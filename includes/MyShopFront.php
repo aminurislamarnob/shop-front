@@ -33,29 +33,6 @@ final class MyShopFront {
     private $container = [];
 
     /**
-     * Plugin dependencies
-     *
-     * @since 2.6.10
-     *
-     * @var array
-     */
-    private const MY_SHOP_FRONT_DEPENEDENCIES = [
-        'plugins' => [
-            // 'woocommerce/woocommerce.php',
-            // 'dokan-lite/dokan.php',
-            // 'dokan-pro/dokan-pro.php'
-        ],
-        'classes' => [
-            // 'Woocommerce',
-            // 'WeDevs_Dokan',
-            // 'Dokan_Pro'
-        ],
-        'functions' => [
-            // 'dokan_admin_menu_position'
-        ],
-    ];
-
-    /**
      * Constructor for the MyShopFront class
      *
      * Sets up all the appropriate hooks and actions
@@ -108,15 +85,14 @@ final class MyShopFront {
      * Nothing is being called here yet.
      */
     public function activate() {
-        // Check my_shop_front dependency plugins
-        if ( ! $this->check_dependencies() ) {
-            wp_die( $this->get_dependency_message() );
-        }
 
         // Rewrite rules during my_shop_front activation
         if ( $this->has_woocommerce() ) {
             $this->flush_rewrite_rules();
         }
+
+        //Create plugin page
+        Install::create_plugin_page();
     }
 
     /**
@@ -174,7 +150,7 @@ final class MyShopFront {
      */
     public function init_plugin() {
         // Check my_shop_front dependency plugins
-        if ( ! $this->check_dependencies() ) {
+        if ( ! $this->has_woocommerce() ) {
             add_action( 'admin_notices', [ $this, 'admin_error_notice_for_dependency_missing' ] );
             return;
         }
@@ -202,7 +178,7 @@ final class MyShopFront {
      * @return void
      */
     public function includes() {
-        // include_once STUB_PLUGIN_DIR . '/functions.php';
+        //Include all the required files
     }
 
     /**
@@ -212,6 +188,8 @@ final class MyShopFront {
      */
     public function init_classes() {
         $this->container['scripts'] = new Assets();
+        $this->container['plugin_install'] = new Install();
+        $this->container['plugin_helper'] = new Helper();
     }
 
     /**
@@ -247,35 +225,6 @@ final class MyShopFront {
      */
     public function is_woocommerce_installed() {
         return in_array( 'woocommerce/woocommerce.php', array_keys( get_plugins() ), true );
-    }
-
-    /**
-     * Check plugin dependencies
-     *
-     * @return boolean
-     */
-    public function check_dependencies() {
-        if ( array_key_exists( 'plugins', self::MY_SHOP_FRONT_DEPENEDENCIES ) && ! empty( self::MY_SHOP_FRONT_DEPENEDENCIES['plugins'] ) ) {
-            for ( $plugin_counter = 0; $plugin_counter < count( self::MY_SHOP_FRONT_DEPENEDENCIES['plugins'] ); $plugin_counter++ ) {
-                if ( ! is_plugin_active( self::MY_SHOP_FRONT_DEPENEDENCIES['plugins'][ $plugin_counter ] ) ) {
-                    return false;
-                }
-            }
-        } elseif ( array_key_exists( 'classes', self::MY_SHOP_FRONT_DEPENEDENCIES ) && ! empty( self::MY_SHOP_FRONT_DEPENEDENCIES['classes'] ) ) {
-            for ( $class_counter = 0; $class_counter < count( self::MY_SHOP_FRONT_DEPENEDENCIES['classes'] ); $class_counter++ ) {
-                if ( ! class_exists( self::MY_SHOP_FRONT_DEPENEDENCIES['classes'][ $class_counter ] ) ) {
-                    return false;
-                }
-            }
-        } elseif ( array_key_exists( 'functions', self::MY_SHOP_FRONT_DEPENEDENCIES ) && ! empty( self::MY_SHOP_FRONT_DEPENEDENCIES['functions'] ) ) {
-            for ( $func_counter = 0; $func_counter < count( self::MY_SHOP_FRONT_DEPENEDENCIES['functions'] ); $func_counter++ ) {
-                if ( ! function_exists( self::MY_SHOP_FRONT_DEPENEDENCIES['functions'][ $func_counter ] ) ) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     /**
