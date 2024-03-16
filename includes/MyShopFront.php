@@ -92,7 +92,7 @@ final class MyShopFront {
         }
 
         //Create plugin page
-        Install::create_plugin_page();
+        Installer::create_plugin_page();
     }
 
     /**
@@ -187,9 +187,14 @@ final class MyShopFront {
      * @return void
      */
     public function init_classes() {
+        require_once MY_SHOP_FRONT_INC_DIR . '/functions.php';
+
         $this->container['scripts'] = new Assets();
-        $this->container['plugin_install'] = new Install();
-        $this->container['plugin_helper'] = new Helper();
+        $this->container['msf_installer'] = new Installer();
+        $this->container['msf_common'] = new Common();
+        $this->container['msf_helper'] = new Helper();
+        $this->container['msf_rewrites'] = new Rewrites();
+        $this->container['msf_shortcode'] = new Shortcodes\Shortcodes();
     }
 
     /**
@@ -264,6 +269,34 @@ final class MyShopFront {
     public function get_template( $name ) {
         $template = untrailingslashit( MY_SHOP_FRONT_TEMPLATE_DIR ) . '/' . untrailingslashit( $name );
 
-        return apply_filters( 'my-shop-front_template', $template, $name );
+        return apply_filters( 'my_shop_front_template', $template, $name );
+    }
+
+    /**
+     * Get the plugin path.
+     *
+     * @return string
+     */
+    public function plugin_path() {
+        return untrailingslashit( plugin_dir_path( __FILE__ ) );
+    }
+
+    /**
+     * Get the template path.
+     *
+     * @return string
+     */
+    public function template_path() {
+        return apply_filters( 'msf_template_path', 'my-shop-front/' );
+    }
+
+    /**
+     * Access rewrites query globally by plugin main class
+     * Ex: welabs_my_shop_front()->get_msf_query()->get_current_endpoint();
+     *
+     * @return void
+     */
+    public function get_msf_query() {
+        return new Rewrites();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace WeLabs\MyShopFront;
 
-class Install {
+class Installer {
 
 	public function __construct() {
 		add_filter( 'display_post_states', array( $this, 'add_display_post_states' ), 10, 2 );
