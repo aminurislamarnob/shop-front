@@ -43,17 +43,13 @@ function msf_get_template_part( $slug, $name = '', $args = [] ) {
     }
 }
 
-
-
-
+/**
+ * Is_msf_endpoint_url - Check if an endpoint is showing.
+ *
+ * @param string|false $endpoint Whether endpoint.
+ * @return bool
+ */
 if ( ! function_exists( 'is_msf_endpoint_url' ) ) {
-
-	/**
-	 * Is_msf_endpoint_url - Check if an endpoint is showing.
-	 *
-	 * @param string|false $endpoint Whether endpoint.
-	 * @return bool
-	 */
 	function is_msf_endpoint_url( $endpoint = false ) {
 		global $wp;
 
@@ -77,4 +73,79 @@ if ( ! function_exists( 'is_msf_endpoint_url' ) ) {
 			return false;
 		}
 	}
+}
+
+/**
+ * Get user-friendly post status based on post
+ *
+ * @param string $status
+ *
+ * @return string|array
+ */
+function msf_get_post_status( $status = '' ) {
+    $statuses = apply_filters(
+        'msf_get_post_status', [
+            'publish' => __( 'Online', 'my-shop-front' ),
+            'draft'   => __( 'Draft', 'my-shop-front' ),
+            'pending' => __( 'Pending Review', 'my-shop-front' ),
+            'future'  => __( 'Scheduled', 'my-shop-front' ),
+        ]
+    );
+
+    if ( $status ) {
+        return isset( $statuses[ $status ] ) ? $statuses[ $status ] : '';
+    }
+
+    return $statuses;
+}
+
+/**
+ * Get user friendly post status label based class
+ *
+ * @param string $status
+ *
+ * @return string|array
+ */
+function msf_get_post_status_label_class( $status = '' ) {
+    $labels = apply_filters(
+        'msf_get_post_status_label_class', [
+            'publish' => 'msf-label-success',
+            'draft'   => 'msf-label-default',
+            'pending' => 'msf-label-danger',
+            'future'  => 'msf-label-warning',
+        ]
+    );
+
+    if ( $status ) {
+        return isset( $labels[ $status ] ) ? $labels[ $status ] : '';
+    }
+
+    return $labels;
+}
+
+
+/**
+ * Get product type
+ *
+ * @param object $product
+ *
+ * @return string
+ */
+function msf_get_product_type( $product ) {
+    $product_type = $product->get_type();
+    if ( $product_type === 'grouped' ) {
+        echo '<span class="product-type grouped">' . esc_html__( 'Grouped', 'my-shop-front' ) . '</span>';
+    } elseif ( $product_type === 'external' ) {
+        echo '<span class="product-type external">' . esc_html__( 'External', 'my-shop-front' ) . '</span>';
+    } elseif ( $product_type === 'simple' ) {
+        if ( $product->is_virtual() ) {
+            echo '<span class="product-type virtual">' . esc_html__( 'Virtual', 'my-shop-front' ) . '</span>';
+        } elseif ( $product->is_downloadable() ) {
+            echo '<span class="product-type downloadable">' . esc_html__( 'Downloadable', 'my-shop-front' ) . '</span>';
+        } else {
+            echo '<span class="product-type simple">' . esc_html__( 'Simple', 'my-shop-front' ) . '</span>';
+        }
+    } elseif ( $product_type === 'variable' ) {
+        echo '<span class="product-type variable">' . esc_html__( 'Variable', 'my-shop-front' ) . '</span>';
+    }
 }

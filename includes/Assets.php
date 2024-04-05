@@ -72,6 +72,7 @@ class Assets {
      * @return void
      */
     public function enqueue_front_scripts() {
+        wp_enqueue_style( 'my_shop_front_style' );
         wp_enqueue_script( 'my_shop_front_script' );
         wp_localize_script(
             'my_shop_front_script', 'My_Shop_Front', []

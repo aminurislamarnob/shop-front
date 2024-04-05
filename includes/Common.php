@@ -24,6 +24,8 @@ class Common {
 			$action         = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
 			$endpoint_title = welabs_my_shop_front()->get_msf_query()->get_endpoint_title( $endpoint, $action );
 			$title          = $endpoint_title ? $endpoint_title : $title;
+
+			remove_filter( 'the_title', [ $this, 'msf_page_endpoint_title' ] );
 		}
 
 		return $title;
