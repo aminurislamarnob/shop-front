@@ -39,7 +39,17 @@ do_action( 'msf_dashboard_wrapper_start' );
                 <table class="my-shop-front-tbl my-shop-front-product-list-table shop_table">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" name="" id=""></th>
+                            <th>
+                                <label class="my-shop-front-checkbox">
+                                    <input type="checkbox" name="" id="" class="my-shop-front-checkbox-input">
+                                    <span class="my-shop-front-checkbox-back"></span>
+                                    <span class="my-shop-front-tick">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                                            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                                        </svg>
+                                    </span>
+                                </label>
+                            </th>
                             <th><?php esc_html_e( 'Image', 'my-shop-front' ); ?></th>
                             <th><?php esc_html_e( 'Name', 'my-shop-front' ); ?></th>
                             <th><?php esc_html_e( 'Category', 'my-shop-front' ); ?></th>
@@ -64,11 +74,21 @@ do_action( 'msf_dashboard_wrapper_start' );
 							}
 							?>
                             <tr class="single-product-item">
-                                <td><input type="checkbox" name="" id=""></td>
+                                <td>
+                                    <label class="my-shop-front-checkbox">
+                                        <input type="checkbox" name="" id="" class="my-shop-front-checkbox-input">
+                                        <span class="my-shop-front-checkbox-back"></span>
+                                        <span class="my-shop-front-tick">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+                                                <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                                            </svg>
+                                        </span>
+                                    </label>
+                                </td>
                                 <td data-title="<?php esc_attr_e( 'Image', 'my-shop-front' ); ?>">
                                     <img src="<?php echo esc_url( $msfc_wfm_thumb ); ?>" class="my-shop-front-thumb" alt="<?php echo esc_attr( get_the_title( $product_id ) ); ?>">
                                 </td>
-                                <td data-title="<?php esc_attr_e( 'Name', 'my-shop-front' ); ?>">
+                                <td class="tbl-product-name" data-title="<?php esc_attr_e( 'Name', 'my-shop-front' ); ?>">
                                     <a href="<?php echo esc_url( get_the_permalink( $product_id ) ); ?>"><?php echo esc_attr( get_the_title( $product_id ) ); ?></a>
                                 </td>
                                 <td data-title="<?php esc_attr_e( 'Category', 'my-shop-front' ); ?>">

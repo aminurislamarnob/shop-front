@@ -1,20 +1,29 @@
 /*Common CSS*/
-.msfc-wfm-container {
+:root{
+    --body-font-size: 14px;
+    --primary-bg: #7f54b3;
+}
+
+.my-shop-front-container {
     margin-top: 30px;
 }
+.my-shop-front-content{
+    font-size: var(--body-font-size);
+}
+
 /*Left Navigation*/
-nav.msfc-wfm-left-navigation ul {
+nav.my-shop-front-left-navigation ul {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-nav.msfc-wfm-left-navigation ul li {
+nav.my-shop-front-left-navigation ul li {
     display: block;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-nav.msfc-wfm-left-navigation ul li a {
+nav.my-shop-front-left-navigation ul li a {
     display: block;
     color: #222;
     padding: 10px 15px;
@@ -22,57 +31,64 @@ nav.msfc-wfm-left-navigation ul li a {
     font-size: 15px;
 }
 
-nav.msfc-wfm-left-navigation {
+nav.my-shop-front-left-navigation {
     background: #f7f7f7;
     border-radius: 4px;
 }
 
-nav.msfc-wfm-left-navigation ul li a:hover, nav.msfc-wfm-left-navigation ul li.is-active a {
+nav.my-shop-front-left-navigation ul li a:hover, nav.my-shop-front-left-navigation ul li.is-active a {
     background: #e04d3b;
     color: #fff;
 }
 
-nav.msfc-wfm-left-navigation ul li:first-child a:hover, nav.msfc-wfm-left-navigation ul li:first-child.is-active a {
+nav.my-shop-front-left-navigation ul li:first-child a:hover, nav.my-shop-front-left-navigation ul li:first-child.is-active a {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 }
 
-nav.msfc-wfm-left-navigation ul li:last-child a:hover, nav.msfc-wfm-left-navigation ul li:last-child.is-active a {
+nav.my-shop-front-left-navigation ul li:last-child a:hover, nav.my-shop-front-left-navigation ul li:last-child.is-active a {
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
 }
 
-.msfc-wfm-container a, .msfc-wfm-container a:hover{
+.my-shop-front-container a, .my-shop-front-container a:hover{
     text-decoration: none!important;
     transition: .3s;
 }
 /*Common Table Style*/
-table.msfc-wfm-tbl{
+table.my-shop-front-tbl{
     border-collapse: collapse;
     width: 100%;
     border: 1px solid rgba(0,0,0,.1);
     border-radius: 4px;
 }
-table.msfc-wfm-tbl>tbody>:nth-child(odd) {
-    background-color: #f9f9f9;
+table.my-shop-front-tbl thead {
+    background-color: rgba(247, 247, 247, 1);
 }
-.msfc-wfm-tbl td.action-buttons {
+table.my-shop-front-product-list-table tbody tr td.tbl-product-name {
+    width: 280px;
+}
+table.my-shop-front-tbl>tbody {
+    background-color: #fff;
+}
+.my-shop-front-tbl td.action-buttons {
     width: 245px;
 }
-.msfc-wfm-tbl tr td:first-child a {
+.my-shop-front-tbl tr td:first-child a {
     color: #E04E3B;
 }
-.msfc-wfm-tbl tr td:first-child a:hover{
+.my-shop-front-tbl tr td:first-child a:hover{
     text-decoration: underline;
 }
 
-.msfc-wfm-tbl thead th {
-    padding: 15px 12px!important;
+.my-shop-front-tbl thead th {
+    padding: 10px!important;
+    text-align: left;
 }
-table.msfc-wfm-tbl caption+thead tr:first-child td, table.msfc-wfm-tbl caption+thead tr:first-child th, table.msfc-wfm-tbl colgroup+thead tr:first-child td, table.msfc-wfm-tbl colgroup+thead tr:first-child th, table.msfc-wfm-tbl thead:first-child tr:first-child td, table.msfc-wfm-tbl thead:first-child tr:first-child th, table.msfc-wfm-tbl td{
+table.my-shop-front-tbl caption+thead tr:first-child td, table.my-shop-front-tbl caption+thead tr:first-child th, table.my-shop-front-tbl colgroup+thead tr:first-child td, table.my-shop-front-tbl colgroup+thead tr:first-child th, table.my-shop-front-tbl thead:first-child tr:first-child td, table.my-shop-front-tbl thead:first-child tr:first-child th, table.my-shop-front-tbl td{
     border: 0px!important;
 }
-.msfc-wfm-tbl del {
+.my-shop-front-tbl del {
     color: #777;
 }
 
@@ -80,8 +96,61 @@ table.msfc-wfm-tbl caption+thead tr:first-child td, table.msfc-wfm-tbl caption+t
     text-decoration: none;
 }
 
+/*Checkbox Style*/
+.my-shop-front-checkbox {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+}
+
+.my-shop-front-checkbox-input {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    margin: 0;
+    left: 0;
+    top: 0;
+}
+
+.my-shop-front-checkbox-back {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,.3)!important;
+    box-sizing: border-box;
+}
+.my-shop-front-tick {
+    position: absolute;
+    top: 0;
+    color: #fff;
+    transition: .3s;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.my-shop-front-checkbox-input:checked ~ .my-shop-front-checkbox-back {
+    background: var(--primary-bg);
+    border-color: var(--primary-bg);
+}
+
+.my-shop-front-checkbox-input:checked ~ .my-shop-front-tick {
+    opacity: 1;
+    visibility: visible;
+}
+
+
 /*Proudct List Page*/
-.msfc-wfm-tbl a{
+.my-shop-front-tbl td, .my-shop-front-tbl th{
+    padding: 12px;
+}
+.my-shop-front-tbl a{
     color: #222222;
     display: inline-block;
     -webkit-transition: 0.5s;
@@ -90,11 +159,11 @@ table.msfc-wfm-tbl caption+thead tr:first-child td, table.msfc-wfm-tbl caption+t
     text-decoration: none;
     outline: 0 !important;
 }
-.msfc-wfm-tbl a:hover{
+.my-shop-front-tbl a:hover{
     color: #0063d1;
     text-decoration: none;
 }
-table.msfc-wfm-tbl .action-buttons a, table.msfc-wfm-tbl .action-buttons button, .msfc-wfm-container button[type=submit] {
+table.my-shop-front-tbl .action-buttons a, table.my-shop-front-tbl .action-buttons button, .my-shop-front-container button[type=submit] {
     margin: 2px 3px!important;
     font-weight: 400!important;
     font-size: 13px!important;
@@ -106,12 +175,12 @@ table.msfc-wfm-tbl .action-buttons a, table.msfc-wfm-tbl .action-buttons button,
     display: inline-flex;
     border: 0px;
 }
-table.msfc-wfm-tbl .action-buttons a:hover, table.msfc-wfm-tbl .action-buttons button:hover, .msfc-wfm-container button[type=submit]:hover{
+table.my-shop-front-tbl .action-buttons a:hover, table.my-shop-front-tbl .action-buttons button:hover, .my-shop-front-container button[type=submit]:hover{
     background: #0063d1;
     border-color: #0063d1;
 }
 
-table .action-buttons a.edit, .msfc-wfm-container button.edit {
+table .action-buttons a.edit, .my-shop-front-container button.edit {
     background: #34495e;
 }
 
@@ -122,27 +191,26 @@ table .action-buttons a.delete, table .action-buttons button.delete {
 table .action-buttons a.view {
     background: #27ae60;
 }
-.msfc-wfm-alert.alert-dismissible .close {
+.my-shop-front-alert.alert-dismissible .close {
     font-weight: 400;
     font-size: 20px;
 }
-.msfc-wfm-alert.alert-dismissible .close:hover, .msfc-wfm-alert.alert-dismissible .close:focus{
+.my-shop-front-alert.alert-dismissible .close:hover, .my-shop-front-alert.alert-dismissible .close:focus{
     background: none;
 }
 
-.msfc-wfm-alert.alert {
+.my-shop-front-alert.alert {
     padding: 10px 15px;
     border-radius: 0px!important;
 }
-.msfc-wfm-thumb {
-    width: 80px;
+.my-shop-front-thumb {
+    width: 40px;
     border-radius: 4px;
+    height: 40px;
+    object-fit: cover;
 }
 
-table.msfc-wfm-product-list-table tbody tr td:first-child {
-    width: 100px;
-}
-table.msfc-wfm-product-list-table tbody tr td{
+table.my-shop-front-product-list-table tbody tr td{
     border-top: 1px solid rgba(0,0,0,.1)!important;
 }
 
@@ -180,20 +248,20 @@ span.order-failed {
 }
 
 /*Order Edit Page*/
-.msfc-wfm-container .form-control {
+.my-shop-front-container .form-control {
     border-radius: 0px;
     font-size: 14px;
     border: 1px solid #ced4da;
 }
-.msfc-wfm-inline-form button {
+.my-shop-front-inline-form button {
     height: 35px!important;
 }
-.msfc-wfm-container .form-control:focus {
+.my-shop-front-container .form-control:focus {
     border: 1px solid #ced4da;
 }
 
 /*Button Style*/
-.msfc-wfm-button {
+.my-shop-front-button {
     background: #E04E3B;
     display: inline-block;
     padding: 7px 20px;
@@ -203,16 +271,16 @@ span.order-failed {
     border-radius: 4px;
 }
 
-.msfc-wfm-button:hover {
+.my-shop-front-button:hover {
     color: #fff;
     background: #222;
 }
 
 /*Add Product Form*/
-.msfc-wfm-container textarea.form-control {
+.my-shop-front-container textarea.form-control {
     height: auto;
 }
-.msfc-wfm-container button.msfc-submit-btn {
+.my-shop-front-container button.msfc-submit-btn {
     border: 0px;
     padding: 8px 25px!important;
     height: auto!important;
@@ -223,16 +291,16 @@ span.order-failed {
 label span.req {
     color: #e74c3c;
 }
-.msfc-wfm-container .form-group {
+.my-shop-front-container .form-group {
     margin-bottom: 25px;
 }
 
-.msfc-wfm-container .form-group label {
+.my-shop-front-container .form-group label {
     font-size: 16px;
     font-weight: 500;
 }
 
-.msfc-wfm-container .form-control {
+.my-shop-front-container .form-control {
     height: 42px;
 }
 .form-group.is-invalid .wp-core-ui.wp-editor-wrap .wp-editor-container {
@@ -339,15 +407,15 @@ label span.req {
 }
 
 /*Product Details Page*/
-.msfc-wfm-product-thumbnail .thumb-gl-item {
+.my-shop-front-product-thumbnail .thumb-gl-item {
     width: 80px;
     margin-bottom: 10px;
 }
-.msfc-wfm-product-thumbnail .thumb-gl-item img{
+.my-shop-front-product-thumbnail .thumb-gl-item img{
     border: 1.5px solid #fff;
     cursor: pointer;
 }
-.msfc-wfm-product-thumbnail .thumb-gl-item .active {
+.my-shop-front-product-thumbnail .thumb-gl-item .active {
     border-color: #E04E3B;
 }
 .msfc_wfm_product_price {
@@ -358,13 +426,13 @@ label span.req {
 .msfc_wfm_product_price del {
     font-size: 16px;
 }
-ul.msfc-wfm-metas {
+ul.my-shop-front-metas {
     line-height: 1.8;
 }
-.msfc-wfm-product-simple h1 {
+.my-shop-front-product-simple h1 {
     font-size: 32px;
 }
-.msfc-wfm-container .msfc-wfm-inline-form button[type=submit] {
+.my-shop-front-container .my-shop-front-inline-form button[type=submit] {
     height: auto!important;
 }
 .order-status-update-form {
@@ -375,6 +443,6 @@ ul.msfc-wfm-metas {
 .order-status-update-form .form-group {
     margin-bottom: 15px;
 }
-.msfc-wfm-tbl.msfc-wfm-order-list-table td.action-buttons {
+.my-shop-front-tbl.my-shop-front-order-list-table td.action-buttons {
     width: 340px;
 }
