@@ -3,9 +3,9 @@
 namespace PluginizeLab\ShopFront;
 
 /**
- * ShopFront class
+ * MyShopFront class
  *
- * @class ShopFront The class that holds the entire ShopFront plugin
+ * @class MyShopFront The class that holds the entire MyShopFront plugin
  */
 final class ShopFront {
 
@@ -33,30 +33,7 @@ final class ShopFront {
     private $container = [];
 
     /**
-     * Plugin dependencies
-     *
-     * @since 2.6.10
-     *
-     * @var array
-     */
-    private const SHOP_FRONT_DEPENEDENCIES = [
-        'plugins' => [
-            // 'woocommerce/woocommerce.php',
-            // 'dokan-lite/dokan.php',
-            // 'dokan-pro/dokan-pro.php'
-        ],
-        'classes' => [
-            // 'Woocommerce',
-            // 'WeDevs_Dokan',
-            // 'Dokan_Pro'
-        ],
-        'functions' => [
-            // 'dokan_admin_menu_position'
-        ],
-    ];
-
-    /**
-     * Constructor for the ShopFront class
+     * Constructor for the MyShopFront class
      *
      * Sets up all the appropriate hooks and actions
      * within our plugin.
@@ -72,12 +49,12 @@ final class ShopFront {
     }
 
     /**
-     * Initializes the ShopFront() class
+     * Initializes the MyShopFront() class
      *
-     * Checks for an existing ShopFront instance
+     * Checks for an existing MyShopFront instance
      * and if it doesn't find one then create a new one.
      *
-     * @return ShopFront
+     * @return MyShopFront
      */
     public static function init() {
         if ( self::$instance === null ) {
@@ -108,19 +85,18 @@ final class ShopFront {
      * Nothing is being called here yet.
      */
     public function activate() {
-        // Check shop_front dependency plugins
-        if ( ! $this->check_dependencies() ) {
-            wp_die( $this->get_dependency_message() );
-        }
 
-        // Rewrite rules during shop_front activation
+        // Rewrite rules during SHOP_FRONT activation
         if ( $this->has_woocommerce() ) {
             $this->flush_rewrite_rules();
         }
+
+        //Create plugin page
+        Installer::create_plugin_page();
     }
 
     /**
-     * Flush rewrite rules after shop_front is activated or woocommerce is activated
+     * Flush rewrite rules after SHOP_FRONT is activated or woocommerce is activated
      *
      * @since 3.2.8
      */
@@ -173,8 +149,8 @@ final class ShopFront {
      * @return void
      */
     public function init_plugin() {
-        // Check shop_front dependency plugins
-        if ( ! $this->check_dependencies() ) {
+        // Check SHOP_FRONT dependency plugins
+        if ( ! $this->has_woocommerce() ) {
             add_action( 'admin_notices', [ $this, 'admin_error_notice_for_dependency_missing' ] );
             return;
         }
@@ -182,7 +158,7 @@ final class ShopFront {
         $this->includes();
         $this->init_hooks();
 
-        do_action( 'shop_front_loaded' );
+        do_action( 'SHOP_FRONT_loaded' );
     }
 
     /**
@@ -202,7 +178,7 @@ final class ShopFront {
      * @return void
      */
     public function includes() {
-        // include_once STUB_PLUGIN_DIR . '/functions.php';
+        //Include all the required files
     }
 
     /**
@@ -224,7 +200,7 @@ final class ShopFront {
     /**
      * Executed after all plugins are loaded
      *
-     * At this point shop_front Pro is loaded
+     * At this point SHOP_FRONT Pro is loaded
      *
      * @since 2.8.7
      *
@@ -257,41 +233,12 @@ final class ShopFront {
     }
 
     /**
-     * Check plugin dependencies
-     *
-     * @return boolean
-     */
-    public function check_dependencies() {
-        if ( array_key_exists( 'plugins', self::SHOP_FRONT_DEPENEDENCIES ) && ! empty( self::SHOP_FRONT_DEPENEDENCIES['plugins'] ) ) {
-            for ( $plugin_counter = 0; $plugin_counter < count( self::SHOP_FRONT_DEPENEDENCIES['plugins'] ); $plugin_counter++ ) {
-                if ( ! is_plugin_active( self::SHOP_FRONT_DEPENEDENCIES['plugins'][ $plugin_counter ] ) ) {
-                    return false;
-                }
-            }
-        } elseif ( array_key_exists( 'classes', self::SHOP_FRONT_DEPENEDENCIES ) && ! empty( self::SHOP_FRONT_DEPENEDENCIES['classes'] ) ) {
-            for ( $class_counter = 0; $class_counter < count( self::SHOP_FRONT_DEPENEDENCIES['classes'] ); $class_counter++ ) {
-                if ( ! class_exists( self::SHOP_FRONT_DEPENEDENCIES['classes'][ $class_counter ] ) ) {
-                    return false;
-                }
-            }
-        } elseif ( array_key_exists( 'functions', self::SHOP_FRONT_DEPENEDENCIES ) && ! empty( self::SHOP_FRONT_DEPENEDENCIES['functions'] ) ) {
-            for ( $func_counter = 0; $func_counter < count( self::SHOP_FRONT_DEPENEDENCIES['functions'] ); $func_counter++ ) {
-                if ( ! function_exists( self::SHOP_FRONT_DEPENEDENCIES['functions'][ $func_counter ] ) ) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Dependency error message
      *
      * @return void
      */
     protected function get_dependency_message() {
-        return __( 'Shop Front plugin is enabled but not effective. It requires dependency plugins to work.', 'shop-front' );
+        return __( 'My Shop Front plugin is enabled but not effective. It requires dependency plugins to work.', 'my-shop-front' );
     }
 
     /**
@@ -322,7 +269,25 @@ final class ShopFront {
     public function get_template( $name ) {
         $template = untrailingslashit( SHOP_FRONT_TEMPLATE_DIR ) . '/' . untrailingslashit( $name );
 
-        return apply_filters( 'shop-front_template', $template, $name );
+        return apply_filters( 'SHOP_FRONT_template', $template, $name );
+    }
+
+    /**
+     * Get the plugin path.
+     *
+     * @return string
+     */
+    public function plugin_path() {
+        return untrailingslashit( plugin_dir_path( __FILE__ ) );
+    }
+
+    /**
+     * Get the template path.
+     *
+     * @return string
+     */
+    public function template_path() {
+        return apply_filters( 'msf_template_path', 'my-shop-front/' );
     }
 
     /**
