@@ -85,10 +85,10 @@ if ( ! function_exists( 'is_msf_endpoint_url' ) ) {
 function msf_get_post_status( $status = '' ) {
     $statuses = apply_filters(
         'msf_get_post_status', [
-            'publish' => __( 'Online', 'my-shop-front' ),
-            'draft'   => __( 'Draft', 'my-shop-front' ),
-            'pending' => __( 'Pending Review', 'my-shop-front' ),
-            'future'  => __( 'Scheduled', 'my-shop-front' ),
+            'publish' => __( 'Online', 'shop-front' ),
+            'draft'   => __( 'Draft', 'shop-front' ),
+            'pending' => __( 'Pending Review', 'shop-front' ),
+            'future'  => __( 'Scheduled', 'shop-front' ),
         ]
     );
 
@@ -134,18 +134,18 @@ function msf_get_post_status_label_class( $status = '' ) {
 function msf_get_product_type( $product ) {
     $product_type = $product->get_type();
     if ( $product_type === 'grouped' ) {
-        echo '<span class="product-type grouped">' . esc_html__( 'Grouped', 'my-shop-front' ) . '</span>';
+        echo '<span class="product-type grouped">' . esc_html__( 'Grouped', 'shop-front' ) . '</span>';
     } elseif ( $product_type === 'external' ) {
-        echo '<span class="product-type external">' . esc_html__( 'External', 'my-shop-front' ) . '</span>';
+        echo '<span class="product-type external">' . esc_html__( 'External', 'shop-front' ) . '</span>';
     } elseif ( $product_type === 'simple' ) {
         if ( $product->is_virtual() ) {
-            echo '<span class="product-type virtual">' . esc_html__( 'Virtual', 'my-shop-front' ) . '</span>';
+            echo '<span class="product-type virtual">' . esc_html__( 'Virtual', 'shop-front' ) . '</span>';
         } elseif ( $product->is_downloadable() ) {
-            echo '<span class="product-type downloadable">' . esc_html__( 'Downloadable', 'my-shop-front' ) . '</span>';
+            echo '<span class="product-type downloadable">' . esc_html__( 'Downloadable', 'shop-front' ) . '</span>';
         } else {
-            echo '<span class="product-type simple">' . esc_html__( 'Simple', 'my-shop-front' ) . '</span>';
+            echo '<span class="product-type simple">' . esc_html__( 'Simple', 'shop-front' ) . '</span>';
         }
     } elseif ( $product_type === 'variable' ) {
-        echo '<span class="product-type variable">' . esc_html__( 'Variable', 'my-shop-front' ) . '</span>';
+        echo '<span class="product-type variable">' . esc_html__( 'Variable', 'shop-front' ) . '</span>';
     }
 }

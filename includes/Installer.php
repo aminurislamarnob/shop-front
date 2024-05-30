@@ -16,7 +16,7 @@ class Installer {
 	 */
 	public function add_display_post_states( $post_states, $post ) {
 		if ( Helper::msfc_get_page_id( 'myshopdashboard' ) === $post->ID ) {
-			$post_states['msf_page_for_dashboard'] = __( 'My Shop Dashboard Page', 'my-shop-front' );
+			$post_states['msf_page_for_dashboard'] = __( 'My Shop Dashboard Page', 'shop-front' );
 		}
 		return $post_states;
 	}
@@ -36,8 +36,8 @@ class Installer {
 			'my_shop_front_create_pages',
 			array(
 				'myshopdashboard' => array(
-					'name'    => _x( 'my-shop-dashboard', 'Page slug', 'my-shop-front' ),
-					'title'   => _x( 'My Shop Dashboard', 'Page title', 'my-shop-front' ),
+					'name'    => _x( 'my-shop-dashboard', 'Page slug', 'shop-front' ),
+					'title'   => _x( 'My Shop Dashboard', 'Page title', 'shop-front' ),
 					'content' => '<!-- wp:shortcode -->[' . $my_shop_front_dashboard_shortcode . ']<!-- /wp:shortcode -->',
 				),
 			)

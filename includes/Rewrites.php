@@ -96,35 +96,35 @@ class Rewrites {
 
 		switch ( $endpoint ) {
 			case 'products':
-				$title = __( 'All Products', 'my-shop-front' );
+				$title = __( 'All Products', 'shop-front' );
 				break;
 			case 'add-new-product':
-				$title = __( 'Add New Product', 'my-shop-front' );
+				$title = __( 'Add New Product', 'shop-front' );
 				break;
 			case 'edit-product':
-				$title = __( 'Edit Product', 'my-shop-front' );
+				$title = __( 'Edit Product', 'shop-front' );
                 break;
 			case 'orders':
 				if ( ! empty( $wp->query_vars['orders'] ) ) {
 					/* translators: %s: page */
-					$title = sprintf( __( 'Orders (page %d)', 'my-shop-front' ), intval( $wp->query_vars['orders'] ) );
+					$title = sprintf( __( 'Orders (page %d)', 'shop-front' ), intval( $wp->query_vars['orders'] ) );
 				} else {
-					$title = __( 'Orders', 'my-shop-front' );
+					$title = __( 'Orders', 'shop-front' );
 				}
 				break;
 			case 'order-details':
 				$order = wc_get_order( $wp->query_vars['view-order'] );
 				/* translators: %s: order number */
-				$title = ( $order ) ? sprintf( __( 'Order #%s', 'my-shop-front' ), $order->get_order_number() ) : '';
+				$title = ( $order ) ? sprintf( __( 'Order #%s', 'shop-front' ), $order->get_order_number() ) : '';
 				break;
 			case 'categories':
-				$title = __( 'Product Categories', 'my-shop-front' );
+				$title = __( 'Product Categories', 'shop-front' );
 				break;
 			case 'add-new-category':
-				$title = __( 'Add New Category', 'my-shop-front' );
+				$title = __( 'Add New Category', 'shop-front' );
 				break;
 			case 'edit-category':
-				$title = __( 'Edit Category', 'my-shop-front' );
+				$title = __( 'Edit Category', 'shop-front' );
 				break;
 			default:
 				$title = '';

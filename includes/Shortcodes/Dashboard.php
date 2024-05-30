@@ -22,11 +22,11 @@ class Dashboard extends MyShopFrontShortcode {
 
         if ( ! function_exists( 'WC' ) ) {
             // translators: 1) wooCommerce installation url
-            return sprintf( __( 'Please install <a href="%s"><strong>WooCommerce</strong></a> plugin first', 'my-shop-front' ), esc_url( 'http://wordpress.org/plugins/woocommerce/' ) );
+            return sprintf( __( 'Please install <a href="%s"><strong>WooCommerce</strong></a> plugin first', 'shop-front' ), esc_url( 'http://wordpress.org/plugins/woocommerce/' ) );
         }
 
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            return __( 'You have no permission to view this page', 'my-shop-front' );
+            return __( 'You have no permission to view this page', 'shop-front' );
         }
 
         ob_start();

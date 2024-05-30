@@ -17,13 +17,13 @@ do_action( 'msf_dashboard_wrapper_start' );
         <div class="col-md-9">
             <?php do_action( 'msf_dashboard_content_before' ); ?>
             <a href="<?php echo esc_url( get_home_url() . '/add-new-product/' ); ?>" class="my-shop-front-button">
-                <?php esc_html_e( 'Add New Product', 'my-shop-front' ); ?>
+                <?php esc_html_e( 'Add New Product', 'shop-front' ); ?>
             </a>
             <div class="my-shop-front-content">
                 <?php
                 $product_statuses  = apply_filters( 'msf_product_listing_post_statuses', [ 'publish', 'draft', 'pending', 'future' ] );
                 $stock_statuses = apply_filters( 'msf_product_stock_statuses', [ 'instock', 'outofstock' ] );
-                $product_types  = apply_filters( 'msf_product_types', [ 'simple' => __( 'Simple', 'my-shop-front' ) ] );
+                $product_types  = apply_filters( 'msf_product_types', [ 'simple' => __( 'Simple', 'shop-front' ) ] );
 
                 $posts_per_page = -1;
                 $query = array(
@@ -50,15 +50,15 @@ do_action( 'msf_dashboard_wrapper_start' );
                                     </span>
                                 </label>
                             </th>
-                            <th><?php esc_html_e( 'Image', 'my-shop-front' ); ?></th>
-                            <th><?php esc_html_e( 'Name', 'my-shop-front' ); ?></th>
-                            <th><?php esc_html_e( 'Category', 'my-shop-front' ); ?></th>
-                            <th><?php esc_html_e( 'Status', 'my-shop-front' ); ?></th>
-                            <th><?php esc_html_e( 'SKU', 'my-shop-front' ); ?></th>
-                            <th><?php esc_html_e( 'Stock', 'my-shop-front' ); ?></th>
-                            <th><?php esc_html_e( 'Price', 'my-shop-front' ); ?></th>
-                            <th><?php esc_html_e( 'Type', 'my-shop-front' ); ?></th>
-                            <th><?php esc_html_e( 'Action', 'my-shop-front' ); ?></th>
+                            <th><?php esc_html_e( 'Image', 'shop-front' ); ?></th>
+                            <th><?php esc_html_e( 'Name', 'shop-front' ); ?></th>
+                            <th><?php esc_html_e( 'Category', 'shop-front' ); ?></th>
+                            <th><?php esc_html_e( 'Status', 'shop-front' ); ?></th>
+                            <th><?php esc_html_e( 'SKU', 'shop-front' ); ?></th>
+                            <th><?php esc_html_e( 'Stock', 'shop-front' ); ?></th>
+                            <th><?php esc_html_e( 'Price', 'shop-front' ); ?></th>
+                            <th><?php esc_html_e( 'Type', 'shop-front' ); ?></th>
+                            <th><?php esc_html_e( 'Action', 'shop-front' ); ?></th>
                         </tr>
                         <tbody>
                         <?php
@@ -85,19 +85,19 @@ do_action( 'msf_dashboard_wrapper_start' );
                                         </span>
                                     </label>
                                 </td>
-                                <td data-title="<?php esc_attr_e( 'Image', 'my-shop-front' ); ?>">
+                                <td data-title="<?php esc_attr_e( 'Image', 'shop-front' ); ?>">
                                     <img src="<?php echo esc_url( $msfc_wfm_thumb ); ?>" class="my-shop-front-thumb" alt="<?php echo esc_attr( get_the_title( $product_id ) ); ?>">
                                 </td>
-                                <td class="tbl-product-name" data-title="<?php esc_attr_e( 'Name', 'my-shop-front' ); ?>">
+                                <td class="tbl-product-name" data-title="<?php esc_attr_e( 'Name', 'shop-front' ); ?>">
                                     <a href="<?php echo esc_url( get_the_permalink( $product_id ) ); ?>"><?php echo esc_attr( get_the_title( $product_id ) ); ?></a>
                                 </td>
-                                <td data-title="<?php esc_attr_e( 'Category', 'my-shop-front' ); ?>">
+                                <td data-title="<?php esc_attr_e( 'Category', 'shop-front' ); ?>">
                                     <?php echo wp_kses_post( wc_get_product_category_list( $product_id, ', ', '', '' ) ); ?>
                                 </td>
-                                <td data-title="<?php esc_attr_e( 'Status', 'my-shop-front' ); ?>">
+                                <td data-title="<?php esc_attr_e( 'Status', 'shop-front' ); ?>">
                                     <?php echo esc_html( msf_get_post_status( get_post_status( $product_id ) ) ); ?>
                                 </td>
-                                <td data-title="<?php esc_attr_e( 'SKU', 'my-shop-front' ); ?>">
+                                <td data-title="<?php esc_attr_e( 'SKU', 'shop-front' ); ?>">
                                     <?php
 									if ( $product->get_sku() ) {
 										echo esc_html( $product->get_sku() );
@@ -106,7 +106,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 									}
                                     ?>
                                 </td>
-                                <td data-title="<?php esc_attr_e( 'Stock', 'my-shop-front' ); ?>">
+                                <td data-title="<?php esc_attr_e( 'Stock', 'shop-front' ); ?>">
                                     <?php
                                     echo esc_html( $product->get_stock_status() );
 									if ( $product->managing_stock() ) {
@@ -114,20 +114,20 @@ do_action( 'msf_dashboard_wrapper_start' );
 									}
                                     ?>
                                 </td>
-                                <td data-title="<?php esc_attr_e( 'Price', 'my-shop-front' ); ?>">
+                                <td data-title="<?php esc_attr_e( 'Price', 'shop-front' ); ?>">
                                     <?php echo wp_kses_post( $product->get_price_html() ); ?>
                                 </td>
-                                <td data-title="<?php esc_attr_e( 'Type', 'my-shop-front' ); ?>">
+                                <td data-title="<?php esc_attr_e( 'Type', 'shop-front' ); ?>">
                                     <?php msf_get_product_type( $product ); ?>
                                 </td>
-                                <td data-title="<?php esc_attr_e( 'Action', 'my-shop-front' ); ?>" class="action-buttons">
-                                    <a href="<?php echo esc_url( get_home_url() . '/msfc-product-details/' . $product_id . '/' ); ?>" class="woocommerce-button view"><?php esc_html_e( 'View', 'my-shop-front' ); ?></a>
-                                    <a href="<?php echo esc_url( get_home_url() . '/msfc-edit-product/' . $product_id . '/' ); ?>" class="woocommerce-button edit"><?php esc_html_e( 'Edit', 'my-shop-front' ); ?></a>
+                                <td data-title="<?php esc_attr_e( 'Action', 'shop-front' ); ?>" class="action-buttons">
+                                    <a href="<?php echo esc_url( get_home_url() . '/msfc-product-details/' . $product_id . '/' ); ?>" class="woocommerce-button view"><?php esc_html_e( 'View', 'shop-front' ); ?></a>
+                                    <a href="<?php echo esc_url( get_home_url() . '/msfc-edit-product/' . $product_id . '/' ); ?>" class="woocommerce-button edit"><?php esc_html_e( 'Edit', 'shop-front' ); ?></a>
                                     <form class="d-inline" action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="POST">
                                         <?php wp_nonce_field( 'msfc_wfm_dlt_product_nonce_211', 'msfc_wfm_dlt_nonce' ); ?>
                                         <input type="hidden" name="id" value="<?php echo esc_attr( $product_id ); ?>">
                                         <input type="hidden" name="action" value="msfc_wfm_trash_product_action">
-                                        <button type="submit" class="woocommerce-button delete"><?php esc_html_e( 'Delete', 'my-shop-front' ); ?></button>
+                                        <button type="submit" class="woocommerce-button delete"><?php esc_html_e( 'Delete', 'shop-front' ); ?></button>
                                     </form>
                                 </td>
                             </tr>
@@ -139,7 +139,7 @@ do_action( 'msf_dashboard_wrapper_start' );
                     </thead>
                 </table>
                 <?php } else { ?>
-                    <div class="alert alert-warning" role="alert"><?php esc_html_e( 'No product found!', 'my-shop-front' ); ?></div>
+                    <div class="alert alert-warning" role="alert"><?php esc_html_e( 'No product found!', 'shop-front' ); ?></div>
                 <?php } ?>
             </div>
             <?php do_action( 'msf_dashboard_content_after' ); ?>
