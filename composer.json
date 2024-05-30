@@ -1,17 +1,17 @@
 {
-    "name": "welabs/my-shop-front",
+    "name": "pluginizelab/shop-front",
     "description": "This plugin enable frontend store management system for WooCommerce simple type product.",
-    "license": "GPL-2.0+",
+    "license": "GPL2",
     "autoload": {
         "psr-4": {
-            "WeLabs\\MyShopFront\\": "includes/"
+            "PluginizeLab\\ShopFront\\": "includes/"
         }
     },
     "authors": [
         {
             "name": "Aminur Islam Arnob",
-            "email": "eng.aminurislam@gmail.com",
-            "homepage": "https://wordpress.org/plugins/my-shop-front/"
+            "email": "contact@pluginizelab.dev",
+            "homepage": "https://wordpress.org/plugins/shop-front/"
         }
     ],
     "minimum-stability": "dev",
@@ -25,7 +25,7 @@
         "yoast/phpunit-polyfills": "^1.0",
         "symfony/var-dumper": "6.4.x-dev"
     },
-   "scripts": {
+    "scripts": {
         "phpcs": [
             "vendor/bin/phpcs -p -s"
         ],

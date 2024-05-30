@@ -1,8 +1,8 @@
 <?php
 
-namespace WeLabs\MyShopFront\Shortcodes;
+namespace PluginizeLab\ShopFront\Shortcodes;
 
-use WeLabs\MyShopFront\Abstracts\MyShopFrontShortcode;
+use PluginizeLab\ShopFront\Abstracts\MyShopFrontShortcode;
 
 class Dashboard extends MyShopFrontShortcode {
 

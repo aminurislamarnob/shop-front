@@ -1,5 +1,5 @@
 <?php
-namespace WeLabs\MyShopFront;
+namespace PluginizeLab\ShopFront;
 
 class Helper {
     public static function msfc_get_page_id( $page ) {

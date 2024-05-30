@@ -1,6 +1,6 @@
 <?php
 
-namespace WeLabs\MyShopFront;
+namespace PluginizeLab\ShopFront;
 
 class Assets {
     /**

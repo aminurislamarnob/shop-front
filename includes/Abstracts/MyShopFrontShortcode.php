@@ -1,6 +1,6 @@
 <?php
 
-namespace WeLabs\MyShopFront\Abstracts;
+namespace PluginizeLab\ShopFront\Abstracts;
 
 abstract class MyShopFrontShortcode {
 
