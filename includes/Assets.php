@@ -34,11 +34,11 @@ class Assets {
      * @return void
      */
     public function register_scripts() {
-        $admin_script       = MY_SHOP_FRONT_PLUGIN_ASSET . '/admin/script.js';
-        $frontend_script    = MY_SHOP_FRONT_PLUGIN_ASSET . '/frontend/script.js';
+        $admin_script       = SHOP_FRONT_PLUGIN_ASSET . '/admin/script.js';
+        $frontend_script    = SHOP_FRONT_PLUGIN_ASSET . '/frontend/script.js';
 
-        wp_register_script( 'my_shop_front_admin_script', $admin_script, [], filemtime( MY_SHOP_FRONT_DIR . '/assets/admin/script.js' ), true );
-        wp_register_script( 'my_shop_front_script', $frontend_script, [], filemtime( MY_SHOP_FRONT_DIR . '/assets/frontend/script.js' ), true );
+        wp_register_script( 'my_shop_front_admin_script', $admin_script, [], filemtime( SHOP_FRONT_DIR . '/assets/admin/script.js' ), true );
+        wp_register_script( 'my_shop_front_script', $frontend_script, [], filemtime( SHOP_FRONT_DIR . '/assets/frontend/script.js' ), true );
     }
 
     /**
@@ -47,11 +47,11 @@ class Assets {
      * @return void
      */
     public function register_styles() {
-        $admin_style       = MY_SHOP_FRONT_PLUGIN_ASSET . '/admin/style.css';
-        $frontend_style    = MY_SHOP_FRONT_PLUGIN_ASSET . '/frontend/style.css';
+        $admin_style       = SHOP_FRONT_PLUGIN_ASSET . '/admin/style.css';
+        $frontend_style    = SHOP_FRONT_PLUGIN_ASSET . '/frontend/style.css';
 
-        wp_register_style( 'my_shop_front_admin_style', $admin_style, [], filemtime( MY_SHOP_FRONT_DIR . '/assets/admin/style.css' ) );
-        wp_register_style( 'my_shop_front_style', $frontend_style, [], filemtime( MY_SHOP_FRONT_DIR . '/assets/frontend/style.css' ) );
+        wp_register_style( 'my_shop_front_admin_style', $admin_style, [], filemtime( SHOP_FRONT_DIR . '/assets/admin/style.css' ) );
+        wp_register_style( 'my_shop_front_style', $frontend_style, [], filemtime( SHOP_FRONT_DIR . '/assets/frontend/style.css' ) );
     }
 
     /**

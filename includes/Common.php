@@ -20,9 +20,9 @@ class Common {
 		global $wp_query;
 
 		if ( ! is_null( $wp_query ) && ! is_admin() && is_main_query() && in_the_loop() && is_page() && is_msf_endpoint_url() ) {
-			$endpoint       = welabs_my_shop_front()->get_msf_query()->get_current_endpoint();
+			$endpoint       = pluginizelab_shop_front()->get_msf_query()->get_current_endpoint();
 			$action         = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
-			$endpoint_title = welabs_my_shop_front()->get_msf_query()->get_endpoint_title( $endpoint, $action );
+			$endpoint_title = pluginizelab_shop_front()->get_msf_query()->get_endpoint_title( $endpoint, $action );
 			$title          = $endpoint_title ? $endpoint_title : $title;
 
 			remove_filter( 'the_title', [ $this, 'msf_page_endpoint_title' ] );

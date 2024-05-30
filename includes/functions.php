@@ -19,12 +19,12 @@ function msf_get_template_part( $slug, $name = '', $args = [] ) {
 
     // Look in yourtheme/my-shop-front/slug-name.php and yourtheme/my-shop-front/slug.php
     $template_path = ! empty( $name ) ? "{$slug}-{$name}.php" : "{$slug}.php";
-    $template      = locate_template( [ welabs_my_shop_front()->template_path() . $template_path ] );
+    $template      = locate_template( [ pluginizelab_shop_front()->template_path() . $template_path ] );
 
     /**
      * Change template directory path filter
      */
-    $template_path = apply_filters( 'msf_set_template_path', MY_SHOP_FRONT_TEMPLATE_DIR, $template, $args );
+    $template_path = apply_filters( 'msf_set_template_path', SHOP_FRONT_TEMPLATE_DIR, $template, $args );
 
     // Get default slug-name.php
     if ( ! $template && $name && file_exists( $template_path . "/{$slug}-{$name}.php" ) ) {
@@ -53,7 +53,7 @@ if ( ! function_exists( 'is_msf_endpoint_url' ) ) {
 	function is_msf_endpoint_url( $endpoint = false ) {
 		global $wp;
 
-		$msf_endpoints = welabs_my_shop_front()->get_msf_query()->query_vars;
+		$msf_endpoints = pluginizelab_shop_front()->get_msf_query()->query_vars;
 
 		if ( false !== $endpoint ) {
 			if ( ! isset( $msf_endpoints[ $endpoint ] ) ) {

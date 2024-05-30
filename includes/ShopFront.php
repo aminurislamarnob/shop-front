@@ -211,7 +211,14 @@ final class ShopFront {
      * @return void
      */
     public function init_classes() {
+        require_once SHOP_FRONT_INC_DIR . '/functions.php';
+
         $this->container['scripts'] = new Assets();
+        $this->container['msf_installer'] = new Installer();
+        $this->container['msf_common'] = new Common();
+        $this->container['msf_helper'] = new Helper();
+        $this->container['msf_rewrites'] = new Rewrites();
+        $this->container['msf_shortcode'] = new Shortcodes\Shortcodes();
     }
 
     /**
@@ -320,7 +327,7 @@ final class ShopFront {
 
     /**
      * Access rewrites query globally by plugin main class
-     * Ex: welabs_my_shop_front()->get_msf_query()->get_current_endpoint();
+     * Ex: pluginizelab_shop_front()->get_msf_query()->get_current_endpoint();
      *
      * @return void
      */
