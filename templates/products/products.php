@@ -95,7 +95,9 @@ do_action( 'msf_dashboard_wrapper_start' );
 									<?php echo wp_kses_post( wc_get_product_category_list( $product_id, ', ', '', '' ) ); ?>
 								</td>
 								<td data-title="<?php esc_attr_e( 'Status', 'shop-front' ); ?>">
-									<?php echo esc_html( msf_get_post_status( get_post_status( $product_id ) ) ); ?>
+									<span class="msfc-badge msfc-badge-<?php echo esc_attr( msf_get_post_status_class( get_post_status( $product_id ) ) ); ?>">
+										<?php echo esc_html( msf_get_post_status( get_post_status( $product_id ) ) ); ?>
+									</span>
 								</td>
 								<td data-title="<?php esc_attr_e( 'SKU', 'shop-front' ); ?>">
 									<?php

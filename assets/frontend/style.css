@@ -208,6 +208,10 @@ table.my-shop-front-tbl caption+thead tr:first-child td, table.my-shop-front-tbl
   background-color: rgb(254 243 199);
   color: rgb(245 158 11);
 }
+.msfc-badge.msfc-badge-info{
+  background-color: rgb(224 231 255);
+  color: rgb(99 102 241);
+}
 
 /*Checkbox Style*/
 .my-shop-front-checkbox {
