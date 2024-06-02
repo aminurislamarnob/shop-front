@@ -58,6 +58,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 							<th><?php esc_html_e( 'Stock', 'shop-front' ); ?></th>
 							<th><?php esc_html_e( 'Price', 'shop-front' ); ?></th>
 							<th><?php esc_html_e( 'Type', 'shop-front' ); ?></th>
+							<th class="text-right"><?php esc_html_e( 'Actions', 'shop-front' ); ?></th>
 						</tr>
 						<tbody>
 						<?php
@@ -89,16 +90,6 @@ do_action( 'msf_dashboard_wrapper_start' );
 								</td>
 								<td class="tbl-product-name" data-title="<?php esc_attr_e( 'Name', 'shop-front' ); ?>">
 									<a href="<?php echo esc_url( get_the_permalink( $product_id ) ); ?>"><?php echo esc_attr( get_the_title( $product_id ) ); ?></a>
-									<div class="product-list-action">
-										<a href="<?php echo esc_url( get_home_url() . '/msfc-product-details/' . $product_id . '/' ); ?>" class="woocommerce-button view"><?php esc_html_e( 'View', 'shop-front' ); ?></a>
-										<a href="<?php echo esc_url( get_home_url() . '/msfc-edit-product/' . $product_id . '/' ); ?>" class="woocommerce-button edit"><?php esc_html_e( 'Edit', 'shop-front' ); ?></a>
-										<form class="d-inline" action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="POST">
-											<?php wp_nonce_field( 'msfc_wfm_dlt_product_nonce_211', 'msfc_wfm_dlt_nonce' ); ?>
-											<input type="hidden" name="id" value="<?php echo esc_attr( $product_id ); ?>">
-											<input type="hidden" name="action" value="msfc_wfm_trash_product_action">
-											<button type="submit" class="inline-button delete"><?php esc_html_e( 'Delete', 'shop-front' ); ?></button>
-										</form>
-									</div>
 								</td>
 								<td data-title="<?php esc_attr_e( 'Category', 'shop-front' ); ?>">
 									<?php echo wp_kses_post( wc_get_product_category_list( $product_id, ', ', '', '' ) ); ?>
@@ -117,9 +108,17 @@ do_action( 'msf_dashboard_wrapper_start' );
 								</td>
 								<td data-title="<?php esc_attr_e( 'Stock', 'shop-front' ); ?>">
 									<?php
-									echo esc_html( $product->get_stock_status() );
+									$stock_count = '';
 									if ( $product->managing_stock() ) {
-										echo ' &times; ' . esc_html( $product->get_stock_quantity() );
+										$stock_count = '(' . $product->get_stock_quantity() . ')';
+									}
+
+									if ( $product->is_on_backorder() ) {
+										echo '<span class="msfc-badge msfc-badge-warning">' . esc_html__( 'On backorder', 'shop-front' ) . '</span>';
+									} elseif ( $product->is_in_stock() ) {
+										echo '<span class="msfc-badge msfc-badge-success">' . esc_html__( 'In stock', 'shop-front' ) . esc_html( $stock_count ) . '</span>';
+									} else {
+										echo '<span class="msfc-badge msfc-badge-danger">' . esc_html__( 'Out of stock', 'shop-front' ) . '</span>';
 									}
 									?>
 								</td>
@@ -128,6 +127,31 @@ do_action( 'msf_dashboard_wrapper_start' );
 								</td>
 								<td data-title="<?php esc_attr_e( 'Type', 'shop-front' ); ?>">
 									<?php msf_get_product_type( $product ); ?>
+								</td>
+								<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'shop-front' ); ?>">
+									<div class="msfc-dropdown">
+										<span class="msfc-dropdown-icon">
+											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+												<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+											</svg>
+										</span>
+										<ul class="msfc-dropdown-menu">
+											<li>
+												<a href="<?php echo esc_url( get_home_url() . '/msfc-product-details/' . $product_id . '/' ); ?>" class="dropdown-link"><?php esc_html_e( 'View', 'shop-front' ); ?></a>
+											</li>
+											<li>
+												<a href="<?php echo esc_url( get_home_url() . '/msfc-edit-product/' . $product_id . '/' ); ?>" class="dropdown-link"><?php esc_html_e( 'Edit', 'shop-front' ); ?></a>
+											</li>
+											<li>
+												<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="POST">
+													<?php wp_nonce_field( 'msfc_wfm_dlt_product_nonce_211', 'msfc_wfm_dlt_nonce' ); ?>
+													<input type="hidden" name="id" value="<?php echo esc_attr( $product_id ); ?>">
+													<input type="hidden" name="action" value="msfc_wfm_trash_product_action">
+													<button type="submit" class="inline-button dropdown-link"><?php esc_html_e( 'Delete', 'shop-front' ); ?></button>
+												</form>
+											</li>
+										</ul>
+									</div>
 								</td>
 							</tr>
 							<?php
