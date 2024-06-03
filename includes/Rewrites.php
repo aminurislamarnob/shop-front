@@ -10,9 +10,17 @@ class Rewrites {
 	public $query_vars = array();
 
 	/**
+	 * Store base slug
+	 *
+	 * @var string
+	 */
+	public $store_front_base = '';
+
+	/**
 	 * Hook into the functions
 	 */
 	public function __construct() {
+		$this->store_front_base = 'my-shop-dashboard'; // need to set dynamically from options table.
 		add_action( 'init', array( $this, 'add_endpoints' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ), 0 );
 		add_filter( 'woocommerce_get_query_vars', array( $this, 'resolve_wocommerce_my_acc_query_conflict' ) );
@@ -71,10 +79,10 @@ class Rewrites {
 			}
 		}
 
-		// Custom rewrite rule for product pagination.
+		// Add rewrite rule for product list pagination.
 		add_rewrite_rule(
-			'^products/page/([0-9]+)/?$',
-			'index.php?products=1&paged=$matches[1]',
+			$this->store_front_base . '/products/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&products=1&paged=$matches[1]',
 			'top'
 		);
 	}

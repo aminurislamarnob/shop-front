@@ -25,17 +25,13 @@ do_action( 'msf_dashboard_wrapper_start' );
 				$stock_statuses   = apply_filters( 'msf_product_stock_statuses', array( 'instock', 'outofstock' ) );
 				$product_types    = apply_filters( 'msf_product_types', array( 'simple' => __( 'Simple', 'shop-front' ) ) );
 
-				$posts_per_page = 5; // Set the number of posts per page.
-				var_dump( get_query_var( 'paged' ) );
-				$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1; // Get current page number, default to 1.
-
-				var_dump( $paged );
-
-				$query = array(
+				$posts_per_page = 10;
+				$current_page   = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1; // Get current page number, default to 1.
+				$query          = array(
 					'posts_per_page' => $posts_per_page,
 					'post_type'      => 'product',
 					'post_status'    => $product_statuses,
-					'paged'          => $paged,
+					'paged'          => $current_page,
 				);
 
 				$product_query = new WP_Query( $query );
@@ -169,27 +165,41 @@ do_action( 'msf_dashboard_wrapper_start' );
 					</thead>
 				</table>
 					<?php
-					$base_url = msfc_get_navigation_url( 'products' );
+					$base_url         = msfc_get_navigation_url( 'products' );
+					$current_page_num = max( 1, $current_page );
+					$total_pages      = $product_query->max_num_pages;
+					$total_products   = $product_query->found_posts;
+					$start_product    = ( $current_page_num - 1 ) * $posts_per_page + 1;
+					$end_product      = min( $total_products, $current_page_num * $posts_per_page );
 
-					if ( $product_query->max_num_pages > 1 ) {
-						$big = 999999999;
-						echo '<div class="pagination-wrap">';
+					if ( $total_pages > 1 ) {
+						$big_num    = 999999999;
 						$page_links = paginate_links(
 							array(
-								'total'     => $product_query->max_num_pages,
-								'base'      => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+								'base'      => str_replace( $big_num, '%#%', esc_url( get_pagenum_link( $big_num ) ) ),
 								'format'    => '?page=%#%',
-								'current'   => max( 1, get_query_var( 'page' ) ),
-								'type'      => 'array',
-								'prev_text' => __( '&laquo; Previous', 'dokan-lite' ),
-								'next_text' => __( 'Next &raquo;', 'dokan-lite' ),
+								'add_args'  => false,
+								'current'   => $current_page_num,
+								'total'     => $total_pages,
+								'type'      => 'array', // list.
+								'prev_text' => '&larr;',
+								'next_text' => '&rarr;',
+								'end_size'  => 3,
+								'mid_size'  => 3,
 							)
 						);
 
+						echo '<div class="msfc-pagination-wrap">';
+
+						echo '<div class="msfc-result-text">';
+						/* translators: %1$s: Start Product, %2$s: End Product, %3$s: Total Products */
+						printf( esc_html__( 'Showing %1$s to %2$s of %3$s', 'store-front' ), esc_html( $start_product ), esc_html( $end_product ), esc_html( $total_products ) );
+						echo '</div>';
+
 						if ( ! empty( $page_links ) ) {
 							echo '<ul class="msfc-pagination"><li>';
-							echo wp_kses_post( join( "</li>\n\t<li>", $page_links ) );
-							echo "</li>\n</ul>\n";
+							echo wp_kses_post( join( '</li><li>', $page_links ) );
+							echo '</li></ul>';
 						}
 						echo '</div>';
 					}

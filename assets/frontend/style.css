@@ -3,6 +3,7 @@
   --body-font-size: 14px;
   --primary-bg: #7f54b3;
   --text-gray: rgb(55 65 81);
+  --text-light: rgba(97, 97, 97, 1);
   --icon-color: rgb(148 163 184);
   --table-border-color: #e2e8f0;
 }
@@ -613,4 +614,34 @@ ul.my-shop-front-metas {
 }
 .my-shop-front-tbl.my-shop-front-order-list-table td.action-buttons {
   width: 340px;
+}
+
+/*Pagination*/
+.msfc-pagination {display: flex;gap: 10px;flex-wrap: wrap;align-items: center;}
+
+.msfc-pagination li a, .msfc-pagination li .current {
+    background: #fff;
+    font-size: 14px;
+    border-radius: 5px;
+    padding: 10px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.msfc-pagination-wrap {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.msfc-pagination li a:hover, .msfc-pagination li .current {
+    background: var(--primary-bg);
+    color: #fff;
+}
+.msfc-result-text {
+  color: var(--text-light);
 }

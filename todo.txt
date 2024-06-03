@@ -1,0 +1,3 @@
+1. Need to store main dashboard page slug to options table.
+2. Adjust on this function msfc_get_navigation_url().
+3. Also need to replace dynamic value of store_front_base on the class Rewrites.
