@@ -37,7 +37,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 				$product_query = new WP_Query( $query );
 				if ( $product_query->found_posts > 0 ) {
 					?>
-				<table class="my-shop-front-tbl my-shop-front-product-list-table shop_table">
+				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>
 							<th>
