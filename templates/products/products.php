@@ -25,12 +25,17 @@ do_action( 'msf_dashboard_wrapper_start' );
 				$stock_statuses   = apply_filters( 'msf_product_stock_statuses', array( 'instock', 'outofstock' ) );
 				$product_types    = apply_filters( 'msf_product_types', array( 'simple' => __( 'Simple', 'shop-front' ) ) );
 
-				$posts_per_page = -1;
-				$query          = array(
+				$posts_per_page = 5; // Set the number of posts per page.
+				var_dump( get_query_var( 'paged' ) );
+				$paged = ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1; // Get current page number, default to 1.
+
+				var_dump( $paged );
+
+				$query = array(
 					'posts_per_page' => $posts_per_page,
 					'post_type'      => 'product',
 					'post_status'    => $product_statuses,
-					// Pass filter here later
+					'paged'          => $paged,
 				);
 
 				$product_query = new WP_Query( $query );
@@ -163,12 +168,38 @@ do_action( 'msf_dashboard_wrapper_start' );
 						</tbody>
 					</thead>
 				</table>
-				<?php } else { ?>
+					<?php
+					$base_url = msfc_get_navigation_url( 'products' );
+
+					if ( $product_query->max_num_pages > 1 ) {
+						$big = 999999999;
+						echo '<div class="pagination-wrap">';
+						$page_links = paginate_links(
+							array(
+								'total'     => $product_query->max_num_pages,
+								'base'      => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+								'format'    => '?page=%#%',
+								'current'   => max( 1, get_query_var( 'page' ) ),
+								'type'      => 'array',
+								'prev_text' => __( '&laquo; Previous', 'dokan-lite' ),
+								'next_text' => __( 'Next &raquo;', 'dokan-lite' ),
+							)
+						);
+
+						if ( ! empty( $page_links ) ) {
+							echo '<ul class="msfc-pagination"><li>';
+							echo wp_kses_post( join( "</li>\n\t<li>", $page_links ) );
+							echo "</li>\n</ul>\n";
+						}
+						echo '</div>';
+					}
+				} else {
+					?>
 					<div class="alert alert-warning rounded-md" role="alert">
 						<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
 						<span><?php esc_html_e( 'No product found!', 'shop-front' ); ?></span>
 					</div>
-				<?php } ?>
+					<?php } ?>
 			</div>
 			<?php do_action( 'msf_dashboard_content_after' ); ?>
 		</div>

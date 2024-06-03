@@ -3,19 +3,19 @@
 namespace PluginizeLab\ShopFront;
 
 class Common {
-    /**
-     * The constructor.
-     */
+	/**
+	 * The constructor.
+	 */
 	public function __construct() {
-        add_filter( 'the_title', [ $this, 'msf_page_endpoint_title' ] );
+		add_filter( 'the_title', array( $this, 'msf_page_endpoint_title' ) );
 	}
 
-    /**
-     * Replace a page title with the endpoint title.
-     *
-     * @param  string $title Post title.
-     * @return string
-     */
+	/**
+	 * Replace a page title with the endpoint title.
+	 *
+	 * @param  string $title Post title.
+	 * @return string
+	 */
 	public function msf_page_endpoint_title( $title ) {
 		global $wp_query;
 
@@ -25,7 +25,7 @@ class Common {
 			$endpoint_title = pluginizelab_shop_front()->get_msf_query()->get_endpoint_title( $endpoint, $action );
 			$title          = $endpoint_title ? $endpoint_title : $title;
 
-			remove_filter( 'the_title', [ $this, 'msf_page_endpoint_title' ] );
+			remove_filter( 'the_title', array( $this, 'msf_page_endpoint_title' ) );
 		}
 
 		return $title;

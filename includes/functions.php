@@ -176,3 +176,39 @@ function msf_get_product_type( $product ) {
 		echo '<span class="product-type variable">' . esc_html__( 'Variable', 'shop-front' ) . '</span>';
 	}
 }
+
+
+/**
+ * Get navigation URL for the shop front dashboard.
+ *
+ * @param string $name Endpoint name.
+ *
+ * @return string URL
+ */
+function msfc_get_navigation_url( $name = '' ) {
+	// Get the page ID from options.
+	$page_id = (int) get_option( 'my_shop_front_myshopdashboard_page_id', 0 );
+
+	// If page ID is not found, return an empty string.
+	if ( ! $page_id ) {
+		return '';
+	}
+
+	// Get the permalink for the page.
+	$url = get_permalink( $page_id );
+
+	// If the permalink retrieval fails, return an empty string.
+	if ( ! $url ) {
+		return '';
+	}
+
+	// Trim the trailing slash and append the endpoint name if provided.
+	$url = rtrim( $url, '/' );
+
+	if ( ! empty( $name ) ) {
+		$url .= '/' . trailingslashit( $name );
+	}
+
+	// Apply a filter to the URL before returning it.
+	return apply_filters( 'msfc_get_navigation_url', esc_url( $url ), $name );
+}

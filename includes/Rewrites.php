@@ -2,7 +2,7 @@
 namespace PluginizeLab\ShopFront;
 
 class Rewrites {
-    /**
+	/**
 	 * Query vars to add to wp.
 	 *
 	 * @var array
@@ -10,55 +10,56 @@ class Rewrites {
 	public $query_vars = array();
 
 	/**
-     * Hook into the functions
-     */
-    public function __construct() {
-        add_action( 'init', array( $this, 'add_endpoints' ) );
-        add_filter( 'query_vars', array( $this, 'add_query_vars' ), 0 );
-        add_filter( 'woocommerce_get_query_vars', [ $this, 'resolve_wocommerce_my_acc_query_conflict' ] );
-        $this->init_query_vars();
-    }
+	 * Hook into the functions
+	 */
+	public function __construct() {
+		add_action( 'init', array( $this, 'add_endpoints' ) );
+		add_filter( 'query_vars', array( $this, 'add_query_vars' ), 0 );
+		add_filter( 'woocommerce_get_query_vars', array( $this, 'resolve_wocommerce_my_acc_query_conflict' ) );
+		$this->init_query_vars();
+	}
 
 
-    /**
+	/**
 	 * Init query vars by loading options.
 	 */
 	public function init_query_vars() {
 		// Query vars to add to WP.
-        $this->query_vars = apply_filters(
-            'my_shop_front_query_var_filter', [
-                'products' => get_option( 'msf_myshop_products_endpoint', 'products' ),
-                'add-new-product' => get_option( 'msf_myshop_new_product_endpoint', 'add-new-product' ),
-                'edit-product' => get_option( 'msf_myshop_edit_product_endpoint', 'edit-product' ),
-                'orders' => get_option( 'msf_myshop_orders_endpoint', 'orders' ),
-                'order-details' => get_option( 'msf_myshop_order_details_endpoint', 'order-details' ),
-                'categories' => get_option( 'msf_myshop_categories_endpoint', 'categories' ),
-                'add-new-category' => get_option( 'msf_myshop_new_category_endpoint', 'add-new-category' ),
-                'edit-category' => get_option( 'msf_myshop_edit_category_endpoint', 'edit-category' ),
-            ]
-        );
+		$this->query_vars = apply_filters(
+			'my_shop_front_query_var_filter',
+			array(
+				'products'         => get_option( 'msf_myshop_products_endpoint', 'products' ),
+				'add-new-product'  => get_option( 'msf_myshop_new_product_endpoint', 'add-new-product' ),
+				'edit-product'     => get_option( 'msf_myshop_edit_product_endpoint', 'edit-product' ),
+				'orders'           => get_option( 'msf_myshop_orders_endpoint', 'orders' ),
+				'order-details'    => get_option( 'msf_myshop_order_details_endpoint', 'order-details' ),
+				'categories'       => get_option( 'msf_myshop_categories_endpoint', 'categories' ),
+				'add-new-category' => get_option( 'msf_myshop_new_category_endpoint', 'add-new-category' ),
+				'edit-category'    => get_option( 'msf_myshop_edit_category_endpoint', 'edit-category' ),
+			)
+		);
 	}
 
-    /**
-     * Resolve query var conflicts with WooCommerce My Account
-     *
-     * @param array $query_vars
-     *
-     * @return array
-     */
-    public function resolve_wocommerce_my_acc_query_conflict( $query_vars ) {
-        global $post;
+	/**
+	 * Resolve query var conflicts with WooCommerce My Account
+	 *
+	 * @param array $query_vars
+	 *
+	 * @return array
+	 */
+	public function resolve_wocommerce_my_acc_query_conflict( $query_vars ) {
+		global $post;
 
-        $dashboard_id = apply_filters( 'msf_get_dashboard_page_id', Helper::msfc_get_page_id( 'myshopdashboard' ) );
+		$dashboard_id = apply_filters( 'msf_get_dashboard_page_id', Helper::msfc_get_page_id( 'myshopdashboard' ) );
 
-        if ( ! empty( $post->ID ) && apply_filters( 'msf_get_current_page_id', $post->ID ) === absint( $dashboard_id ) ) {
-            unset( $query_vars['orders'] );
-        }
+		if ( ! empty( $post->ID ) && apply_filters( 'msf_get_current_page_id', $post->ID ) === absint( $dashboard_id ) ) {
+			unset( $query_vars['orders'] );
+		}
 
-        return $query_vars;
-    }
+		return $query_vars;
+	}
 
-    /**
+	/**
 	 * Add endpoints for query vars.
 	 */
 	public function add_endpoints() {
@@ -69,9 +70,16 @@ class Rewrites {
 				add_rewrite_endpoint( $var, $mask );
 			}
 		}
+
+		// Custom rewrite rule for product pagination.
+		add_rewrite_rule(
+			'^products/page/([0-9]+)/?$',
+			'index.php?products=1&paged=$matches[1]',
+			'top'
+		);
 	}
 
-    /**
+	/**
 	 * Add query vars.
 	 *
 	 * @param array $vars Query vars.
@@ -84,7 +92,7 @@ class Rewrites {
 		return $vars;
 	}
 
-    /**
+	/**
 	 * Get page title for an endpoint.
 	 *
 	 * @param string $endpoint Endpoint key.
@@ -103,7 +111,7 @@ class Rewrites {
 				break;
 			case 'edit-product':
 				$title = __( 'Edit Product', 'shop-front' );
-                break;
+				break;
 			case 'orders':
 				if ( ! empty( $wp->query_vars['orders'] ) ) {
 					/* translators: %s: page */
@@ -134,7 +142,6 @@ class Rewrites {
 		/**
 		 * Filters the page title used for my-account endpoints.
 		 *
-		 *
 		 * @param string $title Default title.
 		 * @param string $endpoint Endpoint key.
 		 * @param string $action Optional action or variation within the endpoint.
@@ -142,7 +149,7 @@ class Rewrites {
 		return apply_filters( 'msf_endpoint_' . $endpoint . '_title', $title, $endpoint, $action );
 	}
 
-    /**
+	/**
 	 * Get query current active query var.
 	 *
 	 * @return string

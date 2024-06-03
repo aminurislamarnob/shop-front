@@ -10,7 +10,7 @@ class Installer {
 	/**
 	 * Add a post display state for special MSF pages.
 	 *
-	 * @param array $post_states
+	 * @param array  $post_states
 	 * @param object $post
 	 * @return array
 	 */
@@ -21,15 +21,15 @@ class Installer {
 		return $post_states;
 	}
 
-    /**
-     * Create plugin main page with shortcode
-     *
-     * @return void
-     */
-    public static function create_plugin_page() {
-        $my_shop_front_dashboard_shortcode = apply_filters( 'my_shop_front_dashboard_shortcode_tag', 'my_shop_front_dashboard' );
+	/**
+	 * Create plugin main page with shortcode
+	 *
+	 * @return void
+	 */
+	public static function create_plugin_page() {
+		$my_shop_front_dashboard_shortcode = apply_filters( 'my_shop_front_dashboard_shortcode_tag', 'my_shop_front_dashboard' );
 
-        /**
+		/**
 		 * Determines which pages are created during install.
 		 */
 		$pages = apply_filters(
@@ -53,7 +53,7 @@ class Installer {
 				! empty( $page['post_status'] ) ? $page['post_status'] : 'publish'
 			);
 		}
-    }
+	}
 
 	/**
 	 * Create a page and store the ID in an option.
