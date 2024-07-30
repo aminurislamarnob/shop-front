@@ -37,7 +37,7 @@ class Assets {
         $admin_script       = SHOP_FRONT_PLUGIN_ASSET . '/admin/script.js';
         $frontend_script    = SHOP_FRONT_PLUGIN_ASSET . '/frontend/script.js';
 
-        wp_register_script( 'my_shop_front_admin_script', $admin_script, [], filemtime( SHOP_FRONT_DIR . '/assets/admin/script.js' ), true );
+        wp_register_script( 'my_shop_front_admin_script', $admin_script, ['my_shop_front-block-editor-script'], filemtime( SHOP_FRONT_DIR . '/assets/admin/script.js' ), true );
         wp_register_script( 'my_shop_front_script', $frontend_script, [], filemtime( SHOP_FRONT_DIR . '/assets/frontend/script.js' ), true );
     }
 
@@ -60,10 +60,18 @@ class Assets {
      * @return void
      */
     public function enqueue_admin_scripts() {
-        wp_enqueue_script( 'my_shop_front_admin_script' );
-        wp_localize_script(
-            'my_shop_front_admin_script', 'My_Shop_Front_Admin', []
+        wp_enqueue_script(
+            'my_shop_front-block-editor-script',
+            SHOP_FRONT_PLUGIN_ASSET . '/build/index.js',
+            array('wp-blocks', 'wp-element', 'wp-editor', 'wp-block-editor', 'wp-components')
         );
+    
+        wp_enqueue_style(
+            'my_shop_front-block-editor-style',
+            SHOP_FRONT_PLUGIN_ASSET . '/block/style.css'
+        );
+
+        wp_enqueue_script( 'my_shop_front_admin_script' );
     }
 
     /**

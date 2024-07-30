@@ -25,8 +25,9 @@ do_action( 'msf_dashboard_wrapper_start' );
 				$stock_statuses   = apply_filters( 'msf_product_stock_statuses', array( 'instock', 'outofstock' ) );
 				$product_types    = apply_filters( 'msf_product_types', array( 'simple' => __( 'Simple', 'shop-front' ) ) );
 
-				$posts_per_page = 10;
+				$posts_per_page = 4;
 				$current_page   = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1; // Get current page number, default to 1.
+				
 				$query          = array(
 					'posts_per_page' => $posts_per_page,
 					'post_type'      => 'product',
