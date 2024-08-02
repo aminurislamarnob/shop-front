@@ -60,18 +60,21 @@ class Assets {
      * @return void
      */
     public function enqueue_admin_scripts() {
-        wp_enqueue_script(
-            'my_shop_front-block-editor-script',
-            SHOP_FRONT_PLUGIN_ASSET . '/build/index.js',
-            array('wp-blocks', 'wp-element', 'wp-editor', 'wp-block-editor', 'wp-components')
-        );
-    
-        wp_enqueue_style(
-            'my_shop_front-block-editor-style',
-            SHOP_FRONT_PLUGIN_ASSET . '/block/style.css'
-        );
-
         wp_enqueue_script( 'my_shop_front_admin_script' );
+
+        $page = get_current_screen();
+        if ( 'toplevel_page_shop-front' == $page->id ) {
+            $asset_file = include SHOP_FRONT_DIR . '/assets/build/admin/script.asset.php';
+
+            wp_enqueue_script(
+                'shop-front-admin-page',
+                SHOP_FRONT_PLUGIN_ASSET . '/build/admin/script.js',
+                $asset_file['dependencies'],
+                $asset_file['version'],
+                true
+            );
+            wp_enqueue_style( 'wp-components' );
+        }
     }
 
     /**

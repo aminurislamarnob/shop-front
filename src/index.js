@@ -1,32 +1,16 @@
-import { registerBlockType } from '@wordpress/blocks';
-import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+// import './styles/admin.scss'; // Include your custom Sass styles for admin panel
 
-registerBlockType('shop-front/settings-page', {
-    title: 'Settings Page',
-    icon: 'admin-generic',
-    category: 'widgets',
-    edit: () => {
-        const [setting, setSetting] = useState('');
+const AdminComponent = () => (
+    <div className="admin-component">
+        <h1>Admin Component</h1>
+        {/* Your admin-specific code */}
+    </div>
+);
 
-        return (
-            <>
-                <InspectorControls>
-                    <PanelBody title="Settings">
-                        <TextControl
-                            label="Custom Setting"
-                            value={setting}
-                            onChange={(value) => setSetting(value)}
-                        />
-                    </PanelBody>
-                </InspectorControls>
-                <div>Your Custom Setting: {setting}</div>
-            </>
-        );
-    },
-    save: () => {
-        // Block is not saving anything to the content, only for settings page
-        return null;
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('my-app');
+    const root = createRoot(container);
+    root.render(<AdminComponent />);
 });

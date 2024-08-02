@@ -1,27 +1,40 @@
 const path = require('path');
+const defaultConfig = require('@wordpress/scripts/config/webpack.config');
 
 module.exports = {
-    entry: './src/index.js',
+    ...defaultConfig,
+    entry: {
+        admin: './src/admin.js',
+    },
     output: {
         path: path.resolve(__dirname, 'assets/build'),
-        filename: 'index.js',
+        filename: '[name]/script.js',
     },
     module: {
+        ...defaultConfig.module,
         rules: [
+            ...defaultConfig.module.rules,
+            // {
+            //     test: /\.scss$/i,
+            //     use: ['style-loader', 'css-loader', 'sass-loader'],
+            // },
+            // {
+            //     test: /\.css$/i,
+            //     use: ['style-loader', 'css-loader', 'postcss-loader'],
+            // },
             {
-                test: /\.js$/,
+                test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
-                },
-            },
-            {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
-            },
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react']
+                    }
+                }
+            }
         ],
     },
     resolve: {
-        extensions: ['.js'],
-    },
+        extensions: ['.js', '.jsx']
+    }
 };
