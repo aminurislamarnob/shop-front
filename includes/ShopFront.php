@@ -46,6 +46,7 @@ final class ShopFront {
 
 		add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
 		add_action( 'woocommerce_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
+		add_action( 'rest_api_init', array( $this, 'register_rest_route' ) );
 	}
 
 	/**
@@ -93,6 +94,15 @@ final class ShopFront {
 
 		// Create plugin page.
 		Installer::create_plugin_page();
+	}
+
+	/**
+	 * Register plugin REST routes
+	 *
+	 * @return void
+	 */
+	public function register_rest_route() {
+		$this->container['msf_admin_settings_controller']->register_routes();
 	}
 
 	/**
@@ -189,13 +199,14 @@ final class ShopFront {
 	public function init_classes() {
 		require_once SHOP_FRONT_INC_DIR . '/functions.php';
 
-		$this->container['scripts']       = new Assets();
-		$this->container['msf_installer'] = new Installer();
-		$this->container['msf_common']    = new Common();
-		$this->container['msf_helper']    = new Helper();
-		$this->container['msf_rewrites']  = new Rewrites();
-		$this->container['msf_shortcode'] = new Shortcodes\Shortcodes();
-		$this->container['msf_admin_settings'] = new Admin\Settings();
+		$this->container['scripts']                       = new Assets();
+		$this->container['msf_installer']                 = new Installer();
+		$this->container['msf_common']                    = new Common();
+		$this->container['msf_helper']                    = new Helper();
+		$this->container['msf_rewrites']                  = new Rewrites();
+		$this->container['msf_shortcode']                 = new Shortcodes\Shortcodes();
+		$this->container['msf_admin_settings']            = new Admin\Settings();
+		$this->container['msf_admin_settings_controller'] = new REST\SettingsController();
 	}
 
 	/**

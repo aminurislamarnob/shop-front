@@ -1,19 +1,111 @@
 import { __ } from '@wordpress/i18n';
+import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Card, CardBody, TextControl } from '@wordpress/components';
+import { Button, Card, CardBody, Notice, TextControl, Spinner } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 
 const OptionsPage = () => {
+	const [ productPerPage, setProductPerPage ] = useState( '' );
+	const [ isLoading, setIsLoading ] = useState( false );
+	const [ message, setMessage ] = useState( '' );
+	const [ error, setError ] = useState( '' );
+	
+	useEffect( () => {
+		const fetchSettings = async () => {
+			const { msf_product_per_page } = await apiFetch( {
+				path: '/wp/v2/settings?_fields=msf_product_per_page',
+			} );
+			setProductPerPage( msf_product_per_page );
+		};
+		fetchSettings().catch( ( error ) => {
+			console.error( error );
+		} );
+	}, [] );
+
+	useEffect(() => {
+		setIsLoading( true );
+        const fetchSettings = async () => {
+            try {
+                const response = await apiFetch({
+                    path: '/msf-shop-front/v1/settings',
+                });
+                setProductPerPage(response.msf_product_per_page);
+                setError(null); // Clear any previous errors
+				setIsLoading( false );
+            } catch (err) {
+                setError( err.message );
+				setIsLoading( false );
+            }
+        };
+
+        fetchSettings();
+    }, []);
+
+	const handleSubmit = async ( event ) => {
+		event.preventDefault();
+		setIsLoading( true );
+		try {
+			const { msf_product_per_page } = await apiFetch( {
+				path: '/msf-shop-front/v1/settings',
+				method: 'POST',
+				data: {
+					msf_product_per_page: productPerPage,
+				},
+			} );
+			setProductPerPage( msf_product_per_page );
+			setMessage(
+				__( 'Settings saved successfully!', 'shop-front' )
+			);
+			setError( '' );
+			setIsLoading( false );
+		} catch (error) {
+			setError( error.message );
+			setMessage( '' );
+			setIsLoading( false );
+		}
+		
+	};
+
 	return (
 		<div>
-			<h1>{ __( 'Options Page', 'wop' ) }</h1>
-			<Card>
-				<CardBody>
-					<TextControl
-						label={ __( 'Custom Field', 'wop' ) }
-						help={ __( 'This is a custom field.', 'wop' ) }
-					/>
-				</CardBody>
-			</Card>
+			{/* <h1>{ __( 'Options Page', 'shop-front' ) }</h1> */}
+			{ message && (
+				<Notice
+					className="w-full mb-4"
+					status="success"
+					isDismissible
+					onDismiss={ () => setMessage( '' ) }
+				>
+					{ message }
+				</Notice>
+			) }
+			{ error && (
+				<Notice
+					className="w-full mb-4"
+					status="error"
+					isDismissible
+					onDismiss={ () => setError( '' ) }
+				>
+					{ error }
+				</Notice>
+			) }
+
+			<form onSubmit={ handleSubmit }>
+				<Card>
+					<CardBody>
+						<TextControl
+							label={ __( 'Product per page', 'shop-front' ) }
+							help={ __( 'Default: 10', 'shop-front' ) }
+							value={ productPerPage }
+							onChange={ setProductPerPage }
+						/>
+						<Button variant="primary" type="submit" disabled={ isLoading }>
+							{ isLoading && <Spinner /> }
+							{ __( 'Save', 'shop-front' ) }
+						</Button>
+					</CardBody>
+				</Card>
+			</form>
 		</div>
 	);
 };
