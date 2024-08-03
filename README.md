@@ -1,7 +1,3 @@
-### Index
-- [Developer Guidelines](#developer-guidelines)
-- [User Guidelines](#user-guidelines)
-
 ## Developer Guidelines
 
 ### For dev. environment
