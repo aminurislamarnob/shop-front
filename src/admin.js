@@ -9,18 +9,6 @@ const OptionsPage = () => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
 	const [ error, setError ] = useState( '' );
-	
-	useEffect( () => {
-		const fetchSettings = async () => {
-			const { msf_product_per_page } = await apiFetch( {
-				path: '/wp/v2/settings?_fields=msf_product_per_page',
-			} );
-			setProductPerPage( msf_product_per_page );
-		};
-		fetchSettings().catch( ( error ) => {
-			console.error( error );
-		} );
-	}, [] );
 
 	useEffect(() => {
 		setIsLoading( true );
