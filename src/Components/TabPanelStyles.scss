@@ -1,0 +1,24 @@
+/* Custom styles for the tab panel */
+.my-tab-panel .components-tab-panel__tabs {
+	@apply border-b border-gray-300 mb-5;
+}
+
+.my-tab-panel .components-tab-panel__tab {
+	@apply inline-block m-0 px-5 py-2 cursor-pointer border border-transparent rounded-t;
+}
+
+.my-tab-panel .components-tab-panel__tab.is-active {
+	@apply bg-gray-100 border-gray-300 border-b-0;
+}
+
+.my-tab-panel .components-tab-panel__tab:not(.is-active):hover {
+	@apply bg-gray-200;
+}
+
+.my-tab-panel .components-tab-panel__tabs-wrapper {
+	@apply flex gap-1;
+}
+
+.my-tab-panel .components-tab-panel__content {
+	@apply border border-gray-300 p-5 bg-white rounded-b;
+}

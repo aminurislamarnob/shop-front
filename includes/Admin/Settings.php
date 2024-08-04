@@ -36,7 +36,6 @@ class Settings {
 	public function settings_page_content() {
 		?>
 		<div class="wrap">
-			<h1><?php echo esc_html__( 'ShopFront Settings', 'shop-front' ); ?></h1>
 			<div id="shop-front-settings"></div>
 		</div>
 		<?php
