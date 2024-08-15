@@ -204,6 +204,7 @@ final class ShopFront {
 		$this->container['msf_common']                    = new Common();
 		$this->container['msf_helper']                    = new Helper();
 		$this->container['msf_rewrites']                  = new Rewrites();
+		$this->container['msf_dashboard_menu']            = new DashboardMenu();
 		$this->container['msf_shortcode']                 = new Shortcodes\Shortcodes();
 		$this->container['msf_admin_settings']            = new Admin\Settings();
 		$this->container['msf_admin_settings_controller'] = new REST\SettingsController();
@@ -306,7 +307,7 @@ final class ShopFront {
 	 * Access rewrites query globally by plugin main class
 	 * Ex: pluginizelab_shop_front()->get_msf_query()->get_current_endpoint();
 	 *
-	 * @return void
+	 * @return object
 	 */
 	public function get_msf_query() {
 		return new Rewrites();
