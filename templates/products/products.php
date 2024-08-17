@@ -11,10 +11,10 @@ do_action( 'msf_dashboard_wrapper_start' );
 ?>
 <div class="my-shop-front-container">
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-2">
 			<?php do_action( 'msf_dashboard_navigation' ); ?>
 		</div>
-		<div class="col-md-9">
+		<div class="col-md-10">
 			<?php do_action( 'msf_dashboard_content_before' ); ?>
 			<a href="<?php echo esc_url( get_home_url() . '/add-new-product/' ); ?>" class="my-shop-front-button">
 				<?php esc_html_e( 'Add New Product', 'shop-front' ); ?>
@@ -27,8 +27,8 @@ do_action( 'msf_dashboard_wrapper_start' );
 
 				$posts_per_page = 4;
 				$current_page   = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1; // Get current page number, default to 1.
-				
-				$query          = array(
+
+				$query = array(
 					'posts_per_page' => $posts_per_page,
 					'post_type'      => 'product',
 					'post_status'    => $product_statuses,

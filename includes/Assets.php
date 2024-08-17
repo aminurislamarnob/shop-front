@@ -49,9 +49,11 @@ class Assets {
 	public function register_styles() {
 		$admin_style    = SHOP_FRONT_PLUGIN_ASSET . '/admin/style.css';
 		$frontend_style = SHOP_FRONT_PLUGIN_ASSET . '/frontend/style.css';
+		$bs_grid_style  = SHOP_FRONT_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
 
 		wp_register_style( 'my_shop_front_admin_style', $admin_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/admin/style.css' ) );
 		wp_register_style( 'my_shop_front_style', $frontend_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/style.css' ) );
+		wp_register_style( 'my_shop_front_bs_grid', $bs_grid_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/bootstrap-grid.min.css' ) );
 	}
 
 	/**
@@ -92,6 +94,7 @@ class Assets {
 	 */
 	public function enqueue_front_scripts() {
 		wp_enqueue_style( 'my_shop_front_style' );
+		wp_enqueue_style( 'my_shop_front_bs_grid' );
 		wp_enqueue_script( 'my_shop_front_script' );
 		wp_localize_script(
 			'my_shop_front_script',
