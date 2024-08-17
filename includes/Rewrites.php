@@ -44,6 +44,9 @@ class Rewrites {
 				'categories'       => get_option( 'msf_myshop_categories_endpoint', 'categories' ),
 				'add-new-category' => get_option( 'msf_myshop_new_category_endpoint', 'add-new-category' ),
 				'edit-category'    => get_option( 'msf_myshop_edit_category_endpoint', 'edit-category' ),
+				'tags'             => get_option( 'msf_myshop_tags_endpoint', 'tags' ),
+				'add-new-tag'      => get_option( 'msf_myshop_new_tag_endpoint', 'add-new-tag' ),
+				'edit-tag'         => get_option( 'msf_myshop_edit_tag_endpoint', 'edit-category' ),
 			)
 		);
 	}

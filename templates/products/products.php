@@ -16,7 +16,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 		</div>
 		<div class="col-md-10">
 			<?php do_action( 'msf_dashboard_content_before' ); ?>
-			<a href="<?php echo esc_url( get_home_url() . '/add-new-product/' ); ?>" class="my-shop-front-button">
+			<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-product' ) ); ?>" class="my-shop-front-button">
 				<?php esc_html_e( 'Add New Product', 'shop-front' ); ?>
 			</a>
 			<div class="my-shop-front-content">

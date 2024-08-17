@@ -31,15 +31,65 @@ class Dashboard extends MyShopFrontShortcode {
 
 		ob_start();
 
-		// dd( $wp->query_vars );
+		dd( $wp->query_vars );
+
+		if ( isset( $wp->query_vars['page'] ) ) {
+			msf_get_template_part( 'dashboard' );
+			return ob_get_clean();
+		}
 
 		if ( isset( $wp->query_vars['products'] ) ) {
-			// if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			// dokan_get_template_part( 'global/no-permission' );
-			// } else {
-				msf_get_template_part( 'products/products' );
-			// }
+			msf_get_template_part( 'products/products' );
+			return ob_get_clean();
+		}
 
+		if ( isset( $wp->query_vars['add-new-product'] ) ) {
+			msf_get_template_part( 'products/add-new-product' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['edit-product'] ) ) {
+			msf_get_template_part( 'products/edit-product' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['orders'] ) ) {
+			msf_get_template_part( 'orders/orders' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['order-details'] ) ) {
+			msf_get_template_part( 'orders/order-details' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['categories'] ) ) {
+			msf_get_template_part( 'categories/categories' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['add-new-category'] ) ) {
+			msf_get_template_part( 'categories/add-new-category' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['edit-category'] ) ) {
+			msf_get_template_part( 'categories/edit-category' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['tags'] ) ) {
+			msf_get_template_part( 'tags/tags' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['add-new-tag'] ) ) {
+			msf_get_template_part( 'tags/add-new-tags' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['edit-tag'] ) ) {
+			msf_get_template_part( 'tags/edit-tag' );
 			return ob_get_clean();
 		}
 
