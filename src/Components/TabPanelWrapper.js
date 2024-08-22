@@ -2,6 +2,7 @@ import React from 'react';
 import { TabPanel } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import './TabPanelStyles.scss';
+import GeneralSettings from './GeneralSettings';
 import ProductSettings from './ProductSettings';
 import OrderSettings from './OrderSettings';
 
@@ -16,6 +17,11 @@ const TabPanelWrapper = () => {
 				activeClass="is-active"
 				tabs={ [
 					{
+						name: 'general',
+						title: __( 'General', 'my-text-domain' ),
+						className: 'tab-one',
+					},
+					{
 						name: 'product',
 						title: __( 'Product', 'my-text-domain' ),
 						className: 'tab-one',
@@ -29,6 +35,11 @@ const TabPanelWrapper = () => {
 			>
 				{ ( tab ) => (
 					<div className="components-tab-panel__content">
+						{ tab.name === 'general' && (
+							<div>
+								<GeneralSettings />
+							</div>
+						) }
 						{ tab.name === 'product' && (
 							<div>
 								<ProductSettings />
