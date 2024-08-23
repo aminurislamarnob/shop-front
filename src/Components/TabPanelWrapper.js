@@ -5,6 +5,7 @@ import './TabPanelStyles.scss';
 import GeneralSettings from './GeneralSettings';
 import ProductSettings from './ProductSettings';
 import OrderSettings from './OrderSettings';
+import { Link } from 'react-router-dom';
 
 const TabPanelWrapper = () => {
 	return (
@@ -12,6 +13,7 @@ const TabPanelWrapper = () => {
 			<h1>
 				{ __( 'ShopFront Settings', 'my-text-domain' ) }
 			</h1>
+			<Link to="/order-settings">Go to Order Settings</Link>
 			<TabPanel
 				className="my-tab-panel"
 				activeClass="is-active"
