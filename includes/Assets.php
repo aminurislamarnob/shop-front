@@ -65,7 +65,7 @@ class Assets {
 		wp_enqueue_script( 'my_shop_front_admin_script' );
 
 		$page = get_current_screen();
-		if ( 'toplevel_page_shop-front' == $page->id ) {
+		if ( 'woocommerce_page_shop-front' == $page->id ) {
 			$asset_file = include SHOP_FRONT_DIR . '/assets/build/admin/script.asset.php';
 
 			wp_enqueue_script(

@@ -10,7 +10,7 @@ class Settings {
 	 * The constructor.
 	 */
 	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'add_admin_settings_menu' ) );
+		add_action( 'admin_menu', array( $this, 'add_admin_settings_menu' ), 100 );
 	}
 
 	/**
@@ -19,12 +19,13 @@ class Settings {
 	 * @return void
 	 */
 	public function add_admin_settings_menu() {
-		add_menu_page(
+		add_submenu_page(
+			'woocommerce',
 			'ShopFront Settings',
 			'ShopFront',
 			'manage_options',
 			'shop-front',
-			array( $this, 'settings_page_content' )
+			array( $this, 'settings_page_content' ),
 		);
 	}
 

@@ -9,6 +9,7 @@ import './styles/styles.css';
 import './styles/index.scss'; // Include your custom Sass styles
 import Layout from './Components/Layout';
 import OrderSettings from './Components/OrderSettings';
+import AppearanceSettings from './Components/AppearanceSettings';
 import GeneralSettings from './Components/GeneralSettings';
 import ProductSettings from './Components/ProductSettings';
 
@@ -17,6 +18,7 @@ const App = () => (
 		<Routes>
 			<Route path="/" element={ <Layout /> }>
                 <Route index element={ <GeneralSettings /> } />
+                <Route path="appearance-settings" element={ <AppearanceSettings /> } />
                 <Route path="product-settings" element={ <ProductSettings /> } />
                 <Route path="order-settings" element={ <OrderSettings /> } />
                 {/* Add more routes here */}
