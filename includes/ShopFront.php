@@ -208,6 +208,7 @@ final class ShopFront {
 		$this->container['msf_shortcode']                 = new Shortcodes\Shortcodes();
 		$this->container['msf_admin_settings']            = new Admin\Settings();
 		$this->container['msf_admin_settings_controller'] = new REST\SettingsController();
+		// $this->container['msf_product_categories']        = new ProductCategory\Categories();
 	}
 
 	/**
