@@ -133,6 +133,7 @@ final class ShopFront {
 		defined( 'SHOP_FRONT_INC_DIR' ) || define( 'SHOP_FRONT_INC_DIR', SHOP_FRONT_DIR . '/includes' );
 		defined( 'SHOP_FRONT_TEMPLATE_DIR' ) || define( 'SHOP_FRONT_TEMPLATE_DIR', SHOP_FRONT_DIR . '/templates' );
 		defined( 'SHOP_FRONT_PLUGIN_ASSET' ) || define( 'SHOP_FRONT_PLUGIN_ASSET', plugins_url( 'assets', SHOP_FRONT_FILE ) );
+		defined( 'SHOP_FRONT_NONCE_SALT' ) || define( 'SHOP_FRONT_NONCE_SALT', 'iG685CuXEZI2J?@~-t 3v)*_z]e,+CXh/Mu#8Fq4W<B^w9m^c]C8XGn(V~#:dn%C' );
 
 		// give a way to turn off loading styles and scripts from parent theme.
 		defined( 'SHOP_FRONT_LOAD_STYLE' ) || define( 'SHOP_FRONT_LOAD_STYLE', true );
@@ -199,16 +200,17 @@ final class ShopFront {
 	public function init_classes() {
 		require_once SHOP_FRONT_INC_DIR . '/functions.php';
 
-		$this->container['scripts']                       = new Assets();
-		$this->container['msf_installer']                 = new Installer();
-		$this->container['msf_common']                    = new Common();
-		$this->container['msf_helper']                    = new Helper();
-		$this->container['msf_rewrites']                  = new Rewrites();
-		$this->container['msf_dashboard_menu']            = new DashboardMenu();
-		$this->container['msf_shortcode']                 = new Shortcodes\Shortcodes();
-		$this->container['msf_admin_settings']            = new Admin\Settings();
-		$this->container['msf_admin_settings_controller'] = new REST\SettingsController();
-		// $this->container['msf_product_categories']        = new ProductCategory\Categories();
+		$this->container['scripts']                         = new Assets();
+		$this->container['msf_installer']                   = new Installer();
+		$this->container['msf_common']                      = new Common();
+		$this->container['msf_helper']                      = new Helper();
+		$this->container['msf_rewrites']                    = new Rewrites();
+		$this->container['msf_dashboard_menu']              = new DashboardMenu();
+		$this->container['msf_shortcode']                   = new Shortcodes\Shortcodes();
+		$this->container['msf_admin_settings']              = new Admin\Settings();
+		$this->container['msf_admin_settings_controller']   = new REST\SettingsController();
+		$this->container['msf_product_categories']          = new ProductCategory\Categories();
+		$this->container['msf_product_category_controller'] = new ProductCategory\CategoryController();
 	}
 
 	/**
