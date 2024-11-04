@@ -1,3 +1,31 @@
+// Common function to handle AJAX requests with loading delay
+async function ajaxRequestWithLoading(url, formData, loadingMessage) {
+    Swal.fire({
+        title: loadingMessage,
+        text: 'Please wait while we process your request.',
+        icon: 'info',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    const minLoadingDelay = new Promise(resolve => setTimeout(resolve, 1000)); // Minimum delay of 1 second
+
+    // Send AJAX request and wait for both the request and the minimum delay to complete
+    const response = await Promise.all([
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+        }).then(res => res.json()),
+        minLoadingDelay
+    ]);
+    
+    Swal.close();
+
+    return response[0];
+}
+
 //Add category
 function categoryFormHandler() {
     return {
@@ -9,51 +37,16 @@ function categoryFormHandler() {
             this.message = '';
             this.error = '';
 
-            // Show loading indicator
-            Swal.fire({
-                title: 'Adding...',
-                text: 'Please wait while we process your request.',
-                icon: 'info',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading(); // Display loading spinner
-                }
-            });
-
             // Collect form data
             let formData = new FormData(document.getElementById('msfc-add-category'));
 
             try {
-                // Define minimum delay
-                const minLoadingDelay = new Promise(resolve => setTimeout(resolve, 1000)); // Minimum delay of 1 second
-
-                // Send AJAX request and wait for both the request and the minimum delay to complete
-                const response = await Promise.all([
-                    fetch(My_Shop_Front_Form_Handler.ajax_url, {
-                        method: 'POST',
-                        body: formData,
-                    }).then(res => res.json()),
-                    minLoadingDelay
-                ]);
-
-                let result = response[0]; // The result of the AJAX request
-
-                // // Send AJAX request using fetch API
-                // let response = await fetch(My_Shop_Front_Form_Handler.ajax_url, {
-                //     method: 'POST',
-                //     body: formData
-                // });
-
-                // let result = await response.json();
+                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Adding...');
 
                 // Check for success or error
                 if (result.success) {
                     this.message = result.data.message;
 
-                    // Close the loading alert
-                    Swal.close();
-
-                    // Show success message with SweetAlert2
                     Swal.fire({
                         icon: 'success',
                         title: 'Added!',
@@ -65,10 +58,6 @@ function categoryFormHandler() {
                 } else {
                     this.error = result.data.error;
 
-                    // Close the loading alert
-                    Swal.close();
-
-                    // Show error message with SweetAlert2
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
@@ -80,10 +69,6 @@ function categoryFormHandler() {
                 // Handle any other errors
                 this.error = 'An unexpected error occurred. Please try again later.';
 
-                // Close the loading alert
-                Swal.close();
-
-                // Show error message with SweetAlert2
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
@@ -106,43 +91,16 @@ function categoryEditFormHandler(categoryId) {
             this.message = '';
             this.error = '';
 
-            // Show loading indicator
-            Swal.fire({
-                title: 'Updating...',
-                text: 'Please wait while we process your request.',
-                icon: 'info',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading(); // Display loading spinner
-                }
-            });
-
             // Collect form data
             let formData = new FormData(document.getElementById('msfc-edit-category'));
 
             try {
-                // Define minimum delay
-                const minLoadingDelay = new Promise(resolve => setTimeout(resolve, 1000)); // Minimum delay of 1 second
-
-                // Send AJAX request and wait for both the request and the minimum delay to complete
-                const response = await Promise.all([
-                    fetch(My_Shop_Front_Form_Handler.ajax_url, {
-                        method: 'POST',
-                        body: formData,
-                    }).then(res => res.json()),
-                    minLoadingDelay
-                ]);
-
-                let result = response[0]; // The result of the AJAX request
+                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Updating...');
 
                 // Check for success or error
                 if (result.success) {
                     this.message = result.data.message;
 
-                    // Close the loading alert
-                    Swal.close();
-
-                    // Show success message with SweetAlert2
                     Swal.fire({
                         icon: 'success',
                         title: 'Updated!',
@@ -152,10 +110,6 @@ function categoryEditFormHandler(categoryId) {
                 } else {
                     this.error = result.data.error;
 
-                    // Close the loading alert
-                    Swal.close();
-
-                    // Show error message with SweetAlert2
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
@@ -167,10 +121,6 @@ function categoryEditFormHandler(categoryId) {
                 // Handle any other errors
                 this.error = 'An unexpected error occurred. Please try again later.';
 
-                // Close the loading alert
-                Swal.close();
-
-                // Show error message with SweetAlert2
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
@@ -206,17 +156,6 @@ function deleteCategoryHandler() {
             this.message = '';
             this.error = '';
 
-            // Show loading indicator
-            Swal.fire({
-                title: 'Deleting...',
-                text: 'Please wait while we process your request.',
-                icon: 'info',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading(); // Display loading spinner
-                }
-            });
-
             // Prepare form data
             let formData = new FormData();
             formData.append('id', categoryId);
@@ -224,27 +163,11 @@ function deleteCategoryHandler() {
             formData.append('msfc_delete_product_category_nonce', My_Shop_Front_Form_Handler.category_delete_nonce);
 
             try {
-                // Define minimum delay
-                const minLoadingDelay = new Promise(resolve => setTimeout(resolve, 1000)); // Minimum delay of 1 second
-
-                // Send AJAX request and wait for both the request and the minimum delay to complete
-                const response = await Promise.all([
-                    fetch(My_Shop_Front_Form_Handler.ajax_url, {
-                        method: 'POST',
-                        body: formData,
-                    }).then(res => res.json()),
-                    minLoadingDelay
-                ]);
-
-                let result = response[0]; // The result of the AJAX request
+                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Deleting...');
 
                 if (result.success) {
                     this.message = result.data.message;
 
-                    // Close the loading alert
-                    Swal.close();
-
-                    // Show success message with SweetAlert2
                     Swal.fire({
                         icon: 'success',
                         title: 'Deleted!',
@@ -257,10 +180,6 @@ function deleteCategoryHandler() {
                 } else {
                     this.error = result.data.error;
 
-                    // Close the loading alert
-                    Swal.close();
-
-                    // Show error message with SweetAlert2
                     Swal.fire({
                         icon: 'error',
                         title: 'Error!',
@@ -271,10 +190,6 @@ function deleteCategoryHandler() {
             } catch (err) {
                 this.error = 'An unexpected error occurred. Please try again later.';
 
-                // Close the loading alert
-                Swal.close();
-                
-                // Show unexpected error message with SweetAlert2
                 Swal.fire({
                     icon: 'error',
                     title: 'Unexpected Error',
