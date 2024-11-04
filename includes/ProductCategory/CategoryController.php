@@ -11,6 +11,7 @@ class CategoryController {
 	 */
 	public function __construct() {
 		add_action( 'wp_ajax_msfc_add_product_category', array( $this, 'handle_add_category' ) );
+		add_action( 'wp_ajax_msfc_edit_product_category', array( $this, 'handle_edit_category' ) );
 	}
 
 	/**
@@ -57,5 +58,57 @@ class CategoryController {
 		}
 
 		wp_send_json_success( array( 'message' => __( 'Category successfully created', 'shop-front' ) ) );
+	}
+
+	/**
+	 * Handle the AJAX request for editing an existing product category.
+	 */
+	public function handle_edit_category() {
+		$unique_action = 'msfc_edit_product_category_' . SHOP_FRONT_NONCE_SALT;
+
+		// Verify the nonce.
+		if ( ! isset( $_POST['msfc_edit_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_edit_product_category_nonce'] ), $unique_action ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_categories' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+		}
+
+		// Validate inputs.
+		$category_id     = isset( $_POST['category_id'] ) ? absint( $_POST['category_id'] ) : 0;
+		$category_name   = sanitize_text_field( wp_unslash( $_POST['product_category_name'] ) );
+		$parent_category = sanitize_text_field( wp_unslash( $_POST['product_parent_category'] ) );
+		$description     = sanitize_textarea_field( wp_unslash( $_POST['product_category_description'] ) );
+
+		if ( empty( $category_id ) ) {
+			wp_send_json_error( array( 'error' => __( 'Category ID is required', 'shop-front' ) ) );
+		}
+
+		if ( empty( $category_name ) ) {
+			wp_send_json_error( array( 'error' => __( 'Category Name is required', 'shop-front' ) ) );
+		}
+
+		// Check for parent category.
+		$parent_term = $parent_category ? get_term_by( 'slug', $parent_category, 'product_cat' ) : null;
+		$parent_id   = $parent_term ? $parent_term->term_id : 0;
+
+		// Update the category.
+		$updated_category = wp_update_term(
+			$category_id,
+			'product_cat',
+			array(
+				'name'        => $category_name,
+				'parent'      => $parent_id,
+				'description' => $description,
+			)
+		);
+
+		if ( is_wp_error( $updated_category ) ) {
+			wp_send_json_error( array( 'error' => $updated_category->get_error_message() ) );
+		}
+
+		wp_send_json_success( array( 'message' => __( 'Category successfully updated', 'shop-front' ) ) );
 	}
 }

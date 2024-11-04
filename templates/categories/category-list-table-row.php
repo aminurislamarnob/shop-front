@@ -17,7 +17,7 @@
 					</a>
 				</li>
 				<li>
-					<a href="<?php echo esc_url( get_home_url() . '/msfc-product-category/edit-product-category/' . $category->term_id . '/' ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
+					<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-category' ) . '%s', $category->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
 				</li>
 				<li>
 					<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="POST">
