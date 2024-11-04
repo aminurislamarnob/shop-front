@@ -38,11 +38,15 @@ class Assets {
 		$frontend_script              = SHOP_FRONT_PLUGIN_ASSET . '/frontend/script.js';
 		$frontend_form_handler_script = SHOP_FRONT_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_alpinejs_script     = 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js';
+		$frontend_sweetalert2         = SHOP_FRONT_PLUGIN_ASSET . '/frontend/vendor/sweetalert2.min.js';
 
 		wp_register_script( 'my_shop_front_admin_script', $admin_script, array( 'my_shop_front-block-editor-script' ), filemtime( SHOP_FRONT_DIR . '/assets/admin/script.js' ), true );
 		wp_register_script( 'my_shop_front_script', $frontend_script, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/script.js' ), true );
+
+		// Need to load specifically.
 		wp_register_script( 'my_shop_front_form_handler_script', $frontend_form_handler_script, array( 'my_shop_front_alpinejs' ), filemtime( SHOP_FRONT_DIR . '/assets/frontend/form-handler.js' ), true );
 		wp_register_script( 'my_shop_front_alpinejs', $frontend_alpinejs_script, array(), null, true );
+		wp_register_script( 'my_shop_front_sweetalert2_script', $frontend_sweetalert2, array(), '11.14.5', true );
 	}
 
 	/**
@@ -51,13 +55,16 @@ class Assets {
 	 * @return void
 	 */
 	public function register_styles() {
-		$admin_style    = SHOP_FRONT_PLUGIN_ASSET . '/admin/style.css';
-		$frontend_style = SHOP_FRONT_PLUGIN_ASSET . '/frontend/style.css';
-		$bs_grid_style  = SHOP_FRONT_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
+		$admin_style                = SHOP_FRONT_PLUGIN_ASSET . '/admin/style.css';
+		$frontend_style             = SHOP_FRONT_PLUGIN_ASSET . '/frontend/style.css';
+		$bs_grid_style              = SHOP_FRONT_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
+		$frontend_sweetalert2_style = SHOP_FRONT_PLUGIN_ASSET . '/frontend/vendor/sweetalert2.min.css';
 
 		wp_register_style( 'my_shop_front_admin_style', $admin_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/admin/style.css' ) );
 		wp_register_style( 'my_shop_front_style', $frontend_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/style.css' ) );
 		wp_register_style( 'my_shop_front_bs_grid', $bs_grid_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/bootstrap-grid.min.css' ) );
+
+		wp_register_style( 'my_shop_front_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 	}
 
 	/**
@@ -106,6 +113,8 @@ class Assets {
 			array()
 		);
 
+		wp_enqueue_style( 'my_shop_front_sweetalert2_style' );
+		wp_enqueue_script( 'my_shop_front_sweetalert2_script' );
 		wp_enqueue_script( 'my_shop_front_alpinejs' );
 		add_filter(
 			'script_loader_tag',
@@ -124,7 +133,8 @@ class Assets {
 			'my_shop_front_form_handler_script',
 			'My_Shop_Front_Form_Handler',
 			array(
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'ajax_url'              => admin_url( 'admin-ajax.php' ),
+				'category_delete_nonce' => wp_create_nonce( '_msfc_delete_product_category_' ),
 			)
 		);
 	}

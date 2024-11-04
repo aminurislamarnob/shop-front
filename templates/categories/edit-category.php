@@ -63,7 +63,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 						<textarea class="form-control" id="product_category_description" name="product_category_description" placeholder="<?php echo esc_attr__( 'Product category description', 'shop-front' ); ?>" rows="3"><?php echo esc_textarea( $category->description ); ?></textarea>
 					</div>
 					<div class="form-group">
-						<?php wp_nonce_field( 'msfc_edit_product_category_' . SHOP_FRONT_NONCE_SALT, 'msfc_edit_product_category_nonce' ); ?>
+						<?php wp_nonce_field( '_msfc_edit_product_category_', 'msfc_edit_product_category_nonce' ); ?>
 						<input type="hidden" name="action" value="msfc_edit_product_category">
 						<input type="hidden" name="category_id" value="<?php echo esc_attr( $category->term_id ); ?>">
 						<button class="msfc-wfm-button msfc-submit-btn" name="save_product_category" type="submit"><?php esc_html_e( 'Save Changes', 'shop-front' ); ?></button>

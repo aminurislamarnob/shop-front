@@ -21,7 +21,10 @@ do_action( 'msf_dashboard_wrapper_start' );
 			<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-category' ) ); ?>" class="my-shop-front-button">
 				<?php esc_html_e( 'Add New Category', 'shop-front' ); ?>
 			</a>
-			<div class="my-shop-front-content">
+			<div class="my-shop-front-content" x-data="deleteCategoryHandler()">
+				<!-- Success and Error Messages -->
+				<!-- <div x-show="message" x-text="message" class="alert"></div>
+				<div x-show="error" x-text="error" class="alert alert-danger"></div> -->
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>

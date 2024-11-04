@@ -1,4 +1,4 @@
-<tr>
+<tr id="category-row-<?php echo esc_attr( $category->term_id ); ?>">
 	<td><?php echo esc_html( $dash_prefix . $category->name ); ?></td>
 	<td><?php echo esc_html( wp_trim_words( $category->description, '9', '...' ) ); ?></td>
 	<td><?php echo esc_html( $category->slug ); ?></td>
@@ -12,7 +12,7 @@
 			</span>
 			<ul class="msfc-dropdown-menu">
 				<li>
-					<a href="<?php echo esc_url( get_home_url() . '/product-category/' . $category->slug . '/' ); ?>" class="dropdown-link">
+					<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>" class="dropdown-link">
 						<?php echo esc_html__( 'View', 'shop-front' ); ?>
 					</a>
 				</li>
@@ -20,12 +20,9 @@
 					<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-category' ) . '%s', $category->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
 				</li>
 				<li>
-					<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="POST">
-						<?php wp_nonce_field( 'msfc_wfm_cat_dlt_non_220', 'msfc_wfm_cat_dlt_non_nonce' ); ?>
-						<input type="hidden" name="id" value="<?php echo esc_attr( $category->term_id ); ?>">
-						<input type="hidden" name="action" value="msfc_wfm_dlt_product_cat_action">
-						<button type="submit" class="inline-button dropdown-link"><?php echo esc_html__( 'Delete', 'shop-front' ); ?></button>
-					</form>
+					<button @click="deleteCategory(<?php echo esc_attr( $category->term_id ); ?>)" type="button" class="inline-button dropdown-link">
+						<?php echo esc_html__( 'Delete', 'shop-front' ); ?>
+					</button>
 				</li>
 			</ul>
 		</div>

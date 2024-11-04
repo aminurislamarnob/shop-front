@@ -12,16 +12,16 @@ class CategoryController {
 	public function __construct() {
 		add_action( 'wp_ajax_msfc_add_product_category', array( $this, 'handle_add_category' ) );
 		add_action( 'wp_ajax_msfc_edit_product_category', array( $this, 'handle_edit_category' ) );
+		add_action( 'wp_ajax_msfc_delete_product_category', array( $this, 'handle_delete_category' ) );
 	}
 
 	/**
 	 * Handle the AJAX request for adding a new product category.
 	 */
 	public function handle_add_category() {
-		$unique_action = 'msfc_add_product_category_' . SHOP_FRONT_NONCE_SALT;
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['msfc_add_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_add_product_category_nonce'] ), $unique_action ) ) {
+		if ( ! isset( $_POST['msfc_add_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_add_product_category_nonce'] ), '_msfc_add_product_category_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
 		}
 
@@ -64,10 +64,9 @@ class CategoryController {
 	 * Handle the AJAX request for editing an existing product category.
 	 */
 	public function handle_edit_category() {
-		$unique_action = 'msfc_edit_product_category_' . SHOP_FRONT_NONCE_SALT;
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['msfc_edit_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_edit_product_category_nonce'] ), $unique_action ) ) {
+		if ( ! isset( $_POST['msfc_edit_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_edit_product_category_nonce'] ), '_msfc_edit_product_category_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
 		}
 
@@ -110,5 +109,37 @@ class CategoryController {
 		}
 
 		wp_send_json_success( array( 'message' => __( 'Category successfully updated', 'shop-front' ) ) );
+	}
+
+	/**
+	 * Handle the AJAX request for deleting an existing product category.
+	 */
+	public function handle_delete_category() {
+		// Verify the nonce.
+		if ( ! isset( $_POST['msfc_delete_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_delete_product_category_nonce'] ), '_msfc_delete_product_category_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_categories' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+		}
+
+		// Validate category ID.
+		$category_id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+		if ( ! $category_id || ! term_exists( $category_id, 'product_cat' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Invalid category ID', 'shop-front' ) ) );
+		}
+
+		// Attempt to delete the category.
+		$result = wp_delete_term( $category_id, 'product_cat' );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'error' => $result->get_error_message() ) );
+		} elseif ( $result === false ) {
+			wp_send_json_error( array( 'error' => __( 'Failed to delete category', 'shop-front' ) ) );
+		}
+
+		wp_send_json_success( array( 'message' => __( 'Category successfully deleted', 'shop-front' ) ) );
 	}
 }
