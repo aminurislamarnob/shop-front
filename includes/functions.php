@@ -177,6 +177,14 @@ function msf_get_product_type( $product ) {
 	}
 }
 
+function msfc_get_option_by_key( $key ) {
+	$msf_settings = get_option( 'msf_settings', array() );
+	if ( ! empty( $msf_settings ) && array_key_exists( $key, $msf_settings ) ) {
+		return $msf_settings[ $key ];
+	}
+	return '';
+}
+
 
 /**
  * Get navigation URL for the shop front dashboard.
@@ -187,7 +195,7 @@ function msf_get_product_type( $product ) {
  */
 function msfc_get_navigation_url( $name = '' ) {
 	// Get the page ID from options.
-	$page_id = (int) get_option( 'my_shop_front_myshopdashboard_page_id', 0 );
+	$page_id = (int) msfc_get_option_by_key( 'msf_dashboard_page_id' );
 
 	// If page ID is not found, return an empty string.
 	if ( ! $page_id ) {
@@ -211,4 +219,16 @@ function msfc_get_navigation_url( $name = '' ) {
 
 	// Apply a filter to the URL before returning it.
 	return apply_filters( 'msfc_get_navigation_url', esc_url( $url ), $name );
+}
+
+
+/**
+ * Check if it's a shop front dashboard page
+ *
+ * @return bool
+ */
+function is_msf_dashboard_page() {
+	$page_id = (int) msfc_get_option_by_key( 'msf_dashboard_page_id' );
+
+	return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'woocommerce_my_account' );
 }

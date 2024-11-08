@@ -43,9 +43,9 @@ class Assets {
 		wp_register_script( 'my_shop_front_admin_script', $admin_script, array( 'my_shop_front-block-editor-script' ), filemtime( SHOP_FRONT_DIR . '/assets/admin/script.js' ), true );
 		wp_register_script( 'my_shop_front_script', $frontend_script, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/script.js' ), true );
 
-		// Need to load specifically.
+		// Dashboard scripts.
 		wp_register_script( 'my_shop_front_form_handler_script', $frontend_form_handler_script, array( 'my_shop_front_alpinejs' ), filemtime( SHOP_FRONT_DIR . '/assets/frontend/form-handler.js' ), true );
-		wp_register_script( 'my_shop_front_alpinejs', $frontend_alpinejs_script, array(), null, true );
+		wp_register_script( 'my_shop_front_alpinejs', $frontend_alpinejs_script, array(), '3.x.x', true );
 		wp_register_script( 'my_shop_front_sweetalert2_script', $frontend_sweetalert2, array(), '11.14.5', true );
 	}
 
@@ -113,29 +113,31 @@ class Assets {
 			array()
 		);
 
-		wp_enqueue_style( 'my_shop_front_sweetalert2_style' );
-		wp_enqueue_script( 'my_shop_front_sweetalert2_script' );
-		wp_enqueue_script( 'my_shop_front_alpinejs' );
-		add_filter(
-			'script_loader_tag',
-			function ( $tag, $handle ) {
-				if ( 'my_shop_front_alpinejs' !== $handle ) {
-					return $tag;
-				}
-				return str_replace( ' src', ' defer="defer" src', $tag );
-			},
-			10,
-			2
-		);
+		if ( is_msf_dashboard_page() ) {
+			wp_enqueue_style( 'my_shop_front_sweetalert2_style' );
+			wp_enqueue_script( 'my_shop_front_sweetalert2_script' );
+			wp_enqueue_script( 'my_shop_front_alpinejs' );
+			add_filter(
+				'script_loader_tag',
+				function ( $tag, $handle ) {
+					if ( 'my_shop_front_alpinejs' !== $handle ) {
+						return $tag;
+					}
+					return str_replace( ' src', ' defer="defer" src', $tag );
+				},
+				10,
+				2
+			);
 
-		wp_enqueue_script( 'my_shop_front_form_handler_script' );
-		wp_localize_script(
-			'my_shop_front_form_handler_script',
-			'My_Shop_Front_Form_Handler',
-			array(
-				'ajax_url'              => admin_url( 'admin-ajax.php' ),
-				'category_delete_nonce' => wp_create_nonce( '_msfc_delete_product_category_' ),
-			)
-		);
+			wp_enqueue_script( 'my_shop_front_form_handler_script' );
+			wp_localize_script(
+				'my_shop_front_form_handler_script',
+				'My_Shop_Front_Form_Handler',
+				array(
+					'ajax_url'              => admin_url( 'admin-ajax.php' ),
+					'category_delete_nonce' => wp_create_nonce( '_msfc_delete_product_category_' ),
+				)
+			);
+		}
 	}
 }
