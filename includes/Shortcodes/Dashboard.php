@@ -78,23 +78,46 @@ class Dashboard extends MyShopFrontShortcode {
 			return ob_get_clean();
 		}
 
+		if ( $this->is_query_var_exists( 'tags', 'add-new-tag' ) ) {
+			msf_get_template_part( 'tags/add-new-tag' );
+			return ob_get_clean();
+		}
+
+		if ( $this->is_query_var_exists( 'tags', 'edit-tag' ) ) {
+			msf_get_template_part( 'tags/edit-tag' );
+			return ob_get_clean();
+		}
+
 		if ( isset( $wp->query_vars['tags'] ) ) {
 			msf_get_template_part( 'tags/tags' );
-			return ob_get_clean();
-		}
-
-		if ( isset( $wp->query_vars['add-new-tag'] ) ) {
-			msf_get_template_part( 'tags/add-new-tags' );
-			return ob_get_clean();
-		}
-
-		if ( isset( $wp->query_vars['edit-tag'] ) ) {
-			msf_get_template_part( 'tags/edit-tag' );
 			return ob_get_clean();
 		}
 
 		do_action( 'msf_load_custom_template', $wp->query_vars );
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Check is the query var exists
+	 *
+	 * @param string $query_var
+	 * @param string $query_var_value
+	 * @return boolean
+	 */
+	public function is_query_var_exists( $query_var, $query_var_value ) {
+		global $wp;
+
+		if ( isset( $wp->query_vars['pagename'] ) && ( $wp->query_vars['pagename'] === 'my-shop-dashboard' ) ) {
+			if ( isset( $wp->query_vars[ $query_var ] ) ) {
+				$query_var_parts = explode( '/', $wp->query_vars[ $query_var ] );
+
+				if ( isset( $query_var_parts[0] ) && $query_var_parts[0] === $query_var_value ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

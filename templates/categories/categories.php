@@ -22,9 +22,6 @@ do_action( 'msf_dashboard_wrapper_start' );
 				<?php esc_html_e( 'Add New Category', 'shop-front' ); ?>
 			</a>
 			<div class="my-shop-front-content" x-data="deleteCategoryHandler()">
-				<!-- Success and Error Messages -->
-				<!-- <div x-show="message" x-text="message" class="alert"></div>
-				<div x-show="error" x-text="error" class="alert alert-danger"></div> -->
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>

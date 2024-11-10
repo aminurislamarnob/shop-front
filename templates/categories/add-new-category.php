@@ -15,7 +15,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 			<?php do_action( 'msf_dashboard_navigation' ); ?>
 		</div>
 		<div class="col-md-10">
-			<div x-data="categoryFormHandler()">
+			<div x-data="categoryAddFormHandler()">
 				<form id="msfc-add-category" @submit.prevent="handleCategorySubmission">
 					<div class="form-group">
 						<label for="product_category_name"><?php esc_html_e( 'Category Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>

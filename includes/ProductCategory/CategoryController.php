@@ -26,14 +26,14 @@ class CategoryController {
 		}
 
 		// Check user permissions.
-		if ( ! current_user_can( 'manage_categories' ) ) {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
 		}
 
 		// Validate inputs.
-		$category_name   = sanitize_text_field( wp_unslash( $_POST['product_category_name'] ) );
-		$parent_category = sanitize_text_field( wp_unslash( $_POST['product_parent_category'] ) );
-		$description     = sanitize_textarea_field( wp_unslash( $_POST['product_category_description'] ) );
+		$category_name   = isset( $_POST['product_category_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_category_name'] ) ) : '';
+		$parent_category = isset( $_POST['product_parent_category'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_category'] ) ) : '';
+		$description     = isset( $_POST['product_category_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_category_description'] ) ) : '';
 
 		if ( empty( $category_name ) ) {
 			wp_send_json_error( array( 'error' => __( 'Category Name is required', 'shop-front' ) ) );
@@ -71,15 +71,15 @@ class CategoryController {
 		}
 
 		// Check user permissions.
-		if ( ! current_user_can( 'manage_categories' ) ) {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
 		}
 
 		// Validate inputs.
 		$category_id     = isset( $_POST['category_id'] ) ? absint( $_POST['category_id'] ) : 0;
-		$category_name   = sanitize_text_field( wp_unslash( $_POST['product_category_name'] ) );
-		$parent_category = sanitize_text_field( wp_unslash( $_POST['product_parent_category'] ) );
-		$description     = sanitize_textarea_field( wp_unslash( $_POST['product_category_description'] ) );
+		$category_name   = isset( $_POST['product_category_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_category_name'] ) ) : '';
+		$parent_category = isset( $_POST['product_parent_category'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_category'] ) ) : '';
+		$description     = isset( $_POST['product_category_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_category_description'] ) ) : '';
 
 		if ( empty( $category_id ) ) {
 			wp_send_json_error( array( 'error' => __( 'Category ID is required', 'shop-front' ) ) );
@@ -121,7 +121,7 @@ class CategoryController {
 		}
 
 		// Check user permissions.
-		if ( ! current_user_can( 'manage_categories' ) ) {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
 		}
 

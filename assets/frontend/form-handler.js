@@ -26,8 +26,14 @@ async function ajaxRequestWithLoading(url, formData, loadingMessage) {
     return response[0];
 }
 
+
+/*** 
+ * Category Form Handler [Start]
+ * Using Alpine JS
+ */
+
 //Add category
-function categoryFormHandler() {
+function categoryAddFormHandler() {
     return {
         message: '',  // Success message
         error: '',    // Error message
@@ -200,3 +206,190 @@ function deleteCategoryHandler() {
         }
     };
 }
+/*** 
+ * Category Form Handler [End]
+ */
+
+
+/*** 
+ * Tag Form Handler [Start]
+ * Using Alpine JS
+ */
+
+//Add tag
+function tagAddFormHandler() {
+    return {
+        message: '',  // Success message
+        error: '',    // Error message
+        
+        async handleTagSubmission() {
+            // Clear messages before submission
+            this.message = '';
+            this.error = '';
+
+            // Collect form data
+            let formData = new FormData(document.getElementById('msfc-add-tag'));
+
+            try {
+                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Adding...');
+
+                // Check for success or error
+                if (result.success) {
+                    this.message = result.data.message;
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added!',
+                        text: this.message,
+                        confirmButtonText: 'OK'
+                    });
+
+                    document.getElementById('msfc-add-tag').reset();  // Reset form fields
+                } else {
+                    this.error = result.data.error;
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: this.error,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (err) {
+                // Handle any other errors
+                this.error = 'An unexpected error occurred. Please try again later.';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: this.error,
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    };
+}
+
+//Edit tag
+function tagEditFormHandler(categoryId) {
+    return {
+        message: '',  // Success message
+        error: '',    // Error message
+
+        async handleTagEditSubmission() {
+            // Clear messages before submission
+            this.message = '';
+            this.error = '';
+
+            // Collect form data
+            let formData = new FormData(document.getElementById('msfc-edit-tag'));
+
+            try {
+                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Updating...');
+
+                // Check for success or error
+                if (result.success) {
+                    this.message = result.data.message;
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated!',
+                        text: this.message,
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    this.error = result.data.error;
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: this.error,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (err) {
+                // Handle any other errors
+                this.error = 'An unexpected error occurred. Please try again later.';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: this.error,
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    };
+}
+
+//Delete category
+function deleteTagHandler() {
+    return {
+        message: '', // Success message
+        error: '',   // Error message
+
+        async deleteTag(tagId) {
+            // Show confirmation dialog with SweetAlert2
+            const confirmation = await Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action will permanently delete the tag.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            });
+
+            // If user cancels, exit the function
+            if (!confirmation.isConfirmed) return;
+            
+            // Clear messages
+            this.message = '';
+            this.error = '';
+
+            // Prepare form data
+            let formData = new FormData();
+            formData.append('id', tagId);
+            formData.append('action', 'msfc_delete_product_tag');
+            formData.append('msfc_delete_product_tag_nonce', My_Shop_Front_Form_Handler.category_delete_nonce);
+
+            try {
+                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Deleting...');
+
+                if (result.success) {
+                    this.message = result.data.message;
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: this.message,
+                        confirmButtonText: 'OK'
+                    });
+                    
+                    // Optionally remove the deleted category row from the DOM
+                    document.getElementById(`tag-row-${tagId}`).remove();
+                } else {
+                    this.error = result.data.error;
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: this.error,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (err) {
+                this.error = 'An unexpected error occurred. Please try again later.';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Unexpected Error',
+                    text: this.error,
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    };
+}
+/*** 
+ * Category Form Handler [End]
+ */

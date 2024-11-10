@@ -232,3 +232,20 @@ function is_msf_dashboard_page() {
 
 	return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'woocommerce_my_account' );
 }
+
+
+/**
+ * Get id query var
+ *
+ * @return bool
+ */
+function msf_get_id_from_query_vars( $query_var ) {
+	global $wp;
+	$query_var_parts = explode( '/', $wp->query_vars[ $query_var ] );
+
+	if ( isset( $query_var_parts[1] ) ) {
+		return $query_var_parts[1];
+	}
+
+	return null;
+}

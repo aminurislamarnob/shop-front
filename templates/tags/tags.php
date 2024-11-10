@@ -18,10 +18,10 @@ do_action( 'msf_dashboard_wrapper_start' );
 		</div>
 		<div class="col-md-10">
 			<?php do_action( 'msf_dashboard_content_before' ); ?>
-			<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-tag' ) ); ?>" class="my-shop-front-button">
+			<a href="<?php echo esc_url( msfc_get_navigation_url( 'tags/add-new-tag' ) ); ?>" class="my-shop-front-button">
 				<?php esc_html_e( 'Add New Tag', 'shop-front' ); ?>
 			</a>
-			<div class="my-shop-front-content" x-data="deleteCategoryHandler()">
+			<div class="my-shop-front-content" x-data="deleteTagHandler()">
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>
@@ -62,10 +62,10 @@ do_action( 'msf_dashboard_wrapper_start' );
 											</a>
 										</li>
 										<li>
-											<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-tag' ) . '%s', $product_tag->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
+											<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'tags/edit-tag' ) . '%s', $product_tag->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
 										</li>
 										<li>
-											<button @click="deleteCategory(<?php echo esc_attr( $product_tag->term_id ); ?>)" type="button" class="inline-button dropdown-link">
+											<button @click="deleteTag(<?php echo esc_attr( $product_tag->term_id ); ?>)" type="button" class="inline-button dropdown-link">
 												<?php echo esc_html__( 'Delete', 'shop-front' ); ?>
 											</button>
 										</li>
