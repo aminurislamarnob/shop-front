@@ -38,7 +38,7 @@ class Assets {
 		$frontend_script              = SHOP_FRONT_PLUGIN_ASSET . '/frontend/script.js';
 		$frontend_form_handler_script = SHOP_FRONT_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_alpinejs_script     = 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js';
-		$frontend_sweetalert2         = SHOP_FRONT_PLUGIN_ASSET . '/frontend/vendor/sweetalert2.min.js';
+		$frontend_sweetalert2         = SHOP_FRONT_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 
 		wp_register_script( 'my_shop_front_admin_script', $admin_script, array( 'my_shop_front-block-editor-script' ), filemtime( SHOP_FRONT_DIR . '/assets/admin/script.js' ), true );
 		wp_register_script( 'my_shop_front_script', $frontend_script, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/script.js' ), true );
@@ -58,7 +58,7 @@ class Assets {
 		$admin_style                = SHOP_FRONT_PLUGIN_ASSET . '/admin/style.css';
 		$frontend_style             = SHOP_FRONT_PLUGIN_ASSET . '/frontend/style.css';
 		$bs_grid_style              = SHOP_FRONT_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
-		$frontend_sweetalert2_style = SHOP_FRONT_PLUGIN_ASSET . '/frontend/vendor/sweetalert2.min.css';
+		$frontend_sweetalert2_style = SHOP_FRONT_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
 
 		wp_register_style( 'my_shop_front_admin_style', $admin_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/admin/style.css' ) );
 		wp_register_style( 'my_shop_front_style', $frontend_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/style.css' ) );
