@@ -65,6 +65,7 @@ class Assets {
 		wp_register_style( 'my_shop_front_bs_grid', $bs_grid_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/bootstrap-grid.min.css' ) );
 
 		wp_register_style( 'my_shop_front_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
+		wp_register_style( 'my_shop_front_poppins', 'https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap', array() );
 	}
 
 	/**
@@ -114,6 +115,7 @@ class Assets {
 		);
 
 		if ( is_msf_dashboard_page() ) {
+			wp_enqueue_style( 'my_shop_front_poppins' );
 			wp_enqueue_style( 'my_shop_front_sweetalert2_style' );
 			wp_enqueue_script( 'my_shop_front_sweetalert2_script' );
 			wp_enqueue_script( 'my_shop_front_alpinejs' );

@@ -8,6 +8,12 @@
   --table-border-color: #e2e8f0;
   --bg-color-light: rgba(235, 235, 235, 1);
 }
+/* Apply border-box to all elements and pseudo-elements */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
 ol, ul {
   list-style: none;
   margin: 0;
@@ -37,6 +43,9 @@ ol, ul {
 
 body {
   margin: 0;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 /**
@@ -363,7 +372,7 @@ template {
   display: none;
 }
 .my-shop-front-container {
-  margin-top: 30px;
+  background: rgb(248 250 252);
 }
 .my-shop-front-content{
   font-size: var(--body-font-size);
@@ -427,6 +436,9 @@ nav.my-shop-front-left-navigation ul li:last-child a:hover, nav.my-shop-front-le
   transition: .3s;
 }
 /*Common Table Style*/
+.my-shop-front-product-list-table tbody tr td:first-child {
+  font-weight: 500;
+}
 table.my-shop-front-tbl{
   border-collapse: collapse;
   width: 100%;
@@ -436,7 +448,6 @@ table.my-shop-front-tbl{
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
   -o-border-radius: 5px;
-  overflow: hidden;
 }
 table.my-shop-front-tbl thead {
   background-color: #fff;
@@ -460,6 +471,8 @@ table.my-shop-front-tbl>tbody {
 .my-shop-front-tbl thead th {
   padding: 10px!important;
   text-align: left;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 table.my-shop-front-tbl caption+thead tr:first-child td, table.my-shop-front-tbl caption+thead tr:first-child th, table.my-shop-front-tbl colgroup+thead tr:first-child td, table.my-shop-front-tbl colgroup+thead tr:first-child th, table.my-shop-front-tbl thead:first-child tr:first-child td, table.my-shop-front-tbl thead:first-child tr:first-child th, table.my-shop-front-tbl td{
   border: 0px!important;
@@ -480,13 +493,14 @@ table.my-shop-front-tbl caption+thead tr:first-child td, table.my-shop-front-tbl
   display: none;
 }
 .msfc-dropdown-menu .dropdown-link {
-  display: inline-flex;
+  display: block;
+  box-sizing: border-box;
   width: 100%;
   cursor: pointer;
-  align-items: center;
   gap: 8px;
   padding: 5px 15px;
-  font-size: 13px;
+  font-size: 14px;
+  text-align: left;
   color: var(--text-gray);
   font-weight: 400;
   transition: .3s;
@@ -510,6 +524,7 @@ table.my-shop-front-tbl caption+thead tr:first-child td, table.my-shop-front-tbl
   width: 120px;
   right: 0;
   top: 20px;
+  padding: 5px 0;
   box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;

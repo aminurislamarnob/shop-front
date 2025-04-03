@@ -2,12 +2,25 @@ import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
 import { Button, Card, CardBody, Notice, TextControl, Spinner } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
+import { Icon } from '@wordpress/components';
+import { registerCoreBlocks } from '@wordpress/block-library';
+import { getBlockTypes } from '@wordpress/blocks';
 
 const OrderSettings = () => {
 	const [ productPerPage, setProductPerPage ] = useState( '' );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
 	const [ error, setError ] = useState( '' );
+	const [blocks, setBlocks] = useState([]);
+
+    // Fetch the blocks and their icons when the component mounts
+    useEffect(() => {
+		registerCoreBlocks();
+        const blockTypes = getBlockTypes(); // Fetch all block types
+		console.log(blockTypes);
+		
+        setBlocks(blockTypes); // Set the blocks in the state
+    }, []);
 
 	useEffect(() => {
 		setIsLoading( true );
@@ -58,6 +71,22 @@ const OrderSettings = () => {
 
 	return (
 		<div>
+			Blocks
+			<ul>
+                {blocks.map((block, index) => (
+                    <li key={index}>
+                        <strong>{block.name}</strong>
+                        <div>
+                            {/* Render the block icon */}
+                            {typeof block.icon === 'function' ? (
+                                <block.icon />
+                            ) : (
+                                <Icon icon={block.icon} />
+                            )}
+                        </div>
+                    </li>
+                ))}
+            </ul>
 			<div className='settings-header'>
 				<div className='settings-header-icon'>
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-gear" viewBox="0 0 16 16">
