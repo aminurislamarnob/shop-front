@@ -171,6 +171,38 @@ sub {
 sup {
   top: -0.5em;
 }
+/* Modern Browsers */
+input::placeholder,
+textarea::placeholder {
+  color: #888;
+  opacity: 1; /* Firefox fix */
+}
+
+/* WebKit Browsers (Chrome, Safari, Edge) */
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: var(--icon-color);
+}
+
+/* Firefox 19+ */
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: var(--icon-color);
+  opacity: 1;
+}
+
+/* Firefox 18- */
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: var(--icon-color);
+  opacity: 1;
+}
+
+/* Internet Explorer 10-11 */
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: var(--icon-color);
+}
 
 /* Embedded content
    ========================================================================== */
@@ -443,6 +475,50 @@ nav.my-shop-front-left-navigation ul li:last-child a:hover, nav.my-shop-front-le
   transition: .3s;
 }
 /*Common Table Style*/
+.msf-table-filter {
+  margin-bottom: 15px;
+}
+.msf-table-search-input {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  max-width: 290px;
+  border-radius: 6px;
+  border: 1px solid var(--table-border-color);
+}
+
+.msf-table-search-input input {
+  border: none;
+  width: calc(100% - 40px);
+  padding: 11px 0;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.msf-table-search-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--icon-color);
+}
+
+.msf-table-search-icon {
+  width: 40px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.msf-table-header-part {
+  margin-bottom: 15px;
+}
+.msf-table-search-input input:focus, .msf-table-search-input input:focus-within {
+  box-shadow: none;
+  outline: none;
+}
 .msf-table-responsive{
   overflow-x: auto;
   border-radius: 4px;
@@ -454,6 +530,7 @@ nav.my-shop-front-left-navigation ul li:last-child a:hover, nav.my-shop-front-le
 .my-shop-front-product-list-table tbody tr td:first-child {
   font-weight: 500;
 }
+
 table.my-shop-front-tbl{
   border-collapse: collapse;
   width: 100%;
@@ -805,15 +882,21 @@ span.order-failed {
 .my-shop-front-button {
   background: var(--primary-bg);
   display: inline-block;
-  padding: 7px 20px;
+  padding: 10px 20px;
   font-size: 14px;
   color: #fff;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+.my-shop-front-button svg{
+  fill: #fff;
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  margin-right: 5px;
 }
 
 .my-shop-front-button:hover {
@@ -1147,4 +1230,45 @@ span.msf-sidebar-trigger svg {
   margin-right: 5px;
   position: relative;
   top: 1px;
+}
+.msf-page-main-title {
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 20px;
+  color: var(--msf-text-color);
+}
+.msf-dashboard-braedcrumb ul {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.msf-dashboard-braedcrumb ul li {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.msf-dashboard-braedcrumb ul li a{
+  color: var(--primary-bg);
+}
+
+.msf-dashboard-braedcrumb ul li span{
+  color: var(--msf-text-color)
+}
+
+.msf-dashboard-braedcrumb ul li svg {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-right: 8px;
+  fill: var(--icon-color);
+}
+
+.msf-dashboard-title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }

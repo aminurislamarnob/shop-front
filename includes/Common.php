@@ -7,29 +7,28 @@ class Common {
 	 * The constructor.
 	 */
 	public function __construct() {
-		// add_filter( 'the_title', array( $this, 'msf_page_endpoint_title' ) );
+		// add_action( 'msf_dashboard_before_main_content', array( $this, 'msf_page_endpoint_title' ) );
 		add_filter( 'page_template', array( $this, 'msf_register_page_template' ) );
 	}
 
 	/**
 	 * Replace a page title with the endpoint title.
 	 *
-	 * @param  string $title Post title.
 	 * @return string
 	 */
-	public function msf_page_endpoint_title( $title ) {
+	public function msf_page_endpoint_title() {
 		global $wp_query;
+
+		$title = '';
 
 		if ( ! is_null( $wp_query ) && ! is_admin() && is_main_query() && in_the_loop() && is_page() && is_msf_endpoint_url() ) {
 			$endpoint       = pluginizelab_shop_front()->get_msf_query()->get_current_endpoint();
 			$action         = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
 			$endpoint_title = pluginizelab_shop_front()->get_msf_query()->get_endpoint_title( $endpoint, $action );
 			$title          = $endpoint_title ? $endpoint_title : $title;
-
-			remove_filter( 'the_title', array( $this, 'msf_page_endpoint_title' ) );
 		}
 
-		return $title;
+		echo '<h3 class="msf-page-main-title">' . esc_html( $title ) . '</h3>';
 	}
 
 	/**

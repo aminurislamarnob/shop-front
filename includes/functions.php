@@ -249,3 +249,24 @@ function msf_get_id_from_query_vars( $query_var ) {
 
 	return null;
 }
+
+/**
+ * Get the endpoint title
+ *
+ * @return string
+ */
+// function msf_get_breadcrumb() {
+// global $wp_query;
+
+// $title = '';
+
+// if ( ! is_null( $wp_query ) && ! is_admin() && is_main_query() && in_the_loop() && is_page() && is_msf_endpoint_url() ) {
+// $endpoint       = pluginizelab_shop_front()->get_msf_query()->get_current_endpoint();
+// $action         = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : '';
+// $endpoint_title = pluginizelab_shop_front()->get_msf_query()->get_endpoint_title( $endpoint, $action );
+// $title          = $endpoint_title ? $endpoint_title : $title;
+// echo $endpoint;
+// }
+
+// return $title;
+// }
