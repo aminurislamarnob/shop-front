@@ -7,6 +7,9 @@
   --icon-color: rgb(148 163 184);
   --table-border-color: #e2e8f0;
   --bg-color-light: rgba(235, 235, 235, 1);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
 }
 /* Apply border-box to all elements and pseudo-elements */
 *,
@@ -46,6 +49,7 @@ body {
   font-family: "Poppins", sans-serif;
   font-weight: 400;
   font-style: normal;
+  background: rgb(248 250 252);
 }
 
 /**
@@ -370,9 +374,6 @@ template {
 
 [hidden] {
   display: none;
-}
-.my-shop-front-container {
-  background: rgb(248 250 252);
 }
 .my-shop-front-content{
   font-size: var(--body-font-size);
@@ -1009,12 +1010,22 @@ ul.my-shop-front-metas {
 }
 
 /*Dash Navigation*/
+.my-shop-front-sidebar {
+  position: fixed;
+  width: 290px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 99;
+}
 ul.msfc-dashboard-menu {
   height: 100%;
-  background: var(--bg-color-light);
+  background: #fff;
   border-radius: 5px;
   padding: 10px;
   font-size: 14px;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 ul.msfc-dashboard-menu a {
@@ -1033,4 +1044,13 @@ ul.msfc-dashboard-menu a {
 ul.msfc-dashboard-menu a.active, ul.msfc-dashboard-menu a:hover {
   background: #fff;
   border-radius: 5px;
+}
+
+/*Dash content*/
+.my-shop-front-wrapper {
+  width: calc(100% - 290px);
+  margin-left: 290px;
+}
+.my-shop-front-page-content {
+  padding: 24px;
 }
