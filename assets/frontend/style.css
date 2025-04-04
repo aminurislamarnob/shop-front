@@ -1,7 +1,8 @@
 /*Common CSS*/
 :root{
   --body-font-size: 14px;
-  --primary-bg: #7f54b3;
+  --primary-bg: #873eff;
+  --primary-bg-hover: #720EEC;
   --text-gray: rgb(55 65 81);
   --text-light: rgba(97, 97, 97, 1);
   --icon-color: rgb(148 163 184);
@@ -10,6 +11,11 @@
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
   --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+  --msf-text-color: rgb(71 85 105);
+  --msf-text-color-light: rgb(130 130 130);
+  --msf-gray: rgb(100 116 139);
+  --msf-border-color: rgb(226 232 240);
+  --msf-border-color-light: rgb(233 233 233);
 }
 /* Apply border-box to all elements and pseudo-elements */
 *,
@@ -375,7 +381,7 @@ template {
 [hidden] {
   display: none;
 }
-.my-shop-front-content{
+.my-shop-front-page-content{
   font-size: var(--body-font-size);
 }
 .d-inline{
@@ -384,7 +390,7 @@ template {
 .text-right{
   text-align: right!important;
 }
-.my-shop-front-content ins {
+.my-shop-front-page-content ins {
   text-decoration: none;
 }
 
@@ -437,18 +443,25 @@ nav.my-shop-front-left-navigation ul li:last-child a:hover, nav.my-shop-front-le
   transition: .3s;
 }
 /*Common Table Style*/
+.msf-table-responsive{
+  overflow-x: auto;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+}
 .my-shop-front-product-list-table tbody tr td:first-child {
   font-weight: 500;
 }
 table.my-shop-front-tbl{
   border-collapse: collapse;
   width: 100%;
-  border: 1px solid rgba(0,0,0,.1);
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
 }
 table.my-shop-front-tbl thead {
   background-color: #fff;
@@ -1019,6 +1032,16 @@ ul.my-shop-front-metas {
   height: 100vh;
   z-index: 99;
 }
+ul.msfc-dashboard-menu a svg {
+  transform: scale(0.85);
+}
+ul.msfc-dashboard-menu a svg.edit-site-site-icon__icon {
+  transform: scale(1);
+}
+
+ul.msfc-dashboard-menu a svg.edit-site-site-icon__icon path {
+  transform: scale(1.02);
+}
 ul.msfc-dashboard-menu {
   height: 100%;
   background: #fff;
@@ -1053,4 +1076,75 @@ ul.msfc-dashboard-menu a.active, ul.msfc-dashboard-menu a:hover {
 }
 .my-shop-front-page-content {
   padding: 24px;
+}
+
+/*Header design*/
+.msf-dashboard-header {
+  background: #fff;
+  padding: 10px 24px;
+}
+
+.msfc-dropdown.msf-header-dropdown img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.msf-header-right {
+  display: flex;
+  gap: 30px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.msf-header-right a.my-shop-front-button {
+  margin: 0;
+  background: transparent;
+  color: var(--msf-text-color-light);
+  border: 1px solid var(--msf-border-color-light);
+  border-radius: 40px;
+  font-size: 12px;
+}
+.msf-header-right a.my-shop-front-button svg {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  margin-right: 5px;
+  position: relative;
+  top: 1px;
+  fill: rgb(130 130 130);
+}
+.msf-header-right a.my-shop-front-button:hover{
+  background: var(--primary-bg-hover);
+  color: #fff;
+  border-color: var(--primary-bg-hover);
+}
+.msf-header-right a.my-shop-front-button:hover svg {
+  fill: #fff;
+}
+.msfc-dropdown.msf-header-dropdown span.msfc-dropdown-icon {
+  display: flex;
+  align-items: center;
+}
+span.msf-sidebar-trigger {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+span.msf-sidebar-trigger svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--msf-gray);
+}
+.msfc-dropdown.msf-header-dropdown .msfc-dropdown-menu {
+  top: 35px;
+  width: 140px;
+}
+.msfc-dropdown .msfc-dropdown-menu svg {
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+  position: relative;
+  top: 1px;
 }
