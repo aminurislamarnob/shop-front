@@ -17,15 +17,15 @@ do_action( 'msf_dashboard_wrapper_start' );
 		<div class="col-md-10">
 			<div x-data="tagAddFormHandler()">
 				<form id="msfc-add-tag" @submit.prevent="handleTagSubmission">
-					<div class="form-group">
+					<div class="msf-form-group">
 						<label for="name"><?php esc_html_e( 'Tag Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-						<input type="text" class="form-control" id="name" name="name" placeholder="<?php echo esc_attr__( 'Product tag name', 'shop-front' ); ?>" aria-required="true">
+						<input type="text" class="msf-form-control" id="name" name="name" placeholder="<?php echo esc_attr__( 'Product tag name', 'shop-front' ); ?>" aria-required="true">
 					</div>
-					<div class="form-group">
+					<div class="msf-form-group">
 						<label for="description"><?php esc_html_e( 'Tag Description', 'shop-front' ); ?></label>
-						<textarea class="form-control" id="description" name="description" placeholder="<?php echo esc_attr__( 'Product tag description', 'shop-front' ); ?>" rows="3"></textarea>
+						<textarea class="msf-form-control" id="description" name="description" placeholder="<?php echo esc_attr__( 'Product tag description', 'shop-front' ); ?>" rows="3"></textarea>
 					</div>
-					<div class="form-group">
+					<div class="msf-form-group">
 						<?php wp_nonce_field( '_msfc_add_product_tag_', 'msfc_add_product_tag_nonce' ); ?>
 						<input type="hidden" name="action" value="msfc_add_product_tag">
 						<button class="msfc-wfm-button msfc-submit-btn" name="save_product_tag" type="submit"><?php esc_html_e( 'Add New Tag', 'shop-front' ); ?></button>

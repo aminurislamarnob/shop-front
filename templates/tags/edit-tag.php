@@ -29,15 +29,15 @@ do_action( 'msf_dashboard_wrapper_start' );
 			?>
 			<div x-data="tagEditFormHandler(<?php echo esc_attr( $product_tag->term_id ); ?>)">
 				<form id="msfc-edit-tag" @submit.prevent="handleTagEditSubmission">
-					<div class="form-group">
+					<div class="msf-form-group">
 						<label for="name"><?php esc_html_e( 'Tag Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-						<input type="text" class="form-control" id="name" name="name" placeholder="<?php echo esc_attr__( 'Product tag name', 'shop-front' ); ?>" aria-required="true" value="<?php echo esc_attr( $product_tag->name ); ?>">
+						<input type="text" class="msf-form-control" id="name" name="name" placeholder="<?php echo esc_attr__( 'Product tag name', 'shop-front' ); ?>" aria-required="true" value="<?php echo esc_attr( $product_tag->name ); ?>">
 					</div>
-					<div class="form-group">
+					<div class="msf-form-group">
 						<label for="description"><?php esc_html_e( 'Tag Description', 'shop-front' ); ?></label>
-						<textarea class="form-control" id="description" name="description" placeholder="<?php echo esc_attr__( 'Product tag description', 'shop-front' ); ?>" rows="3"><?php echo esc_attr( $product_tag->description ); ?></textarea>
+						<textarea class="msf-form-control" id="description" name="description" placeholder="<?php echo esc_attr__( 'Product tag description', 'shop-front' ); ?>" rows="3"><?php echo esc_attr( $product_tag->description ); ?></textarea>
 					</div>
-					<div class="form-group">
+					<div class="msf-form-group">
 					<?php wp_nonce_field( '_msfc_edit_product_tag_', 'msfc_edit_product_tag_nonce' ); ?>
 						<input type="hidden" name="action" value="msfc_edit_product_tag">
 						<input type="hidden" name="tag_id" value="<?php echo esc_attr( $product_tag->term_id ); ?>">

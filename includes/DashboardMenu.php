@@ -46,7 +46,7 @@ class DashboardMenu {
 							'fill-rule' => array(),
 						),
 					)
-				) . ' ' . esc_html( $menu['title'] );
+				) . '<span>' . esc_html( $menu['title'] ) . '</span>';
 				echo '</a>';
 
 				// Check for and render submenu.
@@ -74,7 +74,7 @@ class DashboardMenu {
 										'fill-rule' => array(),
 									),
 								)
-							) . ' ' . esc_html( $submenu['title'] );
+							) . '<span>' . esc_html( $submenu['title'] ) . '</span>';
 							echo '</a>';
 							echo '</li>';
 						}

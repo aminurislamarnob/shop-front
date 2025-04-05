@@ -9,8 +9,13 @@ class TemplateParts {
 	 * The constructor.
 	 */
 	public function __construct() {
+		add_action( 'msf_dashboard_navigation', array( $this, 'add_dashboard_sidebar_logo' ), 1 );
 		add_action( 'msf_dashboard_content_before', array( $this, 'dashboard_header_template' ), 1 );
 		add_action( 'msf_dashboard_before_main_content', array( $this, 'msf_page_endpoint_title' ) );
+	}
+
+	public function add_dashboard_sidebar_logo() {
+		msf_get_template_part( 'dashboard-logo' );
 	}
 
 	/**
@@ -38,7 +43,13 @@ class TemplateParts {
 			$endpoint_title = pluginizelab_shop_front()->get_msf_query()->get_endpoint_title( $endpoint, $action );
 			$title          = $endpoint_title ? $endpoint_title : $title;
 
-			$dashboard_menu        = new ShopFrontDashboardMenu();
+			$dashboard_menu = new ShopFrontDashboardMenu();
+
+			// Customly set parent endpoint for sub pages.
+			if ( 'add-new-category' === $endpoint || 'edit-category' === $endpoint ) {
+				$endpoint = 'categories';
+			}
+
 			$parent_endpoint_title = $dashboard_menu->get_dashboard_menus()[ $endpoint ]['title'] ?? '';
 			$parent_endpoint_url   = $dashboard_menu->get_dashboard_menus()[ $endpoint ]['url'] ?? '';
 		}

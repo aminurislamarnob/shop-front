@@ -1,7 +1,9 @@
 <?php
 /**
  * MSFC category List Page
- * ***/
+ *
+ * @package ShopFront
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

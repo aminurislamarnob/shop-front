@@ -1,3 +1,14 @@
+<?php
+/**
+ * Dashboard Title Template
+ *
+ * @package ShopFront
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+?>
 <div class="msf-dashboard-title-wrapper">
 	<div class="msf-dashboard-title">
 		<h3 class="msf-page-main-title">

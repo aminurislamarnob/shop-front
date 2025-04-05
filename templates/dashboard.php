@@ -1,7 +1,9 @@
 <?php
 /**
- * MSFC WFM Dashboard Page
- * ***/
+ * Dashboard Template
+ *
+ * @package ShopFront
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

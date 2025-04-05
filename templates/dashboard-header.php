@@ -1,3 +1,14 @@
+<?php
+/**
+ * Dashboard Header Template
+ *
+ * @package ShopFront
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+?>
 <header class="msf-dashboard-header">
 	<div class="row align-items-center">
 		<div class="col-md-6">
