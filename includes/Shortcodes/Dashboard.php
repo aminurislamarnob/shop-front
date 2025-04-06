@@ -78,18 +78,18 @@ class Dashboard extends MyShopFrontShortcode {
 			return ob_get_clean();
 		}
 
-		if ( $this->is_query_var_exists( 'tags', 'add-new-tag' ) ) {
+		if ( isset( $wp->query_vars['tags'] ) ) {
+			msf_get_template_part( 'tags/tags' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['add-new-tag'] ) ) {
 			msf_get_template_part( 'tags/add-new-tag' );
 			return ob_get_clean();
 		}
 
-		if ( $this->is_query_var_exists( 'tags', 'edit-tag' ) ) {
+		if ( isset( $wp->query_vars['edit-tag'] ) ) {
 			msf_get_template_part( 'tags/edit-tag' );
-			return ob_get_clean();
-		}
-
-		if ( isset( $wp->query_vars['tags'] ) ) {
-			msf_get_template_part( 'tags/tags' );
 			return ob_get_clean();
 		}
 

@@ -632,6 +632,10 @@ table.my-shop-front-tbl caption+thead tr:first-child td, table.my-shop-front-tbl
 .woocommerce table.shop_table td ins {
   text-decoration: none;
 }
+table.my-shop-front-tbl tbody tr:nth-last-child(-n+2) .msfc-dropdown .msfc-dropdown-menu {
+  top: auto;
+  bottom: 20px;
+}
 
 /*Dropdown*/
 .msfc-dropdown-icon{

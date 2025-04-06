@@ -48,6 +48,8 @@ class TemplateParts {
 			// Customly set parent endpoint for sub pages.
 			if ( 'add-new-category' === $endpoint || 'edit-category' === $endpoint ) {
 				$endpoint = 'categories';
+			} elseif ( 'add-new-tag' === $endpoint || 'edit-tag' === $endpoint ) {
+				$endpoint = 'tags';
 			}
 
 			$parent_endpoint_title = $dashboard_menu->get_dashboard_menus()[ $endpoint ]['title'] ?? '';

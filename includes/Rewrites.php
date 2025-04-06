@@ -143,7 +143,16 @@ class Rewrites {
 				$title = __( 'Add New Category', 'shop-front' );
 				break;
 			case 'edit-category':
-				$title = __( 'Edit Category', 'shop-front' );
+				$title = __( 'Edit Product Category', 'shop-front' );
+				break;
+			case 'tags':
+				$title = __( 'Product Tags', 'shop-front' );
+				break;
+			case 'add-new-tag':
+				$title = __( 'Add New Tag', 'shop-front' );
+				break;
+			case 'edit-tag':
+				$title = __( 'Edit Product Tag', 'shop-front' );
 				break;
 			default:
 				$title = '';
