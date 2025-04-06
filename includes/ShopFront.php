@@ -180,6 +180,7 @@ final class ShopFront {
 	public function init_hooks() {
 		// initialize the classes.
 		add_action( 'init', array( $this, 'init_classes' ), 4 );
+		add_action( 'init', array( $this, 'init_plugin_textdomain' ), 4 );
 		add_action( 'plugins_loaded', array( $this, 'after_plugins_loaded' ) );
 	}
 
@@ -213,6 +214,15 @@ final class ShopFront {
 		$this->container['msf_product_categories']          = new ProductCategory\Categories();
 		$this->container['msf_product_category_controller'] = new ProductCategory\CategoryController();
 		$this->container['msf_product_tag_controller']      = new ProductTag\TagController();
+	}
+
+	/**
+	 * Load the plugin text domain for translation
+	 *
+	 * @return void
+	 */
+	public function init_plugin_textdomain() {
+		load_plugin_textdomain( 'shop-front', false, SHOP_FRONT_DIR . '/languages' );
 	}
 
 	/**
@@ -256,7 +266,7 @@ final class ShopFront {
 	 * @return void
 	 */
 	protected function get_dependency_message() {
-		return __( 'My Shop Front plugin is enabled but not effective. It requires dependency plugins to work.', 'my-shop-front' );
+		return __( 'My Shop Front plugin is enabled but not effective. It requires dependency plugins to work.', 'shop-front' );
 	}
 
 	/**

@@ -194,7 +194,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 
 						echo '<div class="msfc-result-text">';
 						/* translators: %1$s: Start Product, %2$s: End Product, %3$s: Total Products */
-						printf( esc_html__( 'Showing %1$s to %2$s of %3$s', 'store-front' ), esc_html( $start_product ), esc_html( $end_product ), esc_html( $total_products ) );
+						printf( esc_html__( 'Showing %1$s to %2$s of %3$s', 'shop-front' ), esc_html( $start_product ), esc_html( $end_product ), esc_html( $total_products ) );
 						echo '</div>';
 
 						if ( ! empty( $page_links ) ) {
