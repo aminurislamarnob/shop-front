@@ -1,31 +1,54 @@
 <?php
 /**
- * MSFC WFM Product List
- * ***/
+ * MSFC product List Page
+ *
+ * @package ShopFront
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 do_action( 'msf_dashboard_wrapper_start' );
 ?>
 <div class="my-shop-front-container">
-	<div class="row">
-		<div class="col-md-2">
-			<?php do_action( 'msf_dashboard_navigation' ); ?>
-		</div>
-		<div class="col-md-10">
-			<?php do_action( 'msf_dashboard_content_before' ); ?>
-			<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-product' ) ); ?>" class="my-shop-front-button">
-				<?php esc_html_e( 'Add New Product', 'shop-front' ); ?>
-			</a>
-			<div class="my-shop-front-content">
+	<aside class="my-shop-front-sidebar">
+		<?php do_action( 'msf_dashboard_navigation' ); ?>
+	</aside>
+	<div class="my-shop-front-wrapper">
+		<?php do_action( 'msf_dashboard_content_before' ); ?>
+		<main class="my-shop-front-page-content">
+			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
+			<div class="msf-table-header-part">
+				<div class="row">
+					<div class="col-md-6">
+						<form action="">
+							<div class="msf-table-search-input">
+								<div class="msf-table-search-icon">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
+									</svg>
+								</div>
+								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Product', 'shop-front' ); ?>" />
+							</div>
+						</form>
+					</div>
+					<div class="col-md-6 text-right">
+						<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-product' ) ); ?>" class="my-shop-front-button">
+							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
+							</svg>
+							<?php esc_html_e( 'Add Product', 'shop-front' ); ?>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="msf-table-responsive">
 				<?php
 				$product_statuses = apply_filters( 'msf_product_listing_post_statuses', array( 'publish', 'draft', 'pending', 'future' ) );
 				$stock_statuses   = apply_filters( 'msf_product_stock_statuses', array( 'instock', 'outofstock' ) );
 				$product_types    = apply_filters( 'msf_product_types', array( 'simple' => __( 'Simple', 'shop-front' ) ) );
 
-				$posts_per_page = 4;
+				$posts_per_page = apply_filters( 'msf_products_per_page', 10 );
 				$current_page   = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1; // Get current page number, default to 1.
 
 				$query = array(
@@ -141,10 +164,10 @@ do_action( 'msf_dashboard_wrapper_start' );
 										</span>
 										<ul class="msfc-dropdown-menu">
 											<li>
-												<a href="<?php echo esc_url( get_home_url() . '/msfc-product-details/' . $product_id . '/' ); ?>" class="dropdown-link"><?php esc_html_e( 'View', 'shop-front' ); ?></a>
+												<a href="<?php echo esc_url( get_permalink() ); ?>" target="_blank" class="dropdown-link"><?php esc_html_e( 'View', 'shop-front' ); ?></a>
 											</li>
 											<li>
-												<a href="<?php echo esc_url( get_home_url() . '/msfc-edit-product/' . $product_id . '/' ); ?>" class="dropdown-link"><?php esc_html_e( 'Edit', 'shop-front' ); ?></a>
+												<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-product' ) . '%s', $product_id ) ); ?>" class="dropdown-link"><?php esc_html_e( 'Edit', 'shop-front' ); ?></a>
 											</li>
 											<li>
 												<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="POST">
@@ -212,8 +235,8 @@ do_action( 'msf_dashboard_wrapper_start' );
 					</div>
 					<?php } ?>
 			</div>
-			<?php do_action( 'msf_dashboard_content_after' ); ?>
-		</div>
+		</main>
+		<?php do_action( 'msf_dashboard_content_after' ); ?>
 	</div>
 </div>
 <?php do_action( 'msf_dashboard_wrapper_end' ); ?>
