@@ -393,3 +393,71 @@ function deleteTagHandler() {
 /*** 
  * Category Form Handler [End]
  */
+
+
+/*** 
+ * Product Form Handler [Start]
+ * Using Alpine JS
+ */
+
+//Add product
+function productAddFormHandler() {
+    return {
+        message: '',  // Success message
+        error: '',    // Error message
+        
+        async handleProductSubmission() {
+            // Clear messages before submission
+            this.message = '';
+            this.error = '';
+
+            // Force TinyMCE editor content to update the textarea
+            if (typeof tinyMCE !== 'undefined') {
+                const editor = tinyMCE.get('product_description');
+                if (editor) {
+                    editor.save(); // Sync content to the textarea
+                }
+            }
+
+            // Collect form data
+            let formData = new FormData(document.getElementById('msfc-add-product'));
+
+            try {
+                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Adding...');
+                
+                // Check for success or error
+                if (result.success) {
+                    this.message = result.data.message;
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added!',
+                        text: this.message,
+                        confirmButtonText: 'OK'
+                    });
+
+                    document.getElementById('msfc-add-product').reset();  // Reset form fields
+                } else {
+                    this.error = result.data.error;
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: this.error,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (err) {
+                // Handle any other errors
+                this.error = 'An unexpected error occurred. Please try again later.';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: this.error,
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+    };
+}

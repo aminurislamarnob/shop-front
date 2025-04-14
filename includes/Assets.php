@@ -140,6 +140,7 @@ class Assets {
 					'category_delete_nonce' => wp_create_nonce( '_msfc_delete_product_category_' ),
 				)
 			);
+			wp_enqueue_media();
 		}
 	}
 }

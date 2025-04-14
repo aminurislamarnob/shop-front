@@ -215,6 +215,7 @@ final class ShopFront {
 		$this->container['msf_product_categories']          = new ProductCategory\Categories();
 		$this->container['msf_product_category_controller'] = new ProductCategory\CategoryController();
 		$this->container['msf_product_tag_controller']      = new ProductTag\TagController();
+		$this->container['msf_product_controller']          = new Product\ProductController();
 	}
 
 	/**
