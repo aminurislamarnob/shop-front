@@ -136,8 +136,8 @@ class Assets {
 				'my_shop_front_form_handler_script',
 				'My_Shop_Front_Form_Handler',
 				array(
-					'ajax_url'              => admin_url( 'admin-ajax.php' ),
-					'category_delete_nonce' => wp_create_nonce( '_msfc_delete_product_category_' ),
+					'ajax_url'               => admin_url( 'admin-ajax.php' ),
+					'msfc_woo_delete_nonce_' => wp_create_nonce( '_msfc_delete_nonce_' ),
 				)
 			);
 			wp_enqueue_media();

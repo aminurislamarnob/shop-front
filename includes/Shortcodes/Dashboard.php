@@ -93,6 +93,21 @@ class Dashboard extends MyShopFrontShortcode {
 			return ob_get_clean();
 		}
 
+		if ( isset( $wp->query_vars['brands'] ) ) {
+			msf_get_template_part( 'brands/brands' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['add-new-brand'] ) ) {
+			msf_get_template_part( 'brands/add-new-brand' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['edit-brand'] ) ) {
+			msf_get_template_part( 'brands/edit-brand' );
+			return ob_get_clean();
+		}
+
 		do_action( 'msf_load_custom_template', $wp->query_vars );
 
 		return ob_get_clean();

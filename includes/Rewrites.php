@@ -47,6 +47,9 @@ class Rewrites {
 				'tags'             => get_option( 'msf_myshop_tags_endpoint', 'tags' ),
 				'add-new-tag'      => get_option( 'msf_myshop_new_tag_endpoint', 'add-new-tag' ),
 				'edit-tag'         => get_option( 'msf_myshop_edit_tag_endpoint', 'edit-tag' ),
+				'brands'           => get_option( 'msf_myshop_brands_endpoint', 'brands' ),
+				'add-new-brand'    => get_option( 'msf_myshop_new_brand_endpoint', 'add-new-brand' ),
+				'edit-brand'       => get_option( 'msf_myshop_edit_brand_endpoint', 'edit-brand' ),
 			)
 		);
 	}
@@ -153,6 +156,15 @@ class Rewrites {
 				break;
 			case 'edit-tag':
 				$title = __( 'Edit Product Tag', 'shop-front' );
+				break;
+			case 'brands':
+				$title = __( 'Product Brands', 'shop-front' );
+				break;
+			case 'add-new-brand':
+				$title = __( 'Add New Brand', 'shop-front' );
+				break;
+			case 'edit-brand':
+				$title = __( 'Edit Product Brand', 'shop-front' );
 				break;
 			default:
 				$title = '';

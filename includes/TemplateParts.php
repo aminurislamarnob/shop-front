@@ -50,6 +50,8 @@ class TemplateParts {
 				$endpoint = 'categories';
 			} elseif ( 'add-new-tag' === $endpoint || 'edit-tag' === $endpoint ) {
 				$endpoint = 'tags';
+			} elseif ( 'add-new-brand' === $endpoint || 'edit-brand' === $endpoint ) {
+				$endpoint = 'brands';
 			}
 
 			$parent_endpoint_title = $dashboard_menu->get_dashboard_menus()[ $endpoint ]['title'] ?? '';

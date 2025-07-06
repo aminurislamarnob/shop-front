@@ -1,463 +1,722 @@
 // Common function to handle AJAX requests with loading delay
-async function ajaxRequestWithLoading(url, formData, loadingMessage) {
-    Swal.fire({
-        title: loadingMessage,
-        text: 'Please wait while we process your request.',
-        icon: 'info',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
+async function ajaxRequestWithLoading( url, formData, loadingMessage ) {
+	Swal.fire( {
+		title: loadingMessage,
+		text: 'Please wait while we process your request.',
+		icon: 'info',
+		allowOutsideClick: false,
+		didOpen: () => {
+			Swal.showLoading();
+		},
+	} );
 
-    const minLoadingDelay = new Promise(resolve => setTimeout(resolve, 1000)); // Minimum delay of 1 second
+	const minLoadingDelay = new Promise( ( resolve ) =>
+		setTimeout( resolve, 1000 )
+	); // Minimum delay of 1 second
 
-    // Send AJAX request and wait for both the request and the minimum delay to complete
-    const response = await Promise.all([
-        fetch(url, {
-            method: 'POST',
-            body: formData,
-        }).then(res => res.json()),
-        minLoadingDelay
-    ]);
-    
-    Swal.close();
+	// Send AJAX request and wait for both the request and the minimum delay to complete
+	const response = await Promise.all( [
+		fetch( url, {
+			method: 'POST',
+			body: formData,
+		} ).then( ( res ) => res.json() ),
+		minLoadingDelay,
+	] );
 
-    return response[0];
+	Swal.close();
+
+	return response[ 0 ];
 }
 
-
-/*** 
+/***
  * Category Form Handler [Start]
  * Using Alpine JS
  */
 
 //Add category
 function categoryAddFormHandler() {
-    return {
-        message: '',  // Success message
-        error: '',    // Error message
-        
-        async handleCategorySubmission() {
-            // Clear messages before submission
-            this.message = '';
-            this.error = '';
+	return {
+		message: '', // Success message
+		error: '', // Error message
 
-            // Collect form data
-            let formData = new FormData(document.getElementById('msfc-add-category'));
+		async handleCategorySubmission() {
+			// Clear messages before submission
+			this.message = '';
+			this.error = '';
 
-            try {
-                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Adding...');
+			// Collect form data
+			let formData = new FormData(
+				document.getElementById( 'msfc-add-category' )
+			);
 
-                // Check for success or error
-                if (result.success) {
-                    this.message = result.data.message;
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Adding...'
+				);
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Added!',
-                        text: this.message,
-                        confirmButtonText: 'OK'
-                    });
+				// Check for success or error
+				if ( result.success ) {
+					this.message = result.data.message;
 
-                    document.getElementById('msfc-add-category').reset();  // Reset form fields
-                } else {
-                    this.error = result.data.error;
+					Swal.fire( {
+						icon: 'success',
+						title: 'Added!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: this.error,
-                        confirmButtonText: 'OK'
-                    });
-                }
-            } catch (err) {
-                // Handle any other errors
-                this.error = 'An unexpected error occurred. Please try again later.';
+					document.getElementById( 'msfc-add-category' ).reset(); // Reset form fields
+				} else {
+					this.error = result.data.error;
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: this.error,
-                    confirmButtonText: 'OK'
-                });
-            }
-        }
-    };
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				// Handle any other errors
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Error!',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
 }
 
 //Edit category
-function categoryEditFormHandler(categoryId) {
-    return {
-        message: '',  // Success message
-        error: '',    // Error message
+function categoryEditFormHandler( categoryId ) {
+	return {
+		message: '', // Success message
+		error: '', // Error message
 
-        async handleCategoryEditSubmission() {
-            // Clear messages before submission
-            this.message = '';
-            this.error = '';
+		async handleCategoryEditSubmission() {
+			// Clear messages before submission
+			this.message = '';
+			this.error = '';
 
-            // Collect form data
-            let formData = new FormData(document.getElementById('msfc-edit-category'));
+			// Collect form data
+			let formData = new FormData(
+				document.getElementById( 'msfc-edit-category' )
+			);
 
-            try {
-                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Updating...');
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Updating...'
+				);
 
-                // Check for success or error
-                if (result.success) {
-                    this.message = result.data.message;
+				// Check for success or error
+				if ( result.success ) {
+					this.message = result.data.message;
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Updated!',
-                        text: this.message,
-                        confirmButtonText: 'OK'
-                    });
-                } else {
-                    this.error = result.data.error;
+					Swal.fire( {
+						icon: 'success',
+						title: 'Updated!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
+				} else {
+					this.error = result.data.error;
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: this.error,
-                        confirmButtonText: 'OK'
-                    });
-                }
-            } catch (err) {
-                // Handle any other errors
-                this.error = 'An unexpected error occurred. Please try again later.';
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				// Handle any other errors
+				this.error =
+					'An unexpected error occurred. Please try again later.';
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: this.error,
-                    confirmButtonText: 'OK'
-                });
-            }
-        }
-    };
+				Swal.fire( {
+					icon: 'error',
+					title: 'Error!',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
 }
 
 //Delete category
 function deleteCategoryHandler() {
-    return {
-        message: '', // Success message
-        error: '',   // Error message
+	return {
+		message: '', // Success message
+		error: '', // Error message
 
-        async deleteCategory(categoryId) {
-            // Show confirmation dialog with SweetAlert2
-            const confirmation = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'This action will permanently delete the category.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            });
+		async deleteCategory( categoryId ) {
+			// Show confirmation dialog with SweetAlert2
+			const confirmation = await Swal.fire( {
+				title: 'Are you sure?',
+				text: 'This action will permanently delete the category.',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Yes, delete it!',
+				cancelButtonText: 'Cancel',
+			} );
 
-            // If user cancels, exit the function
-            if (!confirmation.isConfirmed) return;
-            
-            // Clear messages
-            this.message = '';
-            this.error = '';
+			// If user cancels, exit the function
+			if ( ! confirmation.isConfirmed ) return;
 
-            // Prepare form data
-            let formData = new FormData();
-            formData.append('id', categoryId);
-            formData.append('action', 'msfc_delete_product_category');
-            formData.append('msfc_delete_product_category_nonce', My_Shop_Front_Form_Handler.category_delete_nonce);
+			// Clear messages
+			this.message = '';
+			this.error = '';
 
-            try {
-                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Deleting...');
+			// Prepare form data
+			let formData = new FormData();
+			formData.append( 'id', categoryId );
+			formData.append( 'action', 'msfc_delete_product_category' );
+			formData.append(
+				'msfc_delete_product_category_nonce',
+				My_Shop_Front_Form_Handler.msfc_woo_delete_nonce_
+			);
 
-                if (result.success) {
-                    this.message = result.data.message;
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Deleting...'
+				);
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Deleted!',
-                        text: this.message,
-                        confirmButtonText: 'OK'
-                    });
-                    
-                    // Optionally remove the deleted category row from the DOM
-                    document.getElementById(`category-row-${categoryId}`).remove();
-                } else {
-                    this.error = result.data.error;
+				if ( result.success ) {
+					this.message = result.data.message;
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: this.error,
-                        confirmButtonText: 'OK'
-                    });
-                }
-            } catch (err) {
-                this.error = 'An unexpected error occurred. Please try again later.';
+					Swal.fire( {
+						icon: 'success',
+						title: 'Deleted!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Unexpected Error',
-                    text: this.error,
-                    confirmButtonText: 'OK'
-                });
-            }
-        }
-    };
+					// Optionally remove the deleted category row from the DOM
+					document
+						.getElementById( `category-row-${ categoryId }` )
+						.remove();
+				} else {
+					this.error = result.data.error;
+
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Unexpected Error',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
 }
-/*** 
+/***
  * Category Form Handler [End]
  */
 
-
-/*** 
+/***
  * Tag Form Handler [Start]
  * Using Alpine JS
  */
 
 //Add tag
 function tagAddFormHandler() {
-    return {
-        message: '',  // Success message
-        error: '',    // Error message
-        
-        async handleTagSubmission() {
-            // Clear messages before submission
-            this.message = '';
-            this.error = '';
+	return {
+		message: '', // Success message
+		error: '', // Error message
 
-            // Collect form data
-            let formData = new FormData(document.getElementById('msfc-add-tag'));
+		async handleTagSubmission() {
+			// Clear messages before submission
+			this.message = '';
+			this.error = '';
 
-            try {
-                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Adding...');
+			// Collect form data
+			let formData = new FormData(
+				document.getElementById( 'msfc-add-tag' )
+			);
 
-                // Check for success or error
-                if (result.success) {
-                    this.message = result.data.message;
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Adding...'
+				);
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Added!',
-                        text: this.message,
-                        confirmButtonText: 'OK'
-                    });
+				// Check for success or error
+				if ( result.success ) {
+					this.message = result.data.message;
 
-                    document.getElementById('msfc-add-tag').reset();  // Reset form fields
-                } else {
-                    this.error = result.data.error;
+					Swal.fire( {
+						icon: 'success',
+						title: 'Added!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: this.error,
-                        confirmButtonText: 'OK'
-                    });
-                }
-            } catch (err) {
-                // Handle any other errors
-                this.error = 'An unexpected error occurred. Please try again later.';
+					document.getElementById( 'msfc-add-tag' ).reset(); // Reset form fields
+				} else {
+					this.error = result.data.error;
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: this.error,
-                    confirmButtonText: 'OK'
-                });
-            }
-        }
-    };
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				// Handle any other errors
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Error!',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
 }
 
 //Edit tag
-function tagEditFormHandler(categoryId) {
-    return {
-        message: '',  // Success message
-        error: '',    // Error message
+function tagEditFormHandler( categoryId ) {
+	return {
+		message: '', // Success message
+		error: '', // Error message
 
-        async handleTagEditSubmission() {
-            // Clear messages before submission
-            this.message = '';
-            this.error = '';
+		async handleTagEditSubmission() {
+			// Clear messages before submission
+			this.message = '';
+			this.error = '';
 
-            // Collect form data
-            let formData = new FormData(document.getElementById('msfc-edit-tag'));
+			// Collect form data
+			let formData = new FormData(
+				document.getElementById( 'msfc-edit-tag' )
+			);
 
-            try {
-                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Updating...');
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Updating...'
+				);
 
-                // Check for success or error
-                if (result.success) {
-                    this.message = result.data.message;
+				// Check for success or error
+				if ( result.success ) {
+					this.message = result.data.message;
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Updated!',
-                        text: this.message,
-                        confirmButtonText: 'OK'
-                    });
-                } else {
-                    this.error = result.data.error;
+					Swal.fire( {
+						icon: 'success',
+						title: 'Updated!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
+				} else {
+					this.error = result.data.error;
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: this.error,
-                        confirmButtonText: 'OK'
-                    });
-                }
-            } catch (err) {
-                // Handle any other errors
-                this.error = 'An unexpected error occurred. Please try again later.';
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				// Handle any other errors
+				this.error =
+					'An unexpected error occurred. Please try again later.';
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: this.error,
-                    confirmButtonText: 'OK'
-                });
-            }
-        }
-    };
+				Swal.fire( {
+					icon: 'error',
+					title: 'Error!',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
 }
 
 //Delete category
 function deleteTagHandler() {
-    return {
-        message: '', // Success message
-        error: '',   // Error message
+	return {
+		message: '', // Success message
+		error: '', // Error message
 
-        async deleteTag(tagId) {
-            // Show confirmation dialog with SweetAlert2
-            const confirmation = await Swal.fire({
-                title: 'Are you sure?',
-                text: 'This action will permanently delete the tag.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            });
+		async deleteTag( tagId ) {
+			// Show confirmation dialog with SweetAlert2
+			const confirmation = await Swal.fire( {
+				title: 'Are you sure?',
+				text: 'This action will permanently delete the tag.',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Yes, delete it!',
+				cancelButtonText: 'Cancel',
+			} );
 
-            // If user cancels, exit the function
-            if (!confirmation.isConfirmed) return;
-            
-            // Clear messages
-            this.message = '';
-            this.error = '';
+			// If user cancels, exit the function
+			if ( ! confirmation.isConfirmed ) return;
 
-            // Prepare form data
-            let formData = new FormData();
-            formData.append('id', tagId);
-            formData.append('action', 'msfc_delete_product_tag');
-            formData.append('msfc_delete_product_tag_nonce', My_Shop_Front_Form_Handler.category_delete_nonce);
+			// Clear messages
+			this.message = '';
+			this.error = '';
 
-            try {
-                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Deleting...');
+			// Prepare form data
+			let formData = new FormData();
+			formData.append( 'id', tagId );
+			formData.append( 'action', 'msfc_delete_product_tag' );
+			formData.append(
+				'msfc_delete_product_tag_nonce',
+				My_Shop_Front_Form_Handler.msfc_woo_delete_nonce_
+			);
 
-                if (result.success) {
-                    this.message = result.data.message;
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Deleting...'
+				);
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Deleted!',
-                        text: this.message,
-                        confirmButtonText: 'OK'
-                    });
-                    
-                    // Optionally remove the deleted category row from the DOM
-                    document.getElementById(`tag-row-${tagId}`).remove();
-                } else {
-                    this.error = result.data.error;
+				if ( result.success ) {
+					this.message = result.data.message;
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: this.error,
-                        confirmButtonText: 'OK'
-                    });
-                }
-            } catch (err) {
-                this.error = 'An unexpected error occurred. Please try again later.';
+					Swal.fire( {
+						icon: 'success',
+						title: 'Deleted!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Unexpected Error',
-                    text: this.error,
-                    confirmButtonText: 'OK'
-                });
-            }
-        }
-    };
+					// Optionally remove the deleted category row from the DOM
+					document.getElementById( `tag-row-${ tagId }` ).remove();
+				} else {
+					this.error = result.data.error;
+
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Unexpected Error',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
 }
-/*** 
+/***
  * Category Form Handler [End]
  */
 
+/***
+ * Brand Form Handler [Start]
+ * Using Alpine JS
+ */
 
-/*** 
+//Add brand
+function brandAddFormHandler() {
+	return {
+		message: '', // Success message
+		error: '', // Error message
+
+		async handleBrandSubmission() {
+			// Clear messages before submission
+			this.message = '';
+			this.error = '';
+
+			// Collect form data
+			let formData = new FormData(
+				document.getElementById( 'msfc-add-brand' )
+			);
+
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Adding...'
+				);
+
+				// Check for success or error
+				if ( result.success ) {
+					this.message = result.data.message;
+
+					Swal.fire( {
+						icon: 'success',
+						title: 'Added!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
+
+					document.getElementById( 'msfc-add-brand' ).reset(); // Reset form fields
+				} else {
+					this.error = result.data.error;
+
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				// Handle any other errors
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Error!',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
+}
+
+//Edit brand
+function brandEditFormHandler( brandId ) {
+	return {
+		message: '', // Success message
+		error: '', // Error message
+
+		async handleBrandEditSubmission() {
+			// Clear messages before submission
+			this.message = '';
+			this.error = '';
+
+			// Collect form data
+			let formData = new FormData(
+				document.getElementById( 'msfc-edit-brand' )
+			);
+
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Updating...'
+				);
+
+				// Check for success or error
+				if ( result.success ) {
+					this.message = result.data.message;
+
+					Swal.fire( {
+						icon: 'success',
+						title: 'Updated!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
+				} else {
+					this.error = result.data.error;
+
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				// Handle any other errors
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Error!',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
+}
+
+//Delete brand
+function deleteBrandHandler() {
+	return {
+		message: '', // Success message
+		error: '', // Error message
+
+		async deleteBrand( brandId ) {
+			// Show confirmation dialog with SweetAlert2
+			const confirmation = await Swal.fire( {
+				title: 'Are you sure?',
+				text: 'This action will permanently delete the brand.',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Yes, delete it!',
+				cancelButtonText: 'Cancel',
+			} );
+
+			// If user cancels, exit the function
+			if ( ! confirmation.isConfirmed ) return;
+
+			// Clear messages
+			this.message = '';
+			this.error = '';
+
+			// Prepare form data
+			let formData = new FormData();
+			formData.append( 'id', brandId );
+			formData.append( 'action', 'msfc_delete_product_brand' );
+			formData.append(
+				'msfc_delete_product_brand_nonce',
+				My_Shop_Front_Form_Handler.msfc_woo_delete_nonce_
+			);
+
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Deleting...'
+				);
+
+				if ( result.success ) {
+					this.message = result.data.message;
+
+					Swal.fire( {
+						icon: 'success',
+						title: 'Deleted!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
+
+					// Optionally remove the deleted brand row from the DOM
+					document
+						.getElementById( `brand-row-${ brandId }` )
+						.remove();
+				} else {
+					this.error = result.data.error;
+
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Unexpected Error',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
+}
+/***
+ * Brand Form Handler [End]
+ */
+
+/***
  * Product Form Handler [Start]
  * Using Alpine JS
  */
 
 //Add product
 function productAddFormHandler() {
-    return {
-        message: '',  // Success message
-        error: '',    // Error message
-        
-        async handleProductSubmission() {
-            // Clear messages before submission
-            this.message = '';
-            this.error = '';
+	return {
+		message: '', // Success message
+		error: '', // Error message
 
-            // Force TinyMCE editor content to update the textarea
-            if (typeof tinyMCE !== 'undefined') {
-                const editor = tinyMCE.get('product_description');
-                if (editor) {
-                    editor.save(); // Sync content to the textarea
-                }
-            }
+		async handleProductSubmission() {
+			// Clear messages before submission
+			this.message = '';
+			this.error = '';
 
-            // Collect form data
-            let formData = new FormData(document.getElementById('msfc-add-product'));
+			// Force TinyMCE editor content to update the textarea
+			if ( typeof tinyMCE !== 'undefined' ) {
+				const editor = tinyMCE.get( 'product_description' );
+				if ( editor ) {
+					editor.save(); // Sync content to the textarea
+				}
+			}
 
-            try {
-                let result = await ajaxRequestWithLoading(My_Shop_Front_Form_Handler.ajax_url, formData, 'Adding...');
-                
-                // Check for success or error
-                if (result.success) {
-                    this.message = result.data.message;
+			// Collect form data
+			let formData = new FormData(
+				document.getElementById( 'msfc-add-product' )
+			);
 
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Added!',
-                        text: this.message,
-                        confirmButtonText: 'OK'
-                    });
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Adding...'
+				);
 
-                    document.getElementById('msfc-add-product').reset();  // Reset form fields
-                } else {
-                    this.error = result.data.error;
+				// Check for success or error
+				if ( result.success ) {
+					this.message = result.data.message;
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: this.error,
-                        confirmButtonText: 'OK'
-                    });
-                }
-            } catch (err) {
-                // Handle any other errors
-                this.error = 'An unexpected error occurred. Please try again later.';
+					Swal.fire( {
+						icon: 'success',
+						title: 'Added!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: this.error,
-                    confirmButtonText: 'OK'
-                });
-            }
-        }
-    };
+					document.getElementById( 'msfc-add-product' ).reset(); // Reset form fields
+				} else {
+					this.error = result.data.error;
+
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				// Handle any other errors
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Error!',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+	};
 }
