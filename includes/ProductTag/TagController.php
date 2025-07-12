@@ -104,7 +104,7 @@ class TagController {
 	 */
 	public function handle_delete_tag() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['msfc_delete_product_tag_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_delete_product_tag_nonce'] ), '_msfc_delete_product_category_' ) ) {
+		if ( ! isset( $_POST['msfc_delete_product_tag_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_delete_product_tag_nonce'] ), '_msfc_delete_nonce_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
 		}
 

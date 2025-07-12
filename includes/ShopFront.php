@@ -214,6 +214,8 @@ final class ShopFront {
 		$this->container['msf_admin_settings_controller']   = new REST\SettingsController();
 		$this->container['msf_product_categories']          = new ProductCategory\Categories();
 		$this->container['msf_product_category_controller'] = new ProductCategory\CategoryController();
+		$this->container['msf_product_brands']              = new ProductBrand\Brands();
+		$this->container['msf_product_brand_controller']    = new ProductBrand\BrandController();
 		$this->container['msf_product_tag_controller']      = new ProductTag\TagController();
 		$this->container['msf_product_controller']          = new Product\ProductController();
 	}

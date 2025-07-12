@@ -230,7 +230,7 @@ function msfc_get_navigation_url( $name = '' ) {
 function is_msf_dashboard_page() {
 	$page_id = (int) msfc_get_option_by_key( 'msf_dashboard_page_id' );
 
-	return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'woocommerce_my_account' );
+	return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'my_shop_front_dashboard' );
 }
 
 
