@@ -51,4 +51,4 @@ do_action( 'msf_dashboard_wrapper_start' );
 		</main>
 	</div>
 </div>
-<?php do_action( 'msf_dashboard_wrapper_end' ); ?> 
+<?php do_action( 'msf_dashboard_wrapper_end' ); ?>
