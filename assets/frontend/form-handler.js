@@ -720,3 +720,147 @@ function productAddFormHandler() {
 		},
 	};
 }
+
+/***
+ * Order Note Form Handler [Start]
+ * Using Alpine JS
+ */
+
+//Add order note
+function orderNoteAddFormHandler() {
+	return {
+		message: '', // Success message
+		error: '', // Error message
+
+		async handleOrderNoteSubmission() {
+			// Clear messages before submission
+			this.message = '';
+			this.error = '';
+
+			// Collect form data
+			let formData = new FormData(
+				document.getElementById( 'msfc-add-order-note' )
+			);
+
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Adding...'
+				);
+
+				// Check for success or error
+				if ( result.success ) {
+					this.message = result.data.message;
+
+					// ✅ Append the returned <li> to the notes list
+					let notesList = document.querySelector('.order_notes');
+					if ( notesList && result.data.note_html ) {
+						notesList.insertAdjacentHTML('afterbegin', result.data.note_html);
+					}
+
+					Swal.fire( {
+						icon: 'success',
+						title: 'Added!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
+
+					document.getElementById( 'msfc-add-order-note' ).reset(); // Reset form fields
+				} else {
+					this.error = result.data.error;
+
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch ( err ) {
+				// Handle any other errors
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Error!',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		},
+
+		async handleDeleteNote(event) {
+			event.preventDefault();
+
+			let el = event.target.closest('li');
+			let noteID = el.dataset.id;
+
+			if ( !noteID ) {
+				return;
+			}
+
+			// Show confirmation dialog with SweetAlert2
+			const confirmation = await Swal.fire( {
+				title: 'Are you sure?',
+				text: 'This action will permanently delete the note.',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Yes, delete it!',
+				cancelButtonText: 'Cancel',
+			} );
+
+			// If user cancels, exit the function
+			if ( ! confirmation.isConfirmed ) return;
+
+			let formData = new FormData();
+			formData.append('action', 'msfc_delete_order_note');
+			formData.append('note_id', noteID);
+			formData.append(
+				'msfc_delete_order_note_nonce',
+				My_Shop_Front_Form_Handler.msfc_woo_delete_nonce_
+			);
+
+			try {
+				let result = await ajaxRequestWithLoading(
+					My_Shop_Front_Form_Handler.ajax_url,
+					formData,
+					'Deleting...'
+				);
+
+				if ( result.success ) {
+					this.message = result.data.message;
+
+					Swal.fire( {
+						icon: 'success',
+						title: 'Deleted!',
+						text: this.message,
+						confirmButtonText: 'OK',
+					} );
+
+					// Remove the <li> from DOM
+					el.remove();
+				} else {
+					this.error = result.data.error;
+					Swal.fire( {
+						icon: 'error',
+						title: 'Error!',
+						text: this.error,
+						confirmButtonText: 'OK',
+					} );
+				}
+			} catch (err) {
+				this.error =
+					'An unexpected error occurred. Please try again later.';
+
+				Swal.fire( {
+					icon: 'error',
+					title: 'Unexpected Error',
+					text: this.error,
+					confirmButtonText: 'OK',
+				} );
+			}
+		}
+	};
+}
