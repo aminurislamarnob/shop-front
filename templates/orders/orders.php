@@ -1,22 +1,129 @@
 <?php
 /**
- * MSFC WFM Order details Page
- * ***/
+ * MSFC order List Page
+ *
+ * @package ShopFront
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use PluginizeLab\ShopFront\Order\OrderManager;
+$orders_obj = new OrderManager();
+
 do_action( 'msf_dashboard_wrapper_start' );
 ?>
 <div class="my-shop-front-container">
-	<div class="row">
-		<div class="col-md-2">
-			<?php do_action( 'msf_dashboard_navigation' ); ?>
-		</div>
-		<div class="col-md-10">
-			Order list
-		</div>
+	<aside class="my-shop-front-sidebar">
+		<?php do_action( 'msf_dashboard_navigation' ); ?>
+	</aside>
+	<div class="my-shop-front-wrapper">
+		<?php do_action( 'msf_dashboard_content_before' ); ?>
+		<main class="my-shop-front-page-content">
+			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
+			<div class="msf-table-header-part">
+				<div class="row">
+					<div class="col-md-6">
+						<form action="">
+							<div class="msf-table-search-input">
+								<div class="msf-table-search-icon">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
+									</svg>
+								</div>
+								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Order', 'shop-front' ); ?>" />
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="msf-table-responsive">
+				<table class="my-shop-front-tbl my-shop-front-product-list-table">
+					<thead>
+						<tr>
+							<th><?php echo esc_html__( 'Order', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Status', 'shop-front' ); ?></th>
+							<!-- <th width="20%"><?php // echo esc_html__( 'Billing & Shipping', 'shop-front' ); ?></th> -->
+							<th><?php echo esc_html__( 'Order Total', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Total Items', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Customer', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Billing Phone', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Date', 'shop-front' ); ?></th>
+							<th class="text-right"><?php echo esc_html__( 'Action', 'shop-front' ); ?></th>
+						</tr>
+						<tbody>
+							<?php
+							$orders = $orders_obj->get_all_orders();
+							foreach ( $orders as $order ) { // phpcs:ignore
+								$item_count = $order->get_item_count() - $order->get_item_count_refunded();
+								/**
+								 * @var WC_Order $order
+								 */
+								?>
+								<tr>
+									<td data-title="<?php echo esc_attr__( 'Order', 'shop-front' ); ?>">
+										<?php $orders_obj->get_order_number_column_value( $order ); ?>
+									</td>
+									<td data-title="<?php echo esc_attr__( 'Status', 'shop-front' ); ?>">
+										<span class="msfc-badge msfc-badge-<?php echo esc_attr( msf_get_order_status_class( $order->get_status() ) ); ?>">
+											<?php echo esc_html( wc_get_order_status_name( $order->get_status() ) ); ?>
+										</span>
+									</td>
+									<!-- <td data-title="<?php echo esc_attr__( 'Billing & Shipping', 'shop-front' ); ?>">
+										<div class="msf-billing-shipping-info">
+											<span><?php // echo esc_html__( 'Billing: ', 'shop-front' ); ?></span>
+											<?php // $orders_obj->get_billing_address_column_value( $order ); ?>
+										</div>
+										<div class="msf-billing-shipping-info">
+											<span><?php // echo esc_html__( 'Shipping: ', 'shop-front' ); ?></span>
+											<?php // $orders_obj->get_shipping_address_column_value( $order ); ?>
+										</div>
+									</td> -->
+									<td data-title="<?php echo esc_attr__( 'Total', 'shop-front' ); ?>">
+										<?php echo wp_kses_post( $order->get_formatted_order_total() ); ?>
+									</td>
+									<td data-title="<?php echo esc_html__( 'Total Items', 'shop-front' ); ?>">
+										<?php echo esc_html( $item_count ); ?>
+									</td>
+									<td data-title="<?php echo esc_attr__( 'Customer', 'shop-front' ); ?>">
+										<?php $orders_obj->get_order_customer_column_value( $order ); ?>
+									</td>
+									<td data-title="<?php echo esc_attr__( 'Billing Phone', 'shop-front' ); ?>">
+										<?php
+										if ( $order->get_billing_phone() ) {
+											echo esc_html( $order->get_billing_phone() );
+										} else {
+											echo esc_html__( 'N/A', 'shop-front' );
+										}
+										?>
+									</td>
+									<td data-title="<?php echo esc_attr__( 'Date', 'shop-front' ); ?>">
+										<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( wc_format_datetime( $order->get_date_created() ) ); ?></time>
+									</td>
+									<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'shop-front' ); ?>">
+										<div class="msfc-dropdown">
+											<span class="msfc-dropdown-icon">
+												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+													<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+												</svg>
+											</span>
+											<ul class="msfc-dropdown-menu">
+												<li>
+													<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'order-details' ) . '%s', $order->get_id() ) ); ?>" class="dropdown-link"><?php esc_html_e( 'View', 'shop-front' ); ?></a>
+												</li>
+											</ul>
+										</div>
+									</td>
+								</tr>
+								<?php
+							}
+							?>
+						</tbody>
+					</thead>
+				</table>
+			</div>
+		</main>
 	</div>
 </div>
 <?php do_action( 'msf_dashboard_wrapper_end' ); ?>

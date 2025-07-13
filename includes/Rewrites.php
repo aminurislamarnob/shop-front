@@ -135,7 +135,7 @@ class Rewrites {
 				}
 				break;
 			case 'order-details':
-				$order = wc_get_order( $wp->query_vars['view-order'] );
+				$order = wc_get_order( $wp->query_vars['order-details'] );
 				/* translators: %s: order number */
 				$title = ( $order ) ? sprintf( __( 'Order #%s', 'shop-front' ), $order->get_order_number() ) : '';
 				break;

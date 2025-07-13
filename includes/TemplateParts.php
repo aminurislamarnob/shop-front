@@ -52,6 +52,8 @@ class TemplateParts {
 				$endpoint = 'tags';
 			} elseif ( 'add-new-brand' === $endpoint || 'edit-brand' === $endpoint ) {
 				$endpoint = 'brands';
+			} elseif ( 'order-details' === $endpoint ) {
+				$endpoint = 'orders';
 			}
 
 			$parent_endpoint_title = $dashboard_menu->get_dashboard_menus()[ $endpoint ]['title'] ?? '';

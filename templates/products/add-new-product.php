@@ -25,7 +25,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 						<div x-data="productAddFormHandler()">
 							<form id="msfc-add-product" @submit.prevent="handleProductSubmission" method="POST">
 								<div class="form-group">
-									<label for="product_title"><?php esc_html_e( 'Prduct Title', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
+									<label for="product_title"><?php esc_html_e( 'Product Title', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
 									<input type="text" class="form-control" id="product_title" name="product_title" placeholder="<?php echo esc_attr__( 'Product name', 'msfc-wfm' ); ?>">
 								</div>
 								<div class="form-group">
