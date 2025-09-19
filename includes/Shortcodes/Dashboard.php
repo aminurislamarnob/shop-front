@@ -58,6 +58,16 @@ class Dashboard extends MyShopFrontShortcode {
 			return ob_get_clean();
 		}
 
+		if ( isset( $wp->query_vars['add-new-order'] ) ) {
+			msf_get_template_part( 'orders/add-new-order' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['edit-order'] ) ) {
+			msf_get_template_part( 'orders/edit-order' );
+			return ob_get_clean();
+		}
+
 		if ( isset( $wp->query_vars['order-details'] ) ) {
 			msf_get_template_part( 'orders/order-details' );
 			return ob_get_clean();
