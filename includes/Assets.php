@@ -36,17 +36,23 @@ class Assets {
 	public function register_scripts() {
 		$admin_script                 = SHOP_FRONT_PLUGIN_ASSET . '/admin/script.js';
 		$frontend_script              = SHOP_FRONT_PLUGIN_ASSET . '/frontend/script.js';
+		$frontend_order_script        = SHOP_FRONT_PLUGIN_ASSET . '/frontend/order.js';
 		$frontend_form_handler_script = SHOP_FRONT_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_alpinejs_script     = 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js';
 		$frontend_sweetalert2         = SHOP_FRONT_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 
-		wp_register_script( 'my_shop_front_admin_script', $admin_script, array( 'my_shop_front-block-editor-script' ), filemtime( SHOP_FRONT_DIR . '/assets/admin/script.js' ), true );
-		wp_register_script( 'my_shop_front_script', $frontend_script, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/script.js' ), true );
+		wp_register_script( 'my_shop_front_admin_script', $admin_script, array( 'my_shop_front-block-editor-script' ), SHOP_FRONT_PLUGIN_VERSION, true );
+		wp_register_script( 'my_shop_front_script', $frontend_script, array(), SHOP_FRONT_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
 		wp_register_script( 'my_shop_front_form_handler_script', $frontend_form_handler_script, array( 'my_shop_front_alpinejs' ), filemtime( SHOP_FRONT_DIR . '/assets/frontend/form-handler.js' ), true );
 		wp_register_script( 'my_shop_front_alpinejs', $frontend_alpinejs_script, array(), '3.x.x', true );
 		wp_register_script( 'my_shop_front_sweetalert2_script', $frontend_sweetalert2, array(), '11.14.5', true );
+		
+		// Order scripts.
+		wp_register_script( 'my_shop_front_order_script', $frontend_order_script, array('my_shop_front_select2'), SHOP_FRONT_PLUGIN_VERSION, true );
+		wp_register_script( 'my_shop_front_select2', WC()->plugin_url() . '/assets/js/select2/select2.full.js', array( 'jquery', 'my_shop_front_selectWoo' ), '4.0.3', true );
+		wp_register_script( 'my_shop_front_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 	}
 
 	/**
@@ -59,6 +65,7 @@ class Assets {
 		$frontend_style             = SHOP_FRONT_PLUGIN_ASSET . '/frontend/style.css';
 		$bs_grid_style              = SHOP_FRONT_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
 		$frontend_sweetalert2_style = SHOP_FRONT_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
+		$frontend_select2_style 	= WC()->plugin_url() . 'assets/css/select2.css';
 
 		wp_register_style( 'my_shop_front_admin_style', $admin_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/admin/style.css' ) );
 		wp_register_style( 'my_shop_front_style', $frontend_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/style.css' ) );
@@ -66,6 +73,9 @@ class Assets {
 
 		wp_register_style( 'my_shop_front_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 		wp_register_style( 'my_shop_front_poppins', 'https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap', array() );
+		
+		// Order styles.
+		wp_register_style( 'my_shop_front_select2', $frontend_select2_style, array(), '4.0.3' );
 	}
 
 	/**
@@ -108,11 +118,6 @@ class Assets {
 		wp_enqueue_style( 'my_shop_front_style' );
 		wp_enqueue_style( 'my_shop_front_bs_grid' );
 		wp_enqueue_script( 'my_shop_front_script' );
-		wp_localize_script(
-			'my_shop_front_script',
-			'My_Shop_Front',
-			array()
-		);
 
 		if ( is_msf_dashboard_page() ) {
 			wp_enqueue_style( 'my_shop_front_poppins' );
@@ -141,6 +146,48 @@ class Assets {
 				)
 			);
 			wp_enqueue_media();
+
+
+			// Order styles and scripts.
+			wp_enqueue_script( 'my_shop_front_select2' );
+			wp_enqueue_style( 'my_shop_front_select2' );
+			wp_enqueue_script( 'my_shop_front_selectWoo' );
+			wp_enqueue_script( 'my_shop_front_order_script' );
+
+			global $theorder;
+			$order_id = \Automattic\WooCommerce\Utilities\OrderUtil::get_post_or_order_id( $theorder ) ;
+			wp_localize_script(
+				'my_shop_front_order_script',
+				'My_Shop_Front_Order',
+				array(
+					'i18n_no_matches'                 => _x( 'No matches found', 'enhanced select', 'woocommerce' ),
+					'i18n_ajax_error'                 => _x( 'Loading failed', 'enhanced select', 'woocommerce' ),
+					'i18n_input_too_short_1'          => _x( 'Please enter 1 or more characters', 'enhanced select', 'woocommerce' ),
+					'i18n_input_too_short_n'          => _x( 'Please enter %qty% or more characters', 'enhanced select', 'woocommerce' ),
+					'i18n_input_too_long_1'           => _x( 'Please delete 1 character', 'enhanced select', 'woocommerce' ),
+					'i18n_input_too_long_n'           => _x( 'Please delete %qty% characters', 'enhanced select', 'woocommerce' ),
+					'i18n_selection_too_long_1'       => _x( 'You can only select 1 item', 'enhanced select', 'woocommerce' ),
+					'i18n_selection_too_long_n'       => _x( 'You can only select %qty% items', 'enhanced select', 'woocommerce' ),
+					'i18n_load_more'                  => _x( 'Loading more results&hellip;', 'enhanced select', 'woocommerce' ),
+					'i18n_searching'                  => _x( 'Searching&hellip;', 'enhanced select', 'woocommerce' ),
+					'ajax_url'                        => admin_url( 'admin-ajax.php' ),
+					'search_products_nonce'           => wp_create_nonce( 'search-products' ),
+					'search_customers_nonce'          => wp_create_nonce( 'search-customers' ),
+					'search_categories_nonce'         => wp_create_nonce( 'search-categories' ),
+					'search_taxonomy_terms_nonce'     => wp_create_nonce( 'search-taxonomy-terms' ),
+					'search_product_attributes_nonce' => wp_create_nonce( 'search-product-attributes' ),
+					'search_pages_nonce'              => wp_create_nonce( 'search-pages' ),
+					'search_order_metakeys_nonce'     => wp_create_nonce( 'search-order-metakeys' ),
+					'copy_billing'                    => __( 'Copy billing information to shipping information? This will remove any currently entered shipping information.', 'woocommerce' ),
+					'load_billing'                    => __( "Load the customer's billing information? This will remove any currently entered billing information.", 'woocommerce' ),
+					'load_shipping'                   => __( "Load the customer's shipping information? This will remove any currently entered shipping information.", 'woocommerce' ),
+					'no_customer_selected'            => __( 'No customer selected', 'woocommerce' ),
+					'get_customer_details_nonce'      => wp_create_nonce( 'get-customer-details' ),
+					'add_order_note_nonce'            => wp_create_nonce( 'add-order-note' ),
+					'delete_order_note_nonce'         => wp_create_nonce( 'delete-order-note' ),
+					'post_id'                         => $order_id,
+				)
+			);
 		}
 	}
 }

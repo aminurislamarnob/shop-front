@@ -9,7 +9,6 @@
             this.uploadProductImage(); // Upload product image
             this.uploadProductGallaryImages(); // Upload product gallery images
         },
-
         handleDropdown: function(){            
             $(document).on('click', '.msfc-dropdown-icon', function(){
                 $('.msfc-dropdown-menu').hide();

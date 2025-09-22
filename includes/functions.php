@@ -283,3 +283,25 @@ function msf_get_id_from_query_vars( $query_var ) {
 
 	return null;
 }
+
+/**
+ * Check if the current page is a shop front page by endpoint
+ *
+ * @param string $endpoint
+ *
+ * @return bool
+ */
+function msfc_is_page( $endpoint ){
+	if( empty( $endpoint ) ){
+		return false;
+	}
+
+	if ( ! is_msf_dashboard_page() ){
+		return false;
+	}
+
+	global $wp;
+
+	$query_var = $wp->query_vars;
+	return array_key_exists( $endpoint, $query_var );
+}

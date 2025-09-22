@@ -102,4 +102,28 @@ class OrderManager {
 			echo '&ndash;';
 		}
 	}
+
+	/**
+	 * Get the available order actions for a given order.
+	 *
+	 * @param WC_Order|null $order The order object or null if no order is available.
+	 *
+	 * @return array
+	 */
+	public static function get_available_order_actions_for_order( $order ) {
+		$actions = array(
+			'send_order_details'              => __( 'Send order details to customer', 'woocommerce' ),
+			'send_order_details_admin'        => __( 'Resend new order notification', 'woocommerce' ),
+			'regenerate_download_permissions' => __( 'Regenerate download permissions', 'woocommerce' ),
+		);
+
+		/**
+		 * Filter: woocommerce_order_actions
+		 * Allows filtering of the available order actions for an order.
+		 *
+		 * @param array         $actions The available order actions for the order.
+		 * @param WC_Order|null $order   The order object or null if no order is available.
+		 */
+		return apply_filters( 'woocommerce_order_actions', $actions, $order );
+	}
 }

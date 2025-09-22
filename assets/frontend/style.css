@@ -463,7 +463,7 @@ template {
 .my-shop-front-inline-form button {
   height: 35px!important;
 }
-.my-shop-front-container .msf-form-control:focus, .my-shop-front-container .msf-form-control:focus-within, .my-shop-front-container .msf-form-control:focus-visible {
+.my-shop-front-container .msf-form-control:focus, .my-shop-front-container .msf-form-control:focus-within, .my-shop-front-container .msf-form-control:focus-visible, .select2-search--dropdown .select2-search__field:focus {
   box-shadow: none;
   outline: none;
   border: 1px solid var(--primary-bg);

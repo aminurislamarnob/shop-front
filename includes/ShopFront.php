@@ -219,6 +219,7 @@ final class ShopFront {
 		$this->container['msf_product_tag_controller']      = new ProductTag\TagController();
 		$this->container['msf_product_controller']          = new Product\ProductController();
 		$this->container['msf_order_controller']            = new Order\OrderController();
+		$this->container['msf_create_new_order']            = new Order\CreateNewOrder();
 		$this->container['msf_order_manager']               = new Order\OrderManager();
 		$this->container['msf_order_hooks']                 = new Order\OrderHooks();
 	}
