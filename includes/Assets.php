@@ -186,6 +186,13 @@ class Assets {
 					'add_order_note_nonce'            => wp_create_nonce( 'add-order-note' ),
 					'delete_order_note_nonce'         => wp_create_nonce( 'delete-order-note' ),
 					'post_id'                         => $order_id,
+					'order_item_nonce'                => wp_create_nonce( 'order-item' ),
+					'hide_new_customer_form'          => __( 'hide new customer form', 'shop-front' ),
+					'add_new_customer_form'           => __( 'add a new customer', 'shop-front' ),
+					'new_customer_or'           	  => __( 'Or', 'shop-front' ),
+					'tax_based_on'                    => esc_attr( get_option( 'woocommerce_tax_based_on' ) ),
+					'i18n_apply_coupon'               => __( 'Enter a coupon code to apply. Discounts are applied to line totals, before taxes.', 'woocommerce' ),
+					'i18n_add_fee'                    => __( 'Enter a fixed amount or percentage.', 'shop-front' ),
 				)
 			);
 		}

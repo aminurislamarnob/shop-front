@@ -13,6 +13,7 @@ class OrderController {
 	public function __construct() {
 		add_action( 'wp_ajax_msfc_add_order_note', array( $this, 'handle_add_order_note' ) );
 		add_action( 'wp_ajax_msfc_delete_order_note', array( $this, 'handle_delete_order_note' ) );
+		add_action( 'wp_ajax_msfc_add_shipping_to_order', array( $this, 'msfc_add_shipping_to_order' ) );
 	}
 
 	/**
@@ -115,5 +116,52 @@ class OrderController {
 		} else {
 			wp_send_json_success( array( 'message' => __( 'Note successfully deleted', 'shop-front' ) ) );
 		}
+	}
+
+	/**
+	 * Add shipping to order
+	 */
+	public function msfc_add_shipping_to_order() {
+		// Verify nonce
+		check_ajax_referer( 'order-item', 'security' );
+
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+			wp_die( -1 );
+		}
+
+		$response = array();
+
+		try {
+			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
+			$order    = wc_get_order( $order_id );
+
+			if ( ! $order ) {
+				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
+			}
+
+			$shipping_method_title = isset($_POST['shipping_method_title']) ? sanitize_text_field($_POST['shipping_method_title']) : __('Shipping', 'shop-front');
+			$shipping_method_id = isset($_POST['shipping_method']) ? sanitize_text_field($_POST['shipping_method']) : '';
+			$shipping_cost = isset($_POST['shipping_cost']) ? floatval($_POST['shipping_cost']) : 0;
+			
+			// Create shipping item
+			$shipping_item = new \WC_Order_Item_Shipping();
+			$shipping_item->set_method_title($shipping_method_title);
+			$shipping_item->set_method_id($shipping_method_id);
+			$shipping_item->set_total($shipping_cost);
+			
+			// Add to order
+			$order->add_item($shipping_item);
+			$order->calculate_totals();
+			$order->save();
+
+			ob_start();
+			include WC()->plugin_path() . '/includes/admin/meta-boxes/views/html-order-items.php';
+			$response['html'] = ob_get_clean();
+		} catch ( \Exception $e ) {
+			wp_send_json_error( array( 'error' => $e->getMessage() ) );
+		}
+
+		// wp_send_json_success must be outside the try block not to break phpunit tests.
+		wp_send_json_success( $response );
 	}
 }

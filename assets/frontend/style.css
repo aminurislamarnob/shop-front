@@ -430,6 +430,9 @@ template {
 }
 
 /*Common Styles*/
+.msf-mb-20{
+  margin-bottom: 20px;
+}
 .msf-card {
   background: #fff;
   border-radius: 6px;
@@ -1343,4 +1346,725 @@ span.msf-sidebar-trigger svg {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
+}
+
+/*Order Add New Page*/
+#search-order-items{
+  display: none;
+}
+.select2-container {
+  box-sizing: border-box;
+  display: inline-block;
+  margin: 0;
+  position: relative;
+  vertical-align: middle;
+  width: 100%!important;
+}
+.select2-container .select2-selection--single {
+  height: 38px;
+  background-color: #fff;
+  border: 1px solid #7e8993;
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: block;
+  margin: 0 0 -4px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.select2-container .select2-selection--single .select2-selection__rendered {
+  line-height: 38px;
+  padding: 0 24px 0 8px;
+  color: #444;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select2-dropdown {
+  border-color: var(--primary-bg);
+}
+
+.select2-dropdown--below {
+  display: inline-block;
+  box-shadow: none;
+}
+
+.select2-dropdown--above {
+  box-shadow: 0 0 0 1px var(--primary-bg),0 -2px 1px rgba(0,0,0,.1);
+}
+
+.select2-selection--single .select2-selection__rendered:hover {
+  color: var(--primary-bg);
+}
+
+.select2-container.select2-container--focus .select2-selection--single, .select2-container.select2-container--open .select2-selection--multiple, .select2-container.select2-container--open .select2-selection--single {
+  border-color: var(--msf-input-border-color);
+  box-shadow: none!important;
+  outline: none;
+}
+.select2-container.select2-container--open .select2-selection--single{
+  border-bottom-left-radius: 0px!important;
+  border-bottom-right-radius: 0px!important;
+  border-color: var(--primary-bg)!important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected], .select2-container--default .select2-results__option--highlighted[data-selected] {
+  background-color: var(--primary-bg);
+  color: #fff;
+  border: 1px solid var(--primary-bg);
+}
+
+.select2-container--default .select2-results__option, .select2-container--default .select2-results__option:focus, .select2-container--default .select2-results__option:visited, .select2-container--default .select2-results__option:active{
+  box-shadow: none!important;
+  outline: none!important;
+  border-radius: 0px;
+  cursor: pointer;
+}
+span.select2-selection__clear {
+  margin-right: 5px;
+}
+
+.select2-container--default .select2-results__option:last-child{
+  border-bottom-left-radius: 6px!important;
+  border-bottom-right-radius: 6px!important;
+}
+
+.select2-container .select2-dropdown, .select2-container .select2-selection {
+  background-color: #fff;
+  border: 1px solid var(--msf-input-border-color)!important;
+  border-radius: 8px !important;
+}
+.select2-container.select2-container--open .select2-dropdown--below {
+  border-top: none!important;
+  border-top-left-radius: 0!important;
+  border-top-right-radius: 0!important;
+  border-color: var(--primary-bg)!important;
+}
+.select2-results__option {
+  margin: 0;
+  padding: 6px;
+  font-size: 14px;
+}
+.select2-search--dropdown {
+  display: block;
+  padding: 4px;
+}
+.select2-search--dropdown .select2-search__field {
+  padding: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  border: 1px solid var(--msf-input-border-color);
+  padding: 8px 16px;
+  height: 38px;
+  border-radius: 8px;
+}
+.select2-search--dropdown .select2-search__field:focus {
+  outline: none;
+  border-color: var(--primary-bg);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+.order-creation-form select#customer_user, select#msf_product_search {
+  display: none;
+}
+.order-creation-form .msf-card {
+  background: #fff;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.order-creation-form .msf-card-content {
+  padding: 24px;
+}
+
+.order-creation-form .msf-card-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  color: #374151;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.order-creation-form .msf-form-group {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.order-creation-form .msf-form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #495057;
+  font-size: 14px;
+}
+
+.order-creation-form .msf-form-control {
+  width: 100%;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+}
+
+.order-creation-form .msf-form-control:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.order-creation-form .search-group {
+  position: relative;
+}
+
+.order-creation-form .search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.order-creation-form .separator {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+}
+
+.order-creation-form .separator::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #e9ecef;
+}
+
+.order-creation-form .separator span {
+  background: white;
+  padding: 0 16px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.order-creation-form .customer-type-group {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.order-creation-form .radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.order-creation-form .radio-label input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #8b5cf6;
+}
+
+.order-creation-form .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.order-creation-form .checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #8b5cf6;
+}
+
+.order-creation-form .address-subtitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px 0 16px 0;
+  color: #2c3e50;
+}
+
+.order-creation-form .card-title-with-checkbox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 24px;
+}
+
+.order-creation-form .card-title-with-checkbox .msf-card-title {
+  margin: 0;
+  border-bottom: none;
+  padding: 0;
+}
+
+.order-creation-form .card-title-with-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 24px;
+}
+
+.order-creation-form .card-title-with-link .msf-card-title {
+  margin: 0;
+  border-bottom: none;
+  padding: 0;
+}
+
+.order-creation-form .checkbox-label.right-aligned {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.order-creation-form .toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  margin-left: 8px;
+}
+
+.order-creation-form .toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.order-creation-form .toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.order-creation-form .toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.order-creation-form input:checked + .toggle-slider {
+  background-color: #8b5cf6;
+}
+
+.order-creation-form input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+.order-creation-form .toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-creation-form .add-customer-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-creation-form .or-text {
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.order-creation-form .add-customer-link a {
+  color: #8b5cf6;
+  text-decoration: underline;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.order-creation-form .add-customer-link a:hover {
+  color: #7c3aed;
+  text-decoration: none;
+}
+
+.order-creation-form .new-customer-fields {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.order-creation-form .msf-table, .msfc-order-items-box table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.order-creation-form .msf-table th,
+.order-creation-form .msf-table td,
+.msfc-order-items-box table th,
+.msfc-order-items-box table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.order-creation-form .msf-table th, .msfc-order-items-box table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  font-size: 14px;
+}
+
+.order-creation-form .msf-table td, .msfc-order-items-box table td {
+  font-size: 14px;
+  color: #495057;
+}
+
+.order-creation-form .quantity-input {
+  width: 80px;
+  text-align: center;
+}
+
+.order-creation-form .delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.order-creation-form .delete-btn:hover {
+  background-color: #f8f9fa;
+}
+
+.order-creation-form .coupon-group {
+  display: flex;
+  gap: 8px;
+}
+
+.order-creation-form .coupon-group .msf-form-control {
+  flex: 1;
+}
+
+.order-creation-form .apply-btn {
+  background-color: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.order-creation-form .apply-btn:hover {
+  background-color: #7c3aed;
+}
+
+.order-creation-form .fee-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.order-creation-form .fee-group .msf-form-control {
+  flex: 1;
+}
+
+.order-creation-form .add-fee-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #8b5cf6;
+  color: white;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.order-creation-form .add-fee-btn:hover {
+  background-color: #7c3aed;
+}
+
+.order-creation-form .order-summary {
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.order-creation-form .summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.order-creation-form .summary-line.discount span:last-child {
+  color: #28a745;
+}
+
+.order-creation-form .summary-line.total {
+  border-top: 2px solid #e9ecef;
+  padding-top: 12px;
+  margin-top: 12px;
+  font-size: 16px;
+}
+
+.order-creation-form .action-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin: 0 0 24px 0;
+}
+
+.order-creation-form .create-order-btn,
+.order-creation-form .save-draft-btn {
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  flex: 1;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.order-creation-form .create-order-btn {
+  background-color: #8b5cf6;
+  color: #fff;
+  border: none;
+  font-weight: 600;
+}
+
+.order-creation-form .create-order-btn:hover {
+  background-color: #7c3aed;
+}
+
+.order-creation-form .save-draft-btn {
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 2px solid #e9ecef;
+  font-weight: 500;
+}
+
+.order-creation-form .save-draft-btn:hover {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.order-creation-form .existing-notes {
+  margin-bottom: 20px;
+}
+
+.order-creation-form .note {
+  margin-bottom: 16px;
+}
+
+.order-creation-form .note_content {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  position: relative;
+  background-color: #f5f5f5;
+  color: #424242;
+  border-left: 4px solid #9e9e9e;
+}
+.order-creation-form .note_content p{
+  margin: 0;
+}
+
+/* .order-creation-form .note_content-blue {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border-left: 4px solid #2196f3;
+}
+
+.order-creation-form .note_content-gray {
+  background-color: #f5f5f5;
+  color: #424242;
+  border-left: 4px solid #9e9e9e;
+} */
+
+.order-creation-form .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.order-creation-form .exact-date {
+  font-style: italic;
+}
+
+.order-creation-form .delete_note {
+  color: #dc3545;
+  text-decoration: underline;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.order-creation-form .delete_note:hover {
+  color: #c82333;
+}
+
+.order-creation-form .add-note-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 20px;
+}
+
+.order-creation-form .add-note-header {
+  margin-bottom: 16px;
+}
+
+.order-creation-form .add-note-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #374151;
+}
+
+.order-creation-form .help-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #6c757d;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: help;
+}
+
+.order-creation-form .note-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.order-creation-form .note-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.order-creation-form .note-options .msf-form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.order-creation-form .add-note-btn {
+  background-color: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.order-creation-form .add-note-btn:hover {
+  background-color: #7c3aed;
+}
+
+.order-creation-form .date-time-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-creation-form .date-input {
+  flex: 1;
+  min-width: 120px;
+}
+
+.order-creation-form .time-input {
+  width: 50px;
+  text-align: center;
+}
+
+.order-creation-form .date-separator,
+.order-creation-form .time-separator {
+  color: #6c757d;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .order-creation-form .col-md-8, 
+  .order-creation-form .col-md-4 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  .order-creation-form .customer-type-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .order-creation-form .coupon-group, 
+  .order-creation-form .fee-group {
+    flex-direction: column;
+  }
+  
+  .order-creation-form .action-buttons {
+    flex-direction: column;
+  }
+  
+  .order-creation-form .date-time-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .order-creation-form .date-input, 
+  .order-creation-form .time-input {
+    width: 100%;
+  }
 }
