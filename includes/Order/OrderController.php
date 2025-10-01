@@ -14,6 +14,7 @@ class OrderController {
 		add_action( 'wp_ajax_msfc_add_order_note', array( $this, 'handle_add_order_note' ) );
 		add_action( 'wp_ajax_msfc_delete_order_note', array( $this, 'handle_delete_order_note' ) );
 		add_action( 'wp_ajax_msfc_add_shipping_to_order', array( $this, 'msfc_add_shipping_to_order' ) );
+		add_action( 'wp_ajax_msfc_create_order', array( $this, 'msfc_create_order' ) );
 	}
 
 	/**
@@ -157,6 +158,117 @@ class OrderController {
 			ob_start();
 			include WC()->plugin_path() . '/includes/admin/meta-boxes/views/html-order-items.php';
 			$response['html'] = ob_get_clean();
+		} catch ( \Exception $e ) {
+			wp_send_json_error( array( 'error' => $e->getMessage() ) );
+		}
+
+		// wp_send_json_success must be outside the try block not to break phpunit tests.
+		wp_send_json_success( $response );
+	}
+
+	public function msfc_create_order(){
+		// Verify nonce
+		check_ajax_referer( 'order-item', 'security' );
+
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+			wp_die( -1 );
+		}
+
+		$response = array();
+
+		try {
+			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
+			$order    = wc_get_order( $order_id );
+			
+			if ( ! $order ) {
+				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
+			}
+
+			// Handle button actions.
+			if ( ! empty( $_POST['order_action'] ) ) { // @codingStandardsIgnoreLine
+
+				$action = wc_clean( wp_unslash( $_POST['order_action'] ) ); // @codingStandardsIgnoreLine
+
+				if ( 'send_order_details' === $action ) {
+					/**
+					 * Fires before an order email is resent.
+					 *
+					 * @since 1.0.0
+					 */
+					do_action( 'woocommerce_before_resend_order_emails', $order, 'customer_invoice' );
+
+					// Send the customer invoice email.
+					WC()->payment_gateways();
+					WC()->shipping();
+					WC()->mailer()->customer_invoice( $order );
+
+					// Note the event.
+					$order->add_order_note( __( 'Order details manually sent to customer.', 'woocommerce' ), false, true );
+
+					/**
+					 * Fires after an order email has been resent.
+					 *
+					 * @since 1.0.0
+					 */
+					do_action( 'woocommerce_after_resend_order_email', $order, 'customer_invoice' );
+
+				} elseif ( 'send_order_details_admin' === $action ) {
+
+					do_action( 'woocommerce_before_resend_order_emails', $order, 'new_order' );
+
+					WC()->payment_gateways();
+					WC()->shipping();
+					add_filter( 'woocommerce_new_order_email_allows_resend', '__return_true' );
+					WC()->mailer()->emails['WC_Email_New_Order']->trigger( $order->get_id(), $order, true );
+					remove_filter( 'woocommerce_new_order_email_allows_resend', '__return_true' );
+
+					do_action( 'woocommerce_after_resend_order_email', $order, 'new_order' );
+
+				} elseif ( 'regenerate_download_permissions' === $action ) {
+
+					$data_store = \WC_Data_Store::load( 'customer-download' );
+					$data_store->delete_by_order_id( $order_id );
+					wc_downloadable_product_permissions( $order_id, true );
+
+				} else {
+
+					if ( ! did_action( 'woocommerce_order_action_' . sanitize_title( $action ) ) ) {
+						do_action( 'woocommerce_order_action_' . sanitize_title( $action ), $order );
+					}
+				}
+			}
+
+			// Update date.
+			if ( empty( $_POST['order_date'] ) ) {
+				$date = time();
+			} else {
+				if ( ! isset( $_POST['order_date_hour'] ) || ! isset( $_POST['order_date_minute'] ) || ! isset( $_POST['order_date_second'] ) ) {
+					throw new \Exception( __( 'Order date, hour, minute and/or second are missing.', 'woocommerce' ), 400 );
+				}
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+				$date = gmdate( 'Y-m-d H:i:s', strtotime( $_POST['order_date'] . ' ' . (int) $_POST['order_date_hour'] . ':' . (int) $_POST['order_date_minute'] . ':' . (int) $_POST['order_date_second'] ) );
+			}
+
+			$order_status = isset($_POST['order_status']) ? sanitize_text_field($_POST['order_status']) : 'wc-pending';
+
+			// Set to order
+            $order->set_date_created( $date );
+			$order->set_status( $order_status );
+			$order->save();
+
+			ob_start();
+			include WC()->plugin_path() . '/includes/admin/meta-boxes/views/html-order-items.php';
+			$items_html = ob_get_clean();
+
+			ob_start();
+			$notes = wc_get_order_notes( array( 'order_id' => $order_id ) );
+			include WC()->plugin_path() . '/includes/admin/meta-boxes/views/html-order-notes.php';
+			$notes_html = ob_get_clean();
+
+			$response = array(
+				'html'       => $items_html,
+				'notes_html' => $notes_html,
+			);
 		} catch ( \Exception $e ) {
 			wp_send_json_error( array( 'error' => $e->getMessage() ) );
 		}

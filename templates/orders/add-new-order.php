@@ -29,10 +29,6 @@ $order = $theorder;
 							<div class="msf-card">
 								<div class="card-title-with-link">
 									<h3 class="msf-card-title"><?php esc_html_e( 'Customer', 'shop-front' ); ?></h3>
-									<div class="add-customer-link">
-										<span class="or-text"><?php esc_html_e( 'Or', 'shop-front' ); ?></span>
-										<a href="#" id="add-new-customer-link"><?php esc_html_e( 'add a new customer', 'shop-front' ); ?></a>
-									</div>
 								</div>
 								<div class="msf-card-content">
 									<div class="msf-form-group search-group">
@@ -54,46 +50,6 @@ $order = $theorder;
 											<?php // phpcs:enable WooCommerce.Commenting.CommentHooks.MissingHookComment ?>
 										</select>
 									</div>
-								<div class="new-customer-fields" id="new-customer-fields" style="display: none;">
-									<div class="customer-type-group">
-										<label class="radio-label">
-											<input type="radio" name="customer_type" value="individual" checked>
-											<span><?php esc_html_e( 'Individual', 'shop-front' ); ?></span>
-										</label>
-										<label class="radio-label">
-											<input type="radio" name="customer_type" value="company">
-											<span><?php esc_html_e( 'Company', 'shop-front' ); ?></span>
-										</label>
-									</div>
-									<div class="row">
-										<div class="col-md-6">
-											<div class="msf-form-group">
-												<label for="first_name"><?php esc_html_e( 'First Name', 'shop-front' ); ?></label>
-												<input type="text" class="msf-form-control" id="first_name" name="first_name" value="John">
-											</div>
-										</div>
-										<div class="col-md-6">
-											<div class="msf-form-group">
-												<label for="last_name"><?php esc_html_e( 'Last Name', 'shop-front' ); ?></label>
-												<input type="text" class="msf-form-control" id="last_name" name="last_name" value="Doe">
-											</div>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-md-6">
-											<div class="msf-form-group">
-												<label for="email"><?php esc_html_e( 'Email Address', 'shop-front' ); ?></label>
-												<input type="email" class="msf-form-control" id="email" name="email" value="john.doe@example.com">
-											</div>
-										</div>
-										<div class="col-md-6">
-											<div class="msf-form-group">
-												<label for="phone"><?php esc_html_e( 'Phone Number', 'shop-front' ); ?></label>
-												<input type="tel" class="msf-form-control" id="phone" name="phone" value="+1 (555) 123-4567">
-											</div>
-										</div>
-									</div>
-								</div>
 								</div>
 							</div>
 	
@@ -125,50 +81,52 @@ $order = $theorder;
 							</div>
 	
 							<!-- Discounts & Fees and Order Summary Section -->
-							<div class="row">
-								<div class="col-md-6">
-									<div class="msf-card">
-										<h3 class="msf-card-title"><?php esc_html_e( 'Discounts & Fees', 'shop-front' ); ?></h3>
-										<div class="msf-card-content">
-											<div class="msf-form-group">
-												<div class="coupon-group">
-													<input type="text" class="msf-form-control" id="coupon_code" placeholder="<?php echo esc_attr__( 'e.g. SUMMER20', 'shop-front' ); ?>">
-													<button type="button" class="apply-btn msfc-apply-coupon"><?php esc_html_e( 'Apply Coupon', 'shop-front' ); ?></button>
+							<div class="order-fee-and-shipping-box<?php echo $order->get_item_count() > 0 ? ' active' : ''; ?>">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="msf-card">
+											<h3 class="msf-card-title"><?php esc_html_e( 'Discounts & Fees', 'shop-front' ); ?></h3>
+											<div class="msf-card-content">
+												<div class="msf-form-group">
+													<div class="coupon-group">
+														<input type="text" class="msf-form-control" id="coupon_code" placeholder="<?php echo esc_attr__( 'e.g. SUMMER20', 'shop-front' ); ?>">
+														<button type="button" class="apply-btn msfc-apply-coupon"><?php esc_html_e( 'Apply Coupon', 'shop-front' ); ?></button>
+													</div>
 												</div>
-											</div>
-											<div class="msf-form-group">
-												<div class="coupon-group">
-													<input type="text" class="msf-form-control" id="add_fee" placeholder="<?php echo esc_attr__( 'Enter a fixed amount or percentage', 'shop-front' ); ?>">
-													<button type="button" class="apply-btn msfc-add-fee"><?php esc_html_e( 'Add Fee', 'shop-front' ); ?></button>
+												<div class="msf-form-group">
+													<div class="coupon-group">
+														<input type="text" class="msf-form-control" id="add_fee" placeholder="<?php echo esc_attr__( 'Enter a fixed amount or percentage', 'shop-front' ); ?>">
+														<button type="button" class="apply-btn msfc-add-fee"><?php esc_html_e( 'Add Fee', 'shop-front' ); ?></button>
+													</div>
 												</div>
 											</div>
 										</div>
 									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="msf-card">
-										<h3 class="msf-card-title"><?php esc_html_e( 'Shipping', 'shop-front' ); ?></h3>
-										<div class="msf-card-content">
-											<div class="msf-form-group">
-												<div class="coupon-group">
-													<input type="text" class="shipping_method_title msf-form-control" placeholder="<?php esc_attr_e( 'Shipping name', 'woocommerce' ); ?>" name="msf_shipping_method_title" value="<?php echo esc_attr__( 'Shipping', 'woocommerce' ); ?>" />
-													<input type="text" name="msf_shipping_cost" placeholder="0" class="msf-form-control" />
-													<select class="shipping_method msf-form-control" name="msf_shipping_method">
-														<optgroup label="<?php esc_attr_e( 'Shipping method', 'woocommerce' ); ?>">
-															<option value=""><?php esc_html_e( 'N/A', 'woocommerce' ); ?></option>
-															<?php
-															$found_method = false;
-															$shipping_methods = WC()->shipping() ? WC()->shipping()->load_shipping_methods() : array();
+									<div class="col-md-6">
+										<div class="msf-card">
+											<h3 class="msf-card-title"><?php esc_html_e( 'Shipping', 'shop-front' ); ?></h3>
+											<div class="msf-card-content">
+												<div class="msf-form-group">
+													<div class="coupon-group">
+														<input type="text" class="shipping_method_title msf-form-control" placeholder="<?php esc_attr_e( 'Shipping name', 'woocommerce' ); ?>" name="msf_shipping_method_title" value="<?php echo esc_attr__( 'Shipping', 'woocommerce' ); ?>" />
+														<input type="text" name="msf_shipping_cost" placeholder="0" class="msf-form-control" />
+														<select class="shipping_method msf-form-control" name="msf_shipping_method">
+															<optgroup label="<?php esc_attr_e( 'Shipping method', 'woocommerce' ); ?>">
+																<option value=""><?php esc_html_e( 'N/A', 'woocommerce' ); ?></option>
+																<?php
+																$found_method = false;
+																$shipping_methods = WC()->shipping() ? WC()->shipping()->load_shipping_methods() : array();
 
-															foreach ( $shipping_methods as $method ) {
-																echo '<option value="' . esc_attr( $method->id ) . '" ' . selected( true, $is_active, false ) . '>' . esc_html( $method->get_method_title() ) . '</option>';
-															}
+																foreach ( $shipping_methods as $method ) {
+																	echo '<option value="' . esc_attr( $method->id ) . '" ' . selected( true, $is_active, false ) . '>' . esc_html( $method->get_method_title() ) . '</option>';
+																}
 
-															echo '<option value="other">' . esc_html__( 'Other', 'woocommerce' ) . '</option>';
-															?>
-														</optgroup>
-													</select>
-													<button type="button" class="apply-btn msfc-add-shipping"><?php esc_html_e( 'Add Shipping', 'shop-front' ); ?></button>
+																echo '<option value="other">' . esc_html__( 'Other', 'woocommerce' ) . '</option>';
+																?>
+															</optgroup>
+														</select>
+														<button type="button" class="apply-btn msfc-add-shipping"><?php esc_html_e( 'Add Shipping', 'shop-front' ); ?></button>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -179,7 +137,7 @@ $order = $theorder;
 							<!-- Billing & Shipping Address Section -->
 							<div class="row">
 								<div class="col-md-6">
-									<div class="msf-card">
+									<div class="msf-card customer-address-box">
 										<h3 class="msf-card-title"><?php esc_html_e( 'Billing Address', 'shop-front' ); ?></h3>
 										<div class="msf-card-content">
 											<div class="row">
@@ -232,13 +190,60 @@ $order = $theorder;
 												<div class="col-md-6">
 													<div class="msf-form-group">
 														<label for="_billing_country"><?php esc_html_e( 'Country / Region', 'shop-front' ); ?></label>
-														<select class="msf-form-control" id="_billing_country" name="_billing_country"></select>
+														<select class="msf-form-control js_field-country" id="_billing_country" name="_billing_country">
+															<option value=""><?php esc_html_e( 'Select a country...', 'shop-front' ); ?></option>
+															<?php
+																$countries = WC()->countries->get_countries();
+																$selected_billing_country = $order ? $order->get_billing_country() : '';
+																
+																foreach ( $countries as $code => $name ) {
+																	printf(
+																		'<option value="%s" %s>%s</option>',
+																		esc_attr( $code ),
+																		selected( $selected_billing_country, $code, false ),
+																		esc_html( $name )
+																	);
+																}
+															?>
+														</select>
 													</div>
 												</div>
 												<div class="col-md-6">
 													<div class="msf-form-group">
 														<label for="_billing_state"><?php esc_html_e( 'State / County', 'shop-front' ); ?></label>
-														<input type="text" class="msf-form-control" id="_billing_state" name="_billing_state" value="">
+														<?php
+														$billing_state   = $order ? $order->get_billing_state() : '';
+														$states          = WC()->countries->get_states( $selected_billing_country );
+														
+														if ( ! empty( $states ) ) {
+															?>
+															<select class="msf-form-control js_field-state" id="_billing_state" name="_billing_state">
+																<option value=""><?php esc_html_e( 'Select a state...', 'shop-front' ); ?></option>
+																<?php
+																foreach ( $states as $code => $name ) {
+																	printf(
+																		'<option value="%s" %s>%s</option>',
+																		esc_attr( $code ),
+																		selected( $billing_state, $code, false ),
+																		esc_html( $name )
+																	);
+																}
+																?>
+															</select>
+															<?php
+														} else {
+															?>
+															<input 
+																type="text" 
+																class="msf-form-control js_field-state" 
+																id="_billing_state" 
+																name="_billing_state" 
+																value="<?php echo esc_attr( $billing_state ); ?>"
+																placeholder="<?php esc_attr_e( 'State / County', 'shop-front' ); ?>"
+															/>
+															<?php
+														}
+														?>
 													</div>
 												</div>
 											</div>
@@ -274,7 +279,7 @@ $order = $theorder;
 									</div>
 								</div>
 								<div class="col-md-6">
-									<div class="msf-card">
+									<div class="msf-card customer-address-box">
 										<h3 class="msf-card-title"><?php esc_html_e( 'Shipping Address', 'shop-front' ); ?></h3>
 										<div class="msf-card-content">
 											<div class="row">
@@ -327,13 +332,59 @@ $order = $theorder;
 												<div class="col-md-6">
 													<div class="msf-form-group">
 														<label for="_shipping_country"><?php esc_html_e( 'Country / Region', 'shop-front' ); ?></label>
-														<select class="msf-form-control" id="_shipping_country" name="_shipping_country"></select>
+														<select class="msf-form-control js_field-country" id="_shipping_country" name="_shipping_country">
+														<option value=""><?php esc_html_e( 'Select a country...', 'shop-front' ); ?></option>
+															<?php
+																$selected_shipping_country = $order ? $order->get_shipping_country() : '';
+																
+																foreach ( $countries as $code => $name ) {
+																	printf(
+																		'<option value="%s" %s>%s</option>',
+																		esc_attr( $code ),
+																		selected( $selected_shipping_country, $code, false ),
+																		esc_html( $name )
+																	);
+																}
+															?>
+														</select>
 													</div>
 												</div>
 												<div class="col-md-6">
 													<div class="msf-form-group">
 														<label for="_shipping_state"><?php esc_html_e( 'State / County', 'shop-front' ); ?></label>
-														<input type="text" class="msf-form-control" id="_shipping_state" name="_shipping_state" value="">
+														<?php
+														$shipping_state   = $order ? $order->get_shipping_state() : '';
+														$shipping_states          = WC()->countries->get_states( $selected_shipping_country );
+														
+														if ( ! empty( $shipping_states ) ) {
+															?>
+															<select class="msf-form-control js_field-state" id="_shipping_state" name="_shipping_state">
+																<option value=""><?php esc_html_e( 'Select a state...', 'shop-front' ); ?></option>
+																<?php
+																foreach ( $shipping_states as $code => $name ) {
+																	printf(
+																		'<option value="%s" %s>%s</option>',
+																		esc_attr( $code ),
+																		selected( $shipping_state, $code, false ),
+																		esc_html( $name )
+																	);
+																}
+																?>
+															</select>
+															<?php
+														} else {
+															?>
+															<input 
+																type="text" 
+																class="msf-form-control js_field-state" 
+																id="_shipping_state" 
+																name="_shipping_state" 
+																value="<?php echo esc_attr( $shipping_state ); ?>"
+																placeholder="<?php esc_attr_e( 'State / County', 'shop-front' ); ?>"
+															/>
+															<?php
+														}
+														?>
 													</div>
 												</div>
 											</div>
@@ -366,11 +417,14 @@ $order = $theorder;
 									<div class="msf-form-group">
 										<label for="date_created"><?php esc_html_e( 'Date Created', 'shop-front' ); ?></label>
 										<div class="date-time-group">
-											<input type="date" class="msf-form-control date-input" id="date_created" name="date_created" value="2025-09-19">
-											<span class="date-separator">@</span>
-											<input type="number" class="msf-form-control time-input" id="time_hours" name="time_hours" value="8" min="0" max="23" placeholder="HH">
-											<span class="time-separator">:</span>
-											<input type="number" class="msf-form-control time-input" id="time_minutes" name="time_minutes" value="19" min="0" max="59" placeholder="MM">
+											<?php
+											$order_date_created_localised = ! is_null( $order->get_date_created() ) ? $order->get_date_created()->getOffsetTimestamp() : '';
+											?>
+											<input type="date" class="date-picker msf-form-control date-input" name="order_date" maxlength="10" value="<?php echo esc_attr( date_i18n( 'Y-m-d', $order_date_created_localised ) ); ?>" pattern="<?php echo esc_attr( apply_filters( 'woocommerce_date_input_html_pattern', '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])' ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment ?>" />@
+											&lrm;
+											<input type="number" class="hour msf-form-control time-input" placeholder="<?php esc_attr_e( 'h', 'woocommerce' ); ?>" name="order_date_hour" min="0" max="23" step="1" value="<?php echo esc_attr( date_i18n( 'H', $order_date_created_localised ) ); ?>" pattern="([01]?[0-9]{1}|2[0-3]{1})" />:
+											<input type="number" class="minute msf-form-control time-input" placeholder="<?php esc_attr_e( 'm', 'woocommerce' ); ?>" name="order_date_minute" min="0" max="59" step="1" value="<?php echo esc_attr( date_i18n( 'i', $order_date_created_localised ) ); ?>" pattern="[0-5]{1}[0-9]{1}" />
+											<input type="hidden" name="order_date_second" value="<?php echo esc_attr( date_i18n( 's', $order_date_created_localised ) ); ?>" />
 										</div>
 									</div>
 									
@@ -390,8 +444,8 @@ $order = $theorder;
 										$order_id      = $order->get_id();
 										$order_actions = PluginizeLab\ShopFront\Order\OrderManager::get_available_order_actions_for_order( $order );
 										?>
-										<label for="payment_method"><?php esc_html_e( 'Order Actions', 'shop-front' ); ?></label>
-										<select class="msf-form-control" id="payment_method" name="payment_method">
+										<label for="order_action"><?php esc_html_e( 'Order Actions', 'shop-front' ); ?></label>
+										<select class="msf-form-control" id="order_action" name="order_action">
 											<option value=""><?php esc_html_e( 'Choose an action...', 'shop-front' ); ?></option>
 											<?php foreach ( $order_actions as $action => $title ) { ?>
 												<option value="<?php echo esc_attr( $action ); ?>"><?php echo esc_html( $title ); ?></option>

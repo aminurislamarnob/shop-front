@@ -4,14 +4,9 @@
             this.bindEvents();
         },
         bindEvents: function() {
-            this.handleSelect2(); // Handle select2
+            $('#customer_user').show().selectWoo().hide();
             this.handleSelect2Customer(); // Handle select2 customer
             $( '#customer_user' ).on( 'change', this.changeCustomerUser );
-			this.AddNewCustomer();
-        },
-
-        handleSelect2: function() {
-            $('#customer_user').select2();
         },
 
         handleSelect2Customer: function() {
@@ -229,28 +224,6 @@
 			}
 			return false;
 		},
-
-		AddNewCustomer: function() {
-			document.addEventListener('DOMContentLoaded', function() {
-				const addCustomerLink = document.getElementById('add-new-customer-link');
-				const newCustomerFields = document.getElementById('new-customer-fields');
-				const orText = document.querySelector('.or-text');
-				
-				addCustomerLink.addEventListener('click', function(e) {
-					e.preventDefault();
-					
-					if (newCustomerFields.style.display === 'none') {
-						newCustomerFields.style.display = 'block';
-						addCustomerLink.textContent = My_Shop_Front_Order.hide_new_customer_form;
-						orText.textContent = My_Shop_Front_Order.new_customer_or;
-					} else {
-						newCustomerFields.style.display = 'none';
-						addCustomerLink.textContent = My_Shop_Front_Order.add_new_customer_form;
-						orText.textContent = My_Shop_Front_Order.new_customer_or;
-					}
-				});
-			});
-		}
     }
 
     /**
@@ -335,15 +308,16 @@
             this.bindEvents();
         },
         bindEvents: function() {
-			$('#msf_product_search').select2();
+			$('#msf_product_search').show().selectWoo().hide();;
             this.handleProductSearch();
 			this.selectProduct();
 			this.deleteSearchOrderItem();
 			this.addToOrder();
 			this.addCoupon();
 			this.addFee();
-			// this.addShipping();
 			this.addShippingToOrder();
+			this.createOrder();
+			this.recalculateOrder();
         },
 
 		displayResult: function( self, select2_args ) {
@@ -524,16 +498,18 @@
 						if ( response.success ) {
 							// Hide table
 							$('#search-order-items').hide();
+							$( '#search-order-items table tbody' ).empty();
+							$('.order-fee-and-shipping-box').addClass('active');
 
 							$( '#woocommerce-order-items' ).find( '.inside' ).empty();
 							$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
 							// console.log( response.data.html );
 
 							// Update notes.
-							// if ( response.data.notes_html ) {
-							// 	$( 'ul.order_notes' ).empty();
-							// 	$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
-							// }
+							if ( response.data.notes_html ) {
+								$( 'ul.order_notes' ).empty();
+								$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+							}
 
 							// prod_search_for_order_box.reloaded_items();
 							prod_search_for_order_box.unblock();
@@ -582,10 +558,10 @@
 							$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
 
 							// Update notes.
-							// if ( response.data.notes_html ) {
-							// 	$( 'ul.order_notes' ).empty();
-							// 	$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
-							// }
+							if ( response.data.notes_html ) {
+								$( 'ul.order_notes' ).empty();
+								$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+							}
 
 							// wc_meta_boxes_order_items.reloaded_items();
 							prod_search_for_order_box.unblock();
@@ -705,6 +681,41 @@
 			});
 		},
 
+		recalculateOrder: function() {
+			$(document).on('click', 'button.calculate-action', function(e) {
+				var prod_search_for_order_box = $( '.product-serach-for-order-box' );
+				prod_search_for_order_box.block();
+
+				var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
+					action:   'woocommerce_calc_line_taxes',
+					order_id: My_Shop_Front_Order.post_id,
+					items:    $( 'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]' ).serialize(),
+					security: My_Shop_Front_Order.calc_totals_nonce
+				} );
+
+				data = NewOrderProducts.filterData( 'recalculate', data );
+
+				$( document.body ).trigger( 'order-totals-recalculate-before', data );
+
+				$.ajax({
+					url:  My_Shop_Front_Order.ajax_url,
+					data: data,
+					type: 'POST',
+					success: function( response ) {
+						$( '#woocommerce-order-items' ).find( '.inside' ).empty();
+						$( '#woocommerce-order-items' ).find( '.inside' ).append( response );
+						prod_search_for_order_box.unblock();
+
+						$( document.body ).trigger( 'order-totals-recalculate-success', response );
+					},
+					complete: function( response ) {
+						$( document.body ).trigger( 'order-totals-recalculate-complete', response );
+					}
+				});
+			});
+			return false;
+		},
+
 		saveLineItems: function() {
 			var data = {
 				order_id: My_Shop_Front_Order.post_id,
@@ -728,10 +739,10 @@
 						$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
 
 						// Update notes.
-						// if ( response.data.notes_html ) {
-						// 	$( 'ul.order_notes' ).empty();
-						// 	$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
-						// }
+						if ( response.data.notes_html ) {
+							$( 'ul.order_notes' ).empty();
+							$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+						}
 
 						// wc_meta_boxes_order_items.reloaded_items();
 						prod_search_for_order_box.unblock();
@@ -746,6 +757,50 @@
 			$( this ).trigger( 'items_saved' );
 
 			return false;
+		},
+
+		createOrder: function() {
+			$(document).on('click', '.create-order-btn', function(e) {
+				e.preventDefault();
+				var data = {
+					action: 'msfc_create_order',
+					order_id: My_Shop_Front_Order.post_id,
+					order_status: $('.msf-form-group [name="order_status"]').val(),
+					order_date: $('.msf-form-group [name="order_date"]').val(),
+					order_date_hour: $('.msf-form-group [name="order_date_hour"]').val(),
+					order_date_minute: $('.msf-form-group [name="order_date_minute"]').val(),
+					order_date_second: $('.msf-form-group [name="order_date_second"]').val(),
+					order_action: $('.msf-form-group [name="order_action"]').val(),
+					security: My_Shop_Front_Order.order_item_nonce
+				};
+
+				var prod_search_for_order_box = $( '.product-serach-for-order-box' );
+				prod_search_for_order_box.block();
+				
+				$.ajax({
+					url: My_Shop_Front_Order.ajax_url,
+					type: 'POST',
+					data: data,
+					success: function(response) {
+						if (response.success) {
+							$( '#woocommerce-order-items' ).find( '.inside' ).empty();
+							$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
+
+							// Update notes.
+							if ( response.data.notes_html ) {
+								$( 'ul.order_notes' ).empty();
+								$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+							}
+
+							prod_search_for_order_box.unblock();
+						} else {
+							prod_search_for_order_box.unblock();
+							window.alert( response.data.error );
+						}
+					},
+					complete: function() {}
+				});
+			});
 		},
 
 		filterData: function( handle, data ) {
@@ -791,7 +846,108 @@
 		},
 	};
 
+	var ManageOrderAddress = {
+		init: function() {
+			this.bindEvents();
+		},
+		bindEvents: function() {
+			if (
+				! (
+					typeof My_Shop_Front_Order === 'undefined' ||
+					typeof My_Shop_Front_Order.countries === 'undefined'
+				)
+			) {
+				/* State/Country select boxes */
+				this.states = JSON.parse( My_Shop_Front_Order.countries.replace( /&quot;/g, '"' ) );
+			}
+
+			$( '.js_field-country' ).selectWoo().on( 'change', this.changeCountry );
+			$( '.js_field-country' ).trigger( 'change', [ true ] );
+			$( document.body ).on( 'change', 'select.js_field-state', this.changeState );
+		},
+		changeCountry: function( e, stickValue ) {
+			// Check for stickValue before using it
+			if ( typeof stickValue === 'undefined' ){
+				stickValue = false;
+			}
+
+			// Prevent if we don't have the metabox data
+			if ( ManageOrderAddress.states === null ){
+				return;
+			}
+
+			var $this = $( this ),
+				country = $this.val(),
+				$state = $this.parents( 'div.customer-address-box' ).find( ':input.js_field-state' ),
+				$parent = $state.parent(),
+				stateValue = $state.val(),
+				input_name = $state.attr( 'name' ),
+				input_id = $state.attr( 'id' ),
+				value = $this.data( 'woocommerce.stickState-' + country ) ? $this.data( 'woocommerce.stickState-' + country ) : stateValue,
+				placeholder = $state.attr( 'placeholder' ),
+				$newstate;
+
+			if ( stickValue ){
+				$this.data( 'woocommerce.stickState-' + country, value );
+			}
+
+			// Remove the previous DOM element
+			$parent.show().find( '.select2-container' ).remove();
+
+			if ( ! $.isEmptyObject( ManageOrderAddress.states[ country ] ) ) {
+				var state = ManageOrderAddress.states[ country ],
+					$defaultOption = $( '<option value=""></option>' )
+						.text( My_Shop_Front_Order.i18n_select_state_text );
+
+				$newstate = $( '<select></select>' )
+					.prop( 'id', input_id )
+					.prop( 'name', input_name )
+					.prop( 'placeholder', placeholder )
+					.addClass( 'js_field-state select short' )
+					.append( $defaultOption );
+
+				$.each( state, function( index ) {
+					var $option = $( '<option></option>' )
+						.prop( 'value', index )
+						.text( state[ index ] );
+					if ( index === stateValue ) {
+						$option.prop( 'selected' );
+					}
+					$newstate.append( $option );
+				} );
+
+				$newstate.val( value );
+
+				$state.replaceWith( $newstate );
+
+				$newstate.show().selectWoo().hide().trigger( 'change' );
+			} else {
+				$newstate = $( '<input type="text" />' )
+					.prop( 'id', input_id )
+					.prop( 'name', input_name )
+					.prop( 'placeholder', placeholder )
+					.addClass( 'js_field-state msf-form-control' )
+					.val( stateValue );
+				$state.replaceWith( $newstate );
+			}
+
+			// Trigger custom event
+			$( document.body ).trigger( 'country-change.woocommerce', [country, $( this ).closest( 'div' )] );
+		},
+
+		changeState: function() {
+			// Here we will find if state value on a select has changed and stick it to the country data
+			var $this = $( this ),
+				state = $this.val(),
+				$country = $this.parents( 'div.customer-address-box' ).find( ':input.js_field-country' ),
+				country = $country.val();
+
+			$country.data( 'woocommerce.stickState-' + country, state );
+		},
+	}
+
     StoreFrontOrderConfig.init();
     NewOrderNotes.init();
     NewOrderProducts.init();
+	ManageOrderAddress.init();
 })(jQuery)

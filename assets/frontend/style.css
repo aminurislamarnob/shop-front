@@ -926,7 +926,7 @@ span.order-failed {
 }
 
 /*Button Style*/
-.my-shop-front-button {
+.my-shop-front-button, .wc-order-data-row.wc-order-bulk-actions button.button {
   background: var(--primary-bg);
   display: inline-block;
   padding: 10px 20px;
@@ -948,7 +948,7 @@ span.order-failed {
   display: flex;
   justify-content: space-between;
 }
-.my-shop-front-button.my-shop-front-button-light {
+.my-shop-front-button.my-shop-front-button-light, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items {
   color: var(--primary-bg);
   background: #fff;
   border-color: var(--msf-input-border-color);
@@ -958,7 +958,7 @@ span.order-failed {
   fill: var(--msf-gray);
 }
 
-.my-shop-front-button:hover, .my-shop-front-button.my-shop-front-button-light:hover {
+.my-shop-front-button:hover, .my-shop-front-button.my-shop-front-button-light:hover, .wc-order-data-row.wc-order-bulk-actions button.button:hover, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items:hover {
   color: #fff;
   background: var(--primary-bg-hover);
   border: 1px solid var(--primary-bg-hover);
@@ -1017,6 +1017,25 @@ label span.req {
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
   border-radius: 0px!important;
   background: #f6f6f6;
+}
+.select2-container .select2-selection--single .select2-selection__arrow b {
+  border: none;
+  display: block;
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItY2hldnJvbi1kb3duIj48cG9seWxpbmUgcG9pbnRzPSI2IDkgMTIgMTUgMTggOSI+PC9wb2x5bGluZT48L3N2Zz4=) no-repeat;
+  background-size: 16px;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  margin: -8px 0 0;
+}
+.select2-container .select2-selection--single .select2-selection__arrow {
+  position: absolute;
+  top: 2px;
+  right: .5em;
+  height: 100%;
+  width: 16px;
 }
 
 /*Image Fields*/
@@ -2026,7 +2045,8 @@ span.select2-selection__clear {
 }
 
 .order-creation-form .time-input {
-  width: 50px;
+  width: 70px;
+  padding: 8px 10px;
   text-align: center;
 }
 
@@ -2035,6 +2055,252 @@ span.select2-selection__clear {
   color: #6c757d;
   font-weight: 500;
   font-size: 14px;
+}
+.msfc-order-items-box .wc-order-item-thumbnail img {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.msfc-order-items-box td.thumb {
+  width: 65px;
+}
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td.name .wc-order-item-sku, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td.name .wc-order-item-variation {
+  display: block;
+  margin-top: .5em;
+  font-size: 12px !important;
+  color: var(--msf-text-color-light);
+}
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta {
+  width: 100%
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta {
+  margin: .5em 0 0;
+  font-size: 12px!important;
+  color: var(--msf-text-color-light);
+  width: auto;
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr th,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr th {
+  border: 0;
+  padding: 0 4px .5em 0;
+  line-height: 1.5em;
+  width: 20%;
+  background: transparent;
+  font-size: 12px !important;
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr td,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td {
+  padding: 0 4px .5em 0;
+  border: 0;
+  line-height: 1.5em;
+  color: var(--msf-text-color-light);
+  font-size: 12px !important;
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr td input,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td input {
+  width: 100%;
+  margin: 0;
+  position: relative;
+  border-bottom: 0;
+  box-shadow: none
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr td textarea,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td textarea {
+  width: 100%;
+  height: 4em;
+  margin: 0;
+  box-shadow: none
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr td input:focus+textarea,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td input:focus+textarea {
+  border-top-color: #999
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr td p,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td p {
+  margin: 0 0 .5em;
+  line-height: 1.5em
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr td p:last-child,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td p:last-child {
+  margin: 0
+}
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td.name .wc-order-item-sku strong, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items td.name .wc-order-item-variation strong, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr th, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr th {
+  font-weight: normal;
+  color: var(--msf-text-color);
+  font-weight: 500;
+}
+
+#woocommerce-order-items a.wc-order-item-name {
+  font-weight: 500;
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .cost .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost_of_goods .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_cost .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_tax .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .quantity .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax_class .wc-order-item-discount {
+    display: block;
+    margin-top: .5em;
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .cost .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .cost .wc-order-item-refund-fields, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .cost .wc-order-item-taxes, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .cost del, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .cost small.times, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost .wc-order-item-refund-fields, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost .wc-order-item-taxes, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost del, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost small.times, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost_of_goods .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost_of_goods .wc-order-item-refund-fields, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost_of_goods .wc-order-item-taxes, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost_of_goods del, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .item_cost_of_goods small.times, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_cost .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_cost .wc-order-item-refund-fields, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_cost .wc-order-item-taxes, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_cost del, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_cost small.times, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_tax .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_tax .wc-order-item-refund-fields, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_tax .wc-order-item-taxes, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_tax del, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .line_tax small.times, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .quantity .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .quantity .wc-order-item-refund-fields, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .quantity .wc-order-item-taxes, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .quantity del, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .quantity small.times, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax .wc-order-item-refund-fields, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax .wc-order-item-taxes, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax del, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax small.times, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax_class .wc-order-item-discount, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax_class .wc-order-item-refund-fields, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax_class .wc-order-item-taxes, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax_class del, #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items .tax_class small.times {
+    font-size: 12px !important;
+    color: var(--msf-text-color-light);
+}
+div#woocommerce-order-items .line_cost {
+  min-width: 200px;
+  text-align: right;
+}
+.wc-order-edit-line-item-actions {
+  display: flex;
+}
+.wc-order-edit-line-item-actions a, #woocommerce-order-items .remove-coupon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  vertical-align: middle;
+  color: var(--msf-text-color-light);
+}
+
+.wc-order-edit-line-item-actions a::before, #woocommerce-order-items .remove-coupon::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg>') center / contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg>') center / contain no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.wc-order-edit-line-item-actions a.delete-order-item::before, #woocommerce-order-items .remove-coupon::before {
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14Zm-4.231-12.359l-4.466,5.359,4.466,5.359c.354.425.296,1.056-.128,1.409-.188.155-.414.231-.64.231-.287,0-.571-.122-.77-.359l-4.231-5.078-4.231,5.078c-.198.237-.482.359-.77.359-.226,0-.452-.076-.64-.231-.424-.354-.481-.984-.128-1.409l4.466-5.359-4.466-5.359c-.354-.425-.296-1.056.128-1.409.426-.353,1.056-.296,1.409.128l4.231,5.078,4.231-5.078c.354-.424.983-.48,1.409-.128.424.354.481.984.128,1.409Z"/></svg>') center / contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14Zm-4.231-12.359l-4.466,5.359,4.466,5.359c.354.425.296,1.056-.128,1.409-.188.155-.414.231-.64.231-.287,0-.571-.122-.77-.359l-4.231-5.078-4.231,5.078c-.198.237-.482.359-.77.359-.226,0-.452-.076-.64-.231-.424-.354-.481-.984-.128-1.409l4.466-5.359-4.466-5.359c-.354-.425-.296-1.056.128-1.409.426-.353,1.056-.296,1.409.128l4.231,5.078,4.231-5.078c.354-.424.983-.48,1.409-.128.424.354.481.984.128,1.409Z"/></svg>') center / contain no-repeat;
+}
+
+.wc-order-edit-line-item-actions a:hover,
+.wc-order-edit-line-item-actions a:focus {
+  outline: none;
+  transform: translateY(-1px);
+  color: var(--msf-text-color);
+}
+
+.wc-order-edit-line-item-actions a:focus-visible {
+  box-shadow: 0 0 0 3px rgba(11,116,222,0.18);
+  border-radius: 6px;
+}
+.order-fee-and-shipping-box{
+  display: none;
+}
+.order-fee-and-shipping-box.active{
+  display: block;
+}
+#woocommerce-order-items .wc-used-coupons {
+  float: left;
+  width: 50%;
+}
+#woocommerce-order-items .wc-order-data-row .wc-used-coupons {
+  text-align: left;
+  padding: 20px;
+}
+#woocommerce-order-items .wc-order-totals {
+  float: right;
+  width: 50%;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+  background: #f8f9fa;
+}
+#woocommerce-order-items .wc-order-totals .total {
+  text-align: right;
+  font-weight: 500;
+  color: var(--msf-text-color);
+}
+#woocommerce-order-items .wc-order-totals .total {
+  text-align: right;
+  font-weight: 500;
+  color: var(--msf-text-color);
+}
+
+#woocommerce-order-items .wc-order-totals tbody tr td {
+  font-size: 14px;
+  padding: 12px 18px;
+}
+#woocommerce-order-items .wc-order-totals tbody tr:last-child td {
+  border-bottom: none;
+}
+#woocommerce-order-items .wc-order-totals tbody tr:last-child td {
+  border-bottom: none;
+}
+
+ul.wc_coupon_list li.code {
+  position: relative;
+  padding: 5px 10px;
+  background-color: #fff;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 1px 0 #dfdfdf;
+  border-radius: 4px;
+  margin-right: 5px;
+  margin-top: 5px;
+  font-size: 14px;
+  color: var(--msf-text-color-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+} 
+
+#woocommerce-order-items .wc-order-data-row .wc-used-coupons strong {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--msf-text-color);
+}
+
+#woocommerce-order-items .remove-coupon {
+  width: 20px;
+  height: 20px;
+}
+
+#woocommerce-order-items .remove-coupon::before {
+  width: 14px;
+  height: 14px;
+}
+.wc-order-data-row.wc-order-bulk-actions {
+  padding: 20px;
+}
+
+.wc-order-data-row.wc-order-bulk-actions button.button.add-line-item, .wc-order-data-row.wc-order-bulk-actions button.button.add-coupon {
+  display: none;
+}
+
+.wc-order-data-row.wc-order-bulk-actions .add-items {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+}
+.wc-order-data-row.wc-order-bulk-actions button.button {
+  font-size: 12px;
+  padding: 9px 15px;
+  border-radius: 5px;
+}
+.order-creation-form .select2-hidden-accessible {
+  border: 0 !important;
+  clip: rect(0 0 0 0) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
 }
 
 @media (max-width: 768px) {
