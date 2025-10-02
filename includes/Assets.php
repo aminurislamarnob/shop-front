@@ -198,6 +198,9 @@ class Assets {
 					'placeholder_value'      		  => esc_attr__( 'Value (required)', 'woocommerce' ),
 					'i18n_delete_note'                => __( 'Are you sure you wish to delete this note? This action cannot be undone.', 'woocommerce' ),
 					'i18n_no_notes'                => __( 'There are no notes yet.', 'woocommerce' ),
+					'remove_item_notice'           => __( 'Are you sure you want to remove the selected items?', 'woocommerce' ),
+					'remove_fee_notice'            => __( 'Are you sure you want to remove the selected fees?', 'woocommerce' ),
+					'remove_shipping_notice'       => __( 'Are you sure you want to remove the selected shipping?', 'woocommerce' ),
 				)
 			);
 		}

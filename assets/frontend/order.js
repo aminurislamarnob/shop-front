@@ -348,8 +348,9 @@
 			this.addShippingToOrder();
 			this.createOrder();
 			this.recalculateOrder();
-			this.editOrderItem();
 			this.saveLineItems();
+			this.editOrderItem();
+			this.deleteOrderItem();
         },
 
 		displayResult: function( self, select2_args ) {
@@ -933,6 +934,69 @@
 				$( 'button.cancel-action' ).attr( 'data-reload', true );
 				return false;
 			});
+		},
+
+		deleteOrderItem: function() {
+			$(document).on('click', 'a.delete-order-item', function(e) {
+				var prod_search_for_order_box = $( '.product-serach-for-order-box' );
+				var notice = My_Shop_Front_Order.remove_item_notice;
+
+				if ( $( this ).parents( 'tbody#order_fee_line_items' ).length ) {
+					notice = My_Shop_Front_Order.remove_fee_notice;
+				}
+
+				if ( $( this ).parents( 'tbody#order_shipping_line_items' ).length ) {
+					notice = My_Shop_Front_Order.remove_shipping_notice;
+				}
+
+				var answer = window.confirm( notice );
+
+				if ( answer ) {
+					var $item         = $( this ).closest( 'tr.item, tr.fee, tr.shipping' );
+					var order_item_id = $item.attr( 'data-order_item_id' );
+
+					prod_search_for_order_box.block();
+
+					var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
+						order_id      : My_Shop_Front_Order.post_id,
+						order_item_ids: order_item_id,
+						action        : 'woocommerce_remove_order_item',
+						security      : My_Shop_Front_Order.order_item_nonce
+					} );
+
+					// Check if items have changed, if so pass them through so we can save them before deleting.
+					if ( 'true' === $( 'button.cancel-action' ).attr( 'data-reload' ) ) {
+						data.items = $( 'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]' ).serialize();
+					}
+
+					data = NewOrderProducts.filterData( 'delete_item', data );
+
+					$.ajax({
+						url:     My_Shop_Front_Order.ajax_url,
+						data:    data,
+						type:    'POST',
+						success: function( response ) {
+							if ( response.success ) {
+								$( '#woocommerce-order-items' ).find( '.inside' ).empty();
+								$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
+
+								// Update notes.
+								if ( response.data.notes_html ) {
+									$( 'ul.order_notes' ).empty();
+									$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+								}
+
+								prod_search_for_order_box.unblock();
+							} else {
+								window.alert( response.data.error );
+							}
+							prod_search_for_order_box.unblock();
+						},
+						complete: function() {}
+					});
+				}
+			});
+			return false;
 		},
 	};
 
