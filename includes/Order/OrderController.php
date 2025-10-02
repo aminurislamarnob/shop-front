@@ -14,6 +14,7 @@ class OrderController {
 		add_action( 'wp_ajax_msfc_add_order_note', array( $this, 'handle_add_order_note' ) );
 		add_action( 'wp_ajax_msfc_delete_order_note', array( $this, 'handle_delete_order_note' ) );
 		add_action( 'wp_ajax_msfc_add_shipping_to_order', array( $this, 'msfc_add_shipping_to_order' ) );
+		add_action( 'wp_ajax_msfc_set_customer_to_order', array( $this, 'msfc_set_customer_to_order' ) );
 		add_action( 'wp_ajax_msfc_create_order', array( $this, 'msfc_create_order' ) );
 	}
 
@@ -166,6 +167,43 @@ class OrderController {
 		wp_send_json_success( $response );
 	}
 
+	public function msfc_set_customer_to_order(){
+		// Verify nonce
+		check_ajax_referer( 'order-item', 'security' );
+
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+			wp_die( -1 );
+		}
+
+		$response = array();
+
+		try {
+			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
+			$order    = wc_get_order( $order_id );
+			
+			if ( ! $order ) {
+				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
+			}
+
+			// Set customer id
+			if ( ! is_null( $_POST['customer_id'] ) ) {
+				$order->set_customer_id( is_numeric( $_POST['customer_id'] ) ? absint( $_POST['customer_id'] ) : 0 );
+			}
+
+			$order->save();
+
+			$response = array(
+				'order_id'       => $order_id,
+				'customer_id' => $order->get_customer_id(),
+			);
+		} catch ( \Exception $e ) {
+			wp_send_json_error( array( 'error' => $e->getMessage() ) );
+		}
+
+		// wp_send_json_success must be outside the try block not to break phpunit tests.
+		wp_send_json_success( $response );
+	}
+
 	public function msfc_create_order(){
 		// Verify nonce
 		check_ajax_referer( 'order-item', 'security' );
@@ -250,6 +288,55 @@ class OrderController {
 			}
 
 			$order_status = isset($_POST['order_status']) ? sanitize_text_field($_POST['order_status']) : 'wc-pending';
+
+			// Map and set billing address
+			$billing_fields = array(
+				'first_name', 'last_name', 'company', 'address_1', 'address_2',
+				'city', 'postcode', 'country', 'state', 'email', 'phone'
+			);
+
+			foreach ( $billing_fields as $field ) {
+				$key = '_billing_' . $field;
+				if ( isset( $_POST[ $key ] ) ) {
+					$setter = "set_billing_{$field}";
+					$value  = is_array( $_POST[ $key ] ) ? '' : wc_clean( wp_unslash( $_POST[ $key ] ) );
+					if ( method_exists( $order, $setter ) ) {
+						$order->$setter( $value );
+					}
+				}
+			}
+
+			// Map and set shipping address
+			$shipping_fields = array(
+				'first_name','last_name','company','address_1','address_2',
+				'city','postcode','country','state','phone'
+			);
+
+			foreach ( $shipping_fields as $field ) {
+				$key = '_shipping_' . $field;
+				if ( isset( $_POST[ $key ] ) ) {
+					$setter = "set_shipping_{$field}";
+					$value  = is_array( $_POST[ $key ] ) ? '' : wc_clean( wp_unslash( $_POST[ $key ] ) );
+					if ( method_exists( $order, $setter ) ) {
+						$order->$setter( $value );
+					}
+				}
+			}
+
+			// Set customer note
+			if ( isset( $_POST['customer_note'] ) ) {
+				$order->set_customer_note( sanitize_textarea_field( wp_unslash( $_POST['customer_note'] ) ) );
+			}
+
+			// Set payment method
+			if ( isset( $_POST['_payment_method'] ) ) {
+				$order->set_payment_method( sanitize_text_field( wp_unslash( $_POST['_payment_method'] ) ) );
+			}
+
+			// Set transaction id
+			if ( isset( $_POST['_transaction_id'] ) ) {
+				$order->set_transaction_id( sanitize_text_field( wp_unslash( $_POST['_transaction_id'] ) ) );
+			}
 
 			// Set to order
             $order->set_date_created( $date );

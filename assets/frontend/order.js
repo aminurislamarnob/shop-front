@@ -125,6 +125,33 @@
 				StoreFrontOrderConfig.loadBilling( true );
 				StoreFrontOrderConfig.loadShipping( true );
 			}
+
+			var customerData = {
+				action: 'msfc_set_customer_to_order',
+				order_id: My_Shop_Front_Order.post_id,
+				customer_id: $( '#customer_user' ).val(),
+				security: My_Shop_Front_Order.order_item_nonce
+			};
+
+			var prod_search_for_order_box = $( '.product-serach-for-order-box' );
+			prod_search_for_order_box.block();
+			
+			$.ajax({
+				url: My_Shop_Front_Order.ajax_url,
+				type: 'POST',
+				data: customerData,
+				success: function(response) {
+					if (response.success) {
+						// $( '#woocommerce-order-items' ).find( '.inside' ).empty();
+						// $( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
+						prod_search_for_order_box.unblock();
+					} else {
+						prod_search_for_order_box.unblock();
+						window.alert( response.data.error );
+					}
+				},
+				complete: function() {}
+			});
 		},
 
 		loadBilling: function( force ) {
@@ -132,7 +159,6 @@
 
 				// Get user ID to load data for
 				var user_id = $( '#customer_user' ).val();
-                console.log( user_id );
 
 				// if ( ! user_id ) {
 				// 	window.alert( My_Shop_Front_Order.no_customer_selected );
@@ -785,6 +811,36 @@
 					order_date_minute: $('.msf-form-group [name="order_date_minute"]').val(),
 					order_date_second: $('.msf-form-group [name="order_date_second"]').val(),
 					order_action: $('.msf-form-group [name="order_action"]').val(),
+					
+					// Billing address
+					_billing_first_name: $('#_billing_first_name').val(),
+					_billing_last_name: $('#_billing_last_name').val(),
+					_billing_company: $('#_billing_company').val(),
+					_billing_address_1: $('#_billing_address_1').val(),
+					_billing_address_2: $('#_billing_address_2').val(),
+					_billing_city: $('#_billing_city').val(),
+					_billing_postcode: $('#_billing_postcode').val(),
+					_billing_country: $('#_billing_country').val(),
+					_billing_state: $('#_billing_state').val(),
+					_billing_email: $('#_billing_email').val(),
+					_billing_phone: $('#_billing_phone').val(),
+
+					// Shipping address
+					_shipping_first_name: $('#_shipping_first_name').val(),
+					_shipping_last_name: $('#_shipping_last_name').val(),
+					_shipping_company: $('#_shipping_company').val(),
+					_shipping_address_1: $('#_shipping_address_1').val(),
+					_shipping_address_2: $('#_shipping_address_2').val(),
+					_shipping_city: $('#_shipping_city').val(),
+					_shipping_postcode: $('#_shipping_postcode').val(),
+					_shipping_country: $('#_shipping_country').val(),
+					_shipping_state: $('#_shipping_state').val(),
+					_shipping_phone: $('#_shipping_phone').val(),
+					customer_note: $('#customer_note').val(),
+
+					// Payment
+					_payment_method: $('#_payment_method').val(),
+					_transaction_id: $('#_transaction_id').val(),
 					security: My_Shop_Front_Order.order_item_nonce
 				};
 

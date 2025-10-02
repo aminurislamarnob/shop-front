@@ -265,13 +265,39 @@ $order = $theorder;
 												<div class="col-md-6">
 													<div class="msf-form-group">
 														<label for="_payment_method"><?php esc_html_e( 'Payment Method', 'shop-front' ); ?></label>
-														<input type="text" class="msf-form-control" id="_payment_method" name="_payment_method" value="">
+														<select name="_payment_method" id="_payment_method" class=" msf-form-control">
+															<option value=""><?php esc_html_e( 'N/A', 'woocommerce' ); ?></option>
+															<?php
+															if ( WC()->payment_gateways() ) {
+																$payment_gateways = WC()->payment_gateways->payment_gateways();
+															} else {
+																$payment_gateways = array();
+															}
+															$payment_method = $order->get_payment_method();
+															$found_method = false;
+
+															foreach ( $payment_gateways as $gateway ) {
+																if ( 'yes' === $gateway->enabled ) {
+																	echo '<option value="' . esc_attr( $gateway->id ) . '" ' . selected( $payment_method, $gateway->id, false ) . '>' . esc_html( $gateway->get_title() ) . '</option>';
+																	if ( $payment_method === $gateway->id ) {
+																		$found_method = true;
+																	}
+																}
+															}
+
+															if ( ! $found_method && ! empty( $payment_method ) ) {
+																echo '<option value="' . esc_attr( $payment_method ) . '" selected="selected">' . esc_html__( 'Other', 'woocommerce' ) . '</option>';
+															} else {
+																echo '<option value="other">' . esc_html__( 'Other', 'woocommerce' ) . '</option>';
+															}
+															?>
+														</select>
 													</div>
 												</div>
 												<div class="col-md-6">
 													<div class="msf-form-group">
 														<label for="_transaction_id"><?php esc_html_e( 'Transaction ID', 'shop-front' ); ?></label>
-														<input type="text" class="msf-form-control" id="_transaction_id" name="_transaction_id" value="">
+														<input type="text" class="msf-form-control" id="_transaction_id" name="_transaction_id" value="<?php echo esc_attr( $order->get_transaction_id() ); ?>">
 													</div>
 												</div>
 											</div>
@@ -392,10 +418,14 @@ $order = $theorder;
 												<label for="_shipping_phone"><?php esc_html_e( 'Phone', 'shop-front' ); ?></label>
 												<input type="text" class="msf-form-control" id="_shipping_phone" name="_shipping_phone" value="">
 											</div>
+											<?php
+											if ( apply_filters( 'woocommerce_enable_order_notes_field', 'yes' === get_option( 'woocommerce_enable_order_comments', 'yes' ) ) ){
+											?>
 											<div class="msf-form-group">
 												<label for="customer_note"><?php esc_html_e( 'Customer Provided Note', 'shop-front' ); ?></label>
-												<textarea class="msf-form-control" id="customer_note" name="customer_note" placeholder="Enter your note here..." rows="4"></textarea>
+												<textarea rows="3" cols="40" class="msf-form-control" name="customer_note" tabindex="6" id="customer_note" placeholder="<?php esc_attr_e( 'Customer notes about the order', 'woocommerce' ); ?>"><?php echo wp_kses( $order->get_customer_note(), array( 'br' => array() ) ); ?></textarea>
 											</div>
+											<?php } ?>
 										</div>
 									</div>
 								</div>

@@ -104,6 +104,10 @@ class CreateNewOrder {
 		$this->order->set_object_read( false );
 		$this->order->set_status( 'auto-draft' );
 		$this->order->set_created_via( wp_get_current_user()->user_login );
+		$this->order->set_currency( get_woocommerce_currency() );
+		$this->order->set_prices_include_tax( 'yes' === get_option( 'woocommerce_prices_include_tax' ) );
+		$this->order->set_customer_ip_address( \WC_Geolocation::get_ip_address() );
+		$this->order->set_customer_user_agent( wc_get_user_agent() );
 		$this->order->save();
 		$this->handle_edit_lock();
 
