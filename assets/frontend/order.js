@@ -343,6 +343,7 @@
 			this.deleteSearchOrderItem();
 			this.addToOrder();
 			this.addCoupon();
+			this.removeCoupon();
 			this.addFee();
 			this.addShippingToOrder();
 			this.createOrder();
@@ -618,36 +619,38 @@
 		},
 
 		removeCoupon: function() {
-			var $this = $( this );
-			wc_meta_boxes_order_items.block();
+			$(document).on('click', '.remove-coupon', function(e) {
+				e.preventDefault();
+				var $this = $( this );
+				var prod_search_for_order_box = $( '.product-serach-for-order-box' );
+				prod_search_for_order_box.block();
 
-			var data = $.extend( {}, wc_meta_boxes_order_items.get_taxable_address(), {
-				action : 'woocommerce_remove_order_coupon',
-				dataType : 'json',
-				order_id : woocommerce_admin_meta_boxes.post_id,
-				security : woocommerce_admin_meta_boxes.order_item_nonce,
-				coupon : $this.data( 'code' )
-			} );
+				var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
+					action : 'woocommerce_remove_order_coupon',
+					dataType : 'json',
+					order_id : My_Shop_Front_Order.post_id,
+					security : My_Shop_Front_Order.order_item_nonce,
+					coupon : $this.data( 'code' )
+				} );
 
-			data = wc_meta_boxes_order_items.filter_data( 'remove_coupon', data );
+				data = NewOrderProducts.filterData( 'remove_coupon', data );
 
-			$.post( woocommerce_admin_meta_boxes.ajax_url, data, function( response ) {
-				if ( response.success ) {
-					$( '#woocommerce-order-items' ).find( '.inside' ).empty();
-					$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
+				$.post( My_Shop_Front_Order.ajax_url, data, function( response ) {
+					if ( response.success ) {
+						$( '#woocommerce-order-items' ).find( '.inside' ).empty();
+						$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
 
-					// Update notes.
-					if ( response.data.notes_html ) {
-						$( 'ul.order_notes' ).empty();
-						$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+						// Update notes.
+						if ( response.data.notes_html ) {
+							$( 'ul.order_notes' ).empty();
+							$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+						}
+						prod_search_for_order_box.unblock();
+					} else {
+						window.alert( response.data.error );
 					}
-
-					wc_meta_boxes_order_items.reloaded_items();
-					wc_meta_boxes_order_items.unblock();
-				} else {
-					window.alert( response.data.error );
-				}
-				wc_meta_boxes_order_items.unblock();
+					prod_search_for_order_box.unblock();
+				});
 			});
 		},
 
