@@ -310,6 +310,7 @@
         bindEvents: function() {
 			$('#msf_product_search').show().selectWoo().hide();;
             this.handleProductSearch();
+			this.handleDeleteSearchItem();
 			this.selectProduct();
 			this.deleteSearchOrderItem();
 			this.addToOrder();
@@ -408,6 +409,19 @@
 			});
 		},
 
+		handleDeleteSearchItem: function() {
+			$(document).on('click', '.delete-search-order-item', function(e) {
+				e.preventDefault();
+				
+				var $row = $(this).closest('tr');
+				
+				// Fade out and remove
+				$row.fadeOut(200, function() {
+					$(this).remove();
+				});
+			});
+		},
+
 		selectProduct: function(){
 			$( '#msf_product_search' ).on( 'change', function(e) {
 				var selectedValue = $(this).val();
@@ -416,7 +430,7 @@
 				if(selectedValue){
 					var row = `<td data-id="${selectedValue}">${selectedText}</td>
 					<td><input type="number" step="1" min="0" max="9999" autocomplete="off" name="item_qty" placeholder="1" size="4" class="msf-form-control quantity-input" /></td>
-					<td><button type="button" class="delete-btn delete-search-order-item">🗑️</button></td>`;
+					<td><button type="button" class="delete-btn delete-search-order-item"><span class="msf-delete-icon"></span></button></td>`;
 	
 					var item_table      = $( '#search-order-items table.msf-table' ),
 						item_table_body = item_table.find( 'tbody' );
