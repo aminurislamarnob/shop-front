@@ -196,6 +196,8 @@ class Assets {
 					'default_state'          		  => isset( $default_location['state'] ) ? $default_location['state'] : '',
 					'placeholder_name'       		  => esc_attr__( 'Name (required)', 'woocommerce' ),
 					'placeholder_value'      		  => esc_attr__( 'Value (required)', 'woocommerce' ),
+					'i18n_delete_note'                => __( 'Are you sure you wish to delete this note? This action cannot be undone.', 'woocommerce' ),
+					'i18n_no_notes'                => __( 'There are no notes yet.', 'woocommerce' ),
 				)
 			);
 		}

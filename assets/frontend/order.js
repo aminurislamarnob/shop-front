@@ -184,7 +184,6 @@
 					data: data,
 					type: 'POST',
 					success: function( response ) {
-                        console.log( response );
 						if ( response && response.billing ) {
 							$.each( response.billing, function( key, data ) {
 								$( ':input#_billing_' + key ).val( data ).trigger( 'change' );
@@ -227,7 +226,6 @@
 					data: data,
 					type: 'POST',
 					success: function( response ) {
-                        console.log( response );
 						if ( response && response.billing ) {
 							$.each( response.shipping, function( key, data ) {
 								$( ':input#_shipping_' + key ).val( data ).trigger( 'change' );
@@ -259,7 +257,7 @@
 		init: function() {
 			$( '#new_order_notes' )
 				.on( 'click', 'button.add-note', this.add_order_note )
-				.on( 'click', 'a.delete-note', this.delete_order_note );
+				.on( 'click', 'a.delete_note', this.delete_order_note );
 		},
 
 		add_order_note: function() {
@@ -300,7 +298,7 @@
 		},
 
 		delete_order_note: function() {
-			if ( window.confirm( woocommerce_admin_meta_boxes.i18n_delete_note ) ) {
+			if ( window.confirm( My_Shop_Front_Order.i18n_delete_note ) ) {
 				var note = $( this ).closest( 'li.note' );
 
 				$( note ).block({
@@ -319,6 +317,10 @@
 
 				$.post( My_Shop_Front_Order.ajax_url, data, function() {
 					$( note ).remove();
+
+					if( $( 'ul.order_notes' ).find( 'li' ).length === 0 ) {
+						$( 'ul.order_notes' ).append( '<li class="note no-items"><div class="note_content"><p>' + My_Shop_Front_Order.i18n_no_notes + '</p></div></li>' );
+					}
 				});
 			}
 

@@ -167,6 +167,9 @@ class OrderController {
 		wp_send_json_success( $response );
 	}
 
+	/**
+	 * Handle the AJAX request for setting a customer to an order.
+	 */
 	public function msfc_set_customer_to_order(){
 		// Verify nonce
 		check_ajax_referer( 'order-item', 'security' );
@@ -204,6 +207,9 @@ class OrderController {
 		wp_send_json_success( $response );
 	}
 
+	/**
+	 * Handle the AJAX request for creating a new order.
+	 */
 	public function msfc_create_order(){
 		// Verify nonce
 		check_ajax_referer( 'order-item', 'security' );
