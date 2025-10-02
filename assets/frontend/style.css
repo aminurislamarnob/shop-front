@@ -453,7 +453,7 @@ template {
 .my-shop-front-container .msf-form-control{
   width: 100%;
 }
-.my-shop-front-container .msf-form-control {
+.my-shop-front-container .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select {
   border-radius: 0px;
   font-size: 14px;
   border: 1px solid var(--msf-input-border-color);
@@ -926,7 +926,7 @@ span.order-failed {
 }
 
 /*Button Style*/
-.my-shop-front-button, .wc-order-data-row.wc-order-bulk-actions button.button {
+.my-shop-front-button, .wc-order-data-row.wc-order-bulk-actions button.button, .wc-order-data-row.wc-order-add-item .button {
   background: var(--primary-bg);
   display: inline-block;
   padding: 10px 20px;
@@ -948,7 +948,7 @@ span.order-failed {
   display: flex;
   justify-content: space-between;
 }
-.my-shop-front-button.my-shop-front-button-light, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items {
+.my-shop-front-button.my-shop-front-button-light, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items, .wc-order-data-row.wc-order-add-item .button.cancel-action {
   color: var(--primary-bg);
   background: #fff;
   border-color: var(--msf-input-border-color);
@@ -958,7 +958,7 @@ span.order-failed {
   fill: var(--msf-gray);
 }
 
-.my-shop-front-button:hover, .my-shop-front-button.my-shop-front-button-light:hover, .wc-order-data-row.wc-order-bulk-actions button.button:hover, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items:hover {
+.my-shop-front-button:hover, .my-shop-front-button.my-shop-front-button-light:hover, .wc-order-data-row.wc-order-bulk-actions button.button:hover, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items:hover, .wc-order-data-row.wc-order-add-item .button.cancel-action:hover, .wc-order-data-row.wc-order-add-item .button.button-primary.save-action {
   color: #fff;
   background: var(--primary-bg-hover);
   border: 1px solid var(--primary-bg-hover);
@@ -1523,7 +1523,7 @@ span.select2-selection__clear {
   font-size: 14px;
 }
 
-.order-creation-form .msf-form-control {
+.order-creation-form .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select {
   width: 100%;
   border-radius: 8px;
   font-size: 14px;
@@ -1531,7 +1531,7 @@ span.select2-selection__clear {
   background-color: #fff;
 }
 
-.order-creation-form .msf-form-control:focus {
+.order-creation-form .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus {
   outline: none;
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
@@ -2273,21 +2273,21 @@ ul.wc_coupon_list li.code {
   width: 14px;
   height: 14px;
 }
-.wc-order-data-row.wc-order-bulk-actions {
+.wc-order-data-row.wc-order-bulk-actions, .wc-order-data-row.wc-order-add-item {
   padding: 20px;
 }
 
-.wc-order-data-row.wc-order-bulk-actions button.button.add-line-item, .wc-order-data-row.wc-order-bulk-actions button.button.add-coupon {
+.wc-order-data-row.wc-order-bulk-actions button.button.add-line-item, .wc-order-data-row.wc-order-bulk-actions button.button.add-coupon, .wc-order-data-row.wc-order-add-item .button.add-order-item, .wc-order-data-row.wc-order-add-item .button.add-order-fee, .wc-order-data-row.wc-order-add-item .button.add-order-shipping {
   display: none;
 }
 
-.wc-order-data-row.wc-order-bulk-actions .add-items {
+.wc-order-data-row.wc-order-bulk-actions .add-items, .wc-order-data-row.wc-order-add-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 0;
 }
-.wc-order-data-row.wc-order-bulk-actions button.button {
+.wc-order-data-row.wc-order-bulk-actions button.button, .wc-order-data-row.wc-order-add-item .button {
   font-size: 12px;
   padding: 9px 15px;
   border-radius: 5px;
@@ -2301,6 +2301,11 @@ ul.wc_coupon_list li.code {
   padding: 0 !important;
   position: absolute !important;
   width: 1px !important;
+}
+.woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select {
+  width: auto;
+  padding: 7px 16px;
+  height: 35px;
 }
 
 @media (max-width: 768px) {

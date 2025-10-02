@@ -348,6 +348,8 @@
 			this.addShippingToOrder();
 			this.createOrder();
 			this.recalculateOrder();
+			this.editOrderItem();
+			this.saveLineItems();
         },
 
 		displayResult: function( self, select2_args ) {
@@ -677,16 +679,10 @@
 					if ( response.success ) {
 						$( '#woocommerce-order-items' ).find( '.inside' ).empty();
 						$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
-						// wc_meta_boxes_order_items.reloaded_items();
 						prod_search_for_order_box.unblock();
-						// window.wcTracks.recordEvent( 'order_edit_added_fee', {
-						// 	order_id: woocommerce_admin_meta_boxes.post_id,
-						// 	status: $( '#order_status' ).val()
-						// } );
 					} else {
 						window.alert( response.data.error );
 					}
-					// wc_meta_boxes_order.init_tiptip();
 					prod_search_for_order_box.unblock();
 				});
 			});
@@ -728,6 +724,8 @@
 
 		recalculateOrder: function() {
 			$(document).on('click', 'button.calculate-action', function(e) {
+				e.preventDefault();
+
 				var prod_search_for_order_box = $( '.product-serach-for-order-box' );
 				prod_search_for_order_box.block();
 
@@ -762,44 +760,48 @@
 		},
 
 		saveLineItems: function() {
-			var data = {
-				order_id: My_Shop_Front_Order.post_id,
-				items:    $( 'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]' ).serialize(),
-				action:   'woocommerce_save_order_items',
-				security: My_Shop_Front_Order.order_item_nonce
-			};
+			$(document).on('click', '.wc-order-add-item .save-action', function(e) {
+				e.preventDefault();
 
-			data = NewOrderProducts.filterData( 'save_line_items', data );
+				var data = {
+					order_id: My_Shop_Front_Order.post_id,
+					items:    $( 'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]' ).serialize(),
+					action:   'woocommerce_save_order_items',
+					security: My_Shop_Front_Order.order_item_nonce
+				};
 
-			var prod_search_for_order_box = $( '.product-serach-for-order-box' );
-			prod_search_for_order_box.block();
+				data = NewOrderProducts.filterData( 'save_line_items', data );
 
-			$.ajax({
-				url:  My_Shop_Front_Order.ajax_url,
-				data: data,
-				type: 'POST',
-				success: function( response ) {
-					if ( response.success ) {
-						$( '#woocommerce-order-items' ).find( '.inside' ).empty();
-						$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
+				var prod_search_for_order_box = $( '.product-serach-for-order-box' );
+				prod_search_for_order_box.block();
 
-						// Update notes.
-						if ( response.data.notes_html ) {
-							$( 'ul.order_notes' ).empty();
-							$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+				$.ajax({
+					url:  My_Shop_Front_Order.ajax_url,
+					data: data,
+					type: 'POST',
+					success: function( response ) {
+						if ( response.success ) {
+							$( '#woocommerce-order-items' ).find( '.inside' ).empty();
+							$( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
+
+							// Update notes.
+							if ( response.data.notes_html ) {
+								$( 'ul.order_notes' ).empty();
+								$( 'ul.order_notes' ).append( $( response.data.notes_html ).find( 'li' ) );
+							}
+
+							// wc_meta_boxes_order_items.reloaded_items();
+							prod_search_for_order_box.unblock();
+						} else {
+							prod_search_for_order_box.unblock();
+							window.alert( response.data.error );
 						}
+					},
+					complete: function() {}
+				});
 
-						// wc_meta_boxes_order_items.reloaded_items();
-						prod_search_for_order_box.unblock();
-					} else {
-						prod_search_for_order_box.unblock();
-						window.alert( response.data.error );
-					}
-				},
-				complete: function() {}
+				$( this ).trigger( 'items_saved' );
 			});
-
-			$( this ).trigger( 'items_saved' );
 
 			return false;
 		},
@@ -918,6 +920,19 @@
 				postcode: postcode,
 				city:     city
 			};
+		},
+
+		editOrderItem: function() {
+			$(document).on('click', 'a.edit-order-item', function(e) {
+				e.preventDefault();
+				$( this ).closest( 'tr' ).find( '.view' ).hide();
+				$( this ).closest( 'tr' ).find( '.edit' ).show();
+				$( this ).hide();
+				$( '.wc-order-data-row.wc-order-bulk-actions' ).hide();
+				$( '.wc-order-data-row.wc-order-add-item' ).show();
+				$( 'button.cancel-action' ).attr( 'data-reload', true );
+				return false;
+			});
 		},
 	};
 
