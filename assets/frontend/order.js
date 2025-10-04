@@ -351,6 +351,7 @@
 			this.saveLineItems();
 			this.editOrderItem();
 			this.deleteOrderItem();
+			this.quantityChanged();
         },
 
 		displayResult: function( self, select2_args ) {
@@ -567,6 +568,70 @@
 					complete: function() {},
 					dataType: 'json'
 				});
+			});
+		},
+
+		// When the qty is changed, increase or decrease costs
+		quantityChanged: function() {
+			$(document).on('change', 'input.quantity', function(e) {
+				e.preventDefault();
+				var $row          = $( this ).closest( 'tr.item' );
+				var qty           = $( this ).val();
+				var o_qty         = $( this ).attr( 'data-qty' );
+				var line_total    = $( 'input.line_total', $row );
+				var line_subtotal = $( 'input.line_subtotal', $row );
+
+				// Totals
+				var unit_total = accounting.unformat( line_total.attr( 'data-total' ), My_Shop_Front_Order.mon_decimal_point ) / o_qty;
+				line_total.val(
+					parseFloat( accounting.formatNumber( unit_total * qty, My_Shop_Front_Order.rounding_precision, '' ) )
+						.toString()
+						.replace( '.', My_Shop_Front_Order.mon_decimal_point )
+				);
+
+				var unit_subtotal = accounting.unformat( line_subtotal.attr( 'data-subtotal' ), My_Shop_Front_Order.mon_decimal_point ) / o_qty;
+				line_subtotal.val(
+					parseFloat( accounting.formatNumber( unit_subtotal * qty, My_Shop_Front_Order.rounding_precision, '' ) )
+						.toString()
+						.replace( '.', My_Shop_Front_Order.mon_decimal_point )
+				);
+
+				// Taxes
+				$( 'input.line_tax', $row ).each( function() {
+					var $line_total_tax    = $( this );
+					var tax_id             = $line_total_tax.data( 'tax_id' );
+					var unit_total_tax     = accounting.unformat(
+						$line_total_tax.attr( 'data-total_tax' ),
+						My_Shop_Front_Order.mon_decimal_point
+					) / o_qty;
+					var $line_subtotal_tax = $( 'input.line_subtotal_tax[data-tax_id="' + tax_id + '"]', $row );
+					var unit_subtotal_tax  = accounting.unformat(
+						$line_subtotal_tax.attr( 'data-subtotal_tax' ),
+						My_Shop_Front_Order.mon_decimal_point
+					) / o_qty;
+
+					if ( 0 < unit_total_tax ) {
+						$line_total_tax.val(
+							parseFloat( accounting.formatNumber( unit_total_tax * qty, My_Shop_Front_Order.rounding_precision, '' ) )
+								.toString()
+								.replace( '.', My_Shop_Front_Order.mon_decimal_point )
+						);
+					}
+
+					if ( 0 < unit_subtotal_tax ) {
+						$line_subtotal_tax.val(
+							parseFloat( accounting.formatNumber(
+								unit_subtotal_tax * qty,
+								My_Shop_Front_Order.rounding_precision,
+								''
+							) )
+								.toString()
+								.replace( '.', My_Shop_Front_Order.mon_decimal_point )
+						);
+					}
+				});
+
+				$( this ).trigger( 'quantity_changed' );
 			});
 		},
 

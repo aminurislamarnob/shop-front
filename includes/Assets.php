@@ -52,6 +52,7 @@ class Assets {
 		// Order scripts.
 		wp_register_script( 'my_shop_front_order_script', $frontend_order_script, array('my_shop_front_selectWoo'), SHOP_FRONT_PLUGIN_VERSION, true );
 		wp_register_script( 'my_shop_front_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
+		wp_register_script( 'accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 	}
 
 	/**
@@ -148,6 +149,15 @@ class Assets {
 			wp_enqueue_script( 'my_shop_front_selectWoo' );
 			wp_enqueue_script( 'my_shop_front_order_script' );
 
+			wp_enqueue_script( 'accounting' );
+			wp_localize_script(
+				'accounting',
+				'accounting_params',
+				array(
+					'mon_decimal_point' => wc_get_price_decimal_separator(),
+				)
+			);
+
 			global $theorder;
 			$order_id = \Automattic\WooCommerce\Utilities\OrderUtil::get_post_or_order_id( $theorder ) ;
 			$default_location = wc_get_customer_default_location();
@@ -204,6 +214,8 @@ class Assets {
 					'placeholder_name'                => esc_attr__( 'Name (required)', 'woocommerce' ),
 					'placeholder_value'               => esc_attr__( 'Value (required)', 'woocommerce' ),
 					'remove_item_meta'                => __( 'Remove this item meta?', 'woocommerce' ),
+					'mon_decimal_point'                 => wc_get_price_decimal_separator(),
+					'rounding_precision'                              => wc_get_rounding_precision(),
 				)
 			);
 		}
