@@ -1098,10 +1098,61 @@
 
 			$country.data( 'woocommerce.stickState-' + country, state );
 		},
+	};
+
+	var itemMeta= {
+		init: function() {
+			this.bindEvents();
+		},
+		bindEvents: function() {
+			itemMeta.add();
+			itemMeta.remove();
+		},
+		add: function() {
+			$(document).on('click', 'button.add_order_item_meta', function(e) {
+				e.preventDefault();
+				var $button = $( this );
+				var $item = $button.closest( 'tr.item, tr.shipping' );
+				var $items = $item.find('tbody.meta_items');
+				var index  = $items.find('tr').length + 1;
+				var $row   = '<tr data-meta_id="0">' +
+					'<td>' +
+					'<input type="text" maxlength="255" placeholder="' +
+					My_Shop_Front_Order.placeholder_name +
+					'" name="meta_key[' + $item.attr( 'data-order_item_id' ) +
+					'][new-' + index + ']" />' +
+					'<textarea placeholder="' +
+					My_Shop_Front_Order.placeholder_value +
+					'" name="meta_value[' +
+					$item.attr( 'data-order_item_id' ) +
+					'][new-' +
+					index +
+					']"></textarea>' +
+					'</td>' +
+					'<td width="1%"><button class="remove_order_item_meta button">&times;</button></td>' +
+					'</tr>';
+				$items.append( $row );
+
+				return false;
+			});
+		},
+
+		remove: function() {
+			$(document).on('click', 'button.remove_order_item_meta', function(e) {
+				e.preventDefault();
+				if ( window.confirm( My_Shop_Front_Order.remove_item_meta ) ) {
+					var $row = $( this ).closest( 'tr' );
+					$row.find( ':input' ).val( '' );
+					$row.hide();
+				}
+				return false;
+			});
+		}
 	}
 
     StoreFrontOrderConfig.init();
     NewOrderNotes.init();
     NewOrderProducts.init();
 	ManageOrderAddress.init();
+	itemMeta.init();
 })(jQuery)

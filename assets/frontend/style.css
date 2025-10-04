@@ -453,7 +453,7 @@ template {
 .my-shop-front-container .msf-form-control{
   width: 100%;
 }
-.my-shop-front-container .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select {
+.my-shop-front-container .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
   border-radius: 0px;
   font-size: 14px;
   border: 1px solid var(--msf-input-border-color);
@@ -926,7 +926,7 @@ span.order-failed {
 }
 
 /*Button Style*/
-.my-shop-front-button, .wc-order-data-row.wc-order-bulk-actions button.button, .wc-order-data-row.wc-order-add-item .button {
+.my-shop-front-button, .wc-order-data-row.wc-order-bulk-actions button.button, .wc-order-data-row.wc-order-add-item .button, button.add_order_item_meta.button {
   background: var(--primary-bg);
   display: inline-block;
   padding: 10px 20px;
@@ -958,7 +958,7 @@ span.order-failed {
   fill: var(--msf-gray);
 }
 
-.my-shop-front-button:hover, .my-shop-front-button.my-shop-front-button-light:hover, .wc-order-data-row.wc-order-bulk-actions button.button:hover, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items:hover, .wc-order-data-row.wc-order-add-item .button.cancel-action:hover, .wc-order-data-row.wc-order-add-item .button.button-primary.save-action {
+.my-shop-front-button:hover, .my-shop-front-button.my-shop-front-button-light:hover, .wc-order-data-row.wc-order-bulk-actions button.button:hover, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items:hover, .wc-order-data-row.wc-order-add-item .button.cancel-action:hover, .wc-order-data-row.wc-order-add-item .button.button-primary.save-action, button.add_order_item_meta.button, button.add_order_item_meta.button:hover {
   color: #fff;
   background: var(--primary-bg-hover);
   border: 1px solid var(--primary-bg-hover);
@@ -1523,7 +1523,7 @@ span.select2-selection__clear {
   font-size: 14px;
 }
 
-.order-creation-form .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select {
+.order-creation-form .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
   width: 100%;
   border-radius: 8px;
   font-size: 14px;
@@ -1531,7 +1531,7 @@ span.select2-selection__clear {
   background-color: #fff;
 }
 
-.order-creation-form .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus {
+.order-creation-form .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus, .woocommerce_order_items_wrapper textarea:focus {
   outline: none;
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
@@ -2100,11 +2100,11 @@ span.select2-selection__clear {
   font-size: 12px !important;
 }
 
-#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr td input,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td input {
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.display_meta tr td input,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td input,#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td textarea {
   width: 100%;
   margin: 0;
   position: relative;
-  border-bottom: 0;
+  /* border-bottom: 0; */
   box-shadow: none
 }
 
@@ -2287,10 +2287,26 @@ ul.wc_coupon_list li.code {
   justify-content: space-between;
   margin: 0;
 }
-.wc-order-data-row.wc-order-bulk-actions button.button, .wc-order-data-row.wc-order-add-item .button {
+.wc-order-data-row.wc-order-bulk-actions button.button, .wc-order-data-row.wc-order-add-item .button, button.add_order_item_meta.button {
   font-size: 12px;
   padding: 9px 15px;
   border-radius: 5px;
+}
+button.remove_order_item_meta.button {
+  background: transparent;
+  border: 1px solid var(--msf-input-border-color);
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  color: var(--msf-text-color-light);
+  transition: .3s;
+}
+
+button.remove_order_item_meta.button:hover {
+  background: var(--primary-bg);
+  color: #fff;
+  border-color: var(--primary-bg);
 }
 .order-creation-form .select2-hidden-accessible {
   border: 0 !important;
@@ -2302,10 +2318,17 @@ ul.wc_coupon_list li.code {
   position: absolute !important;
   width: 1px !important;
 }
-.woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select {
+.woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
   width: auto;
   padding: 7px 16px;
   height: 35px;
+}
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td input {
+  margin-bottom: 5px;
+}
+
+#woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta {
+  display: table;
 }
 
 @media (max-width: 768px) {
