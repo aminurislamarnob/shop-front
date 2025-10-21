@@ -28,6 +28,7 @@ $actions            = array_filter(
 	ARRAY_FILTER_USE_KEY
 );
 
+
 // if ( $show_downloads ) {
 // wc_get_template(
 // 'order/order-downloads.php',
@@ -48,90 +49,127 @@ do_action( 'msf_dashboard_wrapper_start' );
 		<?php do_action( 'msf_dashboard_content_before' ); ?>
 		<main class="my-shop-front-page-content">
 			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
+			<div class="msf-table-header-part">
+				<div class="row">
+					<div class="col-md-6">
+						<form action="">
+							<div class="msf-table-search-input">
+								<div class="msf-table-search-icon">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
+									</svg>
+								</div>
+								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Order', 'shop-front' ); ?>" />
+							</div>
+						</form>
+					</div>
+					<div class="col-md-6 text-right">
+						<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-order' ) ); ?>" class="my-shop-front-button">
+							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
+							</svg>
+							<?php esc_html_e( 'Add Order', 'shop-front' ); ?>
+						</a>
+					</div>
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-md-9">
 					<div class="msf-card">
-						<?php do_action( 'woocommerce_order_details_before_order_table', $order ); ?>
+						<?php do_action( 'msf_before_order_items_table', $order ); ?>
 
-						<table class="my-shop-front-tbl my-shop-front-product-list-table">
+						<div id="woocommerce-order-items">
+							<table class="msf-table order-items">
+								<thead>
+									<tr>
+										<th class="item" colspan="2"><?php esc_html_e( 'Item', 'shop-front' ); ?></th>
 
-							<thead>
-								<tr>
-									<th><?php esc_html_e( 'Product', 'shop-front' ); ?></th>
-									<th><?php esc_html_e( 'Total', 'shop-front' ); ?></th>
-								</tr>
-							</thead>
+										<?php do_action( 'woocommerce_admin_order_item_headers', $order ); ?>
 
-							<tbody>
+										<th class="quantity"><?php esc_html_e( 'Qty', 'shop-front' ); ?></th>
+
+										<th class="line_cost"><?php esc_html_e( 'Totals', 'shop-front' ); ?></th>
+									</tr>
+								</thead>
+								<tbody id="order_items_list">
 								<?php
-								do_action( 'woocommerce_order_details_before_order_table_items', $order );
+								$order_items = $order->get_items( apply_filters( 'woocommerce_admin_order_item_types', array( 'line_item' ) ) );
 
 								foreach ( $order_items as $item_id => $item ) {
-									$product = $item->get_product();
+									do_action( 'woocommerce_before_order_item_' . $item['type'] . '_html', $item_id, $item, $order );
 
-									wc_get_template(
-										'order/order-details-item.php',
-										array(
-											'order'   => $order,
+									$_product = $item->get_product();
+									msf_get_template_part(
+										'orders/order-item-html', '', array(
+											'order' => $order,
 											'item_id' => $item_id,
-											'item'    => $item,
-											'show_purchase_note' => $show_purchase_note,
-											'purchase_note' => $product ? $product->get_purchase_note() : '',
-											'product' => $product,
+											'_product' => $_product,
+											'item'     => $item,
 										)
 									);
+
+									do_action( 'woocommerce_order_item_' . $item['type'] . '_html', $item_id, $item, $order );
 								}
-
-								do_action( 'woocommerce_order_details_after_order_table_items', $order );
 								?>
-							</tbody>
+								</tbody>
 
-							<?php
-							if ( ! empty( $actions ) ) :
-								?>
-							<tfoot>
-								<tr>
-									<th class="order-actions--heading"><?php esc_html_e( 'Actions', 'shop-front' ); ?>:</th>
-									<td>
-										<?php
-										$wp_button_class = wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '';
-										foreach ( $actions as $key => $action ) { // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-											if ( empty( $action['aria-label'] ) ) {
-												// Generate the aria-label based on the action name.
-												/* translators: %1$s Action name, %2$s Order number. */
-												$action_aria_label = sprintf( __( '%1$s order number %2$s', 'shop-front' ), $action['name'], $order->get_order_number() );
-											} else {
-												$action_aria_label = $action['aria-label'];
-											}
-												echo '<a href="' . esc_url( $action['url'] ) . '" class="woocommerce-button' . esc_attr( $wp_button_class ) . ' button ' . sanitize_html_class( $key ) . ' order-actions-button " aria-label="' . esc_attr( $action_aria_label ) . '">' . esc_html( $action['name'] ) . '</a>';
-												unset( $action_aria_label );
-										}
-										?>
-									</td>
-								</tr>
-							</tfoot>
-							<?php endif ?>
-							<tfoot>
+								<tfoot>
 								<?php
-								foreach ( $order->get_order_item_totals() as $key => $total ) {
-									?>
+								if ( $totals = $order->get_order_item_totals() ) { // phpcs:ignore
+									foreach ( $totals as $total ) {
+										?>
 										<tr>
-											<th scope="row"><?php echo esc_html( $total['label'] ); ?></th>
-											<td><?php echo wp_kses_post( $total['value'] ); ?></td>
+											<th colspan="2"><?php echo wp_kses_data( $total['label'] ); ?></th>
+											<td colspan="2" class="value"><?php echo wp_kses_post( $total['value'] ); ?></td>
 										</tr>
 										<?php
+									}
 								}
 								?>
-								<?php if ( $order->get_customer_note() ) : ?>
-									<tr>
-										<th><?php esc_html_e( 'Note:', 'shop-front' ); ?></th>
-										<td><?php echo wp_kses( nl2br( wptexturize( $order->get_customer_note() ) ), array( 'br' => array() ) ); ?></td>
-									</tr>
-								<?php endif; ?>
-							</tfoot>
-						</table>
+								</tfoot>
 
-						<?php do_action( 'woocommerce_order_details_after_order_table', $order ); ?>
+							</table>
+
+							<?php
+							$coupons = $order->get_items( 'coupon' );
+
+							if ( $coupons ) {
+								?>
+								<table class="msf-table order-items">
+									<tr>
+										<th><?php esc_html_e( 'Coupons', 'shop-front' ); ?></th>
+										<td>
+											<ul class="list-inline">
+												<?php
+												foreach ( $coupons as $item_id => $item ) {
+													$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_title = %s AND post_type = 'shop_coupon' AND post_status = 'publish' LIMIT 1;", $item['name'] ) ); // phpcs:ignore
+
+													echo '<li><span>' . esc_html( $item['name'] ) . '</span></li>';
+												}
+												?>
+											</ul>
+										</td>
+									</tr>
+								</table>
+								<?php
+							}
+							?>
+						</div>
+
+						<?php do_action( 'msf_after_order_items_table', $order ); ?>
+
+						<div class="clear"></div>
+
+						<!-- <div class="" style="width: 100%">
+							<div class="msf-panel msf-panel-default">
+								<div class="msf-panel-heading"><strong><?php //esc_html_e( 'Downloadable Product Permission', 'shop-front' ); ?></strong></div>
+								<div class="msf-panel-body">
+									<?php
+									//msf_get_template_part( 'orders/downloadable', '', array( 'order' => $order ) );
+									?>
+								</div>
+							</div>
+						</div> -->
 					</div>
 					<div class="msf-card">
 						<?php

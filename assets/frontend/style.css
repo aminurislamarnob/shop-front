@@ -2331,6 +2331,27 @@ button.remove_order_item_meta.button:hover {
   display: table;
 }
 
+
+/* Order Details */
+.order-item-meta-wrapper .order-item-meta {
+  display: flex;
+  gap: 10px;
+}
+
+.order-item-meta-wrapper .order-item-meta p {
+  margin: 0;
+}
+
+.msf-card section.woocommerce-columns.addresses {
+  display: flex;
+  width: 100%;
+  gap: 30px;
+}
+
+.msf-card section.woocommerce-columns.addresses>div {
+  width: 50%;
+}
+
 @media (max-width: 768px) {
   .order-creation-form .col-md-8, 
   .order-creation-form .col-md-4 {
