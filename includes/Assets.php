@@ -158,8 +158,11 @@ class Assets {
 				)
 			);
 
-			global $theorder;
-			$order_id = \Automattic\WooCommerce\Utilities\OrderUtil::get_post_or_order_id( $theorder ) ;
+			$order_id = absint( get_query_var( 'order-details' ) );
+			if ( ! $order_id ) {
+				global $theorder;
+				$order_id = \Automattic\WooCommerce\Utilities\OrderUtil::get_post_or_order_id( $theorder );
+			}
 			$default_location = wc_get_customer_default_location();
 
 			wp_localize_script(

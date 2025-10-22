@@ -20,7 +20,7 @@ $order = $theorder;
 		<?php do_action( 'msf_dashboard_content_before' ); ?>
 		<main class="my-shop-front-page-content">
 			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
-			<div class="order-creation-form">
+			<div class="msfc-dashboard-order-details">
 				<form action="" method="post">
 					<div class="row">
 						<!-- Left Column -->

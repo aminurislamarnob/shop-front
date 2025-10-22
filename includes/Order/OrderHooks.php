@@ -20,7 +20,6 @@ class OrderHooks {
 		$this->set_fields_and_prefix(); // Set the fields and the field prefix for order attribution meta.
 		add_action( 'msfc_after_order_details_action', array( $this, 'add_order_notes' ) );
 		add_action( 'msfc_after_order_details_action', array( $this, 'add_customer_history' ) );
-		add_action( 'msfc_after_order_details_action', array( $this, 'get_order_attribution' ) );
 	}
 
 	/**
@@ -87,61 +86,5 @@ class OrderHooks {
 		$customers_query = new CustomersQuery( $args );
 		$customer_data   = $customers_query->get_data();
 		return $customer_data->data[0] ?? null;
-	}
-
-	/**
-	 * Output the attribution data for the order details.
-	 *
-	 * @param WC_Order $order The order object.
-	 *
-	 * @return void
-	 */
-	public function get_order_attribution( WC_Order $order ) {
-		$meta = $this->filter_meta_data( $order->get_meta_data() );
-
-		$this->format_device_meta_data( $meta );
-
-		// No more details if there is only the origin value - this is for unknown source types.
-		$has_more_details = array( 'origin' ) !== array_keys( $meta );
-
-		// For direct, web admin, or mobile app orders, also don't show more details.
-		$simple_sources = array( 'typein', 'admin', 'mobile_app' );
-		if ( isset( $meta['source_type'] ) && in_array( $meta['source_type'], $simple_sources, true ) ) {
-			$has_more_details = false;
-		}
-		$template_args = array(
-			'meta'             => $meta,
-			'has_more_details' => $has_more_details,
-		);
-		msf_get_template_part( 'orders/attribution-details', '', $template_args );
-	}
-
-	/**
-	 * Format the meta data for display.
-	 *
-	 * @param array $meta The array of meta data to format.
-	 *
-	 * @return void
-	 */
-	public function format_device_meta_data( array &$meta ) {
-
-		if ( array_key_exists( 'device_type', $meta ) ) {
-
-			switch ( $meta['device_type'] ) {
-				case 'Mobile':
-					$meta['device_type'] = __( 'Mobile', 'woocommerce' );
-					break;
-				case 'Tablet':
-					$meta['device_type'] = __( 'Tablet', 'woocommerce' );
-					break;
-				case 'Desktop':
-					$meta['device_type'] = __( 'Desktop', 'woocommerce' );
-					break;
-
-				default:
-					$meta['device_type'] = __( 'Unknown', 'woocommerce' );
-					break;
-			}
-		}
 	}
 }

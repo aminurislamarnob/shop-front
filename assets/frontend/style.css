@@ -1485,10 +1485,10 @@ span.select2-selection__clear {
   border-color: var(--primary-bg);
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
-.order-creation-form select#customer_user, select#msf_product_search {
+.msfc-dashboard-order-details select#customer_user, select#msf_product_search {
   display: none;
 }
-.order-creation-form .msf-card {
+.msfc-dashboard-order-details .msf-card {
   background: #fff;
   margin-bottom: 24px;
   box-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
@@ -1497,11 +1497,11 @@ span.select2-selection__clear {
   padding: 0;
 }
 
-.order-creation-form .msf-card-content {
+.msfc-dashboard-order-details .msf-card-content {
   padding: 24px;
 }
 
-.order-creation-form .msf-card-title {
+.msfc-dashboard-order-details .msf-card-title {
   font-size: 16px;
   font-weight: 500;
   margin: 0;
@@ -1510,12 +1510,12 @@ span.select2-selection__clear {
   border-bottom: 1px solid #e5e7eb;
 }
 
-.order-creation-form .msf-form-group {
+.msfc-dashboard-order-details .msf-form-group {
   margin-bottom: 16px;
   position: relative;
 }
 
-.order-creation-form .msf-form-group label {
+.msfc-dashboard-order-details .msf-form-group label {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
@@ -1523,7 +1523,7 @@ span.select2-selection__clear {
   font-size: 14px;
 }
 
-.order-creation-form .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
+.msfc-dashboard-order-details .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
   width: 100%;
   border-radius: 8px;
   font-size: 14px;
@@ -1531,17 +1531,17 @@ span.select2-selection__clear {
   background-color: #fff;
 }
 
-.order-creation-form .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus, .woocommerce_order_items_wrapper textarea:focus {
+.msfc-dashboard-order-details .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus, .woocommerce_order_items_wrapper textarea:focus {
   outline: none;
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
-.order-creation-form .search-group {
+.msfc-dashboard-order-details .search-group {
   position: relative;
 }
 
-.order-creation-form .search-icon {
+.msfc-dashboard-order-details .search-icon {
   position: absolute;
   right: 12px;
   top: 50%;
@@ -1551,13 +1551,13 @@ span.select2-selection__clear {
   pointer-events: none;
 }
 
-.order-creation-form .separator {
+.msfc-dashboard-order-details .separator {
   text-align: center;
   margin: 20px 0;
   position: relative;
 }
 
-.order-creation-form .separator::before {
+.msfc-dashboard-order-details .separator::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -1567,20 +1567,20 @@ span.select2-selection__clear {
   background-color: #e9ecef;
 }
 
-.order-creation-form .separator span {
+.msfc-dashboard-order-details .separator span {
   background: white;
   padding: 0 16px;
   color: #6c757d;
   font-size: 14px;
 }
 
-.order-creation-form .customer-type-group {
+.msfc-dashboard-order-details .customer-type-group {
   display: flex;
   gap: 20px;
   margin-bottom: 20px;
 }
 
-.order-creation-form .radio-label {
+.msfc-dashboard-order-details .radio-label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1588,13 +1588,13 @@ span.select2-selection__clear {
   font-weight: 500;
 }
 
-.order-creation-form .radio-label input[type="radio"] {
+.msfc-dashboard-order-details .radio-label input[type="radio"] {
   width: 18px;
   height: 18px;
   accent-color: #8b5cf6;
 }
 
-.order-creation-form .checkbox-label {
+.msfc-dashboard-order-details .checkbox-label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1602,20 +1602,20 @@ span.select2-selection__clear {
   font-weight: 500;
 }
 
-.order-creation-form .checkbox-label input[type="checkbox"] {
+.msfc-dashboard-order-details .checkbox-label input[type="checkbox"] {
   width: 18px;
   height: 18px;
   accent-color: #8b5cf6;
 }
 
-.order-creation-form .address-subtitle {
+.msfc-dashboard-order-details .address-subtitle {
   font-size: 16px;
   font-weight: 600;
   margin: 20px 0 16px 0;
   color: #2c3e50;
 }
 
-.order-creation-form .card-title-with-checkbox {
+.msfc-dashboard-order-details .card-title-with-checkbox {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1624,13 +1624,13 @@ span.select2-selection__clear {
   padding: 16px 24px;
 }
 
-.order-creation-form .card-title-with-checkbox .msf-card-title {
+.msfc-dashboard-order-details .card-title-with-checkbox .msf-card-title {
   margin: 0;
   border-bottom: none;
   padding: 0;
 }
 
-.order-creation-form .card-title-with-link {
+.msfc-dashboard-order-details .card-title-with-link {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1639,19 +1639,19 @@ span.select2-selection__clear {
   padding: 16px 24px;
 }
 
-.order-creation-form .card-title-with-link .msf-card-title {
+.msfc-dashboard-order-details .card-title-with-link .msf-card-title {
   margin: 0;
   border-bottom: none;
   padding: 0;
 }
 
-.order-creation-form .checkbox-label.right-aligned {
+.msfc-dashboard-order-details .checkbox-label.right-aligned {
   margin-left: auto;
   font-size: 14px;
   font-weight: 500;
 }
 
-.order-creation-form .toggle-switch {
+.msfc-dashboard-order-details .toggle-switch {
   position: relative;
   display: inline-block;
   width: 50px;
@@ -1659,13 +1659,13 @@ span.select2-selection__clear {
   margin-left: 8px;
 }
 
-.order-creation-form .toggle-switch input {
+.msfc-dashboard-order-details .toggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.order-creation-form .toggle-slider {
+.msfc-dashboard-order-details .toggle-slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -1677,7 +1677,7 @@ span.select2-selection__clear {
   border-radius: 24px;
 }
 
-.order-creation-form .toggle-slider:before {
+.msfc-dashboard-order-details .toggle-slider:before {
   position: absolute;
   content: "";
   height: 18px;
@@ -1690,33 +1690,33 @@ span.select2-selection__clear {
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.order-creation-form input:checked + .toggle-slider {
+.msfc-dashboard-order-details input:checked + .toggle-slider {
   background-color: #8b5cf6;
 }
 
-.order-creation-form input:checked + .toggle-slider:before {
+.msfc-dashboard-order-details input:checked + .toggle-slider:before {
   transform: translateX(26px);
 }
 
-.order-creation-form .toggle-label {
+.msfc-dashboard-order-details .toggle-label {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.order-creation-form .add-customer-link {
+.msfc-dashboard-order-details .add-customer-link {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.order-creation-form .or-text {
+.msfc-dashboard-order-details .or-text {
   color: #6c757d;
   font-size: 14px;
   font-weight: 500;
 }
 
-.order-creation-form .add-customer-link a {
+.msfc-dashboard-order-details .add-customer-link a {
   color: #8b5cf6;
   text-decoration: underline;
   font-weight: 500;
@@ -1725,12 +1725,12 @@ span.select2-selection__clear {
   cursor: pointer;
 }
 
-.order-creation-form .add-customer-link a:hover {
+.msfc-dashboard-order-details .add-customer-link a:hover {
   color: #7c3aed;
   text-decoration: none;
 }
 
-.order-creation-form .new-customer-fields {
+.msfc-dashboard-order-details .new-customer-fields {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #e9ecef;
@@ -1748,14 +1748,14 @@ span.select2-selection__clear {
   }
 }
 
-.order-creation-form .msf-table, .msfc-order-items-box table {
+.msfc-dashboard-order-details .msf-table, .msfc-order-items-box table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 16px;
 }
 
-.order-creation-form .msf-table th,
-.order-creation-form .msf-table td,
+.msfc-dashboard-order-details .msf-table th,
+.msfc-dashboard-order-details .msf-table td,
 .msfc-order-items-box table th,
 .msfc-order-items-box table td {
   padding: 12px;
@@ -1763,24 +1763,24 @@ span.select2-selection__clear {
   border-bottom: 1px solid #e9ecef;
 }
 
-.order-creation-form .msf-table th, .msfc-order-items-box table th {
+.msfc-dashboard-order-details .msf-table th, .msfc-order-items-box table th {
   background-color: #f8f9fa;
   font-weight: 600;
   color: #495057;
   font-size: 14px;
 }
 
-.order-creation-form .msf-table td, .msfc-order-items-box table td {
+.msfc-dashboard-order-details .msf-table td, .msfc-order-items-box table td {
   font-size: 14px;
   color: #495057;
 }
 
-.order-creation-form .quantity-input {
+.msfc-dashboard-order-details .quantity-input {
   width: 80px;
   text-align: center;
 }
 
-.order-creation-form .delete-btn {
+.msfc-dashboard-order-details .delete-btn {
   background: none;
   border: none;
   cursor: pointer;
@@ -1790,20 +1790,20 @@ span.select2-selection__clear {
   transition: background-color 0.2s;
 }
 
-.order-creation-form .delete-btn:hover {
+.msfc-dashboard-order-details .delete-btn:hover {
   background-color: #f8f9fa;
 }
 
-.order-creation-form .coupon-group {
+.msfc-dashboard-order-details .coupon-group {
   display: flex;
   gap: 8px;
 }
 
-.order-creation-form .coupon-group .msf-form-control {
+.msfc-dashboard-order-details .coupon-group .msf-form-control {
   flex: 1;
 }
 
-.order-creation-form .apply-btn {
+.msfc-dashboard-order-details .apply-btn {
   background-color: #8b5cf6;
   color: white;
   border: none;
@@ -1814,21 +1814,21 @@ span.select2-selection__clear {
   transition: background-color 0.3s;
 }
 
-.order-creation-form .apply-btn:hover {
+.msfc-dashboard-order-details .apply-btn:hover {
   background-color: #7c3aed;
 }
 
-.order-creation-form .fee-group {
+.msfc-dashboard-order-details .fee-group {
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
-.order-creation-form .fee-group .msf-form-control {
+.msfc-dashboard-order-details .fee-group .msf-form-control {
   flex: 1;
 }
 
-.order-creation-form .add-fee-btn {
+.msfc-dashboard-order-details .add-fee-btn {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -1840,43 +1840,43 @@ span.select2-selection__clear {
   transition: background-color 0.3s;
 }
 
-.order-creation-form .add-fee-btn:hover {
+.msfc-dashboard-order-details .add-fee-btn:hover {
   background-color: #7c3aed;
 }
 
-.order-creation-form .order-summary {
+.msfc-dashboard-order-details .order-summary {
   background-color: #f8f9fa;
   padding: 16px;
   border-radius: 8px;
 }
 
-.order-creation-form .summary-line {
+.msfc-dashboard-order-details .summary-line {
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
   font-size: 14px;
 }
 
-.order-creation-form .summary-line.discount span:last-child {
+.msfc-dashboard-order-details .summary-line.discount span:last-child {
   color: #28a745;
 }
 
-.order-creation-form .summary-line.total {
+.msfc-dashboard-order-details .summary-line.total {
   border-top: 2px solid #e9ecef;
   padding-top: 12px;
   margin-top: 12px;
   font-size: 16px;
 }
 
-.order-creation-form .action-buttons {
+.msfc-dashboard-order-details .action-buttons {
   display: flex;
   flex-direction: row;
   gap: 12px;
   margin: 0 0 24px 0;
 }
 
-.order-creation-form .create-order-btn,
-.order-creation-form .save-draft-btn {
+.msfc-dashboard-order-details .create-order-btn,
+.msfc-dashboard-order-details .save-draft-btn {
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
@@ -1888,38 +1888,38 @@ span.select2-selection__clear {
   transition: all 0.3s ease;
 }
 
-.order-creation-form .create-order-btn {
+.msfc-dashboard-order-details .create-order-btn {
   background-color: #8b5cf6;
   color: #fff;
   border: none;
   font-weight: 600;
 }
 
-.order-creation-form .create-order-btn:hover {
+.msfc-dashboard-order-details .create-order-btn:hover {
   background-color: #7c3aed;
 }
 
-.order-creation-form .save-draft-btn {
+.msfc-dashboard-order-details .save-draft-btn {
   background-color: #f8f9fa;
   color: #495057;
   border: 2px solid #e9ecef;
   font-weight: 500;
 }
 
-.order-creation-form .save-draft-btn:hover {
+.msfc-dashboard-order-details .save-draft-btn:hover {
   background-color: #e9ecef;
   border-color: #dee2e6;
 }
 
-.order-creation-form .existing-notes {
+.msfc-dashboard-order-details .existing-notes {
   margin-bottom: 20px;
 }
 
-.order-creation-form .note {
+.msfc-dashboard-order-details .note {
   margin-bottom: 16px;
 }
 
-.order-creation-form .note_content {
+.msfc-dashboard-order-details .note_content {
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 8px;
@@ -1930,23 +1930,23 @@ span.select2-selection__clear {
   color: #424242;
   border-left: 4px solid #9e9e9e;
 }
-.order-creation-form .note_content p{
+.msfc-dashboard-order-details .note_content p{
   margin: 0;
 }
 
-/* .order-creation-form .note_content-blue {
+/* .msfc-dashboard-order-details .note_content-blue {
   background-color: #e3f2fd;
   color: #1976d2;
   border-left: 4px solid #2196f3;
 }
 
-.order-creation-form .note_content-gray {
+.msfc-dashboard-order-details .note_content-gray {
   background-color: #f5f5f5;
   color: #424242;
   border-left: 4px solid #9e9e9e;
 } */
 
-.order-creation-form .meta {
+.msfc-dashboard-order-details .meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1954,38 +1954,38 @@ span.select2-selection__clear {
   color: #6c757d;
 }
 
-.order-creation-form .exact-date {
+.msfc-dashboard-order-details .exact-date {
   font-style: italic;
 }
 
-.order-creation-form .delete_note {
+.msfc-dashboard-order-details .delete_note {
   color: #dc3545;
   text-decoration: underline;
   font-size: 12px;
   cursor: pointer;
 }
 
-.order-creation-form .delete_note:hover {
+.msfc-dashboard-order-details .delete_note:hover {
   color: #c82333;
 }
 
-.order-creation-form .add-note-section {
+.msfc-dashboard-order-details .add-note-section {
   border-top: 1px solid #e5e7eb;
   padding-top: 20px;
 }
 
-.order-creation-form .add-note-header {
+.msfc-dashboard-order-details .add-note-header {
   margin-bottom: 16px;
 }
 
-.order-creation-form .add-note-title {
+.msfc-dashboard-order-details .add-note-title {
   font-size: 16px;
   font-weight: 600;
   margin: 0;
   color: #374151;
 }
 
-.order-creation-form .help-icon {
+.msfc-dashboard-order-details .help-icon {
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -1999,12 +1999,12 @@ span.select2-selection__clear {
   cursor: help;
 }
 
-.order-creation-form .note-textarea {
+.msfc-dashboard-order-details .note-textarea {
   resize: vertical;
   min-height: 80px;
 }
 
-.order-creation-form .note-options {
+.msfc-dashboard-order-details .note-options {
   display: flex;
   justify-content: space-between;
   align-items: end;
@@ -2012,12 +2012,12 @@ span.select2-selection__clear {
   margin-top: 16px;
 }
 
-.order-creation-form .note-options .msf-form-group {
+.msfc-dashboard-order-details .note-options .msf-form-group {
   flex: 1;
   margin-bottom: 0;
 }
 
-.order-creation-form .add-note-btn {
+.msfc-dashboard-order-details .add-note-btn {
   background-color: #8b5cf6;
   color: white;
   border: none;
@@ -2029,29 +2029,29 @@ span.select2-selection__clear {
   white-space: nowrap;
 }
 
-.order-creation-form .add-note-btn:hover {
+.msfc-dashboard-order-details .add-note-btn:hover {
   background-color: #7c3aed;
 }
 
-.order-creation-form .date-time-group {
+.msfc-dashboard-order-details .date-time-group {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.order-creation-form .date-input {
+.msfc-dashboard-order-details .date-input {
   flex: 1;
   min-width: 120px;
 }
 
-.order-creation-form .time-input {
+.msfc-dashboard-order-details .time-input {
   width: 70px;
   padding: 8px 10px;
   text-align: center;
 }
 
-.order-creation-form .date-separator,
-.order-creation-form .time-separator {
+.msfc-dashboard-order-details .date-separator,
+.msfc-dashboard-order-details .time-separator {
   color: #6c757d;
   font-weight: 500;
   font-size: 14px;
@@ -2308,7 +2308,7 @@ button.remove_order_item_meta.button:hover {
   color: #fff;
   border-color: var(--primary-bg);
 }
-.order-creation-form .select2-hidden-accessible {
+.msfc-dashboard-order-details .select2-hidden-accessible {
   border: 0 !important;
   clip: rect(0 0 0 0) !important;
   height: 1px !important;
@@ -2351,35 +2351,76 @@ button.remove_order_item_meta.button:hover {
 .msf-card section.woocommerce-columns.addresses>div {
   width: 50%;
 }
+.customer-history.order-attribution-metabox {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  display: grid;
+  gap: 20px;
+  max-width: 400px;
+}
+
+.customer-history h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #111827;
+}
+
+.customer-history .woocommerce-help-tip {
+  display: inline-block;
+  cursor: help;
+  opacity: 0.6;
+}
+
+.customer-history span[class^="order-attribution-"] {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1f2937;
+  display: block;
+}
+
+.customer-history .woocommerce-Price-amount {
+  font-weight: 600;
+  color: #10b981; /* tailwind green-500 */
+}
+
 
 @media (max-width: 768px) {
-  .order-creation-form .col-md-8, 
-  .order-creation-form .col-md-4 {
+  .msfc-dashboard-order-details .col-md-8, 
+  .msfc-dashboard-order-details .col-md-4 {
     flex: 0 0 100%;
     max-width: 100%;
   }
   
-  .order-creation-form .customer-type-group {
+  .msfc-dashboard-order-details .customer-type-group {
     flex-direction: column;
     gap: 12px;
   }
   
-  .order-creation-form .coupon-group, 
-  .order-creation-form .fee-group {
+  .msfc-dashboard-order-details .coupon-group, 
+  .msfc-dashboard-order-details .fee-group {
     flex-direction: column;
   }
   
-  .order-creation-form .action-buttons {
+  .msfc-dashboard-order-details .action-buttons {
     flex-direction: column;
   }
   
-  .order-creation-form .date-time-group {
+  .msfc-dashboard-order-details .date-time-group {
     flex-direction: column;
     gap: 8px;
   }
   
-  .order-creation-form .date-input, 
-  .order-creation-form .time-input {
+  .msfc-dashboard-order-details .date-input, 
+  .msfc-dashboard-order-details .time-input {
     width: 100%;
   }
 }

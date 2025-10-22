@@ -73,129 +73,128 @@ do_action( 'msf_dashboard_wrapper_start' );
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-9">
-					<div class="msf-card">
-						<?php do_action( 'msf_before_order_items_table', $order ); ?>
-
-						<div id="woocommerce-order-items">
-							<table class="msf-table order-items">
-								<thead>
-									<tr>
-										<th class="item" colspan="2"><?php esc_html_e( 'Item', 'shop-front' ); ?></th>
-
-										<?php do_action( 'woocommerce_admin_order_item_headers', $order ); ?>
-
-										<th class="quantity"><?php esc_html_e( 'Qty', 'shop-front' ); ?></th>
-
-										<th class="line_cost"><?php esc_html_e( 'Totals', 'shop-front' ); ?></th>
-									</tr>
-								</thead>
-								<tbody id="order_items_list">
-								<?php
-								$order_items = $order->get_items( apply_filters( 'woocommerce_admin_order_item_types', array( 'line_item' ) ) );
-
-								foreach ( $order_items as $item_id => $item ) {
-									do_action( 'woocommerce_before_order_item_' . $item['type'] . '_html', $item_id, $item, $order );
-
-									$_product = $item->get_product();
-									msf_get_template_part(
-										'orders/order-item-html', '', array(
-											'order' => $order,
-											'item_id' => $item_id,
-											'_product' => $_product,
-											'item'     => $item,
-										)
-									);
-
-									do_action( 'woocommerce_order_item_' . $item['type'] . '_html', $item_id, $item, $order );
-								}
-								?>
-								</tbody>
-
-								<tfoot>
-								<?php
-								if ( $totals = $order->get_order_item_totals() ) { // phpcs:ignore
-									foreach ( $totals as $total ) {
-										?>
-										<tr>
-											<th colspan="2"><?php echo wp_kses_data( $total['label'] ); ?></th>
-											<td colspan="2" class="value"><?php echo wp_kses_post( $total['value'] ); ?></td>
-										</tr>
-										<?php
-									}
-								}
-								?>
-								</tfoot>
-
-							</table>
-
-							<?php
-							$coupons = $order->get_items( 'coupon' );
-
-							if ( $coupons ) {
-								?>
+			<div class="msfc-dashboard-order-details">
+				<div class="row">
+					<div class="col-md-9">
+						<div class="msf-card">
+							<?php do_action( 'msf_before_order_items_table', $order ); ?>
+	
+							<div id="woocommerce-order-items">
 								<table class="msf-table order-items">
-									<tr>
-										<th><?php esc_html_e( 'Coupons', 'shop-front' ); ?></th>
-										<td>
-											<ul class="list-inline">
-												<?php
-												foreach ( $coupons as $item_id => $item ) {
-													$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_title = %s AND post_type = 'shop_coupon' AND post_status = 'publish' LIMIT 1;", $item['name'] ) ); // phpcs:ignore
-
-													echo '<li><span>' . esc_html( $item['name'] ) . '</span></li>';
-												}
-												?>
-											</ul>
-										</td>
-									</tr>
+									<thead>
+										<tr>
+											<th class="item" colspan="2"><?php esc_html_e( 'Item', 'shop-front' ); ?></th>
+	
+											<?php do_action( 'woocommerce_admin_order_item_headers', $order ); ?>
+	
+											<th class="quantity"><?php esc_html_e( 'Qty', 'shop-front' ); ?></th>
+	
+											<th class="line_cost"><?php esc_html_e( 'Totals', 'shop-front' ); ?></th>
+										</tr>
+									</thead>
+									<tbody id="order_items_list">
+									<?php
+									$order_items = $order->get_items( apply_filters( 'woocommerce_admin_order_item_types', array( 'line_item' ) ) );
+	
+									foreach ( $order_items as $item_id => $item ) {
+										do_action( 'woocommerce_before_order_item_' . $item['type'] . '_html', $item_id, $item, $order );
+	
+										$_product = $item->get_product();
+										msf_get_template_part(
+											'orders/order-item-html', '', array(
+												'order' => $order,
+												'item_id' => $item_id,
+												'_product' => $_product,
+												'item'     => $item,
+											)
+										);
+	
+										do_action( 'woocommerce_order_item_' . $item['type'] . '_html', $item_id, $item, $order );
+									}
+									?>
+									</tbody>
+	
+									<tfoot>
+									<?php
+									if ( $totals = $order->get_order_item_totals() ) { // phpcs:ignore
+										foreach ( $totals as $total ) {
+											?>
+											<tr>
+												<th colspan="2"><?php echo wp_kses_data( $total['label'] ); ?></th>
+												<td colspan="2" class="value"><?php echo wp_kses_post( $total['value'] ); ?></td>
+											</tr>
+											<?php
+										}
+									}
+									?>
+									</tfoot>
+	
 								</table>
+	
 								<?php
-							}
+								$coupons = $order->get_items( 'coupon' );
+	
+								if ( $coupons ) {
+									?>
+									<table class="msf-table order-items">
+										<tr>
+											<th><?php esc_html_e( 'Coupons', 'shop-front' ); ?></th>
+											<td>
+												<ul class="list-inline">
+													<?php
+													foreach ( $coupons as $item_id => $item ) {
+														$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_title = %s AND post_type = 'shop_coupon' AND post_status = 'publish' LIMIT 1;", $item['name'] ) ); // phpcs:ignore
+	
+														echo '<li><span>' . esc_html( $item['name'] ) . '</span></li>';
+													}
+													?>
+												</ul>
+											</td>
+										</tr>
+									</table>
+									<?php
+								}
+								?>
+							</div>
+	
+							<?php do_action( 'msf_after_order_items_table', $order ); ?>
+	
+							<div class="clear"></div>
+	
+							<!-- <div class="" style="width: 100%">
+								<div class="msf-panel msf-panel-default">
+									<div class="msf-panel-heading"><strong><?php //esc_html_e( 'Downloadable Product Permission', 'shop-front' ); ?></strong></div>
+									<div class="msf-panel-body">
+										<?php
+										//msf_get_template_part( 'orders/downloadable', '', array( 'order' => $order ) );
+										?>
+									</div>
+								</div>
+							</div> -->
+						</div>
+						<div class="msf-card">
+							<?php
+							/**
+							 * Action hook fired after the order details.
+							 *
+							 * @param WC_Order $order Order data.
+							 */
+							do_action( 'woocommerce_after_order_details', $order );
+	
+							wc_get_template( 'order/order-details-customer.php', array( 'order' => $order ) );
 							?>
 						</div>
-
-						<?php do_action( 'msf_after_order_items_table', $order ); ?>
-
-						<div class="clear"></div>
-
-						<!-- <div class="" style="width: 100%">
-							<div class="msf-panel msf-panel-default">
-								<div class="msf-panel-heading"><strong><?php //esc_html_e( 'Downloadable Product Permission', 'shop-front' ); ?></strong></div>
-								<div class="msf-panel-body">
-									<?php
-									//msf_get_template_part( 'orders/downloadable', '', array( 'order' => $order ) );
-									?>
-								</div>
-							</div>
-						</div> -->
 					</div>
-					<div class="msf-card">
+					<div class="col-md-3">
 						<?php
-						/**
-						 * Action hook fired after the order details.
-						 *
-						 * @param WC_Order $order Order data.
-						 */
-						do_action( 'woocommerce_after_order_details', $order );
-
-						wc_get_template( 'order/order-details-customer.php', array( 'order' => $order ) );
+							/**
+							 * Action hook fired after the order details action.
+							 *
+							 * @param WC_Order $order Order data.
+							 */
+							do_action( 'msfc_after_order_details_action', $order );
 						?>
 					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="msf-card">
-						
-					</div>
-					<?php
-						/**
-						 * Action hook fired after the order details action.
-						 *
-						 * @param WC_Order $order Order data.
-						 */
-						do_action( 'msfc_after_order_details_action', $order );
-					?>
 				</div>
 			</div>
 		</main>

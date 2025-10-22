@@ -15,10 +15,13 @@ if ( 0 !== $order_id ) {
 	$notes = array();
 }
 ?>
-<div class="msf-card">
-	<div x-data="orderNoteAddFormHandler()">
-		<ul class="order_notes">
-			<?php
+<!-- Order Notes Section -->
+<div id="new_order_notes" class="msf-card">
+	<h3 class="msf-card-title"><?php esc_html_e( 'Order notes', 'shop-front' ); ?></h3>
+	<div class="msf-card-content">
+		<!-- Existing Notes -->
+		<ul class="existing-notes order_notes">
+		<?php
 			if ( $notes ) {
 				foreach ( $notes as $note ) {
 					$css_class   = array( 'note' );
@@ -50,33 +53,34 @@ if ( 0 !== $order_id ) {
 				}
 			} else {
 				?>
-				<li class="no-items"><?php esc_html_e( 'There are no notes yet.', 'shop-front' ); ?></li>
+				<li class="note no-items">
+					<div class="note_content">
+						<p><?php esc_html_e( 'There are no notes yet.', 'shop-front' ); ?></p>
+					</div>
+				</li>
 				<?php
 			}
 			?>
 		</ul>
-	
-		<form id="msfc-add-order-note" @submit.prevent="handleOrderNoteSubmission">
-			<div class="add_note">
-				<p>
-					<label for="add_order_note"><?php esc_html_e( 'Add note', 'shop-front' ); ?> <?php echo wc_help_tip( __( 'Add a note for your reference, or add a customer note (the user will be notified).', 'shop-front' ) ); ?></label>
-					<textarea type="text" name="order_note" id="add_order_note" class="input-text" cols="20" rows="5"></textarea>
-				</p>
-				<p>
-					<label for="order_note_type" class="screen-reader-text"><?php esc_html_e( 'Note type', 'shop-front' ); ?></label>
-					<select name="order_note_type" id="order_note_type">
-						<option value=""><?php esc_html_e( 'Private note', 'shop-front' ); ?></option>
+		
+		<!-- Add Note Section -->
+		<div class="add-note-section">
+			<div class="add-note-header">
+				<h4 class="add-note-title"><?php esc_html_e( 'Add Note', 'shop-front' ); ?></h4>
+			</div>
+			<div class="msf-form-group">
+				<textarea id="add_order_note" class="msf-form-control note-textarea" placeholder="<?php echo esc_attr__( 'Enter your note here...', 'shop-front' ); ?>" rows="4"></textarea>
+				<small><?php esc_html_e( 'Add a note for your reference, or add a customer note (the user will be notified).', 'shop-front' ); ?></small>
+			</div>
+			<div class="note-options">
+				<div class="msf-form-group">
+					<select class="msf-form-control" id="order_note_type">
+						<option><?php esc_html_e( 'Internal note', 'shop-front' ); ?></option>
 						<option value="customer"><?php esc_html_e( 'Note to customer', 'shop-front' ); ?></option>
 					</select>
-					<?php wp_nonce_field( '_msfc_add_order_note_', 'msfc_add_order_note_nonce' ); ?>
-					<input type="hidden" name="action" value="msfc_add_order_note">
-					<input type="hidden" name="order_id" value="<?php echo esc_attr( $order_id ); ?>">
-					<button type="submit" class="add_note button"><?php esc_html_e( 'Add', 'shop-front' ); ?></button>
-				</p>
+				</div>
+				<button type="button" class="add-note add-note-btn"><?php esc_html_e( 'Add', 'shop-front' ); ?></button>
 			</div>
-		</form>
-		<!-- Success and Error Messages -->
-		<div x-show="message" x-text="message" class="alert"></div>
-		<div x-show="error" x-text="error" class="alert alert-danger"></div>
+		</div>
 	</div>
 </div>
