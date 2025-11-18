@@ -172,18 +172,16 @@ do_action( 'msf_dashboard_wrapper_start' );
 								</div>
 							</div> -->
 						</div>
-						<div class="msf-card">
-							<?php
-							/**
-							 * Action hook fired after the order details.
-							 *
-							 * @param WC_Order $order Order data.
-							 */
-							do_action( 'woocommerce_after_order_details', $order );
-	
-							wc_get_template( 'order/order-details-customer.php', array( 'order' => $order ) );
-							?>
-						</div>
+						<?php
+						/**
+						 * Action hook fired after the order details.
+						 *
+						 * @param WC_Order $order Order data.
+						 */
+						do_action( 'woocommerce_after_order_details', $order );
+
+						wc_get_template( 'order/order-details-customer.php', array( 'order' => $order ) );
+						?>
 					</div>
 					<div class="col-md-3">
 						<?php

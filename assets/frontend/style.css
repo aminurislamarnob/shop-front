@@ -433,6 +433,9 @@ template {
 .msf-mb-20{
   margin-bottom: 20px;
 }
+.msf-mb-24{
+  margin-bottom: 24px;
+}
 .msf-card {
   background: #fff;
   border-radius: 6px;
@@ -1045,12 +1048,15 @@ label span.req {
   cursor: pointer;
   transition: .3s;
   position: relative;
+  background: #fff;
+  border-radius: 8px;
 }
 .image-drop-container:hover{
   border-color: var(--primary-bg);
 }
 .image-drop-container  .image-drop-text{
   padding: 15px 0;
+  color: #495057;
 }
 .image-drop-container span {
   display: block;
@@ -1062,7 +1068,7 @@ label span.req {
 }
 .image-drop-container span span {
   display: inline-block;
-  color: var(--primary-bg);
+  color: #495057;
 }
 .preview-image img {
   width: 45px;
@@ -1488,7 +1494,7 @@ span.select2-selection__clear {
 .msfc-dashboard-order-details select#customer_user, select#msf_product_search {
   display: none;
 }
-.msfc-dashboard-order-details .msf-card {
+.msfc-dashboard-order-details .msf-card, .msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column, .msf-card.msf-card-with-header {
   background: #fff;
   margin-bottom: 24px;
   box-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
@@ -1497,11 +1503,11 @@ span.select2-selection__clear {
   padding: 0;
 }
 
-.msfc-dashboard-order-details .msf-card-content {
+.msfc-dashboard-order-details .msf-card-content, .msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column address, .msf-card-with-header .msf-card-content {
   padding: 24px;
 }
 
-.msfc-dashboard-order-details .msf-card-title {
+.msf-card-title, .msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column h2.woocommerce-column__title {
   font-size: 16px;
   font-weight: 500;
   margin: 0;
@@ -1510,12 +1516,12 @@ span.select2-selection__clear {
   border-bottom: 1px solid #e5e7eb;
 }
 
-.msfc-dashboard-order-details .msf-form-group {
+.my-shop-front-wrapper .msf-form-group {
   margin-bottom: 16px;
   position: relative;
 }
 
-.msfc-dashboard-order-details .msf-form-group label {
+.my-shop-front-wrapper .msf-form-group label {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
@@ -1523,7 +1529,7 @@ span.select2-selection__clear {
   font-size: 14px;
 }
 
-.msfc-dashboard-order-details .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
+.my-shop-front-wrapper .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
   width: 100%;
   border-radius: 8px;
   font-size: 14px;
@@ -1531,7 +1537,7 @@ span.select2-selection__clear {
   background-color: #fff;
 }
 
-.msfc-dashboard-order-details .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus, .woocommerce_order_items_wrapper textarea:focus {
+.my-shop-front-wrapper .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus, .woocommerce_order_items_wrapper textarea:focus {
   outline: none;
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
@@ -2351,45 +2357,36 @@ button.remove_order_item_meta.button:hover {
 .msf-card section.woocommerce-columns.addresses>div {
   width: 50%;
 }
-.customer-history.order-attribution-metabox {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  font-family: 'Inter', sans-serif;
+.customer-history-item h4 {
+  margin: 0 0 10px;
   font-size: 15px;
-  line-height: 1.6;
-  display: grid;
-  gap: 20px;
-  max-width: 400px;
-}
-
-.customer-history h4 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #111827;
-}
-
-.customer-history .woocommerce-help-tip {
-  display: inline-block;
-  cursor: help;
-  opacity: 0.6;
-}
-
-.customer-history span[class^="order-attribution-"] {
-  font-size: 18px;
   font-weight: 500;
-  color: #1f2937;
-  display: block;
 }
 
-.customer-history .woocommerce-Price-amount {
-  font-weight: 600;
-  color: #10b981; /* tailwind green-500 */
+.customer-history-item {
+  font-size: 14px;
+}
+
+.customer-history-item:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
+.msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 {
+  display: flex;
+  gap: 24px;
+}
+
+.msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column {
+  flex: 1;
+  width: 100%;
+}
+.msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column address p {
+  margin-top: 0;
+}
+
+.msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column address p:last-child {
+  margin-bottom: 0;
 }
 
 

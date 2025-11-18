@@ -18,39 +18,29 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 ?>
 <div class="msf-card">
-	<div class="customer-history order-attribution-metabox">
-		<h4>
-			<?php
-			esc_html_e( 'Total orders', 'shop-front' );
-			echo wp_kses_post(
-				wc_help_tip(
-					__( 'Total number of non-cancelled, non-failed orders for this customer, including the current one.', 'shop-front' )
-				)
-			);
-			?>
-		</h4>
-
-		<span class="order-attribution-total-orders">
-			<?php echo esc_html( $orders_count ); ?>
-		</span>
-
-		<h4>
-			<?php
-			esc_html_e( 'Total revenue', 'shop-front' );
-			echo wp_kses_post(
-				wc_help_tip(
-					__( "This is the Customer Lifetime Value, or the total amount you have earned from this customer's orders.", 'shop-front' )
-				)
-			);
-			?>
-		</h4>
-		<span class="order-attribution-total-spend">
-			<?php echo wp_kses_post( wc_price( $total_spend ) ); ?>
-		</span>
-
-		<h4><?php esc_html_e( 'Average order value', 'shop-front' ); ?></h4>
-		<span class="order-attribution-average-order-value">
-			<?php echo wp_kses_post( wc_price( $avg_order_value ) ); ?>
-		</span>
+	<div class="card-title-with-link">
+		<h3 class="msf-card-title"><?php esc_html_e( 'Customer History', 'shop-front' ); ?></h3>
+	</div>
+	<div class="msf-card-content">
+		<div class="customer-history order-attribution-metabox">
+			<div class="customer-history-item">
+				<h4><?php esc_html_e( 'Total orders', 'shop-front' ); ?></h4>
+				<span class="order-attribution-total-orders">
+					<?php echo esc_html( $orders_count ); ?>
+				</span>
+			</div>
+			<div class="customer-history-item">
+				<h4><?php esc_html_e( 'Total revenue', 'shop-front' ); ?></h4>
+				<span class="order-attribution-total-spend">
+					<?php echo wp_kses_post( wc_price( $total_spend ) ); ?>
+				</span>
+			</div>
+			<div class="customer-history-item">
+				<h4><?php esc_html_e( 'Average order value', 'shop-front' ); ?></h4>
+				<span class="order-attribution-average-order-value">
+					<?php echo wp_kses_post( wc_price( $avg_order_value ) ); ?>
+				</span>
+			</div>
+		</div>
 	</div>
 </div>
