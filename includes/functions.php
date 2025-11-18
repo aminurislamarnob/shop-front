@@ -4,6 +4,8 @@
  *
  * Looks at the theme directory first
  */
+use Automattic\WooCommerce\Enums\OrderStatus;
+
 function msf_get_template_part( $slug, $name = '', $args = array() ) {
 	$defaults = array(
 		'pro' => false,
@@ -115,6 +117,38 @@ function msf_get_post_status_class( $status = '' ) {
 			'draft'   => 'default',
 			'pending' => 'warning',
 			'future'  => 'info',
+		)
+	);
+
+	if ( $status ) {
+		return isset( $statuses[ $status ] ) ? $statuses[ $status ] : '';
+	}
+
+	return $statuses;
+}
+
+/**
+ * Get user-friendly order status class based on order status
+ *
+ * @param string $status
+ *
+ * @return string|array
+ */
+function msf_get_order_status_class( $status = '' ) {
+	$statuses = apply_filters(
+		'msf_get_order_status_class',
+		array(
+			OrderStatus::PENDING    => 'warning',
+			OrderStatus::DRAFT      => 'default',
+			OrderStatus::FAILED     => 'danger',
+			OrderStatus::ON_HOLD    => 'info',
+			OrderStatus::COMPLETED  => 'success',
+			OrderStatus::PROCESSING => 'success',
+			OrderStatus::REFUNDED   => 'info',
+			OrderStatus::CANCELLED  => 'danger',
+			OrderStatus::TRASH      => 'danger',
+			OrderStatus::NEW        => 'default',
+			OrderStatus::AUTO_DRAFT => 'default',
 		)
 	);
 
@@ -248,4 +282,26 @@ function msf_get_id_from_query_vars( $query_var ) {
 	}
 
 	return null;
+}
+
+/**
+ * Check if the current page is a shop front page by endpoint
+ *
+ * @param string $endpoint
+ *
+ * @return bool
+ */
+function msfc_is_page( $endpoint ){
+	if( empty( $endpoint ) ){
+		return false;
+	}
+
+	if ( ! is_msf_dashboard_page() ){
+		return false;
+	}
+
+	global $wp;
+
+	$query_var = $wp->query_vars;
+	return array_key_exists( $endpoint, $query_var );
 }

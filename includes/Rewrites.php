@@ -40,6 +40,8 @@ class Rewrites {
 				'add-new-product'  => get_option( 'msf_myshop_new_product_endpoint', 'add-new-product' ),
 				'edit-product'     => get_option( 'msf_myshop_edit_product_endpoint', 'edit-product' ),
 				'orders'           => get_option( 'msf_myshop_orders_endpoint', 'orders' ),
+				'add-new-order'    => get_option( 'msf_myshop_new_order_endpoint', 'add-new-order' ),
+				'edit-order'       => get_option( 'msf_myshop_edit_order_endpoint', 'edit-order' ),
 				'order-details'    => get_option( 'msf_myshop_order_details_endpoint', 'order-details' ),
 				'categories'       => get_option( 'msf_myshop_categories_endpoint', 'categories' ),
 				'add-new-category' => get_option( 'msf_myshop_new_category_endpoint', 'add-new-category' ),
@@ -134,8 +136,14 @@ class Rewrites {
 					$title = __( 'Orders', 'shop-front' );
 				}
 				break;
+			case 'add-new-order':
+				$title = __( 'Add New Order', 'shop-front' );
+				break;
+			case 'edit-order':
+				$title = __( 'Edit Order', 'shop-front' );
+				break;
 			case 'order-details':
-				$order = wc_get_order( $wp->query_vars['view-order'] );
+				$order = wc_get_order( $wp->query_vars['order-details'] );
 				/* translators: %s: order number */
 				$title = ( $order ) ? sprintf( __( 'Order #%s', 'shop-front' ), $order->get_order_number() ) : '';
 				break;
