@@ -123,6 +123,74 @@ do_action( 'msf_dashboard_wrapper_start' );
 												<input type="number" class="msf-form-control" id="sale_price" name="sale_price" step="any">
 											</div>
 										</div>
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="_sale_price_dates_from"><?php esc_html_e( 'Sale Price Date From', 'msfc-wfm' ); ?></label>
+												<input type="text" class="msf-form-control" id="_sale_price_dates_from" name="_sale_price_dates_from">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="_sale_price_dates_to"><?php esc_html_e( 'Sale Price Date To', 'msfc-wfm' ); ?></label>
+												<input type="text" class="msf-form-control" id="_sale_price_dates_to" name="_sale_price_dates_to">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="msf-card msf-card-with-header msf-mb-24">
+								<h3 class="msf-card-title"><?php esc_html_e( 'Inventory', 'shop-front' ); ?></h3>
+								<div class="msf-card-content">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="_sku"><?php esc_html_e( 'SKU', 'msfc-wfm' ); ?></label>
+												<input type="text" class="msf-form-control" id="_sku" name="_sku">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="_global_unique_id"><?php esc_html_e( 'GTIN, UPC, EAN, or ISBN', 'msfc-wfm' ); ?></label>
+												<input type="text" class="msf-form-control" id="_global_unique_id" name="_global_unique_id">
+											</div>
+										</div>
+										<div class="col-md-12">
+											<div class="msf-form-group">
+												<input type="checkbox" class="msf-form-control" id="_manage_stock" name="_manage_stock">
+												<label for="_manage_stock"><?php esc_html_e( 'Enable product stock management', 'msfc-wfm' ); ?></label>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="_stock"><?php esc_html_e( 'Quantity', 'msfc-wfm' ); ?></label>
+												<input type="number" class="msf-form-control" id="_stock" name="_stock" step="any" value="1">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="_low_stock_amount"><?php esc_html_e( 'Low Stock Threshold', 'msfc-wfm' ); ?></label>
+												<input type="number" class="msf-form-control" id="_low_stock_amount" name="_low_stock_amount" step="any">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="_backorders"><?php esc_html_e( 'Allow Backorders?', 'msfc-wfm' ); ?></label>
+												<select class="msf-form-control" id="_backorders" name="_backorders">
+													<option value="no"><?php esc_html_e( 'Do not allow', 'msfc-wfm' ); ?></option>
+													<option value="notify"><?php esc_html_e( 'Allow but notify customer', 'msfc-wfm' ); ?></option>
+													<option value="yes"><?php esc_html_e( 'Allow', 'msfc-wfm' ); ?></option>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="_sold_individually"><?php esc_html_e( 'Limit Purchases to 1 Item Per Order?', 'msfc-wfm' ); ?></label>
+												<select class="msf-form-control" id="_sold_individually" name="_sold_individually">
+													<option value="no"><?php esc_html_e( 'No', 'msfc-wfm' ); ?></option>
+													<option value="yes"><?php esc_html_e( 'Yes', 'msfc-wfm' ); ?></option>
+												</select>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -152,16 +220,15 @@ do_action( 'msf_dashboard_wrapper_start' );
 												</div>
 											</div>
 										</div>
+										<div class="col-md-12">
+											<div class="msf-form-group">
+												<label for="product_shipping_class"><?php esc_html_e( 'Shipping Class', 'msfc-wfm' ); ?></label>
+												<select class="msf-form-control" id="product_shipping_class" name="product_shipping_class">
+													<option value="-1"><?php esc_html_e( 'No shipping class', 'msfc-wfm' ); ?></option>
+												</select>
+											</div>
+										</div>
 									</div>
-								</div>
-							</div>
-							
-							<div class="form-group">
-								<?php wp_nonce_field( '_msfc_add_product_', 'msfc_add_product_nonce' ); ?>
-								<input type="hidden" name="action" value="msfc_add_product_action">
-								<div class="msf-button-group">
-									<button class="my-shop-front-button" name="save_product" type="submit"><?php esc_html_e( 'Add Product', 'shop-front' ); ?></button>
-									<a href="<?php echo esc_url( msfc_get_navigation_url( 'products' ) ); ?>" class="my-shop-front-button my-shop-front-button-light">Back</a>
 								</div>
 							</div>
 						</div>
@@ -191,6 +258,21 @@ do_action( 'msf_dashboard_wrapper_start' );
 										<label for="product_tags"><?php esc_html_e( 'Tags', 'msfc-wfm' ); ?> <small><?php esc_html_e( '(Tags must be comma separeted)', 'msfc-wfm' ); ?></small></label>
 										<input type="text" class="msf-form-control" id="product_tags" name="product_tags" placeholder="<?php echo esc_attr__( 'Ex: shirt, t-shirt, men', 'msfc-wfm' ); ?>">
 									</div>
+									<div class="msf-form-group">
+										<label for="comment_status"><?php esc_html_e( 'Enable Reviews?', 'msfc-wfm' ); ?></label>
+										<select class="msf-form-control" id="comment_status" name="comment_status">
+											<option value="open"><?php esc_html_e( 'Yes', 'msfc-wfm' ); ?></option>
+											<option value="close"><?php esc_html_e( 'No', 'msfc-wfm' ); ?></option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<?php wp_nonce_field( '_msfc_add_product_', 'msfc_add_product_nonce' ); ?>
+								<input type="hidden" name="action" value="msfc_add_product_action">
+								<div class="msf-button-group">
+									<button class="my-shop-front-button" name="save_product" type="submit"><?php esc_html_e( 'Add Product', 'shop-front' ); ?></button>
+									<a href="<?php echo esc_url( msfc_get_navigation_url( 'products' ) ); ?>" class="my-shop-front-button my-shop-front-button-light">Back</a>
 								</div>
 							</div>
 						</div>
