@@ -42,11 +42,6 @@ class ProductManager {
 
 		if ( ! empty( $data['ID'] ) ) {
 			$post_arr['ID'] = absint( $data['ID'] );
-
-			// if ( ! dokan_is_product_author( $post_arr['ID'] ) ) {
-			// return new WP_Error( 'not-own', __( 'Sorry, You can not modify another vendor\'s product !', 'dokan-lite' ) );
-			// }
-
 			$is_updating = true;
 		} else {
 			$is_updating = false;
@@ -72,6 +67,10 @@ class ProductManager {
 
 		if ( ! empty( $data['product_category'] ) ) {
 			$post_data['categories'] = array_map( 'absint', (array) $data['product_category'] );
+		}
+
+		if ( ! empty( $data['product_brand'] ) ) {
+			$post_data['brands'] = array_map( 'absint', (array) $data['product_brand'] );
 		}
 
 		if ( isset( $data['product_thumbnail_id'] ) ) {
@@ -128,9 +127,9 @@ class ProductManager {
 		$product = $this->create_product( $post_data );
 
 		if ( ! $is_updating ) {
-			do_action( 'dokan_new_product_added', $product->get_id(), $data );
+			do_action( 'msf_new_product_added', $product->get_id(), $data );
 		} else {
-			do_action( 'dokan_product_updated', $product->get_id(), $data );
+			do_action( 'msf_product_updated', $product->get_id(), $data );
 		}
 
 		if ( $product ) {
@@ -233,8 +232,13 @@ class ProductManager {
 		$product = $this->save_product_shipping_data( $product, $args );
 
 		// SKU.
-		if ( isset( $args['sku'] ) ) {
-			$product->set_sku( wc_clean( $args['sku'] ) );
+		if ( isset( $args['_sku'] ) ) {
+			$product->set_sku( wc_clean( $args['_sku'] ) );
+		}
+
+		// Unique ID.
+		if ( isset( $request['_global_unique_id'] ) ) {
+			$product->set_global_unique_id( wc_clean( $request['_global_unique_id'] ) );
 		}
 
 		// Attributes.
@@ -297,8 +301,8 @@ class ProductManager {
 		// Stock data.
 		if ( 'yes' === get_option( 'woocommerce_manage_stock' ) ) {
 			// Manage stock.
-			if ( isset( $args['manage_stock'] ) ) {
-				$product->set_manage_stock( $args['manage_stock'] );
+			if ( isset( $args['_manage_stock'] ) ) {
+				$product->set_manage_stock( $args['_manage_stock'] );
 			}
 
 			// Backorders.
@@ -377,8 +381,12 @@ class ProductManager {
 
 		// Product categories.
 		if ( isset( $args['categories'] ) && is_array( $args['categories'] ) ) {
-
 			$product->set_category_ids( $args['categories'] );
+		}
+
+		// Product brands.
+		if ( isset( $args['brands'] ) && is_array( $args['brands'] ) ) {
+			$product->set_brand_ids( $args['brands'] );
 		}
 
 		// Product tags.
@@ -631,5 +639,22 @@ class ProductManager {
 		}
 
 		return $product;
+	}
+
+	/**
+     * Get product brands.
+     *
+     * @param int    $product_id Product ID.
+     * @param string $fields
+     *
+     * @return array
+     */
+    public function get_brands( int $product_id, string $fields = 'all' ): array {
+        $brands = wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => $fields ) );
+        if ( is_wp_error( $brands ) ) {
+            return [];
+        }
+
+        return $brands;
 	}
 }

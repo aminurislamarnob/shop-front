@@ -9,6 +9,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.WP.GlobalVariablesOverride.Prohibited
+global $post;
+
+if ( isset( $post->ID ) && $post->ID && 'product' === $post->post_type ) {
+    $product_id      = $post->ID;
+    $product_title   = $post->post_title;
+    $product_content = $post->post_content;
+    $product_excerpt = $post->post_excerpt;
+    $product_status  = $post->post_status;
+    $product      = wc_get_product( $post_id );
+}
+
+// $terms            = wp_get_object_terms( $product_id, 'product_type' );
+$product_type     = 'simple';
+$product_status  = ( ! empty ( $product_status ) ) ? $product_status : 'publish';
+
+
+$product_types    = apply_filters( 'msf_product_types', array( 'simple' => __( 'Simple', 'shop-front' ) ) );
+$product_statuses    = apply_filters( 'msf_product_statuses', array( 'publish' => __( 'Simple', 'shop-front' ) ) );
+$product_brands = pluginizelab_shop_front()->msf_product_brands->get_product_brands();
+
 do_action( 'msf_dashboard_wrapper_start' );
 ?>
 <div class="my-shop-front-container">
@@ -30,7 +51,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 										<input type="text" class="msf-form-control" id="product_title" name="product_title" placeholder="<?php echo esc_attr__( 'Product name', 'msfc-wfm' ); ?>">
 									</div>
 									<div class="msf-form-group">
-										<label for="product_description"><?php esc_html_e( 'Prduct Description', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
+										<label for="product_description"><?php esc_html_e( 'Product Description', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
 										<?php
 										$content   = '';
 										$editor_id = 'product_description';
@@ -155,40 +176,51 @@ do_action( 'msf_dashboard_wrapper_start' );
 											</div>
 										</div>
 										<div class="col-md-12">
-											<div class="msf-form-group">
+											<div class="msf-form-group msf-form-switch">
 												<input type="checkbox" class="msf-form-control" id="_manage_stock" name="_manage_stock">
 												<label for="_manage_stock"><?php esc_html_e( 'Enable product stock management', 'msfc-wfm' ); ?></label>
 											</div>
 										</div>
-										<div class="col-md-6">
-											<div class="msf-form-group">
-												<label for="_stock"><?php esc_html_e( 'Quantity', 'msfc-wfm' ); ?></label>
-												<input type="number" class="msf-form-control" id="_stock" name="_stock" step="any" value="1">
+										<div class="col-md-12 show_if_stock_management">
+											<div class="row">
+												<div class="col-md-6">
+													<div class="msf-form-group">
+														<label for="_stock"><?php esc_html_e( 'Quantity', 'msfc-wfm' ); ?></label>
+														<input type="number" class="msf-form-control" id="_stock" name="_stock" step="any" value="1">
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="msf-form-group">
+														<label for="_low_stock_amount"><?php esc_html_e( 'Low Stock Threshold', 'msfc-wfm' ); ?></label>
+														<input type="number" class="msf-form-control" id="_low_stock_amount" name="_low_stock_amount" step="any">
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="msf-form-group">
+														<label for="_backorders"><?php esc_html_e( 'Allow Backorders?', 'msfc-wfm' ); ?></label>
+														<select class="msf-form-control" id="_backorders" name="_backorders">
+															<option value="no"><?php esc_html_e( 'Do not allow', 'msfc-wfm' ); ?></option>
+															<option value="notify"><?php esc_html_e( 'Allow but notify customer', 'msfc-wfm' ); ?></option>
+															<option value="yes"><?php esc_html_e( 'Allow', 'msfc-wfm' ); ?></option>
+														</select>
+													</div>
+												</div>
 											</div>
 										</div>
-										<div class="col-md-6">
+										<div class="col-md-6 _stock_status_field">
 											<div class="msf-form-group">
-												<label for="_low_stock_amount"><?php esc_html_e( 'Low Stock Threshold', 'msfc-wfm' ); ?></label>
-												<input type="number" class="msf-form-control" id="_low_stock_amount" name="_low_stock_amount" step="any">
-											</div>
-										</div>
-										<div class="col-md-6">
-											<div class="msf-form-group">
-												<label for="_backorders"><?php esc_html_e( 'Allow Backorders?', 'msfc-wfm' ); ?></label>
-												<select class="msf-form-control" id="_backorders" name="_backorders">
-													<option value="no"><?php esc_html_e( 'Do not allow', 'msfc-wfm' ); ?></option>
-													<option value="notify"><?php esc_html_e( 'Allow but notify customer', 'msfc-wfm' ); ?></option>
-													<option value="yes"><?php esc_html_e( 'Allow', 'msfc-wfm' ); ?></option>
+												<label for="_stock_status"><?php esc_html_e( 'Stock Status', 'msfc-wfm' ); ?></label>
+												<select class="msf-form-control" id="_stock_status" name="_stock_status">
+													<?php foreach ( wc_get_product_stock_status_options() as $key => $value ) { ?>
+													<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $value ); ?></option>
+													<?php } ?>
 												</select>
 											</div>
 										</div>
-										<div class="col-md-6">
-											<div class="msf-form-group">
+										<div class="col-md-12">
+											<div class="msf-form-group msf-form-switch">
+												<input type="checkbox" class="msf-form-control" id="_sold_individually" name="_sold_individually" value="yes">
 												<label for="_sold_individually"><?php esc_html_e( 'Limit Purchases to 1 Item Per Order?', 'msfc-wfm' ); ?></label>
-												<select class="msf-form-control" id="_sold_individually" name="_sold_individually">
-													<option value="no"><?php esc_html_e( 'No', 'msfc-wfm' ); ?></option>
-													<option value="yes"><?php esc_html_e( 'Yes', 'msfc-wfm' ); ?></option>
-												</select>
 											</div>
 										</div>
 									</div>
@@ -237,21 +269,28 @@ do_action( 'msf_dashboard_wrapper_start' );
 								<h3 class="msf-card-title"><?php esc_html_e( 'General Informations', 'shop-front' ); ?></h3>
 								<div class="msf-card-content">
 									<div class="msf-form-group">
-										<label for="product_type"><?php esc_html_e( 'Type', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
-										<select class="msf-form-control" id="product_type" name="product_type">
-											<option value=""><?php esc_html_e( '-- Select type --', 'msfc-wfm' ); ?></option>
+										<label for="post_type"><?php esc_html_e( 'Type', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
+										<select class="msf-form-control" id="post_type" name="post_type">
+											<?php foreach ( $product_types as $key => $value ) : ?>
+												<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $product_type, $key ); ?>><?php echo esc_html( $value ); ?></option>
+											<?php endforeach; ?>
 										</select>
 									</div>
 									<div class="msf-form-group">
-										<label for="product_status"><?php esc_html_e( 'Status', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
-										<select class="msf-form-control" id="product_status" name="product_status">
-											<option value=""><?php esc_html_e( '-- Select type --', 'msfc-wfm' ); ?></option>
+										<label for="post_status"><?php esc_html_e( 'Status', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
+										<select class="msf-form-control" id="post_status" name="post_status">
+											<?php foreach ( $product_statuses as $key => $value ) : ?>
+												<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $product_status, $key ); ?>><?php echo esc_html( $value ); ?></option>
+											<?php endforeach; ?>
 										</select>
 									</div>
 									<div class="msf-form-group">
 										<label for="product_brand"><?php esc_html_e( 'Brand', 'msfc-wfm' ); ?></label>
 										<select class="msf-form-control" id="product_brand" name="product_brand">
-											<option value=""><?php esc_html_e( '-- Select type --', 'msfc-wfm' ); ?></option>
+												<option value=""><?php echo esc_html__( 'Select brand', 'msfc-wfm' ); ?></option>
+											<?php foreach ( $product_brands as $brand ) : ?>
+												<option value="<?php echo esc_attr( $brand->term_id ); ?>" <?php //selected( $product_brand, $key ); ?>><?php echo esc_html( $brand->name ); ?></option>
+											<?php endforeach; ?>
 										</select>
 									</div>
 									<div class="msf-form-group">
