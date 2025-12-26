@@ -177,7 +177,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 										</div>
 										<div class="col-md-12">
 											<div class="msf-form-group msf-form-switch">
-												<input type="checkbox" class="msf-form-control" id="_manage_stock" name="_manage_stock">
+												<input type="checkbox" class="msf-form-control" id="_manage_stock" name="_manage_stock" value="yes">
 												<label for="_manage_stock"><?php esc_html_e( 'Enable product stock management', 'msfc-wfm' ); ?></label>
 											</div>
 										</div>
@@ -185,8 +185,8 @@ do_action( 'msf_dashboard_wrapper_start' );
 											<div class="row">
 												<div class="col-md-6">
 													<div class="msf-form-group">
-														<label for="_stock"><?php esc_html_e( 'Quantity', 'msfc-wfm' ); ?></label>
-														<input type="number" class="msf-form-control" id="_stock" name="_stock" step="any" value="1">
+														<label for="_stock_quantity"><?php esc_html_e( 'Quantity', 'msfc-wfm' ); ?></label>
+														<input type="number" class="msf-form-control" id="_stock_quantity" name="_stock_quantity" step="any" value="1">
 													</div>
 												</div>
 												<div class="col-md-6">

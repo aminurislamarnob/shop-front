@@ -124,6 +124,38 @@ class ProductManager {
 			$post_data['height'] = wc_clean( $data['height'] );
 		}
 
+		if ( isset( $data['_sku'] ) ) {
+			$post_data['_sku'] = wc_clean( wp_unslash( $data['_sku'] ) );
+		}
+
+		if ( isset( $data['_global_unique_id'] ) ) {
+			$post_data['_global_unique_id'] = wc_clean( wp_unslash( $data['_global_unique_id'] ) );
+		}
+
+		if ( isset( $data['_manage_stock'] ) ) {
+			$post_data['_manage_stock'] = wc_clean( wp_unslash( $data['_manage_stock'] ) );
+		}
+
+		if ( isset( $data['_stock_quantity'] ) ) {
+			$post_data['_stock_quantity'] = wc_stock_amount( wp_unslash( $data['_stock_quantity'] ) );
+		}
+
+		if ( isset( $data['_low_stock_amount'] ) ) {
+			$post_data['_low_stock_amount'] = wc_stock_amount( wp_unslash( $data['_low_stock_amount'] ) );
+		}
+
+		if ( isset( $data['_backorders'] ) ) {
+			$post_data['_backorders'] = wc_clean( wp_unslash( $data['_backorders'] ) );
+		}
+
+		if ( isset( $data['_sold_individually'] ) ) {
+			$post_data['_sold_individually'] = wc_clean( wp_unslash( $data['_sold_individually'] ) );
+		}
+
+		if ( isset( $data['_stock_status'] ) ) {
+			$post_data['_stock_status'] = wc_clean( wp_unslash( $data['_stock_status'] ) );
+		}
+
 		$product = $this->create_product( $post_data );
 
 		if ( ! $is_updating ) {
@@ -237,8 +269,8 @@ class ProductManager {
 		}
 
 		// Unique ID.
-		if ( isset( $request['_global_unique_id'] ) ) {
-			$product->set_global_unique_id( wc_clean( $request['_global_unique_id'] ) );
+		if ( isset( $args['_global_unique_id'] ) ) {
+			$product->set_global_unique_id( wc_clean( $args['_global_unique_id'] ) );
 		}
 
 		// Attributes.
@@ -287,13 +319,13 @@ class ProductManager {
 		}
 
 		// Sold individually.
-		if ( isset( $args['sold_individually'] ) ) {
-			$product->set_sold_individually( $args['sold_individually'] );
+		if ( isset( $args['_sold_individually'] ) ) {
+			$product->set_sold_individually( $args['_sold_individually'] );
 		}
 
 		// Stock status; stock_status has priority over in_stock.
-		if ( isset( $args['stock_status'] ) ) {
-			$stock_status = $args['stock_status'];
+		if ( isset( $args['_stock_status'] ) ) {
+			$stock_status = $args['_stock_status'];
 		} else {
 			$stock_status = $product->get_stock_status();
 		}
@@ -302,12 +334,13 @@ class ProductManager {
 		if ( 'yes' === get_option( 'woocommerce_manage_stock' ) ) {
 			// Manage stock.
 			if ( isset( $args['_manage_stock'] ) ) {
+				error_log('manage stock: ' . $args['_manage_stock']);
 				$product->set_manage_stock( $args['_manage_stock'] );
 			}
 
 			// Backorders.
-			if ( isset( $args['backorders'] ) ) {
-				$product->set_backorders( $args['backorders'] );
+			if ( isset( $args['_backorders'] ) ) {
+				$product->set_backorders( $args['_backorders'] );
 			}
 
 			if ( $product->is_type( 'grouped' ) ) {
@@ -327,18 +360,25 @@ class ProductManager {
 				}
 
 				// Stock quantity.
-				if ( isset( $args['stock_quantity'] ) ) {
-					$product->set_stock_quantity( wc_stock_amount( $args['stock_quantity'] ) );
+				if ( isset( $args['_stock_quantity'] ) ) {
+					$product->set_stock_quantity( wc_stock_amount( $args['_stock_quantity'] ) );
 				} elseif ( isset( $args['inventory_delta'] ) ) {
 					$stock_quantity  = wc_stock_amount( $product->get_stock_quantity() );
 					$stock_quantity += wc_stock_amount( $args['inventory_delta'] );
 					$product->set_stock_quantity( wc_stock_amount( $stock_quantity ) );
+				}
+
+				if ( isset( $args['_low_stock_amount'] ) ) {
+					$product->set_low_stock_amount( wc_stock_amount( $args['_low_stock_amount'] ) );
+				} else {
+					$product->set_low_stock_amount( '' );
 				}
 			} else {
 				// Don't manage stock.
 				$product->set_manage_stock( 'no' );
 				$product->set_stock_quantity( '' );
 				$product->set_stock_status( $stock_status );
+				$product->set_low_stock_amount( '' );
 			}
 		} elseif ( ! $product->is_type( 'variable' ) ) {
 			$product->set_stock_status( $stock_status );
