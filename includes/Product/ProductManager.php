@@ -50,7 +50,7 @@ class ProductManager {
 		$post_data = array(
 			'id'                => $is_updating ? $post_arr['ID'] : '',
 			'name'              => sanitize_text_field( $data['product_title'] ),
-			'type'              => ! empty( $data['product_type'] ) ? $data['product_type'] : 'simple',
+			'type'              => ! empty( $data['post_type'] ) ? $data['post_type'] : 'simple',
 			'description'       => wp_kses_post( $data['product_description'] ),
 			'short_description' => wp_kses_post( $data['product_short_description'] ),
 			'status'            => $post_status,
@@ -155,6 +155,13 @@ class ProductManager {
 		if ( isset( $data['_stock_status'] ) ) {
 			$post_data['_stock_status'] = wc_clean( wp_unslash( $data['_stock_status'] ) );
 		}
+
+		if ( isset( $data['comment_status'] ) ) {
+			$post_data['reviews_allowed'] = $data['comment_status'] === 'open' ? true : false;
+		}
+
+		// Save shipping class
+        $post_data['product_shipping_class'] = ( isset( $data['product_shipping_class'] ) && $data['product_shipping_class'] > 0 && 'external' !== $post_data['type'] ) ? absint( $data['product_shipping_class'] ) : '';
 
 		$product = $this->create_product( $post_data );
 
@@ -556,7 +563,9 @@ class ProductManager {
 		}
 
 		// Set shipping class.
-		if ( isset( $data['shipping_class'] ) ) {
+		if ( isset( $data['product_shipping_class'] ) && $data['product_shipping_class'] > 0 ) {
+			$product->set_shipping_class_id( absint( $data['product_shipping_class'] ) );
+		} elseif ( isset( $data['shipping_class'] ) ) {
 			$data_store        = $product->get_data_store();
 			$shipping_class_id = $data_store->get_shipping_class_id_by_slug( wc_clean( $data['shipping_class'] ) );
 			$product->set_shipping_class_id( $shipping_class_id );

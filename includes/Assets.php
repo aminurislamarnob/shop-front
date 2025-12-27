@@ -226,6 +226,14 @@ class Assets {
 
 			// product styles and scripts.
 			wp_enqueue_script( 'my_shop_front_product_script' );
+
+			wp_localize_script(
+				'my_shop_front_product_script',
+				'My_Shop_Front_Product',
+				array(
+					'i18n_global_unique_id_error'       => __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
+				)
+			);
 		}
 	}
 }

@@ -254,10 +254,20 @@ do_action( 'msf_dashboard_wrapper_start' );
 										</div>
 										<div class="col-md-12">
 											<div class="msf-form-group">
+											<?php
+												$shipping_class_args = array(
+													'taxonomy'         => 'product_shipping_class',
+													'hide_empty'       => 0,
+													'show_option_none' => __( 'No shipping class', 'woocommerce' ),
+													'name'             => 'product_shipping_class',
+													'id'               => 'product_shipping_class',
+													// 'selected'         => $product_object->get_shipping_class_id( 'edit' ),
+													'class'            => 'msf-form-control',
+													'orderby'          => 'name',
+												);
+											?>
 												<label for="product_shipping_class"><?php esc_html_e( 'Shipping Class', 'msfc-wfm' ); ?></label>
-												<select class="msf-form-control" id="product_shipping_class" name="product_shipping_class">
-													<option value="-1"><?php esc_html_e( 'No shipping class', 'msfc-wfm' ); ?></option>
-												</select>
+												<?php wp_dropdown_categories( $shipping_class_args ); ?>
 											</div>
 										</div>
 									</div>
