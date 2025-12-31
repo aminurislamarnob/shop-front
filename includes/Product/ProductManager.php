@@ -177,8 +177,8 @@ class ProductManager {
 			$post_data['upsell_ids'] = array_map( 'intval', (array) wp_unslash( $data['upsell_ids'] ) );
 		}
 
-		if ( isset( $data['cross_sell_ids'] ) ) {
-			$post_data['cross_sell_ids'] = array_map( 'intval', (array) wp_unslash( $data['cross_sell_ids'] ) );
+		if ( isset( $data['crosssell_ids'] ) ) {
+			$post_data['cross_sell_ids'] = array_map( 'intval', (array) wp_unslash( $data['crosssell_ids'] ) );
 		}
 
 		// Save shipping class
@@ -285,7 +285,7 @@ class ProductManager {
 
 		// Featured Product.
 		if ( isset( $args['featured'] ) ) {
-			$product->set_featured( $args['featured'] );
+			$product->set_featured( $args['featured'] === 'on' ? true : false );
 		}
 
 		// Shipping data.

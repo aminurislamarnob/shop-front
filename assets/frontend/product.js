@@ -5,10 +5,23 @@
             this.errorTips();
         },
         bindEvents: function() {
+            this.initSelect2();
             this.manageStock();
             $(document).on('change', '#_manage_stock', this.manageStock);
             $( document.body ).on( 'keyup', 'input[type=text][name*=_global_unique_id]', this.validateGlobalUniqueIdOnKeyUp);
             $( document.body ).on( 'change', 'input[type=text][name*=_global_unique_id]', this.validateGlobalUniqueIdOnChange);
+        },
+        initSelect2: function() {
+            $( '.msf-select2' ).filter( ':not(.enhanced)' ).each( function() {
+                var select2_args = {
+                    allowClear: $( this ).data( 'allow_clear' ) ? true : false,
+                    placeholder: $( this ).data( 'placeholder' ) || '',
+                    minimumResultsForSearch: $( this ).data( 'minimum_results_for_search' ) || 0,
+                    width: '100%'
+                };
+
+                $( this ).selectWoo( select2_args ).addClass( 'enhanced' );
+            });
         },
         manageStock: function(){            
             const product_type = $( 'select#post_type' ).val();
