@@ -37,6 +37,7 @@ class Assets {
 		$admin_script                 = SHOP_FRONT_PLUGIN_ASSET . '/admin/script.js';
 		$frontend_script              = SHOP_FRONT_PLUGIN_ASSET . '/frontend/script.js';
 		$frontend_order_script        = SHOP_FRONT_PLUGIN_ASSET . '/frontend/order.js';
+		$frontend_product_script        = SHOP_FRONT_PLUGIN_ASSET . '/frontend/product.js';
 		$frontend_form_handler_script = SHOP_FRONT_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_alpinejs_script     = 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js';
 		$frontend_sweetalert2         = SHOP_FRONT_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
@@ -51,6 +52,7 @@ class Assets {
 		
 		// Order scripts.
 		wp_register_script( 'my_shop_front_order_script', $frontend_order_script, array('my_shop_front_selectWoo'), SHOP_FRONT_PLUGIN_VERSION, true );
+		wp_register_script( 'my_shop_front_product_script', $frontend_product_script, array(), SHOP_FRONT_PLUGIN_VERSION, true );
 		wp_register_script( 'my_shop_front_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 	}
@@ -219,6 +221,19 @@ class Assets {
 					'remove_item_meta'                => __( 'Remove this item meta?', 'woocommerce' ),
 					'mon_decimal_point'                 => wc_get_price_decimal_separator(),
 					'rounding_precision'                              => wc_get_rounding_precision(),
+				)
+			);
+
+			// product styles and scripts.
+			wp_enqueue_script( 'my_shop_front_product_script' );
+
+			wp_localize_script(
+				'my_shop_front_product_script',
+				'My_Shop_Front_Product',
+				array(
+					'i18n_global_unique_id_error'	=> __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
+					'ajax_url'	=> admin_url( 'admin-ajax.php' ),
+					'search_products_nonce'	=> wp_create_nonce( 'search-products' ),
 				)
 			);
 		}

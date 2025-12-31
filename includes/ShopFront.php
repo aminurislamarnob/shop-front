@@ -218,6 +218,7 @@ final class ShopFront {
 		$this->container['msf_product_brand_controller']    = new ProductBrand\BrandController();
 		$this->container['msf_product_tag_controller']      = new ProductTag\TagController();
 		$this->container['msf_product_controller']          = new Product\ProductController();
+		$this->container['msf_product_hooks']          = new Product\ProductHooks();
 		$this->container['msf_order_controller']            = new Order\OrderController();
 		$this->container['msf_create_new_order']            = new Order\CreateNewOrder();
 		$this->container['msf_order_manager']               = new Order\OrderManager();

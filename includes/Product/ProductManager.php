@@ -42,11 +42,6 @@ class ProductManager {
 
 		if ( ! empty( $data['ID'] ) ) {
 			$post_arr['ID'] = absint( $data['ID'] );
-
-			// if ( ! dokan_is_product_author( $post_arr['ID'] ) ) {
-			// return new WP_Error( 'not-own', __( 'Sorry, You can not modify another vendor\'s product !', 'dokan-lite' ) );
-			// }
-
 			$is_updating = true;
 		} else {
 			$is_updating = false;
@@ -55,7 +50,7 @@ class ProductManager {
 		$post_data = array(
 			'id'                => $is_updating ? $post_arr['ID'] : '',
 			'name'              => sanitize_text_field( $data['product_title'] ),
-			'type'              => ! empty( $data['product_type'] ) ? $data['product_type'] : 'simple',
+			'type'              => ! empty( $data['post_type'] ) ? $data['post_type'] : 'simple',
 			'description'       => wp_kses_post( $data['product_description'] ),
 			'short_description' => wp_kses_post( $data['product_short_description'] ),
 			'status'            => $post_status,
@@ -72,6 +67,10 @@ class ProductManager {
 
 		if ( ! empty( $data['product_category'] ) ) {
 			$post_data['categories'] = array_map( 'absint', (array) $data['product_category'] );
+		}
+
+		if ( ! empty( $data['product_brand'] ) ) {
+			$post_data['brands'] = array_map( 'absint', (array) $data['product_brand'] );
 		}
 
 		if ( isset( $data['product_thumbnail_id'] ) ) {
@@ -104,10 +103,9 @@ class ProductManager {
 			$post_data['date_on_sale_to'] = wc_clean( $data['_sale_price_dates_to'] );
 		}
 
-		// Need to implement later (Maybe)
-		// if ( isset( $data['_visibility'] ) && array_key_exists( $data['_visibility'], dokan_get_product_visibility_options() ) ) {
-		// $post_data['catalog_visibility'] = sanitize_text_field( $data['_visibility'] );
-		// }
+		if ( isset( $data['_visibility'] ) ) {
+			$post_data['visibility'] = wc_clean( $data['_visibility'] );
+		}
 
 		if ( isset( $data['weight'] ) ) {
 			$post_data['weight'] = wc_clean( $data['weight'] );
@@ -125,12 +123,73 @@ class ProductManager {
 			$post_data['height'] = wc_clean( $data['height'] );
 		}
 
+		if ( isset( $data['_sku'] ) ) {
+			$post_data['_sku'] = wc_clean( wp_unslash( $data['_sku'] ) );
+		}
+
+		if ( isset( $data['_global_unique_id'] ) ) {
+			$post_data['_global_unique_id'] = wc_clean( wp_unslash( $data['_global_unique_id'] ) );
+		}
+
+		if ( isset( $data['_manage_stock'] ) ) {
+			$post_data['_manage_stock'] = wc_clean( wp_unslash( $data['_manage_stock'] ) );
+		}
+
+		if ( isset( $data['_stock_quantity'] ) ) {
+			$post_data['_stock_quantity'] = wc_stock_amount( wp_unslash( $data['_stock_quantity'] ) );
+		}
+
+		if ( isset( $data['_low_stock_amount'] ) ) {
+			$post_data['_low_stock_amount'] = wc_stock_amount( wp_unslash( $data['_low_stock_amount'] ) );
+		}
+
+		if ( isset( $data['_backorders'] ) ) {
+			$post_data['_backorders'] = wc_clean( wp_unslash( $data['_backorders'] ) );
+		}
+
+		if ( isset( $data['_sold_individually'] ) ) {
+			$post_data['_sold_individually'] = wc_clean( wp_unslash( $data['_sold_individually'] ) );
+		}
+
+		if ( isset( $data['_stock_status'] ) ) {
+			$post_data['_stock_status'] = wc_clean( wp_unslash( $data['_stock_status'] ) );
+		}
+
+		if ( isset( $data['comment_status'] ) ) {
+			$post_data['reviews_allowed'] = $data['comment_status'] === 'open' ? true : false;
+		}
+
+		if ( isset( $data['_featured'] ) ) {
+			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$post_data['featured'] = wp_unslash( $data['_featured'] );
+			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		}
+
+		if ( isset( $data['menu_order'] ) ) {
+			$post_data['menu_order'] = wc_clean( wp_unslash( $data['menu_order'] ) );
+		}
+
+		if ( isset( $data['_purchase_note'] ) ) {
+			$post_data['purchase_note'] = wp_kses_post( wp_unslash( $data['_purchase_note'] ) );
+		}
+
+		if ( isset( $data['upsell_ids'] ) ) {
+			$post_data['upsell_ids'] = array_map( 'intval', (array) wp_unslash( $data['upsell_ids'] ) );
+		}
+
+		if ( isset( $data['cross_sell_ids'] ) ) {
+			$post_data['cross_sell_ids'] = array_map( 'intval', (array) wp_unslash( $data['cross_sell_ids'] ) );
+		}
+
+		// Save shipping class
+        $post_data['product_shipping_class'] = ( isset( $data['product_shipping_class'] ) && $data['product_shipping_class'] > 0 && 'external' !== $post_data['type'] ) ? absint( $data['product_shipping_class'] ) : '';
+
 		$product = $this->create_product( $post_data );
 
 		if ( ! $is_updating ) {
-			do_action( 'dokan_new_product_added', $product->get_id(), $data );
+			do_action( 'msf_new_product_added', $product->get_id(), $data );
 		} else {
-			do_action( 'dokan_product_updated', $product->get_id(), $data );
+			do_action( 'msf_product_updated', $product->get_id(), $data );
 		}
 
 		if ( $product ) {
@@ -215,8 +274,8 @@ class ProductManager {
 		}
 
 		// Catalog Visibility.
-		if ( isset( $args['catalog_visibility'] ) ) {
-			$product->set_catalog_visibility( $args['catalog_visibility'] );
+		if ( isset( $args['visibility'] ) ) {
+			$product->set_catalog_visibility( $args['visibility'] );
 		}
 
 		// Purchase Note.
@@ -233,8 +292,13 @@ class ProductManager {
 		$product = $this->save_product_shipping_data( $product, $args );
 
 		// SKU.
-		if ( isset( $args['sku'] ) ) {
-			$product->set_sku( wc_clean( $args['sku'] ) );
+		if ( isset( $args['_sku'] ) ) {
+			$product->set_sku( wc_clean( $args['_sku'] ) );
+		}
+
+		// Unique ID.
+		if ( isset( $args['_global_unique_id'] ) ) {
+			$product->set_global_unique_id( wc_clean( $args['_global_unique_id'] ) );
 		}
 
 		// Attributes.
@@ -283,13 +347,13 @@ class ProductManager {
 		}
 
 		// Sold individually.
-		if ( isset( $args['sold_individually'] ) ) {
-			$product->set_sold_individually( $args['sold_individually'] );
+		if ( isset( $args['_sold_individually'] ) ) {
+			$product->set_sold_individually( $args['_sold_individually'] );
 		}
 
 		// Stock status; stock_status has priority over in_stock.
-		if ( isset( $args['stock_status'] ) ) {
-			$stock_status = $args['stock_status'];
+		if ( isset( $args['_stock_status'] ) ) {
+			$stock_status = $args['_stock_status'];
 		} else {
 			$stock_status = $product->get_stock_status();
 		}
@@ -297,13 +361,14 @@ class ProductManager {
 		// Stock data.
 		if ( 'yes' === get_option( 'woocommerce_manage_stock' ) ) {
 			// Manage stock.
-			if ( isset( $args['manage_stock'] ) ) {
-				$product->set_manage_stock( $args['manage_stock'] );
+			if ( isset( $args['_manage_stock'] ) ) {
+				error_log('manage stock: ' . $args['_manage_stock']);
+				$product->set_manage_stock( $args['_manage_stock'] );
 			}
 
 			// Backorders.
-			if ( isset( $args['backorders'] ) ) {
-				$product->set_backorders( $args['backorders'] );
+			if ( isset( $args['_backorders'] ) ) {
+				$product->set_backorders( $args['_backorders'] );
 			}
 
 			if ( $product->is_type( 'grouped' ) ) {
@@ -323,18 +388,25 @@ class ProductManager {
 				}
 
 				// Stock quantity.
-				if ( isset( $args['stock_quantity'] ) ) {
-					$product->set_stock_quantity( wc_stock_amount( $args['stock_quantity'] ) );
+				if ( isset( $args['_stock_quantity'] ) ) {
+					$product->set_stock_quantity( wc_stock_amount( $args['_stock_quantity'] ) );
 				} elseif ( isset( $args['inventory_delta'] ) ) {
 					$stock_quantity  = wc_stock_amount( $product->get_stock_quantity() );
 					$stock_quantity += wc_stock_amount( $args['inventory_delta'] );
 					$product->set_stock_quantity( wc_stock_amount( $stock_quantity ) );
+				}
+
+				if ( isset( $args['_low_stock_amount'] ) ) {
+					$product->set_low_stock_amount( wc_stock_amount( $args['_low_stock_amount'] ) );
+				} else {
+					$product->set_low_stock_amount( '' );
 				}
 			} else {
 				// Don't manage stock.
 				$product->set_manage_stock( 'no' );
 				$product->set_stock_quantity( '' );
 				$product->set_stock_status( $stock_status );
+				$product->set_low_stock_amount( '' );
 			}
 		} elseif ( ! $product->is_type( 'variable' ) ) {
 			$product->set_stock_status( $stock_status );
@@ -377,8 +449,12 @@ class ProductManager {
 
 		// Product categories.
 		if ( isset( $args['categories'] ) && is_array( $args['categories'] ) ) {
-
 			$product->set_category_ids( $args['categories'] );
+		}
+
+		// Product brands.
+		if ( isset( $args['brands'] ) && is_array( $args['brands'] ) ) {
+			$product->set_brand_ids( $args['brands'] );
 		}
 
 		// Product tags.
@@ -508,7 +584,9 @@ class ProductManager {
 		}
 
 		// Set shipping class.
-		if ( isset( $data['shipping_class'] ) ) {
+		if ( isset( $data['product_shipping_class'] ) && $data['product_shipping_class'] > 0 ) {
+			$product->set_shipping_class_id( absint( $data['product_shipping_class'] ) );
+		} elseif ( isset( $data['shipping_class'] ) ) {
 			$data_store        = $product->get_data_store();
 			$shipping_class_id = $data_store->get_shipping_class_id_by_slug( wc_clean( $data['shipping_class'] ) );
 			$product->set_shipping_class_id( $shipping_class_id );
@@ -631,5 +709,22 @@ class ProductManager {
 		}
 
 		return $product;
+	}
+
+	/**
+     * Get product brands.
+     *
+     * @param int    $product_id Product ID.
+     * @param string $fields
+     *
+     * @return array
+     */
+    public function get_brands( int $product_id, string $fields = 'all' ): array {
+        $brands = wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => $fields ) );
+        if ( is_wp_error( $brands ) ) {
+            return [];
+        }
+
+        return $brands;
 	}
 }
