@@ -231,7 +231,9 @@ class Assets {
 				'my_shop_front_product_script',
 				'My_Shop_Front_Product',
 				array(
-					'i18n_global_unique_id_error'       => __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
+					'i18n_global_unique_id_error'	=> __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
+					'ajax_url'	=> admin_url( 'admin-ajax.php' ),
+					'search_products_nonce'	=> wp_create_nonce( 'search-products' ),
 				)
 			);
 		}

@@ -8,6 +8,7 @@ class Common {
 	 */
 	public function __construct() {
 		add_filter( 'page_template', array( $this, 'msf_register_page_template' ) );
+		add_filter( 'body_class', array( $this, 'msf_add_body_class' ) );
 	}
 
 	/**
@@ -25,5 +26,19 @@ class Common {
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Add body class for MSF dashboard page.
+	 *
+	 * @param  array $classes Array of body classes.
+	 * @return array
+	 */
+	public function msf_add_body_class( $classes ) {
+		if ( is_msf_dashboard_page() ) {
+			$classes[] = 'msf-main-dashboard';
+		}
+
+		return $classes;
 	}
 }

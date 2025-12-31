@@ -273,6 +273,66 @@ do_action( 'msf_dashboard_wrapper_start' );
 									</div>
 								</div>
 							</div>
+							<div class="msf-card msf-card-with-header msf-mb-24">
+								<h3 class="msf-card-title"><?php esc_html_e( 'Linked Products', 'shop-front' ); ?></h3>
+								<div class="msf-card-content">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="msf-form-group search-group">
+												<label for="upsell_ids"><?php esc_html_e( 'Upsells', 'msfc-wfm' ); ?></label>
+												<?php
+													// phpcs:enable WordPress.Security.NonceVerification.Recommended
+													$excluded_product_types = array_diff( array_keys( wc_get_product_types() ), array( 'simple', 'variable' ) );
+												?>
+												<select class="msf-form-control wc-product-search" id="upsell_ids" name="upsell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'woocommerce' ); ?>" data-allow_clear="true" multiple>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="crosssell_ids"><?php esc_html_e( 'Cross-sells', 'msfc-wfm' ); ?></label>
+												<select class="msf-form-control wc-product-search" id="crosssell_ids" name="crosssell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'woocommerce' ); ?>" data-allow_clear="true" multiple></select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="msf-card msf-card-with-header msf-mb-24">
+								<h3 class="msf-card-title"><?php esc_html_e( 'Others', 'shop-front' ); ?></h3>
+								<div class="msf-card-content">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="_visibility"><?php esc_html_e( 'Catalog Visibility', 'msfc-wfm' ); ?></label>
+												<select class="msf-form-control" id="_visibility" name="_visibility">
+													<option value="visible"><?php esc_html_e( 'Shop and search results', 'msfc-wfm' ); ?></option>
+													<option value="catalog"><?php esc_html_e( 'Shop only', 'msfc-wfm' ); ?></option>
+													<option value="search"><?php esc_html_e( 'Search results only', 'msfc-wfm' ); ?></option>
+													<option value="hidden"><?php esc_html_e( 'Hidden', 'msfc-wfm' ); ?></option>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="msf-form-group">
+												<label for="menu_order"><?php esc_html_e( 'Menu Order', 'msfc-wfm' ); ?></label>
+												<input type="number" class="msf-form-control" id="menu_order" name="menu_order" value="0">
+											</div>
+										</div>
+										<div class="col-md-12">
+											<div class="msf-form-group msf-form-switch">
+												<input type="checkbox" class="msf-form-control" id="_featured" name="_featured">
+												<label for="_featured"><?php esc_html_e( 'Mark this product as featured.', 'msfc-wfm' ); ?></label>
+											</div>
+										</div>
+										<div class="col-md-12">
+											<div class="msf-form-group">
+												<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'msfc-wfm' ); ?></strong></label>
+												<textarea class="msf-form-control" id="_purchase_note" name="_purchase_note" rows="2" cols="20"></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="msf-card msf-card-with-header">

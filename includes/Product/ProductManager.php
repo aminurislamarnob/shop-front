@@ -103,10 +103,9 @@ class ProductManager {
 			$post_data['date_on_sale_to'] = wc_clean( $data['_sale_price_dates_to'] );
 		}
 
-		// Need to implement later (Maybe)
-		// if ( isset( $data['_visibility'] ) && array_key_exists( $data['_visibility'], dokan_get_product_visibility_options() ) ) {
-		// $post_data['catalog_visibility'] = sanitize_text_field( $data['_visibility'] );
-		// }
+		if ( isset( $data['_visibility'] ) ) {
+			$post_data['visibility'] = wc_clean( $data['_visibility'] );
+		}
 
 		if ( isset( $data['weight'] ) ) {
 			$post_data['weight'] = wc_clean( $data['weight'] );
@@ -158,6 +157,28 @@ class ProductManager {
 
 		if ( isset( $data['comment_status'] ) ) {
 			$post_data['reviews_allowed'] = $data['comment_status'] === 'open' ? true : false;
+		}
+
+		if ( isset( $data['_featured'] ) ) {
+			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$post_data['featured'] = wp_unslash( $data['_featured'] );
+			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		}
+
+		if ( isset( $data['menu_order'] ) ) {
+			$post_data['menu_order'] = wc_clean( wp_unslash( $data['menu_order'] ) );
+		}
+
+		if ( isset( $data['_purchase_note'] ) ) {
+			$post_data['purchase_note'] = wp_kses_post( wp_unslash( $data['_purchase_note'] ) );
+		}
+
+		if ( isset( $data['upsell_ids'] ) ) {
+			$post_data['upsell_ids'] = array_map( 'intval', (array) wp_unslash( $data['upsell_ids'] ) );
+		}
+
+		if ( isset( $data['cross_sell_ids'] ) ) {
+			$post_data['cross_sell_ids'] = array_map( 'intval', (array) wp_unslash( $data['cross_sell_ids'] ) );
 		}
 
 		// Save shipping class
@@ -253,8 +274,8 @@ class ProductManager {
 		}
 
 		// Catalog Visibility.
-		if ( isset( $args['catalog_visibility'] ) ) {
-			$product->set_catalog_visibility( $args['catalog_visibility'] );
+		if ( isset( $args['visibility'] ) ) {
+			$product->set_catalog_visibility( $args['visibility'] );
 		}
 
 		// Purchase Note.
