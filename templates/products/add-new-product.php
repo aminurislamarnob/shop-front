@@ -107,8 +107,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 										<div class="col-md-12">
 											<div class="msf-form-group">
 												<label for="product_category"><?php esc_html_e( 'Select Category', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
-												<select class="msf-form-control" id="product_category" name="product_category">
-													<option value=""><?php esc_html_e( '-- Select category --', 'msfc-wfm' ); ?></option>
+												<select class="msf-form-control msf-select2" id="product_category" name="product_category[]" data-placeholder="<?php esc_attr_e( 'Select category', 'msfc-wfm' ); ?>" data-allow_clear="true" multiple>
 													<?php
 													$product_categories = get_categories(
 														array(
@@ -364,8 +363,26 @@ do_action( 'msf_dashboard_wrapper_start' );
 										</select>
 									</div>
 									<div class="msf-form-group">
-										<label for="product_tags"><?php esc_html_e( 'Tags', 'msfc-wfm' ); ?> <small><?php esc_html_e( '(Tags must be comma separeted)', 'msfc-wfm' ); ?></small></label>
-										<input type="text" class="msf-form-control" id="product_tags" name="product_tags" placeholder="<?php echo esc_attr__( 'Ex: shirt, t-shirt, men', 'msfc-wfm' ); ?>">
+										<label for="product_tags"><?php esc_html_e( 'Tags', 'msfc-wfm' ); ?></label>
+										<select class="msf-form-control msf-select2" id="product_tags" name="product_tags[]" data-placeholder="<?php esc_attr_e( 'Select tags', 'msfc-wfm' ); ?>" data-allow_clear="true" multiple>
+											<?php
+											$product_tags = get_terms(
+												array(
+													'taxonomy'   => 'product_tag',
+													'orderby'    => 'name',
+													'order'      => 'ASC',
+													'hide_empty' => false,
+												)
+											);
+											if ( ! is_wp_error( $product_tags ) && ! empty( $product_tags ) ) {
+												foreach ( $product_tags as $tag ) {
+													?>
+											<option value="<?php echo esc_attr( $tag->term_id ); ?>"><?php echo esc_html( $tag->name ); ?></option>
+													<?php
+												}
+											}
+											?>
+										</select>
 									</div>
 									<div class="msf-form-group">
 										<label for="comment_status"><?php esc_html_e( 'Enable Reviews?', 'msfc-wfm' ); ?></label>

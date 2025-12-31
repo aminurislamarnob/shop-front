@@ -52,7 +52,7 @@ class Assets {
 		
 		// Order scripts.
 		wp_register_script( 'my_shop_front_order_script', $frontend_order_script, array('my_shop_front_selectWoo'), SHOP_FRONT_PLUGIN_VERSION, true );
-		wp_register_script( 'my_shop_front_product_script', $frontend_product_script, array(), SHOP_FRONT_PLUGIN_VERSION, true );
+		wp_register_script( 'my_shop_front_product_script', $frontend_product_script, array( 'my_shop_front_selectWoo' ), SHOP_FRONT_PLUGIN_VERSION, true );
 		wp_register_script( 'my_shop_front_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 	}
