@@ -138,10 +138,16 @@ class Assets {
 			wp_enqueue_script( 'my_shop_front_form_handler_script' );
 			wp_localize_script(
 				'my_shop_front_form_handler_script',
-				'My_Shop_Front_Form_Handler',
+				'MSF_Form_Handler',
 				array(
 					'ajax_url'               => admin_url( 'admin-ajax.php' ),
 					'msfc_woo_delete_nonce_' => wp_create_nonce( '_msfc_delete_nonce_' ),
+					'msfc_woo_delete_nonce_' => wp_create_nonce( '_msfc_delete_nonce_' ),
+					'submission_error_message' => __( 'An unexpected error occurred. Please try again later.', 'shop-front' ),
+					'modal_processing_title' => __( 'Processing...', 'shop-front' ),
+					'modal_success_title' => __( 'Submitted!', 'shop-front' ),
+					'modal_error_title' => __( 'Error!', 'shop-front' ),
+					'modal_ok_button_text' => __( 'Ok', 'shop-front' ),
 				)
 			);
 			wp_enqueue_media();
@@ -219,8 +225,8 @@ class Assets {
 					'placeholder_name'                => esc_attr__( 'Name (required)', 'woocommerce' ),
 					'placeholder_value'               => esc_attr__( 'Value (required)', 'woocommerce' ),
 					'remove_item_meta'                => __( 'Remove this item meta?', 'woocommerce' ),
-					'mon_decimal_point'                 => wc_get_price_decimal_separator(),
-					'rounding_precision'                              => wc_get_rounding_precision(),
+					'mon_decimal_point'               => wc_get_price_decimal_separator(),
+					'rounding_precision'              => wc_get_rounding_precision(),
 				)
 			);
 
@@ -232,21 +238,7 @@ class Assets {
 				'i18n_global_unique_id_error' => __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
 				'ajax_url'                    => admin_url( 'admin-ajax.php' ),
 				'search_products_nonce'       => wp_create_nonce( 'search-products' ),
-				'stock_management_enabled'    => 'no',
 			);
-
-			// Pass product data if on edit product page.
-			if ( msfc_is_page( 'edit-product' ) ) {
-				global $wp;
-				$product_id = isset( $wp->query_vars['edit-product'] ) ? absint( $wp->query_vars['edit-product'] ) : 0;
-
-				if ( $product_id ) {
-					$product = wc_get_product( $product_id );
-					if ( $product ) {
-						$product_script_data['stock_management_enabled'] = $product->get_manage_stock() ? 'yes' : 'no';
-					}
-				}
-			}
 
 			wp_localize_script(
 				'my_shop_front_product_script',

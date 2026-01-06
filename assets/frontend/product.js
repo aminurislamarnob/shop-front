@@ -7,7 +7,7 @@
         bindEvents: function() {
             var self = this;
             this.initSelect2();
-            this.initManageStock();
+            this.toggleStockFields();
             $(document).on('change', '#_manage_stock', function() {
                 self.toggleStockFields();
             });
@@ -26,15 +26,11 @@
                 $( this ).selectWoo( select2_args ).addClass( 'enhanced' );
             });
         },
-        initManageStock: function() {
-            // On page load, check if stock management is enabled from localized data
-            if ( typeof My_Shop_Front_Product !== 'undefined' && My_Shop_Front_Product.stock_management_enabled === 'yes' ) {
-                this.toggleStockFields();
-            }
-        },
         toggleStockFields: function(){         
             const product_type = $( 'select#post_type' ).val();
             const is_checked = $( '#_manage_stock' ).is( ':checked' );
+            console.log(is_checked);
+            
 
             if ( is_checked && 'external' !== product_type ) {
                 $( '.show_if_stock_management' ).slideDown( 'fast' );

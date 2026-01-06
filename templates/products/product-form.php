@@ -45,7 +45,7 @@ $purchase_note          = '';
 $product_categories     = array();
 $product_brand          = '';
 $product_tags_array     = array();
-$comment_status         = 'open';
+$is_reviews_allowed         = false;
 $thumbnail_id           = 0;
 $gallery_image_ids      = array();
 $global_unique_id       = '';
@@ -111,8 +111,7 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 		}
 
 		// Get product post.
-		$product_post   = get_post( $product_id );
-		$comment_status = $product_post ? $product_post->comment_status : 'open';
+		$is_reviews_allowed = $product->get_reviews_allowed( 'edit' );
 
 		// Get meta data.
 		$global_unique_id = $product->get_global_unique_id( 'edit' );
@@ -520,8 +519,8 @@ $product_brands = pluginizelab_shop_front()->msf_product_brands->get_product_bra
                         <div class="msf-form-group">
                             <label for="comment_status"><?php esc_html_e( 'Enable Reviews?', 'msfc-wfm' ); ?></label>
                             <select class="msf-form-control" id="comment_status" name="comment_status">
-                                <option value="open" <?php selected( $comment_status, 'open' ); ?>><?php esc_html_e( 'Yes', 'msfc-wfm' ); ?></option>
-                                <option value="close" <?php selected( $comment_status, 'close' ); ?>><?php esc_html_e( 'No', 'msfc-wfm' ); ?></option>
+                                <option value="yes" <?php selected( $is_reviews_allowed, true ); ?>><?php esc_html_e( 'Yes', 'msfc-wfm' ); ?></option>
+                                <option value="no" <?php selected( $is_reviews_allowed, false ); ?>><?php esc_html_e( 'No', 'msfc-wfm' ); ?></option>
                             </select>
                         </div>
                     </div>
