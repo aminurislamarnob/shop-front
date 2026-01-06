@@ -19,13 +19,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 		<?php do_action( 'msf_dashboard_content_before' ); ?>
 		<main class="my-shop-front-page-content">
 			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
-			<div class="row">
-				<div class="col-md-8">
-					<div class="msf-card">
-
-					</div>
-				</div>
-			</div>
+			<?php do_action( 'msf_dashboard_product_edit_form', $query_vars ); ?>
 		</main>
 	</div>
 </div>

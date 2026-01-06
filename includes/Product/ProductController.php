@@ -10,7 +10,69 @@ class ProductController {
 	 * The constructor.
 	 */
 	public function __construct() {
+		add_action( 'msf_load_new_product_template', array( $this, 'load_new_product_template' ) );
+		add_action( 'msf_load_edit_product_template', array( $this, 'load_edit_product_template' ) );
+		add_action( 'msf_dashboard_product_add_form', array( $this, 'load_product_form' ) );
+		add_action( 'msf_dashboard_product_edit_form', array( $this, 'load_product_edit_form' ) );
 		add_action( 'wp_ajax_msfc_add_product_action', array( $this, 'handle_add_product' ) );
+	}
+	
+	/**
+	 * Load the new product template.
+	 *
+	 * @param array $query_vars The query variables.
+	 *
+	 * @return void
+	 */
+	public function load_new_product_template( $query_vars ) {
+		$template_args = array(
+			'query_vars' => $query_vars,
+		);
+		msf_get_template_part( 'products/add-new-product', '', $template_args );
+	}
+
+	/**
+	 * Load the edit product template.
+	 *
+	 * @param array $query_vars The query variables.
+	 *
+	 * @return void
+	 */
+	public function load_edit_product_template( $query_vars ) {
+		$template_args = array(
+			'query_vars' => $query_vars,
+		);
+		msf_get_template_part( 'products/edit-product', '', $template_args );
+	}
+
+	/**
+	 * Load the product add form template.
+	 *
+	 * @param array $query_vars The query variables.
+	 *
+	 * @return void
+	 */
+	public function load_product_form( $query_vars ) {
+		$template_args = array(
+			'query_vars'    => $query_vars,
+			'template_type' => 'add-new-product',
+		);
+		msf_get_template_part( 'products/product-form', '', $template_args );
+	}
+
+	/**
+	 * Load the product edit form template.
+	 *
+	 * @param array $query_vars The query variables.
+	 *
+	 * @return void
+	 */
+	public function load_product_edit_form( $query_vars ) {
+		$template_args = array(
+			'query_vars'    => $query_vars,
+			'template_type' => 'edit-product',
+		);
+		msf_get_template_part( 'products/product-form', '', $template_args );
 	}
 
 	/**
