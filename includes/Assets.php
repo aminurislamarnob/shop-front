@@ -138,10 +138,16 @@ class Assets {
 			wp_enqueue_script( 'my_shop_front_form_handler_script' );
 			wp_localize_script(
 				'my_shop_front_form_handler_script',
-				'My_Shop_Front_Form_Handler',
+				'MSF_Form_Handler',
 				array(
 					'ajax_url'               => admin_url( 'admin-ajax.php' ),
 					'msfc_woo_delete_nonce_' => wp_create_nonce( '_msfc_delete_nonce_' ),
+					'msfc_woo_delete_nonce_' => wp_create_nonce( '_msfc_delete_nonce_' ),
+					'submission_error_message' => __( 'An unexpected error occurred. Please try again later.', 'shop-front' ),
+					'modal_processing_title' => __( 'Processing...', 'shop-front' ),
+					'modal_success_title' => __( 'Submitted!', 'shop-front' ),
+					'modal_error_title' => __( 'Error!', 'shop-front' ),
+					'modal_ok_button_text' => __( 'Ok', 'shop-front' ),
 				)
 			);
 			wp_enqueue_media();
@@ -219,22 +225,25 @@ class Assets {
 					'placeholder_name'                => esc_attr__( 'Name (required)', 'woocommerce' ),
 					'placeholder_value'               => esc_attr__( 'Value (required)', 'woocommerce' ),
 					'remove_item_meta'                => __( 'Remove this item meta?', 'woocommerce' ),
-					'mon_decimal_point'                 => wc_get_price_decimal_separator(),
-					'rounding_precision'                              => wc_get_rounding_precision(),
+					'mon_decimal_point'               => wc_get_price_decimal_separator(),
+					'rounding_precision'              => wc_get_rounding_precision(),
 				)
 			);
 
 			// product styles and scripts.
 			wp_enqueue_script( 'my_shop_front_product_script' );
 
+			// Prepare product script data.
+			$product_script_data = array(
+				'i18n_global_unique_id_error' => __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
+				'ajax_url'                    => admin_url( 'admin-ajax.php' ),
+				'search_products_nonce'       => wp_create_nonce( 'search-products' ),
+			);
+
 			wp_localize_script(
 				'my_shop_front_product_script',
 				'My_Shop_Front_Product',
-				array(
-					'i18n_global_unique_id_error'	=> __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
-					'ajax_url'	=> admin_url( 'admin-ajax.php' ),
-					'search_products_nonce'	=> wp_create_nonce( 'search-products' ),
-				)
+				$product_script_data
 			);
 		}
 	}

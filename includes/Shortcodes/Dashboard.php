@@ -44,12 +44,20 @@ class Dashboard extends MyShopFrontShortcode {
 		}
 
 		if ( isset( $wp->query_vars['add-new-product'] ) ) {
-			msf_get_template_part( 'products/add-new-product' );
+			if ( ! current_user_can( 'manage_woocommerce' ) ) {
+                msf_get_template_part( 'global/no-permission' );
+            } else {
+                do_action( 'msf_load_new_product_template', $wp->query_vars );
+            }
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['edit-product'] ) ) {
-			msf_get_template_part( 'products/edit-product' );
+			if ( ! current_user_can( 'manage_woocommerce' ) ) {
+                msf_get_template_part( 'global/no-permission' );
+            } else {
+                do_action( 'msf_load_edit_product_template', $wp->query_vars );
+            }
 			return ob_get_clean();
 		}
 

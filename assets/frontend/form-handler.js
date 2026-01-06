@@ -51,7 +51,7 @@ function categoryAddFormHandler() {
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Adding...'
 				);
@@ -112,7 +112,7 @@ function categoryEditFormHandler( categoryId ) {
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Updating...'
 				);
@@ -183,12 +183,12 @@ function deleteCategoryHandler() {
 			formData.append( 'action', 'msfc_delete_product_category' );
 			formData.append(
 				'msfc_delete_product_category_nonce',
-				My_Shop_Front_Form_Handler.msfc_woo_delete_nonce_
+				MSF_Form_Handler.msfc_woo_delete_nonce_
 			);
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Deleting...'
 				);
@@ -258,7 +258,7 @@ function tagAddFormHandler() {
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Adding...'
 				);
@@ -319,7 +319,7 @@ function tagEditFormHandler( categoryId ) {
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Updating...'
 				);
@@ -390,12 +390,12 @@ function deleteTagHandler() {
 			formData.append( 'action', 'msfc_delete_product_tag' );
 			formData.append(
 				'msfc_delete_product_tag_nonce',
-				My_Shop_Front_Form_Handler.msfc_woo_delete_nonce_
+				MSF_Form_Handler.msfc_woo_delete_nonce_
 			);
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Deleting...'
 				);
@@ -463,7 +463,7 @@ function brandAddFormHandler() {
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Adding...'
 				);
@@ -524,7 +524,7 @@ function brandEditFormHandler( brandId ) {
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Updating...'
 				);
@@ -595,12 +595,12 @@ function deleteBrandHandler() {
 			formData.append( 'action', 'msfc_delete_product_brand' );
 			formData.append(
 				'msfc_delete_product_brand_nonce',
-				My_Shop_Front_Form_Handler.msfc_woo_delete_nonce_
+				MSF_Form_Handler.msfc_woo_delete_nonce_
 			);
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Deleting...'
 				);
@@ -675,12 +675,13 @@ function productAddFormHandler() {
 			let formData = new FormData(
 				document.getElementById( 'msfc-add-product' )
 			);
+			
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
-					'Adding...'
+					MSF_Form_Handler.modal_processing_title
 				);
 
 				// Check for success or error
@@ -689,32 +690,31 @@ function productAddFormHandler() {
 
 					Swal.fire( {
 						icon: 'success',
-						title: 'Added!',
+						title: MSF_Form_Handler.modal_success_title,
 						text: this.message,
-						confirmButtonText: 'OK',
+						confirmButtonText: MSF_Form_Handler.modal_ok_button_text,
 					} );
-
-					document.getElementById( 'msfc-add-product' ).reset(); // Reset form fields
+					
+					if( 'add' === result.context ){
+						document.getElementById( 'msfc-add-product' ).reset(); // Reset form fields
+					}
 				} else {
 					this.error = result.data.error;
 
 					Swal.fire( {
 						icon: 'error',
-						title: 'Error!',
+						title: MSF_Form_Handler.modal_error_title,
 						text: this.error,
-						confirmButtonText: 'OK',
+						confirmButtonText: MSF_Form_Handler.modal_ok_button_text,
 					} );
 				}
 			} catch ( err ) {
 				// Handle any other errors
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
 				Swal.fire( {
 					icon: 'error',
-					title: 'Error!',
-					text: this.error,
-					confirmButtonText: 'OK',
+					title: MSF_Form_Handler.modal_error_title,
+					text: MSF_Form_Handler.submission_error_message,
+					confirmButtonText: MSF_Form_Handler.modal_ok_button_text,
 				} );
 			}
 		},
@@ -744,7 +744,7 @@ function orderNoteAddFormHandler() {
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Adding...'
 				);
@@ -819,12 +819,12 @@ function orderNoteAddFormHandler() {
 			formData.append('note_id', noteID);
 			formData.append(
 				'msfc_delete_order_note_nonce',
-				My_Shop_Front_Form_Handler.msfc_woo_delete_nonce_
+				MSF_Form_Handler.msfc_woo_delete_nonce_
 			);
 
 			try {
 				let result = await ajaxRequestWithLoading(
-					My_Shop_Front_Form_Handler.ajax_url,
+					MSF_Form_Handler.ajax_url,
 					formData,
 					'Deleting...'
 				);

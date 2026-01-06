@@ -1048,13 +1048,16 @@ label span.req {
   position: relative;
   background: #fff;
   border-radius: 8px;
+  padding: 5px;
 }
 .image-drop-container:hover{
   border-color: var(--primary-bg);
 }
 .image-drop-container  .image-drop-text{
-  padding: 15px 0;
+  padding: 20px 0;
   color: #495057;
+  background: #f3f4f6;
+  border-radius: 5px;
 }
 .image-drop-container span {
   display: block;
@@ -1979,6 +1982,10 @@ span.select2-selection__clear {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
 }
 
 .msfc-dashboard-order-details .create-order-btn {
