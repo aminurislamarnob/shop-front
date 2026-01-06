@@ -227,14 +227,31 @@ class Assets {
 			// product styles and scripts.
 			wp_enqueue_script( 'my_shop_front_product_script' );
 
+			// Prepare product script data.
+			$product_script_data = array(
+				'i18n_global_unique_id_error' => __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
+				'ajax_url'                    => admin_url( 'admin-ajax.php' ),
+				'search_products_nonce'       => wp_create_nonce( 'search-products' ),
+				'stock_management_enabled'    => 'no',
+			);
+
+			// Pass product data if on edit product page.
+			if ( msfc_is_page( 'edit-product' ) ) {
+				global $wp;
+				$product_id = isset( $wp->query_vars['edit-product'] ) ? absint( $wp->query_vars['edit-product'] ) : 0;
+
+				if ( $product_id ) {
+					$product = wc_get_product( $product_id );
+					if ( $product ) {
+						$product_script_data['stock_management_enabled'] = $product->get_manage_stock() ? 'yes' : 'no';
+					}
+				}
+			}
+
 			wp_localize_script(
 				'my_shop_front_product_script',
 				'My_Shop_Front_Product',
-				array(
-					'i18n_global_unique_id_error'	=> __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
-					'ajax_url'	=> admin_url( 'admin-ajax.php' ),
-					'search_products_nonce'	=> wp_create_nonce( 'search-products' ),
-				)
+				$product_script_data
 			);
 		}
 	}

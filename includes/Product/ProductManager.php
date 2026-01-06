@@ -40,15 +40,15 @@ class ProductManager {
 
 		$post_status = ! empty( $data['post_status'] ) ? sanitize_text_field( $data['post_status'] ) : 'publish';
 
-		if ( ! empty( $data['ID'] ) ) {
-			$post_arr['ID'] = absint( $data['ID'] );
+		if ( ! empty( $data['product_id'] ) ) {
+			$post_arr['product_id'] = absint( $data['product_id'] );
 			$is_updating = true;
 		} else {
 			$is_updating = false;
 		}
 
 		$post_data = array(
-			'id'                => $is_updating ? $post_arr['ID'] : '',
+			'id'                => $is_updating ? $post_arr['product_id'] : '',
 			'name'              => sanitize_text_field( $data['product_title'] ),
 			'type'              => ! empty( $data['post_type'] ) ? $data['post_type'] : 'simple',
 			'description'       => wp_kses_post( $data['product_description'] ),

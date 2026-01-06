@@ -5,9 +5,12 @@
             this.errorTips();
         },
         bindEvents: function() {
+            var self = this;
             this.initSelect2();
-            this.manageStock();
-            $(document).on('change', '#_manage_stock', this.manageStock);
+            this.initManageStock();
+            $(document).on('change', '#_manage_stock', function() {
+                self.toggleStockFields();
+            });
             $( document.body ).on( 'keyup', 'input[type=text][name*=_global_unique_id]', this.validateGlobalUniqueIdOnKeyUp);
             $( document.body ).on( 'change', 'input[type=text][name*=_global_unique_id]', this.validateGlobalUniqueIdOnChange);
         },
@@ -23,19 +26,24 @@
                 $( this ).selectWoo( select2_args ).addClass( 'enhanced' );
             });
         },
-        manageStock: function(){            
+        initManageStock: function() {
+            // On page load, check if stock management is enabled from localized data
+            if ( typeof My_Shop_Front_Product !== 'undefined' && My_Shop_Front_Product.stock_management_enabled === 'yes' ) {
+                this.toggleStockFields();
+            }
+        },
+        toggleStockFields: function(){         
             const product_type = $( 'select#post_type' ).val();
+            const is_checked = $( '#_manage_stock' ).is( ':checked' );
 
-            if ( $( this ).is( ':checked' ) && 'external' !== product_type ) {
+            if ( is_checked && 'external' !== product_type ) {
                 $( '.show_if_stock_management' ).slideDown( 'fast' );
             } else {
                 $( '.show_if_stock_management' ).slideUp( 'fast' );
             }
 
             if ( 'simple' === product_type ) {
-                $( this ).is( ':checked' )
-                    ? $( '._stock_status_field' ).slideUp( 'fast' )
-                    : $( '._stock_status_field' ).slideDown( 'fast' );
+                is_checked ? $( '._stock_status_field' ).slideUp( 'fast' ) : $( '._stock_status_field' ).slideDown( 'fast' );
             }
         },
         validateGlobalUniqueIdOnKeyUp: function() {
