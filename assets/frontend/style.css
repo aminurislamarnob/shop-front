@@ -992,52 +992,11 @@ label span.req {
 .invalid-feedback {
   font-size: 13px;
 }
-
-/*Select2 Style*/
-/* .select2-container--default .select2-selection--multiple {
-  border-radius: 0!important;
-  border: 1px solid #ced4da!important;
+a.sale_schedule, a.cancel_sale_schedule {
+  color: var(--primary-bg);
+  text-decoration: underline!important;
+  font-size: 13px;
 }
-
-.select2-container--default.select2-container--focus .select2-selection--multiple {
-  border: 1px solid #ced4da!important;
-}
-
-.select2-dropdown {
-  border-radius: 0px!important;
-  border-color: #ddd!important;
-}
-
-.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
-  background-color: var(--primary-bg)!important;
-}
-.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-  padding: 0 4px!important;
-}
-
-.select2-container--default .select2-selection--multiple .select2-selection__choice {
-  border-radius: 0px!important;
-  background: #f6f6f6;
-}
-.select2-container .select2-selection--single .select2-selection__arrow b {
-  border: none;
-  display: block;
-  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItY2hldnJvbi1kb3duIj48cG9seWxpbmUgcG9pbnRzPSI2IDkgMTIgMTUgMTggOSI+PC9wb2x5bGluZT48L3N2Zz4=) no-repeat;
-  background-size: 16px;
-  width: 16px;
-  height: 16px;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  margin: -8px 0 0;
-}
-.select2-container .select2-selection--single .select2-selection__arrow {
-  position: absolute;
-  top: 2px;
-  right: .5em;
-  height: 100%;
-  width: 16px;
-} */
 
 /*Image Fields*/
 .image-drop-container {
@@ -1107,6 +1066,105 @@ label span.req {
 .preview-image.privew-gimages img {
   margin: 0 4px;
   padding: 4px 0;
+}
+
+/*Product form date picker*/
+.msf-main-dashboard .ui-datepicker {
+  background: #fff;
+  border: 1px solid #ddd;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  padding: 1em;
+  width: auto;
+  max-width: 320px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.msf-main-dashboard .ui-datepicker .ui-datepicker-header {
+  background: #f8f8f8;
+  border: none;
+  color: #333;
+  font-weight: 600;
+  padding: 0.5em 0;
+  text-align: center;
+}
+.msf-main-dashboard .ui-datepicker .ui-datepicker-prev, .msf-main-dashboard .ui-datepicker .ui-datepicker-next{
+  top: 8px;
+}
+
+.msf-main-dashboard .ui-datepicker .ui-datepicker-title {
+  font-size: 15px;
+  margin: 0;
+}
+
+.msf-main-dashboard .ui-datepicker table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5em;
+}
+
+.msf-main-dashboard .ui-datepicker th {
+  color: #777;
+  font-weight: 500;
+  padding: 0.3em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.msf-main-dashboard .ui-datepicker td {
+  text-align: center;
+  padding: 4px;
+}
+
+.msf-main-dashboard .ui-datepicker .ui-state-default {
+  background: none;
+  border: none;
+  color: #333;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.msf-main-dashboard .ui-datepicker .ui-state-default:hover {
+  background: #f0f0f0;
+}
+
+.msf-main-dashboard .ui-datepicker .ui-state-active,
+.msf-main-dashboard .ui-datepicker .ui-state-highlight {
+  background: var(--primary-bg);
+  color: #fff !important;
+}
+
+.msf-main-dashboard .ui-datepicker .ui-state-disabled {
+  color: #ccc !important;
+  background: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.msf-main-dashboard .ui-datepicker-buttonpane {
+  margin-top: 1em;
+  text-align: center;
+}
+
+.msf-main-dashboard .ui-datepicker-buttonpane button {
+  background: #f8f8f8;
+  border: 1px solid #ccc;
+  color: #333;
+  padding: 0.4em 1em;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.msf-main-dashboard .ui-datepicker-buttonpane button:hover {
+  background: #eee;
 }
 
 /*Product Details Page*/

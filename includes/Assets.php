@@ -52,7 +52,7 @@ class Assets {
 		
 		// Order scripts.
 		wp_register_script( 'my_shop_front_order_script', $frontend_order_script, array('my_shop_front_selectWoo'), SHOP_FRONT_PLUGIN_VERSION, true );
-		wp_register_script( 'my_shop_front_product_script', $frontend_product_script, array( 'my_shop_front_selectWoo' ), SHOP_FRONT_PLUGIN_VERSION, true );
+		wp_register_script( 'my_shop_front_product_script', $frontend_product_script, array( 'my_shop_front_selectWoo', 'jquery-ui-datepicker' ), SHOP_FRONT_PLUGIN_VERSION, true );
 		wp_register_script( 'my_shop_front_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 	}
@@ -68,12 +68,13 @@ class Assets {
 		$bs_grid_style              = SHOP_FRONT_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
 		$frontend_sweetalert2_style = SHOP_FRONT_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
 
-		wp_register_style( 'my_shop_front_admin_style', $admin_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/admin/style.css' ) );
-		wp_register_style( 'my_shop_front_style', $frontend_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/style.css' ) );
-		wp_register_style( 'my_shop_front_bs_grid', $bs_grid_style, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/bootstrap-grid.min.css' ) );
+		wp_register_style( 'my_shop_front_admin_style', $admin_style, array(), SHOP_FRONT_PLUGIN_VERSION );
+		wp_register_style( 'my_shop_front_style', $frontend_style, array(), SHOP_FRONT_PLUGIN_VERSION );
+		wp_register_style( 'my_shop_front_bs_grid', $bs_grid_style, array(), SHOP_FRONT_PLUGIN_VERSION );
 
 		wp_register_style( 'my_shop_front_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 		wp_register_style( 'my_shop_front_poppins', 'https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap', array() );
+		wp_register_style( 'my_shop_front_jquery-ui-style', WC()->plugin_url() . '/assets/css/jquery-ui/jquery-ui.min.css', array(), SHOP_FRONT_PLUGIN_VERSION );
 	}
 
 	/**
@@ -231,6 +232,7 @@ class Assets {
 			);
 
 			// product styles and scripts.
+			wp_enqueue_style( 'my_shop_front_jquery-ui-style' );
 			wp_enqueue_script( 'my_shop_front_product_script' );
 
 			// Prepare product script data.

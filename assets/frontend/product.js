@@ -3,16 +3,20 @@
         init: function() {
             this.bindEvents();
             this.errorTips();
+            this.initSalePriceSchedule();
+            this.initSelect2();
+            this.toggleStockFields();
+            this.salePriceDatesPicker();
         },
         bindEvents: function() {
             var self = this;
-            this.initSelect2();
-            this.toggleStockFields();
             $(document).on('change', '#_manage_stock', function() {
                 self.toggleStockFields();
             });
             $( document.body ).on( 'keyup', 'input[type=text][name*=_global_unique_id]', this.validateGlobalUniqueIdOnKeyUp);
             $( document.body ).on( 'change', 'input[type=text][name*=_global_unique_id]', this.validateGlobalUniqueIdOnChange);
+            $(document).on('click', '.sale_schedule', this.openSaleSchedule );
+            $(document).on('click', '.cancel_sale_schedule', this.cancelSaleSchedule);
         },
         initSelect2: function() {
             $( '.msf-select2' ).filter( ':not(.enhanced)' ).each( function() {
@@ -29,8 +33,6 @@
         toggleStockFields: function(){         
             const product_type = $( 'select#post_type' ).val();
             const is_checked = $( '#_manage_stock' ).is( ':checked' );
-            console.log(is_checked);
-            
 
             if ( is_checked && 'external' !== product_type ) {
                 $( '.show_if_stock_management' ).slideDown( 'fast' );
@@ -106,7 +108,77 @@
 						$( this ).remove();
 					} );
 			} )
-        }
+        },
+        salePriceDatesPicker: function(){
+            var self = this
+            $( '.sale_price_dates_fields' ).each( function () {
+                $( this )
+                    .find( 'input' )
+                    .datepicker( {
+                        defaultDate: '',
+                        dateFormat: 'yy-mm-dd',
+                        numberOfMonths: 1,
+                        showButtonPanel: true,
+                        onSelect: function () {
+                            self.datePickerSelect( $( this ) );
+                        },
+                    } );
+                $( this )
+                    .find( 'input' )
+                    .each( function () {
+                        self.datePickerSelect( $( this ) );
+                    } );
+            } );
+        },
+        datePickerSelect: function( datepicker ) {
+            var option = $( datepicker ).next().is( '.hasDatepicker' )
+                    ? 'minDate'
+                    : 'maxDate',
+                otherDateField =
+                    'minDate' === option
+                        ? $( datepicker ).next()
+                        : $( datepicker ).prev(),
+                date = $( datepicker ).datepicker( 'getDate' );
+    
+            $( otherDateField ).datepicker( 'option', option, date );
+            $( datepicker ).trigger( 'change' );
+        },
+        initSalePriceSchedule: function() {
+            $( '.sale_price_dates_fields' ).each( function () {
+                var sale_schedule_set = false;
+        
+                $(this).find( 'input' ).each( function () {
+                    if ( '' !== $( this ).val() ) {
+                        sale_schedule_set = true;
+                    }
+                } );
+        
+                if ( sale_schedule_set ) {
+                    $( '.sale_schedule' ).hide();
+                    $( '.cancel_sale_schedule' ).show();
+                    $( '.sale_price_dates_fields' ).slideDown();
+                } else {
+                    $( '.sale_schedule' ).show();
+                    $( '.cancel_sale_schedule' ).hide();
+                    $( '.sale_price_dates_fields' ).slideUp();
+                }
+            } );
+        },
+        openSaleSchedule: function () {
+			$( this ).hide();
+			$( '.cancel_sale_schedule' ).show();
+			$( '.sale_price_dates_fields' ).slideDown();
+
+			return false;
+		},
+        cancelSaleSchedule: function () {
+			$( this ).hide();
+			$( '.sale_schedule' ).show();
+			$( '.sale_price_dates_fields' ).slideUp();
+			$( '.sale_price_dates_fields' ).find( 'input' ).val( '' );
+
+			return false;
+		}
     }
     StoreFrontProduct.init();
 })(jQuery)

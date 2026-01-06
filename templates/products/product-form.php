@@ -67,8 +67,8 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 		// Pricing.
 		$regular_price         = $product->get_regular_price();
 		$sale_price            = $product->get_sale_price();
-		$sale_price_dates_from = $product->get_date_on_sale_from() ? $product->get_date_on_sale_from()->date( 'Y-m-d' ) : '';
-		$sale_price_dates_to   = $product->get_date_on_sale_to() ? $product->get_date_on_sale_to()->date( 'Y-m-d' ) : '';
+		$sale_price_dates_from = $product->get_date_on_sale_from() ? date( 'Y-m-d', $product->get_date_on_sale_from()->getTimestamp() ) : '';
+		$sale_price_dates_to   = $product->get_date_on_sale_to() ? date( 'Y-m-d', $product->get_date_on_sale_to()->getTimestamp() ) : '';
 
 		// Inventory.
 		$sku               = $product->get_sku();
@@ -249,20 +249,32 @@ $product_brands = pluginizelab_shop_front()->msf_product_brands->get_product_bra
                             </div>
                             <div class="col-md-6">
                                 <div class="msf-form-group">
-                                    <label for="sale_price"><?php esc_html_e( 'Sale Price', 'msfc-wfm' ); ?></label>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <label for="sale_price"><?php esc_html_e( 'Sale Price', 'msfc-wfm' ); ?></label>
+                                        </div>
+                                        <div class="col-md-4 text-right">
+                                            <a href="#" class="sale_schedule"><?php esc_html_e( 'Schedule', 'msfc-wfm' ); ?></a>
+                                            <a href="#" class="cancel_sale_schedule"><?php esc_html_e( 'Cancel', 'msfc-wfm' ); ?></a>
+                                        </div>
+                                    </div>
                                     <input type="number" class="msf-form-control" id="sale_price" name="sale_price" step="any" value="<?php echo esc_attr( $sale_price ); ?>">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="msf-form-group">
-                                    <label for="_sale_price_dates_from"><?php esc_html_e( 'Sale Price Date From', 'msfc-wfm' ); ?></label>
-                                    <input type="text" class="msf-form-control" id="_sale_price_dates_from" name="_sale_price_dates_from" value="<?php echo esc_attr( $sale_price_dates_from ); ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="msf-form-group">
-                                    <label for="_sale_price_dates_to"><?php esc_html_e( 'Sale Price Date To', 'msfc-wfm' ); ?></label>
-                                    <input type="text" class="msf-form-control" id="_sale_price_dates_to" name="_sale_price_dates_to" value="<?php echo esc_attr( $sale_price_dates_to ); ?>">
+                            <div class="col-md-12">
+                                <div class="row sale_price_dates_fields">
+                                    <div class="col-md-6">
+                                        <div class="msf-form-group">
+                                            <label for="_sale_price_dates_from"><?php esc_html_e( 'Sale Price Date From', 'msfc-wfm' ); ?></label>
+                                            <input type="text" class="msf-form-control" id="_sale_price_dates_from" name="_sale_price_dates_from" value="<?php echo esc_attr( $sale_price_dates_from ); ?>">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="msf-form-group">
+                                            <label for="_sale_price_dates_to"><?php esc_html_e( 'Sale Price Date To', 'msfc-wfm' ); ?></label>
+                                            <input type="text" class="msf-form-control" id="_sale_price_dates_to" name="_sale_price_dates_to" value="<?php echo esc_attr( $sale_price_dates_to ); ?>">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
