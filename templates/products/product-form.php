@@ -157,8 +157,8 @@ $product_brands = pluginizelab_shop_front()->msf_product_brands->get_product_bra
                         </div>
                         <div class="msf-form-group">
                             <div class="row">
-                                <div class="col-md-4">
-                                    <label for="product_thumbnail_id"><?php esc_html_e( 'Upload Prouduct Image', 'msfc-wfm' ); ?></label>
+                                <div class="col-md-3">
+                                    <label for="product_thumbnail_id"><?php esc_html_e( 'Prouduct Image', 'msfc-wfm' ); ?></label>
                                     <?php
                                     $thumbnail_url = '';
                                     if ( $thumbnail_id ) {
@@ -175,12 +175,12 @@ $product_brands = pluginizelab_shop_front()->msf_product_brands->get_product_bra
                                         </div> 
                                         <div class="image-drop-text">
                                             <i class="las la-image"></i>
-                                            <span><span><?php esc_html_e( 'Click Here', 'msfc-wfm' ); ?></span> <?php esc_html_e( 'To Upload Image', 'msfc-wfm' ); ?></span>
+                                            <span><?php esc_html_e( 'Upload Image', 'msfc-wfm' ); ?></span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <label for="product_image_gallery"><?php esc_html_e( 'Upload Prouduct Gallery Images', 'msfc-wfm' ); ?></label>
+                                <div class="col-md-9">
+                                    <label for="product_image_gallery"><?php esc_html_e( 'Prouduct Gallery Images', 'msfc-wfm' ); ?></label>
                                     <?php
                                     $gallery_ids_string = '';
                                     $gallery_urls       = array();
@@ -193,20 +193,29 @@ $product_brands = pluginizelab_shop_front()->msf_product_brands->get_product_bra
                                     ?>
                                     <input type="hidden" id="product_image_gallery" name="product_image_gallery" value="<?php echo esc_attr( $gallery_ids_string ); ?>">
                                     <input type="hidden" id="product_image_gallery_url" name="product_image_gallery_url" value="<?php echo esc_attr( implode( ',', $gallery_urls ) ); ?>">
-                                    <div id="product-gallery-images" class="image-drop-container">
+                                    <div class="product-gallery-images-wrapper<?php if ( empty( $gallery_image_ids ) ){ echo esc_attr(' gallery-has-no-image'); } ?>">
                                         <div id="product_gallery_img" class="preview-image privew-gimages">
                                             <?php if ( ! empty( $gallery_image_ids ) ) : ?>
                                                 <?php foreach ( $gallery_image_ids as $gallery_id ) : ?>
                                                     <?php $gallery_url = wp_get_attachment_image_url( $gallery_id, 'thumbnail' ); ?>
                                                     <?php if ( $gallery_url ) : ?>
-                                                        <img src="<?php echo esc_url( $gallery_url ); ?>" alt="<?php esc_attr_e( 'Gallery image', 'shop-front' ); ?>">
+                                                        <span>
+                                                            <i class="las la-trash" data-id="<?php echo esc_attr( $gallery_id ); ?>"></i>
+                                                            <img src="<?php echo esc_url( $gallery_url ); ?>" alt="<?php esc_attr_e( 'Gallery image', 'shop-front' ); ?>">
+                                                        </span>
                                                     <?php endif; ?>
                                                 <?php endforeach; ?>
                                             <?php endif; ?>
                                         </div>
-                                        <div class="image-drop-text">
-                                            <i class="las la-image"></i>
-                                            <span><span><?php esc_html_e( 'Click Here', 'msfc-wfm' ); ?></span> <?php esc_html_e( 'To Upload Gallery Images', 'msfc-wfm' ); ?></span>
+                                        <div id="product-gallery-images" class="image-drop-container<?php if ( ! empty( $gallery_image_ids ) ){ echo esc_attr(' sm-gallery-image-uploader'); } ?>">
+                                            <div class="image-drop-text">
+                                                <span class="add-gl-img-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+                                                        <path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"></path>
+                                                    </svg>
+                                                </span>
+                                                <span class="add-gl-img-text"><?php esc_html_e( 'Upload Gallery Images', 'msfc-wfm' ); ?></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

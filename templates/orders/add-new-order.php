@@ -25,34 +25,6 @@ $order = $theorder;
 					<div class="row">
 						<!-- Left Column -->
 						<div class="col-md-8">
-							<!-- Customer Section -->
-							<div class="msf-card">
-								<div class="card-title-with-link">
-									<h3 class="msf-card-title"><?php esc_html_e( 'Customer', 'shop-front' ); ?></h3>
-								</div>
-								<div class="msf-card-content">
-									<div class="msf-form-group search-group">
-										<?php
-										$user_string = '';
-										$user_id     = '';
-										?>
-										<select class="wc-customer-search" id="customer_user" name="customer_user" data-placeholder="<?php esc_attr_e( 'Guest', 'woocommerce' ); ?>" data-allow_clear="true">
-											<?php
-											// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment
-											/**
-											 * Filter to customize the display of the currently selected customer for an order in the order edit page.
-											 * This is the same filter used in the ajax call for customer search in the same metabox.
-											 *
-											 * @param array @user_info An array containing one item with the name and email of the user currently selected as the customer for the order.
-											 */
-											?>
-											<option value="<?php echo esc_attr( $user_id ); ?>" selected="selected"><?php echo esc_html( htmlspecialchars( wp_kses_post( current( apply_filters( 'woocommerce_json_search_found_customers', array( $user_string ) ) ) ) ) ); ?></option>
-											<?php // phpcs:enable WooCommerce.Commenting.CommentHooks.MissingHookComment ?>
-										</select>
-									</div>
-								</div>
-							</div>
-	
 							<!-- Products Section -->
 							<div class="msf-card product-serach-for-order-box">
 								<h3 class="msf-card-title"><?php esc_html_e( 'Products', 'shop-front' ); ?></h3>
@@ -138,8 +110,55 @@ $order = $theorder;
 							<div class="row">
 								<div class="col-md-6">
 									<div class="msf-card customer-address-box">
-										<h3 class="msf-card-title"><?php esc_html_e( 'Billing Address', 'shop-front' ); ?></h3>
-										<div class="msf-card-content">
+										<h3 class="msf-card-title">
+											<?php esc_html_e( 'Billing Address', 'shop-front' ); ?>
+											<button class="edit-msf-order-address edit-msf-order-billing-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
+										</h3>
+										<div class="customer-billing-address">
+											<ul>
+												<li class="_billing_first_name">
+													<strong><?php esc_html_e( 'Full Name', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_billing_company">
+													<strong><?php esc_html_e( 'Company', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_billing_address_1">
+													<strong><?php esc_html_e( 'Address Line 1', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_billing_address_2">
+													<strong><?php esc_html_e( 'Address Line 2', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_billing_city">
+													<strong><?php esc_html_e( 'City', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_billing_postcode">
+													<strong><?php esc_html_e( 'Postcode / ZIP', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_billing_country">
+													<strong><?php esc_html_e( 'Country / Region', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_billing_state">
+													<strong><?php esc_html_e( 'State / County', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_billing_email">
+													<strong><?php esc_html_e( 'Email Address', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_billing_phone">
+													<strong><?php esc_html_e( 'Phone', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+											</ul>
+										</div>
+										<div class="msf-card-content msf-billing-address-fields">
 											<div class="row">
 												<div class="col-md-6">
 													<div class="msf-form-group">
@@ -306,8 +325,55 @@ $order = $theorder;
 								</div>
 								<div class="col-md-6">
 									<div class="msf-card customer-address-box">
-										<h3 class="msf-card-title"><?php esc_html_e( 'Shipping Address', 'shop-front' ); ?></h3>
-										<div class="msf-card-content">
+										<h3 class="msf-card-title">
+											<?php esc_html_e( 'Shipping Address', 'shop-front' ); ?>
+											<button class="edit-msf-order-address edit-msf-order-shipping-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
+										</h3>
+										<div class="customer-shipping-address">
+											<ul>
+												<li class="_shipping_first_name">
+													<strong><?php esc_html_e( 'Full Name', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_shipping_company">
+													<strong><?php esc_html_e( 'Company', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_shipping_address_1">
+													<strong><?php esc_html_e( 'Address Line 1', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_shipping_address_2">
+													<strong><?php esc_html_e( 'Address Line 2', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_shipping_city">
+													<strong><?php esc_html_e( 'City', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_shipping_postcode">
+													<strong><?php esc_html_e( 'Postcode / ZIP', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_shipping_country">
+													<strong><?php esc_html_e( 'Country / Region', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_shipping_state">
+													<strong><?php esc_html_e( 'State / County', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="_shipping_phone">
+													<strong><?php esc_html_e( 'Phone', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+												<li class="customer_note">
+													<strong><?php esc_html_e( 'Note', 'shop-front' ); ?>:</strong>
+													<span></span>
+												</li>
+											</ul>
+										</div>
+										<div class="msf-card-content msf-shipping-address-fields">
 											<div class="row">
 												<div class="col-md-6">
 													<div class="msf-form-group">
@@ -434,16 +500,30 @@ $order = $theorder;
 	
 						<!-- Right Column -->
 						<div class="col-md-4">
-							<!-- Action Buttons -->
-							<div class="action-buttons">
-								<button type="submit" class="create-order-btn"><?php esc_html_e( 'Create Order', 'shop-front' ); ?></button>
-								<button type="button" class="save-draft-btn"><?php esc_html_e( 'Save as Draft', 'shop-front' ); ?></button>
-							</div>
-	
 							<!-- General Section -->
 							<div class="msf-card">
 								<h3 class="msf-card-title"><?php esc_html_e( 'General', 'shop-front' ); ?></h3>
 								<div class="msf-card-content">
+									<div class="msf-form-group search-group">
+										<?php
+										$user_string = '';
+										$user_id     = '';
+										?>
+										<label for="date_created"><?php esc_html_e( 'Customer', 'shop-front' ); ?></label>
+										<select class="wc-customer-search" id="customer_user" name="customer_user" data-placeholder="<?php esc_attr_e( 'Guest', 'woocommerce' ); ?>" data-allow_clear="true">
+											<?php
+											// phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment
+											/**
+											 * Filter to customize the display of the currently selected customer for an order in the order edit page.
+											 * This is the same filter used in the ajax call for customer search in the same metabox.
+											 *
+											 * @param array @user_info An array containing one item with the name and email of the user currently selected as the customer for the order.
+											 */
+											?>
+											<option value="<?php echo esc_attr( $user_id ); ?>" selected="selected"><?php echo esc_html( htmlspecialchars( wp_kses_post( current( apply_filters( 'woocommerce_json_search_found_customers', array( $user_string ) ) ) ) ) ); ?></option>
+											<?php // phpcs:enable WooCommerce.Commenting.CommentHooks.MissingHookComment ?>
+										</select>
+									</div>
 									<div class="msf-form-group">
 										<label for="date_created"><?php esc_html_e( 'Date Created', 'shop-front' ); ?></label>
 										<div class="date-time-group">
@@ -492,6 +572,12 @@ $order = $theorder;
 								 */
 								do_action( 'msfc_after_new_order_actions', $order );
 							?>
+
+							<!-- Action Buttons -->
+							<div class="action-buttons">
+								<button type="submit" class="create-order-btn"><?php esc_html_e( 'Create Order', 'shop-front' ); ?></button>
+								<button type="button" class="save-draft-btn"><?php esc_html_e( 'Save as Draft', 'shop-front' ); ?></button>
+							</div>
 	
 							<!-- Order Notes Section -->
 							<div id="new_order_notes" class="msf-card">

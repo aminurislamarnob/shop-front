@@ -7,6 +7,8 @@
             $('#customer_user').show().selectWoo().hide();
             this.handleSelect2Customer(); // Handle select2 customer
             $( '#customer_user' ).on( 'change', this.changeCustomerUser );
+            $( '.edit-msf-order-billing-address' ).on( 'click', this.showBillingAddressFields );
+            $( '.edit-msf-order-shipping-address' ).on( 'click', this.showShippingAddressFields );
         },
 
         handleSelect2Customer: function() {
@@ -185,8 +187,15 @@
 					type: 'POST',
 					success: function( response ) {
 						if ( response && response.billing ) {
+							$( '.customer-address-box' ).show();
 							$.each( response.billing, function( key, data ) {
 								$( ':input#_billing_' + key ).val( data ).trigger( 'change' );
+								
+								if(data){
+									$( 'li._billing_' + key + ' span' ).text( data );
+								}else{
+									$( 'li._billing_' + key ).hide();
+								}
 							});
 						}
 						$( 'div.edit_address' ).unblock();
@@ -226,9 +235,17 @@
 					data: data,
 					type: 'POST',
 					success: function( response ) {
-						if ( response && response.billing ) {
+						console.log(response);
+						
+						if ( response && response.shipping ) {
 							$.each( response.shipping, function( key, data ) {
 								$( ':input#_shipping_' + key ).val( data ).trigger( 'change' );
+								
+								if( data ){
+									$( 'li._shipping_' + key + ' span' ).text( data );
+								}else{
+									$( 'li._shipping_' + key ).hide();
+								}
 							});
 						}
 						$( 'div.edit_address' ).unblock();
@@ -248,6 +265,20 @@
 			}
 			return false;
 		},
+
+		showBillingAddressFields: function(e){
+			e.preventDefault();
+			$(this).hide();
+			$('.customer-billing-address').hide();
+			$('.msf-billing-address-fields').show();
+		},
+
+		showShippingAddressFields: function(e){
+			e.preventDefault();
+			$(this).hide();
+			$('.customer-shipping-address').hide();
+			$('.msf-shipping-address-fields').show();
+		}
     }
 
     /**

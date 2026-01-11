@@ -119,6 +119,14 @@ class Assets {
 			wp_enqueue_style( 'my_shop_front_style' );
 			wp_enqueue_style( 'my_shop_front_bs_grid' );
 			wp_enqueue_script( 'my_shop_front_script' );
+			wp_localize_script(
+				'my_shop_front_script',
+				'MSF_Front_Script',
+				array(
+					'upload_image_text' => __( 'Upload Image', 'shop-front' ),
+					'remove_image_text' => __( 'Remove Image', 'shop-front' ),
+				)
+			);
 
 			wp_enqueue_style( 'my_shop_front_poppins' );
 			wp_enqueue_style( 'my_shop_front_sweetalert2_style' );

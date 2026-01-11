@@ -25,38 +25,50 @@
         uploadProductImage: function() {
             $('#product-single-image').click(function(event){
                 event.preventDefault();
-    
+
+                var image_id = $('#product_thumbnail_url').val();
                 var targetContainer = $(this);
-                // If the media frame already exists, reopen it.
-                if ( frame ) {
+
+                if( image_id && image_id.length > 0 ){
+                    $('#product_thumbnail_id').val('');
+                    $('#product_thumbnail_url').val('');
+                    $('#product_thumb_img').html('');
+                    $(targetContainer).find(".image-drop-text span").text( MSF_Front_Script.upload_image_text );
+                    $(targetContainer).removeClass('image-drop-bg');
+                } else {
+                    // If the media frame already exists, reopen it.
+                    if ( frame ) {
+                        frame.open();
+                        return false;
+                    }
+        
+                    // Create a new media frame
+                    var frame = wp.media({
+                        title: "Upload Product Image",
+                        button:{
+                            text: "Insert Image"
+                        },
+                        multiple: false
+                    });
+        
+                    frame.on('select', function(){
+                        var attachment = frame.state().get('selection').first().toJSON();
+                        
+                        // Send the attachment id to our hidden input
+                        $('#product_thumbnail_id').val(attachment.id);
+        
+                        // Send the attachment URL to our custom image input field.
+                        $('#product_thumb_img').html( '<img src="'+attachment.sizes.thumbnail.url+'" alt="Product Image"/>' );
+                        $('#product_thumbnail_url').val( attachment.sizes.thumbnail.url );
+        
+                        //add class to hide text normaly
+                        $(targetContainer).addClass('image-drop-bg');
+                        $("#product-single-image .image-drop-text span").text( MSF_Front_Script.remove_image_text );
+                    });
+        
                     frame.open();
-                    return false;
                 }
     
-                // Create a new media frame
-                var frame = wp.media({
-                    title: "Upload Product Image",
-                    button:{
-                        text: "Insert Image"
-                    },
-                    multiple: false
-                });
-    
-                frame.on('select', function(){
-                    var attachment = frame.state().get('selection').first().toJSON();
-                    
-                    // Send the attachment id to our hidden input
-                    $('#product_thumbnail_id').val(attachment.id);
-    
-                    // Send the attachment URL to our custom image input field.
-                    $('#product_thumb_img').html( '<img src="'+attachment.sizes.thumbnail.url+'" alt="Product Image"/>' );
-                    $('#product_thumbnail_url').val( attachment.sizes.thumbnail.url );
-    
-                    //add class to hide text normaly
-                    $(targetContainer).addClass('image-drop-bg');
-                });
-    
-                frame.open();
             });
         },
         uploadProductGallaryImages: function() {
@@ -80,16 +92,25 @@
                 });
     
                 gframe.on('select', function(){
-                    $('#product_gallery_img').html('');
-                    var galleryImageIds = [];
-                    var galleryImageUrls = [];
+                    $('#product_gallery_img').html();
+                    var galleryImageIds = $.map( ($('#product_image_gallery').val() || '').split(','), function(imageId){
+                        imageId = $.trim(imageId);
+                        return imageId ? imageId : null;
+                    });
+
+                    var galleryImageUrls = $.map( ($('#product_image_gallery_url').val() || '').split(','), function(imageUrl){
+                        imageUrl = $.trim(imageUrl);
+                        return imageUrl ? imageUrl : null;
+                    });
                     var attachments = gframe.state().get('selection').toJSON();
                     
                     for(var singleItem in attachments){
                         var attachment = attachments[singleItem];
-                        galleryImageIds.push(attachment.id);
-                        galleryImageUrls.push(attachment.sizes.thumbnail.url);
-                        $('#product_gallery_img').append( '<img src="'+attachment.sizes.thumbnail.url+'" alt="Product Gallery Image"/>' );
+                        if ( $.inArray( String( attachment.id ), galleryImageIds ) === -1 ) {
+                            galleryImageIds.push( String( attachment.id ) );
+                            galleryImageUrls.push(attachment.sizes.thumbnail.url);
+                            $('#product_gallery_img').append( '<span><i class="las la-trash" data-id="'+attachment.id+'"></i><img src="'+attachment.sizes.thumbnail.url+'" data-id="'+attachment.id+'" alt="Product Gallery Image"/></span>' );
+                        }
                         
                     }
                     // Send the attachment ids to our hidden input
@@ -97,7 +118,8 @@
                     $('#product_image_gallery_url').val( galleryImageUrls.join(',') );
     
                     //add class to hide text normaly
-                    $(targetContainer).addClass('image-drop-bg');
+                    $(targetContainer).addClass('sm-gallery-image-uploader');
+                    $('.product-gallery-images-wrapper').removeClass('gallery-has-no-image');
                 });
     
                 gframe.open();
