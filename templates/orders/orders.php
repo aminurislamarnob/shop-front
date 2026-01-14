@@ -64,7 +64,9 @@ do_action( 'msf_dashboard_wrapper_start' );
 							<?php
 							$orders = $orders_obj->get_all_orders();
 							foreach ( $orders as $order ) { // phpcs:ignore
-								$item_count = $order->get_item_count() - $order->get_item_count_refunded();
+								$is_refund     = $order instanceof \WC_Order_Refund;
+								$order = $is_refund ? wc_get_order( $order->get_parent_id() ) : $order;
+								$item_count = $order->get_item_count();
 								/**
 								 * @var WC_Order $order
 								 */
