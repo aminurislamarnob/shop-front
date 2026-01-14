@@ -47,6 +47,7 @@ final class ShopFront {
 		add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
 		add_action( 'woocommerce_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_route' ) );
+		add_action( 'before_woocommerce_init', array( $this, 'make_wc_hpos_compatible' ) );
 	}
 
 	/**
@@ -103,6 +104,17 @@ final class ShopFront {
 	 */
 	public function register_rest_route() {
 		$this->container['msf_admin_settings_controller']->register_routes();
+	}
+
+	/**
+	 * Declare WooCommerce HPOS compatibility
+	 *
+	 * @return void
+	 */
+	public function make_wc_hpos_compatible() {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
 	}
 
 	/**
