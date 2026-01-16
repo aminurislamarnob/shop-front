@@ -63,12 +63,21 @@ do_action( 'msf_dashboard_wrapper_start' );
 						<tbody>
 							<?php
 							$orders = $orders_obj->get_all_orders();
-							foreach ( $orders as $order ) { // phpcs:ignore
-								$item_count = $order->get_item_count();
-								/**
-								 * @var WC_Order $order
-								 */
-								?>
+							if ( empty( $orders ) ) {
+								echo '<tr id="order-row-not-found"><td colspan="8">';
+								msf_get_template_part(
+									'not-found',
+									'',
+									array(
+										'title' => esc_html__( 'No order found!', 'shop-front' ),
+										'desc'  => esc_html__( 'There is nothing to display at the moment.', 'shop-front' ),
+									)
+								);
+								echo '</td></tr>';
+							} else {
+								foreach ( $orders as $order ) { // phpcs:ignore
+									$item_count = $order->get_item_count();
+									?>
 								<tr>
 									<td data-title="<?php echo esc_attr__( 'Order', 'shop-front' ); ?>">
 										<?php $orders_obj->get_order_number_column_value( $order ); ?>
@@ -124,7 +133,8 @@ do_action( 'msf_dashboard_wrapper_start' );
 										</div>
 									</td>
 								</tr>
-								<?php
+										<?php
+								}
 							}
 							?>
 						</tbody>

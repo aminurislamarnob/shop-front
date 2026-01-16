@@ -2770,6 +2770,32 @@ table.msf-table.order-items .wc-order-item-thumbnail img {
   overflow: hidden;
 }
 
+/*Not found template part*/
+.msf-no-data-found {
+  text-align: center;
+  padding: 100px 0;
+}
+
+.msf-no-data-found h2 {
+  font-size: 22px;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-bottom: 10px;
+  margin-top: 0;
+  color: #374151;
+}
+
+.msf-no-data-found p {
+  margin: 0;
+  font-weight: normal;
+  color: var(--msf-text-color);
+  font-size: 14px;
+}
+
+.msf-no-data-found .not-found-image {
+  margin-bottom: 30px;
+}
+
 
 @media (max-width: 768px) {
   .msfc-dashboard-order-details .col-md-8, 

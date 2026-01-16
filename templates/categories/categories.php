@@ -57,9 +57,23 @@ do_action( 'msf_dashboard_wrapper_start' );
 						</tr>
 						<tbody>
 							<?php
-								$product_categories   = new Categories();
-								$categories_hierarchy = $product_categories->get_product_parent_and_subcategories_recursively();
+							$product_categories   = new Categories();
+							$categories_hierarchy = $product_categories->get_product_parent_and_subcategories_recursively();
+
+							if ( empty( $categories_hierarchy ) ) {
+								echo '<tr id="tag-category-not-found"><td colspan="5">';
+								msf_get_template_part(
+									'not-found',
+									'',
+									array(
+										'title' => esc_html__( 'No category found!', 'shop-front' ),
+										'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a category.', 'shop-front' ),
+									)
+								);
+								echo '</td></tr>';
+							} else {
 								$product_categories->display_categories_recursively( $categories_hierarchy );
+							}
 							?>
 						</tbody>
 					</thead>

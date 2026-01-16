@@ -32,6 +32,20 @@ class Brands {
 	public function display_brands() {
 		$brands = $this->get_product_brands();
 
+		if ( empty( $brands ) ) {
+			echo '<tr id="brand-row-not-found"><td colspan="5">';
+			msf_get_template_part(
+				'not-found',
+				'',
+				array(
+					'title' => esc_html__( 'No brand found!', 'shop-front' ),
+					'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a brand.', 'shop-front' ),
+				)
+			);
+			echo '</td></tr>';
+			return;
+		}
+
 		foreach ( $brands as $brand ) {
 			$template_args = array(
 				'brand' => $brand,
@@ -59,4 +73,4 @@ class Brands {
 		$brands = $this->get_product_brands();
 		return count( $brands );
 	}
-} 
+}

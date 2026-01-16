@@ -47,23 +47,21 @@ do_action( 'msf_dashboard_wrapper_start' );
 					</div>
 				</div>
 			</div>
-			<div class="msf-card">
-				<div class="msf-table-responsive" x-data="deleteBrandHandler()">
-					<table class="my-shop-front-tbl my-shop-front-product-list-table">
-						<thead>
-							<tr>
-								<th><?php esc_html_e( 'Brand Name', 'shop-front' ); ?></th>
-								<th><?php esc_html_e( 'Description', 'shop-front' ); ?></th>
-								<th><?php esc_html_e( 'Slug', 'shop-front' ); ?></th>
-								<th><?php esc_html_e( 'Count', 'shop-front' ); ?></th>
-								<th class="text-right"><?php esc_html_e( 'Actions', 'shop-front' ); ?></th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php $brands_obj->display_brands(); ?>
-						</tbody>
-					</table>
-				</div>
+			<div class="msf-table-responsive" x-data="deleteBrandHandler()">
+				<table class="my-shop-front-tbl my-shop-front-product-list-table">
+					<thead>
+						<tr>
+							<th><?php esc_html_e( 'Name', 'shop-front' ); ?></th>
+							<th><?php esc_html_e( 'Description', 'shop-front' ); ?></th>
+							<th><?php esc_html_e( 'Slug', 'shop-front' ); ?></th>
+							<th><?php esc_html_e( 'Count', 'shop-front' ); ?></th>
+							<th class="text-right"><?php esc_html_e( 'Actions', 'shop-front' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php $brands_obj->display_brands(); ?>
+					</tbody>
+				</table>
 			</div>
 		</main>
 	</div>

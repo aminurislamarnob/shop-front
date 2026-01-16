@@ -20,6 +20,10 @@ class Categories {
 			)
 		);
 
+		if ( empty( $categories ) ) {
+			return array();
+		}
+
 		$categories_hierarchy = array();
 
 		foreach ( $categories as $category ) {

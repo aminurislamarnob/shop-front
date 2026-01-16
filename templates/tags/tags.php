@@ -62,7 +62,18 @@ do_action( 'msf_dashboard_wrapper_start' );
 							)
 						);
 
-						if ( ! is_wp_error( $product_tags ) && ! empty( $product_tags ) ) {
+						if ( empty( $product_tags ) ) {
+							echo '<tr id="tag-row-not-found"><td colspan="5">';
+							msf_get_template_part(
+								'not-found',
+								'',
+								array(
+									'title' => esc_html__( 'No tag found!', 'shop-front' ),
+									'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a tag.', 'shop-front' ),
+								)
+							);
+							echo '</td></tr>';
+						} else {
 							foreach ( $product_tags as $product_tag ) {
 								?>
 						<tr id="tag-row-<?php echo esc_attr( $product_tag->term_id ); ?>">
