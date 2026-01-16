@@ -67,8 +67,8 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 		// Pricing.
 		$regular_price         = $product->get_regular_price();
 		$sale_price            = $product->get_sale_price();
-		$sale_price_dates_from = $product->get_date_on_sale_from() ? date( 'Y-m-d', $product->get_date_on_sale_from()->getTimestamp() ) : '';
-		$sale_price_dates_to   = $product->get_date_on_sale_to() ? date( 'Y-m-d', $product->get_date_on_sale_to()->getTimestamp() ) : '';
+		$sale_price_dates_from = $product->get_date_on_sale_from() ? wp_date( 'Y-m-d', $product->get_date_on_sale_from()->getTimestamp() ) : '';
+		$sale_price_dates_to   = $product->get_date_on_sale_to() ? wp_date( 'Y-m-d', $product->get_date_on_sale_to()->getTimestamp() ) : '';
 
 		// Inventory.
 		$sku               = $product->get_sku();

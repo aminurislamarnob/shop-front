@@ -141,18 +141,18 @@ class OrderController {
 				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
 			}
 
-			$shipping_method_title = isset($_POST['shipping_method_title']) ? sanitize_text_field($_POST['shipping_method_title']) : __('Shipping', 'shop-front');
-			$shipping_method_id = isset($_POST['shipping_method']) ? sanitize_text_field($_POST['shipping_method']) : '';
-			$shipping_cost = isset($_POST['shipping_cost']) ? floatval($_POST['shipping_cost']) : 0;
-			
+			$shipping_method_title = isset( $_POST['shipping_method_title'] ) ? sanitize_text_field( $_POST['shipping_method_title'] ) : __( 'Shipping', 'shop-front' );
+			$shipping_method_id    = isset( $_POST['shipping_method'] ) ? sanitize_text_field( $_POST['shipping_method'] ) : '';
+			$shipping_cost         = isset( $_POST['shipping_cost'] ) ? floatval( $_POST['shipping_cost'] ) : 0;
+
 			// Create shipping item
 			$shipping_item = new \WC_Order_Item_Shipping();
-			$shipping_item->set_method_title($shipping_method_title);
-			$shipping_item->set_method_id($shipping_method_id);
-			$shipping_item->set_total($shipping_cost);
-			
+			$shipping_item->set_method_title( $shipping_method_title );
+			$shipping_item->set_method_id( $shipping_method_id );
+			$shipping_item->set_total( $shipping_cost );
+
 			// Add to order
-			$order->add_item($shipping_item);
+			$order->add_item( $shipping_item );
 			$order->calculate_totals();
 			$order->save();
 
@@ -170,7 +170,7 @@ class OrderController {
 	/**
 	 * Handle the AJAX request for setting a customer to an order.
 	 */
-	public function msfc_set_customer_to_order(){
+	public function msfc_set_customer_to_order() {
 		// Verify nonce
 		check_ajax_referer( 'order-item', 'security' );
 
@@ -183,7 +183,7 @@ class OrderController {
 		try {
 			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
 			$order    = wc_get_order( $order_id );
-			
+
 			if ( ! $order ) {
 				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
 			}
@@ -196,7 +196,7 @@ class OrderController {
 			$order->save();
 
 			$response = array(
-				'order_id'       => $order_id,
+				'order_id'    => $order_id,
 				'customer_id' => $order->get_customer_id(),
 			);
 		} catch ( \Exception $e ) {
@@ -210,7 +210,7 @@ class OrderController {
 	/**
 	 * Handle the AJAX request for creating a new order.
 	 */
-	public function msfc_create_order(){
+	public function msfc_create_order() {
 		// Verify nonce
 		check_ajax_referer( 'order-item', 'security' );
 
@@ -223,7 +223,7 @@ class OrderController {
 		try {
 			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
 			$order    = wc_get_order( $order_id );
-			
+
 			if ( ! $order ) {
 				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
 			}
@@ -274,11 +274,9 @@ class OrderController {
 					$data_store->delete_by_order_id( $order_id );
 					wc_downloadable_product_permissions( $order_id, true );
 
-				} else {
+				} elseif ( ! did_action( 'woocommerce_order_action_' . sanitize_title( $action ) ) ) {
 
-					if ( ! did_action( 'woocommerce_order_action_' . sanitize_title( $action ) ) ) {
 						do_action( 'woocommerce_order_action_' . sanitize_title( $action ), $order );
-					}
 				}
 			}
 
@@ -290,15 +288,24 @@ class OrderController {
 					throw new \Exception( __( 'Order date, hour, minute and/or second are missing.', 'woocommerce' ), 400 );
 				}
 				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-				$date = gmdate( 'Y-m-d H:i:s', strtotime( $_POST['order_date'] . ' ' . (int) $_POST['order_date_hour'] . ':' . (int) $_POST['order_date_minute'] . ':' . (int) $_POST['order_date_second'] ) );
+				$date = gmdate( 'Y-m-d H:i:s', strtotime( sanitize_text_field( wp_unslash( $_POST['order_date'] ) ) . ' ' . absint( $_POST['order_date_hour'] ) . ':' . absint( $_POST['order_date_minute'] ) . ':' . absint( $_POST['order_date_second'] ) ) );
 			}
 
-			$order_status = isset($_POST['order_status']) ? sanitize_text_field($_POST['order_status']) : 'wc-pending';
+			$order_status = isset( $_POST['order_status'] ) ? sanitize_text_field( wp_unslash( $_POST['order_status'] ) ) : 'wc-pending';
 
 			// Map and set billing address
 			$billing_fields = array(
-				'first_name', 'last_name', 'company', 'address_1', 'address_2',
-				'city', 'postcode', 'country', 'state', 'email', 'phone'
+				'first_name',
+				'last_name',
+				'company',
+				'address_1',
+				'address_2',
+				'city',
+				'postcode',
+				'country',
+				'state',
+				'email',
+				'phone',
 			);
 
 			foreach ( $billing_fields as $field ) {
@@ -314,8 +321,16 @@ class OrderController {
 
 			// Map and set shipping address
 			$shipping_fields = array(
-				'first_name','last_name','company','address_1','address_2',
-				'city','postcode','country','state','phone'
+				'first_name',
+				'last_name',
+				'company',
+				'address_1',
+				'address_2',
+				'city',
+				'postcode',
+				'country',
+				'state',
+				'phone',
 			);
 
 			foreach ( $shipping_fields as $field ) {
@@ -345,7 +360,7 @@ class OrderController {
 			}
 
 			// Set to order
-            $order->set_date_created( $date );
+			$order->set_date_created( $date );
 			$order->set_status( $order_status );
 			$order->save();
 

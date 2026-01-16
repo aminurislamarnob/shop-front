@@ -462,7 +462,7 @@ template {
   transition: .3s;
 }
 .msf-form-group .select2-container--default .select2-selection--multiple .select2-selection__rendered li {
-  margin: 0;
+  margin-top: 0;
 }
 .my-shop-front-inline-form button {
   height: 35px!important;
@@ -1606,7 +1606,7 @@ span.msf-sidebar-trigger svg {
   color: #444;
   cursor: default;
   float: left;
-  margin-bottom: 2px!important;
+  margin-bottom: 5px!important;
   padding: 4px 8px;
   font-size: 14px;
   line-height: 1.5;
