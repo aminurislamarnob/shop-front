@@ -17,18 +17,12 @@ class OrderManager {
 	 * @return array
 	 */
 	public function get_all_orders() {
-		// $query  = new \WC_Order_Query(
-		// 	array(
-		// 		'limit'  => -1,
-		// 		'return' => 'objects',
-		// 	)
-		// );
 		$orders = wc_get_orders(
 			array(
-				'limit'    => -1,
+				'limit' => -1,
+				'type'  => 'shop_order',
 			)
 		);
-		// $orders = $query->get_orders();
 		return $orders;
 	}
 

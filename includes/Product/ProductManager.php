@@ -42,7 +42,7 @@ class ProductManager {
 
 		if ( ! empty( $data['product_id'] ) ) {
 			$post_arr['product_id'] = absint( $data['product_id'] );
-			$is_updating = true;
+			$is_updating            = true;
 		} else {
 			$is_updating = false;
 		}
@@ -69,7 +69,7 @@ class ProductManager {
 			$post_data['categories'] = array_map( 'absint', (array) $data['product_category'] );
 		}
 
-		$post_data['brands'] =  isset( $data['product_brand'] ) ? array_map( 'absint', (array) $data['product_brand'] ) : array();
+		$post_data['brands'] = isset( $data['product_brand'] ) ? array_map( 'absint', (array) $data['product_brand'] ) : array();
 
 		if ( isset( $data['product_thumbnail_id'] ) ) {
 			$post_data['featured_image_id'] = ! empty( $data['product_thumbnail_id'] ) ? absint( $data['product_thumbnail_id'] ) : '';
@@ -79,7 +79,7 @@ class ProductManager {
 			$post_data['gallery_image_ids'] = ! empty( $data['product_image_gallery'] ) ? wc_clean( $data['product_image_gallery'] ) : '';
 		}
 
-		$post_data['tags'] =  isset( $data['product_tags'] ) ? array_map( 'absint', (array) $data['product_tags'] ) : array();
+		$post_data['tags'] = isset( $data['product_tags'] ) ? array_map( 'absint', (array) $data['product_tags'] ) : array();
 
 		if ( isset( $data['regular_price'] ) ) {
 			$post_data['regular_price'] = $data['regular_price'] === '' ? '' : wc_format_decimal( $data['regular_price'] );
@@ -127,9 +127,9 @@ class ProductManager {
 			$post_data['_global_unique_id'] = wc_clean( wp_unslash( $data['_global_unique_id'] ) );
 		}
 
-		if ( isset( $data['_manage_stock'] ) && 'grouped' !== $post_data[ 'type' ] ) {
+		if ( isset( $data['_manage_stock'] ) && 'grouped' !== $post_data['type'] ) {
 			$post_data['_manage_stock'] = 'yes';
-		}else{
+		} else {
 			$post_data['_manage_stock'] = 'no';
 		}
 
@@ -147,7 +147,7 @@ class ProductManager {
 
 		if ( isset( $data['_sold_individually'] ) && 'yes' === $data['_sold_individually'] ) {
 			$post_data['_sold_individually'] = 'yes';
-		}else{
+		} else {
 			$post_data['_sold_individually'] = 'no';
 		}
 
@@ -161,7 +161,7 @@ class ProductManager {
 			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			$post_data['featured'] = 'on';
 			// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		}else{
+		} else {
 			$post_data['featured'] = 'off';
 		}
 
@@ -509,11 +509,15 @@ class ProductManager {
 		// Set featured image id
 		if ( ! empty( $args['featured_image_id'] ) ) {
 			$product->set_image_id( $args['featured_image_id'] );
+		} else {
+			$product->set_image_id( '' );
 		}
 
 		// Set gallery image ids
 		if ( ! empty( $args['gallery_image_ids'] ) ) {
 			$product->set_gallery_image_ids( $args['gallery_image_ids'] );
+		} else {
+			$product->set_gallery_image_ids( array() );
 		}
 
 		// Allow set meta_data.
@@ -711,19 +715,19 @@ class ProductManager {
 	}
 
 	/**
-     * Get product brands.
-     *
-     * @param int    $product_id Product ID.
-     * @param string $fields
-     *
-     * @return array
-     */
-    public function get_brands( int $product_id, string $fields = 'all' ): array {
-        $brands = wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => $fields ) );
-        if ( is_wp_error( $brands ) ) {
-            return [];
-        }
+	 * Get product brands.
+	 *
+	 * @param int    $product_id Product ID.
+	 * @param string $fields
+	 *
+	 * @return array
+	 */
+	public function get_brands( int $product_id, string $fields = 'all' ): array {
+		$brands = wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => $fields ) );
+		if ( is_wp_error( $brands ) ) {
+			return array();
+		}
 
-        return $brands;
+		return $brands;
 	}
 }
