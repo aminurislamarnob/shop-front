@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use PluginizeLab\ShopFront\ProductTag\Tags;
+
 do_action( 'msf_dashboard_wrapper_start' );
 ?>
 <div class="my-shop-front-container">
@@ -43,7 +45,13 @@ do_action( 'msf_dashboard_wrapper_start' );
 					</div>
 				</div>
 			</div>
-			<div class="msf-table-responsive" x-data="deleteTagHandler()">
+			<?php
+			$current_page  = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
+			$tags_per_page = apply_filters( 'msf_tags_per_page', 10 );
+			$product_tags  = new Tags();
+			$tags_data     = $product_tags->get_paginated_tags( $tags_per_page, $current_page );
+			?>
+			<div class="msf-table-responsive">
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>
@@ -55,14 +63,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 						</tr>
 						<tbody>
 						<?php
-						$product_tags = get_terms(
-							array(
-								'taxonomy'   => 'product_tag',
-								'hide_empty' => false,
-							)
-						);
-
-						if ( empty( $product_tags ) ) {
+						if ( empty( $tags_data->tags ) ) {
 							echo '<tr id="tag-row-not-found"><td colspan="5">';
 							msf_get_template_part(
 								'not-found',
@@ -74,7 +75,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 							);
 							echo '</td></tr>';
 						} else {
-							foreach ( $product_tags as $product_tag ) {
+							foreach ( $tags_data->tags as $product_tag ) {
 								?>
 						<tr id="tag-row-<?php echo esc_attr( $product_tag->term_id ); ?>">
 							<td><?php echo esc_html( $product_tag->name ); ?></td>
@@ -98,7 +99,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 											<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-tag' ) . '%s', $product_tag->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
 										</li>
 										<li>
-											<button @click="deleteTag(<?php echo esc_attr( $product_tag->term_id ); ?>)" type="button" class="inline-button dropdown-link">
+											<button type="button" class="inline-button dropdown-link msfc-delete-tag" data-tag-id="<?php echo esc_attr( $product_tag->term_id ); ?>">
 												<?php echo esc_html__( 'Delete', 'shop-front' ); ?>
 											</button>
 										</li>
@@ -113,6 +114,20 @@ do_action( 'msf_dashboard_wrapper_start' );
 						</tbody>
 					</thead>
 				</table>
+				<?php
+				if ( $tags_data->max_num_pages > 1 ) {
+					msf_get_template_part(
+						'pagination',
+						'',
+						array(
+							'total_items'  => $tags_data->total,
+							'total_pages'  => $tags_data->max_num_pages,
+							'current_page' => $current_page,
+							'per_page'     => $tags_per_page,
+						)
+					);
+				}
+				?>
 			</div>
 		</main>
 	</div>

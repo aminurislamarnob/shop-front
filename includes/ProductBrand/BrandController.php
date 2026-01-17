@@ -57,6 +57,8 @@ class BrandController {
 			wp_send_json_error( array( 'error' => $new_brand->get_error_message() ) );
 		}
 
+		do_action( 'msf_product_brand_created', $new_brand );
+
 		wp_send_json_success( array( 'message' => __( 'Brand successfully created', 'shop-front' ) ) );
 	}
 
@@ -108,6 +110,8 @@ class BrandController {
 			wp_send_json_error( array( 'error' => $updated_brand->get_error_message() ) );
 		}
 
+		do_action( 'msf_product_brand_updated', $updated_brand );
+
 		wp_send_json_success( array( 'message' => __( 'Brand successfully updated', 'shop-front' ) ) );
 	}
 
@@ -139,6 +143,8 @@ class BrandController {
 		} elseif ( $result === false ) {
 			wp_send_json_error( array( 'error' => __( 'Failed to delete brand', 'shop-front' ) ) );
 		}
+
+		do_action( 'msf_product_brand_deleted', $brand_id );
 
 		wp_send_json_success( array( 'message' => __( 'Brand successfully deleted', 'shop-front' ) ) );
 	}

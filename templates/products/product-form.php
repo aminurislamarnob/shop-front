@@ -121,8 +121,7 @@ $product_types    = apply_filters( 'msf_product_types', array( 'simple' => __( '
 $product_statuses = apply_filters( 'msf_product_statuses', array( 'publish' => __( 'Simple', 'shop-front' ) ) );
 $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_brands();
 ?>
-<div x-data="productAddFormHandler()">
-	<form id="msfc-add-product" @submit.prevent="handleProductSubmission" method="POST">
+<form id="msfc-add-product" method="POST">
 		<div class="row">
 			<div class="col-md-8">
 				<div class="msf-card msf-mb-24">
@@ -541,10 +540,10 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 									)
 								);
 								if ( ! is_wp_error( $all_tags ) && ! empty( $all_tags ) ) {
-									foreach ( $all_tags as $tag ) {
-										$selected = in_array( $tag->term_id, $product_tags_array, true ) ? 'selected' : '';
+									foreach ( $all_tags as $product_tag ) {
+										$selected = in_array( $product_tag->term_id, $product_tags_array, true ) ? 'selected' : '';
 										?>
-								<option value="<?php echo esc_attr( $tag->term_id ); ?>" <?php echo esc_attr( $selected ); ?>><?php echo esc_html( $tag->name ); ?></option>
+								<option value="<?php echo esc_attr( $product_tag->term_id ); ?>" <?php echo esc_attr( $selected ); ?>><?php echo esc_html( $product_tag->name ); ?></option>
 										<?php
 									}
 								}
@@ -579,7 +578,3 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 			</div>
 		</div>
 	</form>
-	<!-- Success and Error Messages -->
-	<div x-show="message" x-text="message" class="alert"></div>
-	<div x-show="error" x-text="error" class="alert alert-danger"></div>
-</div>

@@ -51,7 +51,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 			$product_categories  = new Categories();
 			$categories_data     = $product_categories->get_paginated_categories_with_children( $categories_per_page, $current_page );
 			?>
-			<div class="msf-table-responsive" x-data="deleteCategoryHandler()">
+			<div class="msf-table-responsive">
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>

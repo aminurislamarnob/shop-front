@@ -229,6 +229,7 @@ final class ShopFront {
 		$this->container['msf_product_category_controller'] = new ProductCategory\CategoryController();
 		$this->container['msf_product_brands']              = new ProductBrand\Brands();
 		$this->container['msf_product_brand_controller']    = new ProductBrand\BrandController();
+		$this->container['msf_product_tags']                = new ProductTag\Tags();
 		$this->container['msf_product_tag_controller']      = new ProductTag\TagController();
 		$this->container['msf_product_controller']          = new Product\ProductController();
 		$this->container['msf_product_hooks']               = new Product\ProductHooks();

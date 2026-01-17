@@ -37,7 +37,7 @@ class Assets {
 		$admin_script                 = SHOP_FRONT_PLUGIN_ASSET . '/admin/script.js';
 		$frontend_script              = SHOP_FRONT_PLUGIN_ASSET . '/frontend/script.js';
 		$frontend_order_script        = SHOP_FRONT_PLUGIN_ASSET . '/frontend/order.js';
-		$frontend_product_script        = SHOP_FRONT_PLUGIN_ASSET . '/frontend/product.js';
+		$frontend_product_script      = SHOP_FRONT_PLUGIN_ASSET . '/frontend/product.js';
 		$frontend_form_handler_script = SHOP_FRONT_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_alpinejs_script     = 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js';
 		$frontend_sweetalert2         = SHOP_FRONT_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
@@ -46,12 +46,11 @@ class Assets {
 		wp_register_script( 'my_shop_front_script', $frontend_script, array(), SHOP_FRONT_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
-		wp_register_script( 'my_shop_front_form_handler_script', $frontend_form_handler_script, array( 'my_shop_front_alpinejs' ), filemtime( SHOP_FRONT_DIR . '/assets/frontend/form-handler.js' ), true );
-		wp_register_script( 'my_shop_front_alpinejs', $frontend_alpinejs_script, array(), '3.x.x', true );
+		wp_register_script( 'my_shop_front_form_handler_script', $frontend_form_handler_script, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/form-handler.js' ), true );
 		wp_register_script( 'my_shop_front_sweetalert2_script', $frontend_sweetalert2, array(), '11.14.5', true );
-		
+
 		// Order scripts.
-		wp_register_script( 'my_shop_front_order_script', $frontend_order_script, array('my_shop_front_selectWoo'), SHOP_FRONT_PLUGIN_VERSION, true );
+		wp_register_script( 'my_shop_front_order_script', $frontend_order_script, array( 'my_shop_front_selectWoo' ), SHOP_FRONT_PLUGIN_VERSION, true );
 		wp_register_script( 'my_shop_front_product_script', $frontend_product_script, array( 'my_shop_front_selectWoo', 'jquery-ui-datepicker' ), SHOP_FRONT_PLUGIN_VERSION, true );
 		wp_register_script( 'my_shop_front_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
@@ -86,7 +85,7 @@ class Assets {
 		wp_enqueue_script( 'my_shop_front_admin_script' );
 
 		$page = get_current_screen();
-		if ( 'woocommerce_page_shop-front' == $page->id ) {
+		if ( 'woocommerce_page_shop-front' === $page->id ) {
 			$asset_file = include SHOP_FRONT_DIR . '/assets/build/admin/script.asset.php';
 
 			wp_enqueue_script(
@@ -131,19 +130,6 @@ class Assets {
 			wp_enqueue_style( 'my_shop_front_poppins' );
 			wp_enqueue_style( 'my_shop_front_sweetalert2_style' );
 			wp_enqueue_script( 'my_shop_front_sweetalert2_script' );
-			wp_enqueue_script( 'my_shop_front_alpinejs' );
-			add_filter(
-				'script_loader_tag',
-				function ( $tag, $handle ) {
-					if ( 'my_shop_front_alpinejs' !== $handle ) {
-						return $tag;
-					}
-					return str_replace( ' src', ' defer="defer" src', $tag );
-				},
-				10,
-				2
-			);
-
 			wp_enqueue_script( 'my_shop_front_form_handler_script' );
 			wp_localize_script(
 				'my_shop_front_form_handler_script',
@@ -151,16 +137,67 @@ class Assets {
 				array(
 					'ajax_url'               => admin_url( 'admin-ajax.php' ),
 					'msfc_woo_delete_nonce_' => wp_create_nonce( '_msfc_delete_nonce_' ),
-					'msfc_woo_delete_nonce_' => wp_create_nonce( '_msfc_delete_nonce_' ),
-					'submission_error_message' => __( 'An unexpected error occurred. Please try again later.', 'shop-front' ),
-					'modal_processing_title' => __( 'Processing...', 'shop-front' ),
-					'modal_success_title' => __( 'Submitted!', 'shop-front' ),
-					'modal_error_title' => __( 'Error!', 'shop-front' ),
-					'modal_ok_button_text' => __( 'Ok', 'shop-front' ),
+					'i18n'                   => array(
+						// Common messages.
+						'processing'                     => __( 'Processing...', 'shop-front' ),
+						'please_wait'                    => __( 'Please wait while we process your request.', 'shop-front' ),
+						'success_title'                  => __( 'Success!', 'shop-front' ),
+						'error_title'                    => __( 'Error!', 'shop-front' ),
+						'ok_button'                      => __( 'OK', 'shop-front' ),
+						'yes_button'                     => __( 'Yes', 'shop-front' ),
+						'no_button'                      => __( 'No', 'shop-front' ),
+						'cancel_button'                  => __( 'Cancel', 'shop-front' ),
+						'unexpected_error'               => __( 'An unexpected error occurred. Please try again.', 'shop-front' ),
+
+						// Category messages.
+						'category_name_required'         => __( 'Please enter category name.', 'shop-front' ),
+						'category_adding'                => __( 'Adding Category...', 'shop-front' ),
+						'category_added_successfully'    => __( 'Category added successfully!', 'shop-front' ),
+						'category_updating'              => __( 'Updating Category...', 'shop-front' ),
+						'category_updated_successfully'  => __( 'Category updated successfully!', 'shop-front' ),
+						'category_delete_confirm_title'  => __( 'Are you sure?', 'shop-front' ),
+						'category_delete_confirm_text'   => __( 'Do you want to delete this category? This action cannot be undone.', 'shop-front' ),
+						'category_delete_confirm_button' => __( 'Yes, delete it!', 'shop-front' ),
+						'category_deleting'              => __( 'Deleting Category...', 'shop-front' ),
+						'category_deleted_successfully'  => __( 'Category deleted successfully!', 'shop-front' ),
+
+						// Tag messages.
+						'tag_name_required'              => __( 'Please enter tag name.', 'shop-front' ),
+						'tag_adding'                     => __( 'Adding Tag...', 'shop-front' ),
+						'tag_added_successfully'         => __( 'Tag added successfully!', 'shop-front' ),
+						'tag_updating'                   => __( 'Updating Tag...', 'shop-front' ),
+						'tag_updated_successfully'       => __( 'Tag updated successfully!', 'shop-front' ),
+						'tag_delete_confirm_title'       => __( 'Are you sure?', 'shop-front' ),
+						'tag_delete_confirm_text'        => __( 'Do you want to delete this tag? This action cannot be undone.', 'shop-front' ),
+						'tag_delete_confirm_button'      => __( 'Yes, delete it!', 'shop-front' ),
+						'tag_deleting'                   => __( 'Deleting Tag...', 'shop-front' ),
+						'tag_deleted_successfully'       => __( 'Tag deleted successfully!', 'shop-front' ),
+
+						// Brand messages.
+						'brand_name_required'            => __( 'Please enter brand name.', 'shop-front' ),
+						'brand_adding'                   => __( 'Adding Brand...', 'shop-front' ),
+						'brand_added_successfully'       => __( 'Brand added successfully!', 'shop-front' ),
+						'brand_updating'                 => __( 'Updating Brand...', 'shop-front' ),
+						'brand_updated_successfully'     => __( 'Brand updated successfully!', 'shop-front' ),
+						'brand_delete_confirm_title'     => __( 'Are you sure?', 'shop-front' ),
+						'brand_delete_confirm_text'      => __( 'Do you want to delete this brand? This action cannot be undone.', 'shop-front' ),
+						'brand_delete_confirm_button'    => __( 'Yes, delete it!', 'shop-front' ),
+						'brand_deleting'                 => __( 'Deleting Brand...', 'shop-front' ),
+						'brand_deleted_successfully'     => __( 'Brand deleted successfully!', 'shop-front' ),
+
+						// Product messages.
+						'product_title_required'         => __( 'Please enter product title.', 'shop-front' ),
+						'product_description_required'   => __( 'Please enter product description.', 'shop-front' ),
+						'product_category_required'      => __( 'Please select at least one category.', 'shop-front' ),
+						'product_price_required'         => __( 'Please enter product price.', 'shop-front' ),
+						'product_adding'                 => __( 'Adding Product...', 'shop-front' ),
+						'product_added_successfully'     => __( 'Product added successfully!', 'shop-front' ),
+						'product_updating'               => __( 'Updating Product...', 'shop-front' ),
+						'product_updated_successfully'   => __( 'Product updated successfully!', 'shop-front' ),
+					),
 				)
 			);
 			wp_enqueue_media();
-
 
 			// Order styles and scripts.
 			wp_enqueue_script( 'my_shop_front_selectWoo' );
@@ -215,19 +252,19 @@ class Assets {
 					'order_item_nonce'                => wp_create_nonce( 'order-item' ),
 					'hide_new_customer_form'          => __( 'hide new customer form', 'shop-front' ),
 					'add_new_customer_form'           => __( 'add a new customer', 'shop-front' ),
-					'new_customer_or'           	  => __( 'Or', 'shop-front' ),
+					'new_customer_or'                 => __( 'Or', 'shop-front' ),
 					'tax_based_on'                    => esc_attr( get_option( 'woocommerce_tax_based_on' ) ),
 					'i18n_apply_coupon'               => __( 'Enter a coupon code to apply. Discounts are applied to line totals, before taxes.', 'woocommerce' ),
 					'i18n_add_fee'                    => __( 'Enter a fixed amount or percentage.', 'shop-front' ),
 					'calc_totals_nonce'               => wp_create_nonce( 'calc-totals' ),
-					'countries'              		  => wp_json_encode( array_merge( WC()->countries->get_allowed_country_states(), WC()->countries->get_shipping_country_states() ) ),
-					'i18n_select_state_text' 		  => esc_attr__( 'Select an option&hellip;', 'woocommerce' ),
+					'countries'                       => wp_json_encode( array_merge( WC()->countries->get_allowed_country_states(), WC()->countries->get_shipping_country_states() ) ),
+					'i18n_select_state_text'          => esc_attr__( 'Select an option&hellip;', 'woocommerce' ),
 					'default_country'                 => isset( $default_location['country'] ) ? $default_location['country'] : '',
-					'default_state'          		  => isset( $default_location['state'] ) ? $default_location['state'] : '',
-					'placeholder_name'       		  => esc_attr__( 'Name (required)', 'woocommerce' ),
-					'placeholder_value'      		  => esc_attr__( 'Value (required)', 'woocommerce' ),
+					'default_state'                   => isset( $default_location['state'] ) ? $default_location['state'] : '',
+					'placeholder_name'                => esc_attr__( 'Name (required)', 'woocommerce' ),
+					'placeholder_value'               => esc_attr__( 'Value (required)', 'woocommerce' ),
 					'i18n_delete_note'                => __( 'Are you sure you wish to delete this note? This action cannot be undone.', 'woocommerce' ),
-					'i18n_no_notes'                	  => __( 'There are no notes yet.', 'woocommerce' ),
+					'i18n_no_notes'                   => __( 'There are no notes yet.', 'woocommerce' ),
 					'remove_item_notice'              => __( 'Are you sure you want to remove the selected items?', 'woocommerce' ),
 					'remove_fee_notice'               => __( 'Are you sure you want to remove the selected fees?', 'woocommerce' ),
 					'remove_shipping_notice'          => __( 'Are you sure you want to remove the selected shipping?', 'woocommerce' ),

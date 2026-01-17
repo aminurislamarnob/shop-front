@@ -1,866 +1,682 @@
-// Common function to handle AJAX requests with loading delay
-async function ajaxRequestWithLoading( url, formData, loadingMessage ) {
-	Swal.fire( {
-		title: loadingMessage,
-		text: 'Please wait while we process your request.',
-		icon: 'info',
-		allowOutsideClick: false,
-		didOpen: () => {
-			Swal.showLoading();
+( function ( $ ) {
+	'use strict';
+
+	var StoreFrontFormHandler = {
+		init: function () {
+			this.bindEvents();
 		},
-	} );
 
-	const minLoadingDelay = new Promise( ( resolve ) =>
-		setTimeout( resolve, 1000 )
-	); // Minimum delay of 1 second
-
-	// Send AJAX request and wait for both the request and the minimum delay to complete
-	const response = await Promise.all( [
-		fetch( url, {
-			method: 'POST',
-			body: formData,
-		} ).then( ( res ) => res.json() ),
-		minLoadingDelay,
-	] );
-
-	Swal.close();
-
-	return response[ 0 ];
-}
-
-/***
- * Category Form Handler [Start]
- * Using Alpine JS
- */
-
-//Add category
-function categoryAddFormHandler() {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async handleCategorySubmission() {
-			// Clear messages before submission
-			this.message = '';
-			this.error = '';
-
-			// Collect form data
-			let formData = new FormData(
-				document.getElementById( 'msfc-add-category' )
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Adding...'
-				);
-
-				// Check for success or error
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					Swal.fire( {
-						icon: 'success',
-						title: 'Added!',
-						text: this.message,
-						confirmButtonText: 'OK',
-					} );
-
-					document.getElementById( 'msfc-add-category' ).reset(); // Reset form fields
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
-				}
-			} catch ( err ) {
-				// Handle any other errors
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
-				Swal.fire( {
-					icon: 'error',
-					title: 'Error!',
-					text: this.error,
-					confirmButtonText: 'OK',
-				} );
-			}
+		bindEvents: function () {
+			this.handleCategoryAdd();
+			this.handleCategoryEdit();
+			this.handleCategoryDelete();
+			this.handleTagAdd();
+			this.handleTagEdit();
+			this.handleTagDelete();
+			this.handleBrandAdd();
+			this.handleBrandEdit();
+			this.handleBrandDelete();
+			this.handleProductSubmit();
 		},
-	};
-}
 
-//Edit category
-function categoryEditFormHandler( categoryId ) {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async handleCategoryEditSubmission() {
-			// Clear messages before submission
-			this.message = '';
-			this.error = '';
-
-			// Collect form data
-			let formData = new FormData(
-				document.getElementById( 'msfc-edit-category' )
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Updating...'
-				);
-
-				// Check for success or error
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					Swal.fire( {
-						icon: 'success',
-						title: 'Updated!',
-						text: this.message,
-						confirmButtonText: 'OK',
-					} );
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
-				}
-			} catch ( err ) {
-				// Handle any other errors
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
-				Swal.fire( {
-					icon: 'error',
-					title: 'Error!',
-					text: this.error,
-					confirmButtonText: 'OK',
-				} );
-			}
-		},
-	};
-}
-
-//Delete category
-function deleteCategoryHandler() {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async deleteCategory( categoryId ) {
-			// Show confirmation dialog with SweetAlert2
-			const confirmation = await Swal.fire( {
-				title: 'Are you sure?',
-				text: 'This action will permanently delete the category.',
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonText: 'Yes, delete it!',
-				cancelButtonText: 'Cancel',
+		/**
+		 * Show loading state with SweetAlert2
+		 */
+		showLoading: function ( title ) {
+			Swal.fire( {
+				title: title || MSF_Form_Handler.i18n.processing,
+				text: MSF_Form_Handler.i18n.please_wait,
+				icon: 'info',
+				allowOutsideClick: false,
+				didOpen: () => {
+					Swal.showLoading();
+				},
 			} );
-
-			// If user cancels, exit the function
-			if ( ! confirmation.isConfirmed ) return;
-
-			// Clear messages
-			this.message = '';
-			this.error = '';
-
-			// Prepare form data
-			let formData = new FormData();
-			formData.append( 'id', categoryId );
-			formData.append( 'action', 'msfc_delete_product_category' );
-			formData.append(
-				'msfc_delete_product_category_nonce',
-				MSF_Form_Handler.msfc_woo_delete_nonce_
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Deleting...'
-				);
-
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					Swal.fire( {
-						icon: 'success',
-						title: 'Deleted!',
-						text: this.message,
-						confirmButtonText: 'OK',
-					} );
-
-					// Optionally remove the deleted category row from the DOM
-					document
-						.getElementById( `category-row-${ categoryId }` )
-						.remove();
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
-				}
-			} catch ( err ) {
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
-				Swal.fire( {
-					icon: 'error',
-					title: 'Unexpected Error',
-					text: this.error,
-					confirmButtonText: 'OK',
-				} );
-			}
 		},
-	};
-}
-/***
- * Category Form Handler [End]
- */
 
-/***
- * Tag Form Handler [Start]
- * Using Alpine JS
- */
-
-//Add tag
-function tagAddFormHandler() {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async handleTagSubmission() {
-			// Clear messages before submission
-			this.message = '';
-			this.error = '';
-
-			// Collect form data
-			let formData = new FormData(
-				document.getElementById( 'msfc-add-tag' )
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Adding...'
-				);
-
-				// Check for success or error
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					Swal.fire( {
-						icon: 'success',
-						title: 'Added!',
-						text: this.message,
-						confirmButtonText: 'OK',
-					} );
-
-					document.getElementById( 'msfc-add-tag' ).reset(); // Reset form fields
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
-				}
-			} catch ( err ) {
-				// Handle any other errors
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
-				Swal.fire( {
-					icon: 'error',
-					title: 'Error!',
-					text: this.error,
-					confirmButtonText: 'OK',
-				} );
-			}
-		},
-	};
-}
-
-//Edit tag
-function tagEditFormHandler( categoryId ) {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async handleTagEditSubmission() {
-			// Clear messages before submission
-			this.message = '';
-			this.error = '';
-
-			// Collect form data
-			let formData = new FormData(
-				document.getElementById( 'msfc-edit-tag' )
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Updating...'
-				);
-
-				// Check for success or error
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					Swal.fire( {
-						icon: 'success',
-						title: 'Updated!',
-						text: this.message,
-						confirmButtonText: 'OK',
-					} );
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
-				}
-			} catch ( err ) {
-				// Handle any other errors
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
-				Swal.fire( {
-					icon: 'error',
-					title: 'Error!',
-					text: this.error,
-					confirmButtonText: 'OK',
-				} );
-			}
-		},
-	};
-}
-
-//Delete category
-function deleteTagHandler() {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async deleteTag( tagId ) {
-			// Show confirmation dialog with SweetAlert2
-			const confirmation = await Swal.fire( {
-				title: 'Are you sure?',
-				text: 'This action will permanently delete the tag.',
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonText: 'Yes, delete it!',
-				cancelButtonText: 'Cancel',
+		/**
+		 * Show success message
+		 */
+		showSuccess: function ( message ) {
+			Swal.fire( {
+				icon: 'success',
+				title: MSF_Form_Handler.i18n.success_title,
+				text: message,
+				confirmButtonText: MSF_Form_Handler.i18n.ok_button,
 			} );
-
-			// If user cancels, exit the function
-			if ( ! confirmation.isConfirmed ) return;
-
-			// Clear messages
-			this.message = '';
-			this.error = '';
-
-			// Prepare form data
-			let formData = new FormData();
-			formData.append( 'id', tagId );
-			formData.append( 'action', 'msfc_delete_product_tag' );
-			formData.append(
-				'msfc_delete_product_tag_nonce',
-				MSF_Form_Handler.msfc_woo_delete_nonce_
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Deleting...'
-				);
-
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					Swal.fire( {
-						icon: 'success',
-						title: 'Deleted!',
-						text: this.message,
-						confirmButtonText: 'OK',
-					} );
-
-					// Optionally remove the deleted category row from the DOM
-					document.getElementById( `tag-row-${ tagId }` ).remove();
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
-				}
-			} catch ( err ) {
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
-				Swal.fire( {
-					icon: 'error',
-					title: 'Unexpected Error',
-					text: this.error,
-					confirmButtonText: 'OK',
-				} );
-			}
 		},
-	};
-}
-/***
- * Category Form Handler [End]
- */
 
-/***
- * Brand Form Handler [Start]
- * Using Alpine JS
- */
-
-//Add brand
-function brandAddFormHandler() {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async handleBrandSubmission() {
-			// Clear messages before submission
-			this.message = '';
-			this.error = '';
-
-			// Collect form data
-			let formData = new FormData(
-				document.getElementById( 'msfc-add-brand' )
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Adding...'
-				);
-
-				// Check for success or error
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					Swal.fire( {
-						icon: 'success',
-						title: 'Added!',
-						text: this.message,
-						confirmButtonText: 'OK',
-					} );
-
-					document.getElementById( 'msfc-add-brand' ).reset(); // Reset form fields
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
-				}
-			} catch ( err ) {
-				// Handle any other errors
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
-				Swal.fire( {
-					icon: 'error',
-					title: 'Error!',
-					text: this.error,
-					confirmButtonText: 'OK',
-				} );
-			}
-		},
-	};
-}
-
-//Edit brand
-function brandEditFormHandler( brandId ) {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async handleBrandEditSubmission() {
-			// Clear messages before submission
-			this.message = '';
-			this.error = '';
-
-			// Collect form data
-			let formData = new FormData(
-				document.getElementById( 'msfc-edit-brand' )
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Updating...'
-				);
-
-				// Check for success or error
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					Swal.fire( {
-						icon: 'success',
-						title: 'Updated!',
-						text: this.message,
-						confirmButtonText: 'OK',
-					} );
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
-				}
-			} catch ( err ) {
-				// Handle any other errors
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
-				Swal.fire( {
-					icon: 'error',
-					title: 'Error!',
-					text: this.error,
-					confirmButtonText: 'OK',
-				} );
-			}
-		},
-	};
-}
-
-//Delete brand
-function deleteBrandHandler() {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async deleteBrand( brandId ) {
-			// Show confirmation dialog with SweetAlert2
-			const confirmation = await Swal.fire( {
-				title: 'Are you sure?',
-				text: 'This action will permanently delete the brand.',
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonText: 'Yes, delete it!',
-				cancelButtonText: 'Cancel',
+		/**
+		 * Show error message
+		 */
+		showError: function ( message ) {
+			Swal.fire( {
+				icon: 'error',
+				title: MSF_Form_Handler.i18n.error_title,
+				text: message || MSF_Form_Handler.i18n.unexpected_error,
+				confirmButtonText: MSF_Form_Handler.i18n.ok_button,
 			} );
+		},
 
-			// If user cancels, exit the function
-			if ( ! confirmation.isConfirmed ) return;
+		/**
+		 * Handle Category Add
+		 */
+		handleCategoryAdd: function () {
+			var self = this;
 
-			// Clear messages
-			this.message = '';
-			this.error = '';
+			$( document ).on( 'submit', '#msfc-add-category', function ( e ) {
+				e.preventDefault();
 
-			// Prepare form data
-			let formData = new FormData();
-			formData.append( 'id', brandId );
-			formData.append( 'action', 'msfc_delete_product_brand' );
-			formData.append(
-				'msfc_delete_product_brand_nonce',
-				MSF_Form_Handler.msfc_woo_delete_nonce_
-			);
+				var $form = $( this );
+				var formData = new FormData( this );
 
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Deleting...'
-				);
+				// Validate required fields
+				var categoryName = $form
+					.find( '#product_category_name' )
+					.val()
+					.trim();
 
-				if ( result.success ) {
-					this.message = result.data.message;
-
+				if ( ! categoryName ) {
 					Swal.fire( {
-						icon: 'success',
-						title: 'Deleted!',
-						text: this.message,
-						confirmButtonText: 'OK',
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.category_name_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
 					} );
-
-					// Optionally remove the deleted brand row from the DOM
-					document
-						.getElementById( `brand-row-${ brandId }` )
-						.remove();
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
+					return;
 				}
-			} catch ( err ) {
-				this.error =
-					'An unexpected error occurred. Please try again later.';
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							$form[ 0 ].reset();
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Category Edit
+		 */
+		handleCategoryEdit: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msfc-edit-category', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var formData = new FormData( this );
+
+				// Validate required fields
+				var categoryName = $form
+					.find( '#product_category_name' )
+					.val()
+					.trim();
+
+				if ( ! categoryName ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.category_name_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Category Delete
+		 */
+		handleCategoryDelete: function () {
+			var self = this;
+
+			$( document ).on( 'click', '.msfc-delete-category', function ( e ) {
+				e.preventDefault();
+
+				var categoryId = $( this ).data( 'category-id' );
+
+				if ( ! categoryId ) {
+					return;
+				}
 
 				Swal.fire( {
-					icon: 'error',
-					title: 'Unexpected Error',
-					text: this.error,
-					confirmButtonText: 'OK',
-				} );
-			}
-		},
-	};
-}
-/***
- * Brand Form Handler [End]
- */
-
-/***
- * Product Form Handler [Start]
- * Using Alpine JS
- */
-
-//Add product
-function productAddFormHandler() {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async handleProductSubmission() {
-			// Clear messages before submission
-			this.message = '';
-			this.error = '';
-
-			// Force TinyMCE editor content to update the textarea
-			if ( typeof tinyMCE !== 'undefined' ) {
-				const editor = tinyMCE.get( 'product_description' );
-				if ( editor ) {
-					editor.save(); // Sync content to the textarea
-				}
-			}
-
-			// Collect form data
-			let formData = new FormData(
-				document.getElementById( 'msfc-add-product' )
-			);
-			
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					MSF_Form_Handler.modal_processing_title
-				);
-
-				// Check for success or error
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					Swal.fire( {
-						icon: 'success',
-						title: MSF_Form_Handler.modal_success_title,
-						text: this.message,
-						confirmButtonText: MSF_Form_Handler.modal_ok_button_text,
-					} );
-					
-					if( 'add' === result.context ){
-						document.getElementById( 'msfc-add-product' ).reset(); // Reset form fields
-					}
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: MSF_Form_Handler.modal_error_title,
-						text: this.error,
-						confirmButtonText: MSF_Form_Handler.modal_ok_button_text,
-					} );
-				}
-			} catch ( err ) {
-				// Handle any other errors
-				Swal.fire( {
-					icon: 'error',
-					title: MSF_Form_Handler.modal_error_title,
-					text: MSF_Form_Handler.submission_error_message,
-					confirmButtonText: MSF_Form_Handler.modal_ok_button_text,
-				} );
-			}
-		},
-	};
-}
-
-/***
- * Order Note Form Handler [Start]
- * Using Alpine JS
- */
-
-//Add order note
-function orderNoteAddFormHandler() {
-	return {
-		message: '', // Success message
-		error: '', // Error message
-
-		async handleOrderNoteSubmission() {
-			// Clear messages before submission
-			this.message = '';
-			this.error = '';
-
-			// Collect form data
-			let formData = new FormData(
-				document.getElementById( 'msfc-add-order-note' )
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Adding...'
-				);
-
-				// Check for success or error
-				if ( result.success ) {
-					this.message = result.data.message;
-
-					// ✅ Append the returned <li> to the notes list
-					let notesList = document.querySelector('.order_notes');
-					if ( notesList && result.data.note_html ) {
-						notesList.insertAdjacentHTML('afterbegin', result.data.note_html);
+					title: MSF_Form_Handler.i18n.are_you_sure,
+					text: MSF_Form_Handler.i18n.delete_category_warning,
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
+					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
+						return;
 					}
 
-					Swal.fire( {
-						icon: 'success',
-						title: 'Added!',
-						text: this.message,
-						confirmButtonText: 'OK',
+					self.showLoading( MSF_Form_Handler.i18n.deleting );
+
+					var formData = new FormData();
+					formData.append( 'id', categoryId );
+					formData.append( 'action', 'msfc_delete_product_category' );
+					formData.append(
+						'msfc_delete_product_category_nonce',
+						MSF_Form_Handler.msfc_woo_delete_nonce_
+					);
+
+					$.ajax( {
+						url: MSF_Form_Handler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$( '#category-row-' + categoryId ).fadeOut(
+									300,
+									function () {
+										$( this ).remove();
+									}
+								);
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
 					} );
-
-					document.getElementById( 'msfc-add-order-note' ).reset(); // Reset form fields
-				} else {
-					this.error = result.data.error;
-
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
-				}
-			} catch ( err ) {
-				// Handle any other errors
-				this.error =
-					'An unexpected error occurred. Please try again later.';
-
-				Swal.fire( {
-					icon: 'error',
-					title: 'Error!',
-					text: this.error,
-					confirmButtonText: 'OK',
 				} );
-			}
+			} );
 		},
 
-		async handleDeleteNote(event) {
-			event.preventDefault();
+		/**
+		 * Handle Tag Add
+		 */
+		handleTagAdd: function () {
+			var self = this;
 
-			let el = event.target.closest('li');
-			let noteID = el.dataset.id;
+			$( document ).on( 'submit', '#msfc-add-tag', function ( e ) {
+				e.preventDefault();
 
-			if ( !noteID ) {
-				return;
-			}
+				var $form = $( this );
+				var formData = new FormData( this );
 
-			// Show confirmation dialog with SweetAlert2
-			const confirmation = await Swal.fire( {
-				title: 'Are you sure?',
-				text: 'This action will permanently delete the note.',
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonText: 'Yes, delete it!',
-				cancelButtonText: 'Cancel',
-			} );
+				// Validate required fields
+				var tagName = $form.find( '#name' ).val().trim();
 
-			// If user cancels, exit the function
-			if ( ! confirmation.isConfirmed ) return;
-
-			let formData = new FormData();
-			formData.append('action', 'msfc_delete_order_note');
-			formData.append('note_id', noteID);
-			formData.append(
-				'msfc_delete_order_note_nonce',
-				MSF_Form_Handler.msfc_woo_delete_nonce_
-			);
-
-			try {
-				let result = await ajaxRequestWithLoading(
-					MSF_Form_Handler.ajax_url,
-					formData,
-					'Deleting...'
-				);
-
-				if ( result.success ) {
-					this.message = result.data.message;
-
+				if ( ! tagName ) {
 					Swal.fire( {
-						icon: 'success',
-						title: 'Deleted!',
-						text: this.message,
-						confirmButtonText: 'OK',
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.tag_name_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
 					} );
-
-					// Remove the <li> from DOM
-					el.remove();
-				} else {
-					this.error = result.data.error;
-					Swal.fire( {
-						icon: 'error',
-						title: 'Error!',
-						text: this.error,
-						confirmButtonText: 'OK',
-					} );
+					return;
 				}
-			} catch (err) {
-				this.error =
-					'An unexpected error occurred. Please try again later.';
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							$form[ 0 ].reset();
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Tag Edit
+		 */
+		handleTagEdit: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msfc-edit-tag', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var formData = new FormData( this );
+
+				// Validate required fields
+				var tagName = $form.find( '#name' ).val().trim();
+
+				if ( ! tagName ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.tag_name_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Tag Delete
+		 */
+		handleTagDelete: function () {
+			var self = this;
+
+			$( document ).on( 'click', '.msfc-delete-tag', function ( e ) {
+				e.preventDefault();
+
+				var tagId = $( this ).data( 'tag-id' );
+
+				if ( ! tagId ) {
+					return;
+				}
 
 				Swal.fire( {
-					icon: 'error',
-					title: 'Unexpected Error',
-					text: this.error,
-					confirmButtonText: 'OK',
+					title: MSF_Form_Handler.i18n.are_you_sure,
+					text: MSF_Form_Handler.i18n.delete_tag_warning,
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
+					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
+						return;
+					}
+
+					self.showLoading( MSF_Form_Handler.i18n.deleting );
+
+					var formData = new FormData();
+					formData.append( 'id', tagId );
+					formData.append( 'action', 'msfc_delete_product_tag' );
+					formData.append(
+						'msfc_delete_product_tag_nonce',
+						MSF_Form_Handler.msfc_woo_delete_nonce_
+					);
+
+					$.ajax( {
+						url: MSF_Form_Handler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$( '#tag-row-' + tagId ).fadeOut(
+									300,
+									function () {
+										$( this ).remove();
+									}
+								);
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
+					} );
 				} );
-			}
-		}
+			} );
+		},
+
+		/**
+		 * Handle Brand Add
+		 */
+		handleBrandAdd: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msfc-add-brand', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var formData = new FormData( this );
+
+				// Validate required fields
+				var brandName = $form
+					.find( '#product_brand_name' )
+					.val()
+					.trim();
+
+				if ( ! brandName ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.brand_name_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							$form[ 0 ].reset();
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Brand Edit
+		 */
+		handleBrandEdit: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msfc-edit-brand', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var formData = new FormData( this );
+
+				// Validate required fields
+				var brandName = $form
+					.find( '#product_brand_name' )
+					.val()
+					.trim();
+
+				if ( ! brandName ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.brand_name_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Brand Delete
+		 */
+		handleBrandDelete: function () {
+			var self = this;
+
+			$( document ).on( 'click', '.msfc-delete-brand', function ( e ) {
+				e.preventDefault();
+
+				var brandId = $( this ).data( 'brand-id' );
+
+				if ( ! brandId ) {
+					return;
+				}
+
+				Swal.fire( {
+					title: MSF_Form_Handler.i18n.are_you_sure,
+					text: MSF_Form_Handler.i18n.delete_brand_warning,
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
+					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
+						return;
+					}
+
+					self.showLoading( MSF_Form_Handler.i18n.deleting );
+
+					var formData = new FormData();
+					formData.append( 'id', brandId );
+					formData.append( 'action', 'msfc_delete_product_brand' );
+					formData.append(
+						'msfc_delete_product_brand_nonce',
+						MSF_Form_Handler.msfc_woo_delete_nonce_
+					);
+
+					$.ajax( {
+						url: MSF_Form_Handler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$( '#brand-row-' + brandId ).fadeOut(
+									300,
+									function () {
+										$( this ).remove();
+									}
+								);
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
+					} );
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Product Submit (Add/Edit)
+		 */
+		handleProductSubmit: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msfc-add-product', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+
+				// Force TinyMCE editor content to update the textarea
+				if ( typeof tinyMCE !== 'undefined' ) {
+					var editor = tinyMCE.get( 'product_description' );
+					if ( editor ) {
+						editor.save();
+					}
+				}
+
+				var formData = new FormData( this );
+
+				self.showLoading( MSF_Form_Handler.i18n.processing );
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							Swal.fire( {
+								icon: 'success',
+								title: MSF_Form_Handler.i18n.success_title,
+								text: response.data.message,
+								confirmButtonText:
+									MSF_Form_Handler.i18n.ok_button,
+							} );
+
+							// Reset form fields only if adding (not editing)
+							if ( response.data.context === 'add' ) {
+								$form[ 0 ].reset();
+
+								// Clear TinyMCE editor
+								if ( typeof tinyMCE !== 'undefined' ) {
+									var editor = tinyMCE.get(
+										'product_description'
+									);
+									if ( editor ) {
+										editor.setContent( '' );
+									}
+								}
+
+								// Clear select2 fields if present
+								$form
+									.find( '.msf-select2' )
+									.val( null )
+									.trigger( 'change' );
+							}
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
 	};
-}
+
+	StoreFrontFormHandler.init();
+} )( jQuery );

@@ -107,6 +107,20 @@ class Rewrites {
 			'index.php?pagename=' . $this->store_front_base . '&categories=1&paged=$matches[1]',
 			'top'
 		);
+
+		// Add rewrite rule for brand list pagination.
+		add_rewrite_rule(
+			$this->store_front_base . '/brands/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&brands=1&paged=$matches[1]',
+			'top'
+		);
+
+		// Add rewrite rule for tag list pagination.
+		add_rewrite_rule(
+			$this->store_front_base . '/tags/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&tags=1&paged=$matches[1]',
+			'top'
+		);
 	}
 
 	/**

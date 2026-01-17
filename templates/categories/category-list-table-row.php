@@ -1,3 +1,14 @@
+<?php
+/**
+ * MSFC category list table row
+ *
+ * @package ShopFront
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+?>
 <tr id="category-row-<?php echo esc_attr( $category->term_id ); ?>">
 	<td><?php echo esc_html( $dash_prefix . $category->name ); ?></td>
 	<td><?php echo esc_html( wp_trim_words( $category->description, '9', '...' ) ); ?></td>
@@ -21,7 +32,7 @@
 					<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-category' ) . '%s', $category->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
 				</li>
 				<li>
-					<button @click="deleteCategory(<?php echo esc_attr( $category->term_id ); ?>)" type="button" class="inline-button dropdown-link">
+					<button type="button" class="inline-button dropdown-link msfc-delete-category" data-category-id="<?php echo esc_attr( $category->term_id ); ?>">
 						<?php echo esc_html__( 'Delete', 'shop-front' ); ?>
 					</button>
 				</li>

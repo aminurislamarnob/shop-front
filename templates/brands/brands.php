@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use PluginizeLab\ShopFront\ProductBrand\Brands;
 
-$brands_obj = new Brands();
-
 do_action( 'msf_dashboard_wrapper_start' );
 ?>
 <div class="my-shop-front-container">
@@ -47,21 +45,69 @@ do_action( 'msf_dashboard_wrapper_start' );
 					</div>
 				</div>
 			</div>
-			<div class="msf-table-responsive" x-data="deleteBrandHandler()">
+			<?php
+			$current_page    = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
+			$brands_per_page = apply_filters( 'msf_brands_per_page', 10 );
+			$product_brands  = new Brands();
+			$brands_data     = $product_brands->get_paginated_brands_with_children( $brands_per_page, $current_page );
+			?>
+			<div class="msf-table-responsive">
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>
 							<th><?php esc_html_e( 'Name', 'shop-front' ); ?></th>
 							<th><?php esc_html_e( 'Description', 'shop-front' ); ?></th>
+							<th><?php esc_html_e( 'Parent', 'shop-front' ); ?></th>
 							<th><?php esc_html_e( 'Slug', 'shop-front' ); ?></th>
 							<th><?php esc_html_e( 'Count', 'shop-front' ); ?></th>
 							<th class="text-right"><?php esc_html_e( 'Actions', 'shop-front' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
-						<?php $brands_obj->display_brands(); ?>
+						<?php
+						if ( empty( $brands_data->brands ) ) {
+							echo '<tr id="brand-row-not-found"><td colspan="6">';
+							msf_get_template_part(
+								'not-found',
+								'',
+								array(
+									'title' => esc_html__( 'No brand found!', 'shop-front' ),
+									'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a brand.', 'shop-front' ),
+								)
+							);
+							echo '</td></tr>';
+						} else {
+							foreach ( $brands_data->brands as $brand_item ) {
+								$product_brand = $brand_item['brand'];
+								$depth         = $brand_item['depth'];
+								$parent        = $brand_item['parent'];
+								$dash_prefix   = str_repeat( '&mdash; ', $depth );
+
+								$template_args = array(
+									'brand'       => $product_brand,
+									'dash_prefix' => $dash_prefix,
+									'parent'      => $parent,
+								);
+								msf_get_template_part( 'brands/brand-list-table-row', '', $template_args );
+							}
+						}
+						?>
 					</tbody>
 				</table>
+				<?php
+				if ( $brands_data->max_num_pages > 1 ) {
+					msf_get_template_part(
+						'pagination',
+						'',
+						array(
+							'total_items'  => $brands_data->total,
+							'total_pages'  => $brands_data->max_num_pages,
+							'current_page' => $current_page,
+							'per_page'     => $brands_per_page,
+						)
+					);
+				}
+				?>
 			</div>
 		</main>
 	</div>
