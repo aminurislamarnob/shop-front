@@ -189,43 +189,21 @@ do_action( 'msf_dashboard_wrapper_start' );
 					</thead>
 				</table>
 					<?php
-					$base_url         = msfc_get_navigation_url( 'products' );
-					$current_page_num = max( 1, $current_page );
-					$total_pages      = $product_query->max_num_pages;
-					$total_products   = $product_query->found_posts;
-					$start_product    = ( $current_page_num - 1 ) * $posts_per_page + 1;
-					$end_product      = min( $total_products, $current_page_num * $posts_per_page );
+					$total_pages = $product_query->max_num_pages;
 
 					if ( $total_pages > 1 ) {
-						$big_num    = 999999999;
-						$page_links = paginate_links(
+						$current_page_num = max( 1, $current_page );
+						$total_products   = $product_query->found_posts;
+						msf_get_template_part(
+							'pagination',
+							'',
 							array(
-								'base'      => str_replace( $big_num, '%#%', esc_url( get_pagenum_link( $big_num ) ) ),
-								'format'    => '?page=%#%',
-								'add_args'  => false,
-								'current'   => $current_page_num,
-								'total'     => $total_pages,
-								'type'      => 'array', // list.
-								'prev_text' => '&larr;',
-								'next_text' => '&rarr;',
-								'end_size'  => 3,
-								'mid_size'  => 3,
+								'total_items'  => $total_products,
+								'total_pages'  => $total_pages,
+								'current_page' => $current_page_num,
+								'per_page'     => $posts_per_page,
 							)
 						);
-
-						echo '<div class="msfc-pagination-wrap">';
-
-						echo '<div class="msfc-result-text">';
-						/* translators: %1$s: Start Product, %2$s: End Product, %3$s: Total Products */
-						printf( esc_html__( 'Showing %1$s to %2$s of %3$s', 'shop-front' ), esc_html( $start_product ), esc_html( $end_product ), esc_html( $total_products ) );
-						echo '</div>';
-
-						if ( ! empty( $page_links ) ) {
-							echo '<ul class="msfc-pagination"><li>';
-							echo wp_kses_post( join( '</li><li>', $page_links ) );
-							echo '</li></ul>';
-						}
-						echo '</div>';
 					}
 				} else {
 					msf_get_template_part(
