@@ -1,184 +1,299 @@
-(function($) {
-    var StoreFrontProduct = {
-        init: function() {
-            this.bindEvents();
-            this.errorTips();
-            this.initSalePriceSchedule();
-            this.initSelect2();
-            this.toggleStockFields();
-            this.salePriceDatesPicker();
-        },
-        bindEvents: function() {
-            var self = this;
-            $(document).on('change', '#_manage_stock', function() {
-                self.toggleStockFields();
-            });
-            $( document.body ).on( 'keyup', 'input[type=text][name*=_global_unique_id]', this.validateGlobalUniqueIdOnKeyUp);
-            $( document.body ).on( 'change', 'input[type=text][name*=_global_unique_id]', this.validateGlobalUniqueIdOnChange);
-            $(document).on('click', '.sale_schedule', this.openSaleSchedule );
-            $(document).on('click', '.cancel_sale_schedule', this.cancelSaleSchedule);
-        },
-        initSelect2: function() {
-            $( '.msf-select2' ).filter( ':not(.enhanced)' ).each( function() {
-                var select2_args = {
-                    allowClear: $( this ).data( 'allow_clear' ) ? true : false,
-                    placeholder: $( this ).data( 'placeholder' ) || '',
-                    minimumResultsForSearch: $( this ).data( 'minimum_results_for_search' ) || 0,
-                    width: '100%'
-                };
+( function ( $ ) {
+	var StoreFrontProduct = {
+		init: function () {
+			this.bindEvents();
+			this.errorTips();
+			this.initSalePriceSchedule();
+			this.initSelect2();
+			this.toggleStockFields();
+			this.salePriceDatesPicker();
+			this.handleProductSubmit();
+		},
+		bindEvents: function () {
+			var self = this;
+			$( document ).on( 'change', '#_manage_stock', function () {
+				self.toggleStockFields();
+			} );
+			$( document.body ).on(
+				'keyup',
+				'input[type=text][name*=_global_unique_id]',
+				this.validateGlobalUniqueIdOnKeyUp
+			);
+			$( document.body ).on(
+				'change',
+				'input[type=text][name*=_global_unique_id]',
+				this.validateGlobalUniqueIdOnChange
+			);
+			$( document ).on(
+				'click',
+				'.sale_schedule',
+				this.openSaleSchedule
+			);
+			$( document ).on(
+				'click',
+				'.cancel_sale_schedule',
+				this.cancelSaleSchedule
+			);
+		},
+		/**
+		 * Handle Product Submit (Add/Edit)
+		 */
+		handleProductSubmit: function () {
+			var self = this;
 
-                $( this ).selectWoo( select2_args ).addClass( 'enhanced' );
-            });
-        },
-        toggleStockFields: function(){         
-            const product_type = $( 'select#post_type' ).val();
-            const is_checked = $( '#_manage_stock' ).is( ':checked' );
+			$( document ).on( 'submit', '#msfc-add-product', function ( e ) {
+				e.preventDefault();
 
-            if ( is_checked && 'external' !== product_type ) {
-                $( '.show_if_stock_management' ).slideDown( 'fast' );
-            } else {
-                $( '.show_if_stock_management' ).slideUp( 'fast' );
-            }
+				var $form = $( this );
 
-            if ( 'simple' === product_type ) {
-                is_checked ? $( '._stock_status_field' ).slideUp( 'fast' ) : $( '._stock_status_field' ).slideDown( 'fast' );
-            }
-        },
-        validateGlobalUniqueIdOnKeyUp: function() {
-            var global_unique_id = $( this ).val();
-
-            if ( /[^0-9\-]/.test( global_unique_id ) ) {
-                $( document.body ).triggerHandler( 'wc_add_error_tip', [
-                    $( this ),
-                    'i18n_global_unique_id_error',
-                ] );
-            } else {
-                $( document.body ).triggerHandler(
-                    'wc_remove_error_tip',
-                    [ $( this ), 'i18n_global_unique_id_error' ]
-                );
-            }
-        },
-        validateGlobalUniqueIdOnChange: function() {
-            var global_unique_id = $( this ).val();
-            $( this ).val(
-                global_unique_id
-                    .replace( /[^0-9\-]/g, '' )
-                    .replace( /^-+|-+$/g, '' )
-            );
-
-            $( document.body ).triggerHandler(
-                'wc_remove_error_tip',
-                [ $( this ), 'i18n_global_unique_id_error' ]
-            );
-        },
-        errorTips: function() {
-            $( document.body )
-			.on( 'wc_add_error_tip', function ( e, element, error_type ) {
-				var offset = element.position();
-
-				if ( element.parent().find( '.wc_error_tip' ).length === 0 ) {
-					element.after(
-						'<div class="wc_error_tip ' +
-							error_type +
-							'">' +
-							My_Shop_Front_Product[ error_type ] +
-							'</div>'
-					);
-					element
-						.parent()
-						.find( '.wc_error_tip' )
-						.css(
-							'left',
-							offset.left +
-								element.width() -
-								element.width() / 2 -
-								$( '.wc_error_tip' ).width() / 2
-						)
-						.css( 'top', offset.top + element.height() )
-						.fadeIn( '100' );
+				// Force TinyMCE editor content to update the textarea
+				if ( typeof tinyMCE !== 'undefined' ) {
+					var editor = tinyMCE.get( 'product_description' );
+					if ( editor ) {
+						editor.save();
+					}
 				}
-			} )
 
-			.on( 'wc_remove_error_tip', function ( e, element, error_type ) {
-				element
-					.parent()
-					.find( '.wc_error_tip.' + error_type )
-					.fadeOut( '100', function () {
-						$( this ).remove();
+				var formData = new FormData( this );
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							Swal.fire( {
+								icon: 'success',
+								title: MSF_Form_Handler.i18n.success_title,
+								text: response.data.message,
+								confirmButtonText:
+									MSF_Form_Handler.i18n.ok_button,
+							} );
+
+							// Reset form fields only if adding (not editing)
+							if ( response.data.context === 'add' ) {
+								$form[ 0 ].reset();
+
+								// Clear TinyMCE editor
+								if ( typeof tinyMCE !== 'undefined' ) {
+									var editor = tinyMCE.get(
+										'product_description'
+									);
+									if ( editor ) {
+										editor.setContent( '' );
+									}
+								}
+
+								// Clear select2 fields if present
+								$form
+									.find( '.msf-select2' )
+									.val( null )
+									.trigger( 'change' );
+							}
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+		showError: function ( message ) {
+			Swal.fire( {
+				icon: 'error',
+				title: MSF_Form_Handler.i18n.error_title,
+				text: message || MSF_Form_Handler.i18n.unexpected_error,
+				confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+			} );
+		},
+		initSelect2: function () {
+			$( '.msf-select2' )
+				.filter( ':not(.enhanced)' )
+				.each( function () {
+					var select2_args = {
+						allowClear: $( this ).data( 'allow_clear' )
+							? true
+							: false,
+						placeholder: $( this ).data( 'placeholder' ) || '',
+						minimumResultsForSearch:
+							$( this ).data( 'minimum_results_for_search' ) || 0,
+						width: '100%',
+					};
+
+					$( this ).selectWoo( select2_args ).addClass( 'enhanced' );
+				} );
+		},
+		toggleStockFields: function () {
+			const product_type = $( 'select#post_type' ).val();
+			const is_checked = $( '#_manage_stock' ).is( ':checked' );
+
+			if ( is_checked && 'external' !== product_type ) {
+				$( '.show_if_stock_management' ).slideDown( 'fast' );
+			} else {
+				$( '.show_if_stock_management' ).slideUp( 'fast' );
+			}
+
+			if ( 'simple' === product_type ) {
+				is_checked
+					? $( '._stock_status_field' ).slideUp( 'fast' )
+					: $( '._stock_status_field' ).slideDown( 'fast' );
+			}
+		},
+		validateGlobalUniqueIdOnKeyUp: function () {
+			var global_unique_id = $( this ).val();
+
+			if ( /[^0-9\-]/.test( global_unique_id ) ) {
+				$( document.body ).triggerHandler( 'wc_add_error_tip', [
+					$( this ),
+					'i18n_global_unique_id_error',
+				] );
+			} else {
+				$( document.body ).triggerHandler( 'wc_remove_error_tip', [
+					$( this ),
+					'i18n_global_unique_id_error',
+				] );
+			}
+		},
+		validateGlobalUniqueIdOnChange: function () {
+			var global_unique_id = $( this ).val();
+			$( this ).val(
+				global_unique_id
+					.replace( /[^0-9\-]/g, '' )
+					.replace( /^-+|-+$/g, '' )
+			);
+
+			$( document.body ).triggerHandler( 'wc_remove_error_tip', [
+				$( this ),
+				'i18n_global_unique_id_error',
+			] );
+		},
+		errorTips: function () {
+			$( document.body )
+				.on( 'wc_add_error_tip', function ( e, element, error_type ) {
+					var offset = element.position();
+
+					if (
+						element.parent().find( '.wc_error_tip' ).length === 0
+					) {
+						element.after(
+							'<div class="wc_error_tip ' +
+								error_type +
+								'">' +
+								My_Shop_Front_Product[ error_type ] +
+								'</div>'
+						);
+						element
+							.parent()
+							.find( '.wc_error_tip' )
+							.css(
+								'left',
+								offset.left +
+									element.width() -
+									element.width() / 2 -
+									$( '.wc_error_tip' ).width() / 2
+							)
+							.css( 'top', offset.top + element.height() )
+							.fadeIn( '100' );
+					}
+				} )
+
+				.on(
+					'wc_remove_error_tip',
+					function ( e, element, error_type ) {
+						element
+							.parent()
+							.find( '.wc_error_tip.' + error_type )
+							.fadeOut( '100', function () {
+								$( this ).remove();
+							} );
+					}
+				);
+		},
+		salePriceDatesPicker: function () {
+			var self = this;
+			$( '.sale_price_dates_fields' ).each( function () {
+				$( this )
+					.find( 'input' )
+					.datepicker( {
+						defaultDate: '',
+						dateFormat: 'yy-mm-dd',
+						numberOfMonths: 1,
+						showButtonPanel: true,
+						onSelect: function () {
+							self.datePickerSelect( $( this ) );
+						},
 					} );
-			} )
-        },
-        salePriceDatesPicker: function(){
-            var self = this
-            $( '.sale_price_dates_fields' ).each( function () {
-                $( this )
-                    .find( 'input' )
-                    .datepicker( {
-                        defaultDate: '',
-                        dateFormat: 'yy-mm-dd',
-                        numberOfMonths: 1,
-                        showButtonPanel: true,
-                        onSelect: function () {
-                            self.datePickerSelect( $( this ) );
-                        },
-                    } );
-                $( this )
-                    .find( 'input' )
-                    .each( function () {
-                        self.datePickerSelect( $( this ) );
-                    } );
-            } );
-        },
-        datePickerSelect: function( datepicker ) {
-            var option = $( datepicker ).next().is( '.hasDatepicker' )
-                    ? 'minDate'
-                    : 'maxDate',
-                otherDateField =
-                    'minDate' === option
-                        ? $( datepicker ).next()
-                        : $( datepicker ).prev(),
-                date = $( datepicker ).datepicker( 'getDate' );
-    
-            $( otherDateField ).datepicker( 'option', option, date );
-            $( datepicker ).trigger( 'change' );
-        },
-        initSalePriceSchedule: function() {
-            $( '.sale_price_dates_fields' ).each( function () {
-                var sale_schedule_set = false;
-        
-                $(this).find( 'input' ).each( function () {
-                    if ( '' !== $( this ).val() ) {
-                        sale_schedule_set = true;
-                    }
-                } );
-        
-                if ( sale_schedule_set ) {
-                    $( '.sale_schedule' ).hide();
-                    $( '.cancel_sale_schedule' ).show();
-                    $( '.sale_price_dates_fields' ).slideDown();
-                } else {
-                    $( '.sale_schedule' ).show();
-                    $( '.cancel_sale_schedule' ).hide();
-                    $( '.sale_price_dates_fields' ).slideUp();
-                }
-            } );
-        },
-        openSaleSchedule: function () {
+				$( this )
+					.find( 'input' )
+					.each( function () {
+						self.datePickerSelect( $( this ) );
+					} );
+			} );
+		},
+		datePickerSelect: function ( datepicker ) {
+			var option = $( datepicker ).next().is( '.hasDatepicker' )
+					? 'minDate'
+					: 'maxDate',
+				otherDateField =
+					'minDate' === option
+						? $( datepicker ).next()
+						: $( datepicker ).prev(),
+				date = $( datepicker ).datepicker( 'getDate' );
+
+			$( otherDateField ).datepicker( 'option', option, date );
+			$( datepicker ).trigger( 'change' );
+		},
+		initSalePriceSchedule: function () {
+			$( '.sale_price_dates_fields' ).each( function () {
+				var sale_schedule_set = false;
+
+				$( this )
+					.find( 'input' )
+					.each( function () {
+						if ( '' !== $( this ).val() ) {
+							sale_schedule_set = true;
+						}
+					} );
+
+				if ( sale_schedule_set ) {
+					$( '.sale_schedule' ).hide();
+					$( '.cancel_sale_schedule' ).show();
+					$( '.sale_price_dates_fields' ).slideDown();
+				} else {
+					$( '.sale_schedule' ).show();
+					$( '.cancel_sale_schedule' ).hide();
+					$( '.sale_price_dates_fields' ).slideUp();
+				}
+			} );
+		},
+		openSaleSchedule: function () {
 			$( this ).hide();
 			$( '.cancel_sale_schedule' ).show();
 			$( '.sale_price_dates_fields' ).slideDown();
 
 			return false;
 		},
-        cancelSaleSchedule: function () {
+		cancelSaleSchedule: function () {
 			$( this ).hide();
 			$( '.sale_schedule' ).show();
 			$( '.sale_price_dates_fields' ).slideUp();
 			$( '.sale_price_dates_fields' ).find( 'input' ).val( '' );
 
 			return false;
-		}
-    }
-    StoreFrontProduct.init();
-})(jQuery)
+		},
+	};
+	StoreFrontProduct.init();
+} )( jQuery );

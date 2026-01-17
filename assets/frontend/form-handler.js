@@ -16,7 +16,6 @@
 			this.handleBrandAdd();
 			this.handleBrandEdit();
 			this.handleBrandDelete();
-			this.handleProductSubmit();
 		},
 
 		/**
@@ -594,85 +593,6 @@
 							self.showError();
 						},
 					} );
-				} );
-			} );
-		},
-
-		/**
-		 * Handle Product Submit (Add/Edit)
-		 */
-		handleProductSubmit: function () {
-			var self = this;
-
-			$( document ).on( 'submit', '#msfc-add-product', function ( e ) {
-				e.preventDefault();
-
-				var $form = $( this );
-
-				// Force TinyMCE editor content to update the textarea
-				if ( typeof tinyMCE !== 'undefined' ) {
-					var editor = tinyMCE.get( 'product_description' );
-					if ( editor ) {
-						editor.save();
-					}
-				}
-
-				var formData = new FormData( this );
-
-				self.showLoading( MSF_Form_Handler.i18n.processing );
-
-				var $submitBtn = $form.find( 'button[type="submit"]' );
-				$submitBtn.prop( 'disabled', true );
-
-				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function ( response ) {
-						Swal.close();
-
-						if ( response.success ) {
-							Swal.fire( {
-								icon: 'success',
-								title: MSF_Form_Handler.i18n.success_title,
-								text: response.data.message,
-								confirmButtonText:
-									MSF_Form_Handler.i18n.ok_button,
-							} );
-
-							// Reset form fields only if adding (not editing)
-							if ( response.data.context === 'add' ) {
-								$form[ 0 ].reset();
-
-								// Clear TinyMCE editor
-								if ( typeof tinyMCE !== 'undefined' ) {
-									var editor = tinyMCE.get(
-										'product_description'
-									);
-									if ( editor ) {
-										editor.setContent( '' );
-									}
-								}
-
-								// Clear select2 fields if present
-								$form
-									.find( '.msf-select2' )
-									.val( null )
-									.trigger( 'change' );
-							}
-						} else {
-							self.showError( response.data.error );
-						}
-					},
-					error: function ( xhr, status, error ) {
-						Swal.close();
-						self.showError();
-					},
-					complete: function () {
-						$submitBtn.prop( 'disabled', false );
-					},
 				} );
 			} );
 		},

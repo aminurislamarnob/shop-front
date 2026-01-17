@@ -39,7 +39,6 @@ class Assets {
 		$frontend_order_script        = SHOP_FRONT_PLUGIN_ASSET . '/frontend/order.js';
 		$frontend_product_script      = SHOP_FRONT_PLUGIN_ASSET . '/frontend/product.js';
 		$frontend_form_handler_script = SHOP_FRONT_PLUGIN_ASSET . '/frontend/form-handler.js';
-		$frontend_alpinejs_script     = 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js';
 		$frontend_sweetalert2         = SHOP_FRONT_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 
 		wp_register_script( 'my_shop_front_admin_script', $admin_script, array( 'my_shop_front-block-editor-script' ), SHOP_FRONT_PLUGIN_VERSION, true );
@@ -285,6 +284,13 @@ class Assets {
 				'i18n_global_unique_id_error' => __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
 				'ajax_url'                    => admin_url( 'admin-ajax.php' ),
 				'search_products_nonce'       => wp_create_nonce( 'search-products' ),
+				'i18n'                        => array(
+					// Common messages.
+					'success_title'    => __( 'Success!', 'shop-front' ),
+					'error_title'      => __( 'Error!', 'shop-front' ),
+					'ok_button'        => __( 'OK', 'shop-front' ),
+					'unexpected_error' => __( 'An unexpected error occurred. Please try again.', 'shop-front' ),
+				),
 			);
 
 			wp_localize_script(
