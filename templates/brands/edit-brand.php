@@ -45,6 +45,34 @@ do_action( 'msf_dashboard_wrapper_start' );
 									<input type="text" class="msf-form-control" id="product_brand_name" name="product_brand_name" value="<?php echo esc_attr( $brand->name ); ?>" placeholder="<?php echo esc_attr__( 'Product brand name', 'shop-front' ); ?>" aria-required="true">
 								</div>
 								<div class="msf-form-group">
+									<label for="product_parent_brand"><?php esc_html_e( 'Parent Brand', 'shop-front' ); ?></label>
+									<select class="msf-form-control" id="product_parent_brand" name="product_parent_brand">
+										<option value=""><?php esc_html_e( 'Select parent brand', 'shop-front' ); ?></option>
+										<?php
+										$product_brands = get_terms(
+											array(
+												'taxonomy' => 'product_brand',
+												'hide_empty' => false,
+												'orderby'  => 'name',
+												'order'    => 'ASC',
+											)
+										);
+										if ( ! empty( $product_brands ) && ! is_wp_error( $product_brands ) ) {
+											foreach ( $product_brands as $product_brand ) {
+												// Don't allow selecting itself as parent.
+												if ( $product_brand->term_id === $brand->term_id ) {
+													continue;
+												}
+												$selected = ( $brand->parent === $product_brand->term_id ) ? 'selected' : '';
+												?>
+												<option value="<?php echo esc_attr( $product_brand->slug ); ?>" <?php echo esc_attr( $selected ); ?>><?php echo esc_html( $product_brand->name ); ?></option>
+												<?php
+											}
+										}
+										?>
+									</select>
+								</div>
+								<div class="msf-form-group">
 									<label for="product_brand_description"><?php esc_html_e( 'Brand Description', 'shop-front' ); ?></label>
 									<textarea class="msf-form-control" id="product_brand_description" name="product_brand_description" placeholder="<?php echo esc_attr__( 'Product brand description', 'shop-front' ); ?>" rows="3"><?php echo esc_textarea( $brand->description ); ?></textarea>
 								</div>

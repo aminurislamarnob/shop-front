@@ -7,6 +7,8 @@
 
 namespace PluginizeLab\ShopFront\ProductCategory;
 
+use PluginizeLab\ShopFront\Cache;
+
 /**
  * Categories class
  */
@@ -84,8 +86,7 @@ class Categories {
 	 * @return array
 	 */
 	private function get_all_flat() {
-		$cache_key = 'msf_flat_categories';
-		$cached    = get_transient( $cache_key );
+		$cached = Cache::get( 'flat_categories' );
 
 		if ( false !== $cached ) {
 			return $cached;
@@ -94,8 +95,7 @@ class Categories {
 		$hierarchy = $this->build_hierarchy();
 		$all       = $this->flatten( $hierarchy );
 
-		// Cache for 1 hour.
-		set_transient( $cache_key, $all, HOUR_IN_SECONDS );
+		Cache::set( 'flat_categories', $all, HOUR_IN_SECONDS );
 
 		return $all;
 	}
@@ -106,7 +106,7 @@ class Categories {
 	 * @return void
 	 */
 	public function clear_cache() {
-		delete_transient( 'msf_flat_categories' );
+		Cache::delete( 'flat_categories' );
 	}
 
 	/**

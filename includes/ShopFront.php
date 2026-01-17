@@ -213,6 +213,7 @@ final class ShopFront {
 	public function init_classes() {
 		require_once SHOP_FRONT_INC_DIR . '/functions.php';
 
+		$this->container['cache']                           = new Cache();
 		$this->container['scripts']                         = new Assets();
 		$this->container['msf_installer']                   = new Installer();
 		$this->container['msf_common']                      = new Common();

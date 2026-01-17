@@ -31,12 +31,17 @@ class BrandController {
 		}
 
 		// Validate inputs.
-		$brand_name  = isset( $_POST['product_brand_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_brand_name'] ) ) : '';
-		$description = isset( $_POST['product_brand_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_brand_description'] ) ) : '';
+		$brand_name   = isset( $_POST['product_brand_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_brand_name'] ) ) : '';
+		$parent_brand = isset( $_POST['product_parent_brand'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_brand'] ) ) : '';
+		$description  = isset( $_POST['product_brand_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_brand_description'] ) ) : '';
 
 		if ( empty( $brand_name ) ) {
 			wp_send_json_error( array( 'error' => __( 'Brand Name is required', 'shop-front' ) ) );
 		}
+
+		// Check for parent brand.
+		$parent_term = $parent_brand ? get_term_by( 'slug', $parent_brand, 'product_brand' ) : null;
+		$parent_id   = $parent_term ? $parent_term->term_id : 0;
 
 		// Create a new brand.
 		$new_brand = wp_insert_term(
@@ -44,6 +49,7 @@ class BrandController {
 			'product_brand',
 			array(
 				'description' => $description,
+				'parent'      => $parent_id,
 			)
 		);
 
@@ -70,9 +76,10 @@ class BrandController {
 		}
 
 		// Validate inputs.
-		$brand_id    = isset( $_POST['brand_id'] ) ? absint( $_POST['brand_id'] ) : 0;
-		$brand_name  = isset( $_POST['product_brand_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_brand_name'] ) ) : '';
-		$description = isset( $_POST['product_brand_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_brand_description'] ) ) : '';
+		$brand_id     = isset( $_POST['brand_id'] ) ? absint( $_POST['brand_id'] ) : 0;
+		$brand_name   = isset( $_POST['product_brand_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_brand_name'] ) ) : '';
+		$parent_brand = isset( $_POST['product_parent_brand'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_brand'] ) ) : '';
+		$description  = isset( $_POST['product_brand_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_brand_description'] ) ) : '';
 
 		if ( empty( $brand_id ) ) {
 			wp_send_json_error( array( 'error' => __( 'Brand ID is required', 'shop-front' ) ) );
@@ -82,6 +89,10 @@ class BrandController {
 			wp_send_json_error( array( 'error' => __( 'Brand Name is required', 'shop-front' ) ) );
 		}
 
+		// Check for parent brand.
+		$parent_term = $parent_brand ? get_term_by( 'slug', $parent_brand, 'product_brand' ) : null;
+		$parent_id   = $parent_term ? $parent_term->term_id : 0;
+
 		// Update the brand.
 		$updated_brand = wp_update_term(
 			$brand_id,
@@ -89,6 +100,7 @@ class BrandController {
 			array(
 				'name'        => $brand_name,
 				'description' => $description,
+				'parent'      => $parent_id,
 			)
 		);
 
