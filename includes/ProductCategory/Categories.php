@@ -1,17 +1,33 @@
 <?php
+/**
+ * Product categories handler
+ *
+ * @package ShopFront
+ */
 
 namespace PluginizeLab\ShopFront\ProductCategory;
 
 /**
- * Plugin product categories class
+ * Categories class
  */
 class Categories {
+
 	/**
-	 * Recursive function to get woocommerce parent and its subcategories.
+	 * The constructor.
+	 */
+	public function __construct() {
+		add_action( 'msf_product_category_created', array( $this, 'clear_cache' ) );
+		add_action( 'msf_product_category_updated', array( $this, 'clear_cache' ) );
+		add_action( 'msf_product_category_deleted', array( $this, 'clear_cache' ) );
+	}
+
+	/**
+	 * Build category hierarchy recursively.
 	 *
+	 * @param int $parent_id Parent category ID.
 	 * @return array
 	 */
-	public function get_product_parent_and_subcategories_recursively( $parent_id = 0 ) {
+	private function build_hierarchy( $parent_id = 0 ) {
 		$categories = get_terms(
 			array(
 				'taxonomy'   => 'product_cat',
@@ -24,40 +40,95 @@ class Categories {
 			return array();
 		}
 
-		$categories_hierarchy = array();
+		$result = array();
 
 		foreach ( $categories as $category ) {
-			$subcategories = $this->get_product_parent_and_subcategories_recursively( $category->term_id );
-
-			$categories_hierarchy[ $category->term_id ] = array(
+			$result[ $category->term_id ] = array(
 				'category'      => $category,
-				'subcategories' => $subcategories,
+				'subcategories' => $this->build_hierarchy( $category->term_id ),
 			);
 		}
 
-		return $categories_hierarchy;
+		return $result;
 	}
 
 	/**
-	 * Recursive function to display category table each row..
+	 * Flatten hierarchy to ordered list with depth.
+	 *
+	 * @param array  $hierarchy Category hierarchy.
+	 * @param int    $depth Current depth level.
+	 * @param object $parent_category Parent category object.
+	 * @return array
+	 */
+	private function flatten( $hierarchy, $depth = 0, $parent_category = null ) {
+		$result = array();
+
+		foreach ( $hierarchy as $data ) {
+			$result[] = array(
+				'category' => $data['category'],
+				'depth'    => $depth,
+				'parent'   => ( $depth > 0 && $parent_category ) ? $parent_category : null,
+			);
+
+			if ( ! empty( $data['subcategories'] ) ) {
+				$result = array_merge( $result, $this->flatten( $data['subcategories'], $depth + 1, $data['category'] ) );
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Get all categories as flat list (with caching).
+	 *
+	 * @return array
+	 */
+	private function get_all_flat() {
+		$cache_key = 'msf_flat_categories';
+		$cached    = get_transient( $cache_key );
+
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
+		$hierarchy = $this->build_hierarchy();
+		$all       = $this->flatten( $hierarchy );
+
+		// Cache for 1 hour.
+		set_transient( $cache_key, $all, HOUR_IN_SECONDS );
+
+		return $all;
+	}
+
+	/**
+	 * Clear categories cache.
 	 *
 	 * @return void
 	 */
-	public function display_categories_recursively( $categories_hierarchy, $depth = 0 ) {
-		foreach ( $categories_hierarchy as $category_id => $data ) {
-			$category      = $data['category'];
-			$subcategories = $data['subcategories'];
-			$dash_prefix   = str_repeat( '— ', $depth );
+	public function clear_cache() {
+		delete_transient( 'msf_flat_categories' );
+	}
 
-			$template_args = array(
-				'category'    => $category,
-				'dash_prefix' => $dash_prefix,
-			);
-			msf_get_template_part( 'categories/category-list-table-row', '', $template_args );
+	/**
+	 * Get paginated categories.
+	 *
+	 * @param int $per_page Items per page.
+	 * @param int $page Current page number.
+	 * @return object
+	 */
+	public function get_paginated_categories_with_children( $per_page = 10, $page = 1 ) {
+		$all        = $this->get_all_flat();
+		$total      = count( $all );
+		$max_pages  = ceil( $total / $per_page );
+		$offset     = ( $page - 1 ) * $per_page;
+		$categories = array_slice( $all, $offset, $per_page );
 
-			if ( ! empty( $subcategories ) ) {
-				$this->display_categories_recursively( $subcategories, $depth + 1 );
-			}
-		}
+		return (object) array(
+			'categories'    => $categories,
+			'total'         => $total,
+			'max_num_pages' => $max_pages,
+			'current_page'  => $page,
+			'per_page'      => $per_page,
+		);
 	}
 }

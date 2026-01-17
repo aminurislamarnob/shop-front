@@ -100,6 +100,13 @@ class Rewrites {
 			'index.php?pagename=' . $this->store_front_base . '&orders=1&paged=$matches[1]',
 			'top'
 		);
+
+		// Add rewrite rule for category list pagination.
+		add_rewrite_rule(
+			$this->store_front_base . '/categories/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&categories=1&paged=$matches[1]',
+			'top'
+		);
 	}
 
 	/**

@@ -79,7 +79,6 @@ do_action( 'msf_dashboard_wrapper_start' );
 								echo '</td></tr>';
 							} else {
 								foreach ( $orders->orders as $order ) { // phpcs:ignore
-									$item_count = $order->get_item_count();
 									?>
 								<tr>
 									<td data-title="<?php echo esc_attr__( 'Order', 'shop-front' ); ?>">
@@ -90,21 +89,11 @@ do_action( 'msf_dashboard_wrapper_start' );
 											<?php echo esc_html( wc_get_order_status_name( $order->get_status() ) ); ?>
 										</span>
 									</td>
-									<!-- <td data-title="<?php echo esc_attr__( 'Billing & Shipping', 'shop-front' ); ?>">
-										<div class="msf-billing-shipping-info">
-											<span><?php // echo esc_html__( 'Billing: ', 'shop-front' ); ?></span>
-											<?php // $orders_obj->get_billing_address_column_value( $order ); ?>
-										</div>
-										<div class="msf-billing-shipping-info">
-											<span><?php // echo esc_html__( 'Shipping: ', 'shop-front' ); ?></span>
-											<?php // $orders_obj->get_shipping_address_column_value( $order ); ?>
-										</div>
-									</td> -->
 									<td data-title="<?php echo esc_attr__( 'Total', 'shop-front' ); ?>">
 										<?php echo wp_kses_post( $order->get_formatted_order_total() ); ?>
 									</td>
 									<td data-title="<?php echo esc_html__( 'Total Items', 'shop-front' ); ?>">
-										<?php echo esc_html( $item_count ); ?>
+										<?php echo esc_html( $order->get_item_count() ); ?>
 									</td>
 									<td data-title="<?php echo esc_attr__( 'Customer', 'shop-front' ); ?>">
 										<?php $orders_obj->get_order_customer_column_value( $order ); ?>

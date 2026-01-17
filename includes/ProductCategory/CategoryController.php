@@ -57,6 +57,8 @@ class CategoryController {
 			wp_send_json_error( array( 'error' => $new_category->get_error_message() ) );
 		}
 
+		do_action( 'msf_product_category_created', $new_category );
+
 		wp_send_json_success( array( 'message' => __( 'Category successfully created', 'shop-front' ) ) );
 	}
 
@@ -108,6 +110,8 @@ class CategoryController {
 			wp_send_json_error( array( 'error' => $updated_category->get_error_message() ) );
 		}
 
+		do_action( 'msf_product_category_updated', $updated_category );
+
 		wp_send_json_success( array( 'message' => __( 'Category successfully updated', 'shop-front' ) ) );
 	}
 
@@ -139,6 +143,8 @@ class CategoryController {
 		} elseif ( $result === false ) {
 			wp_send_json_error( array( 'error' => __( 'Failed to delete category', 'shop-front' ) ) );
 		}
+
+		do_action( 'msf_product_category_deleted', $category_id );
 
 		wp_send_json_success( array( 'message' => __( 'Category successfully deleted', 'shop-front' ) ) );
 	}

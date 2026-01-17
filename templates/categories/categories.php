@@ -45,23 +45,27 @@ do_action( 'msf_dashboard_wrapper_start' );
 					</div>
 				</div>
 			</div>
+			<?php
+			$current_page        = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
+			$categories_per_page = apply_filters( 'msf_categories_per_page', 15 );
+			$product_categories  = new Categories();
+			$categories_data     = $product_categories->get_paginated_categories_with_children( $categories_per_page, $current_page );
+			?>
 			<div class="msf-table-responsive" x-data="deleteCategoryHandler()">
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>
 							<th width="210"><?php echo esc_html__( 'Name', 'shop-front' ); ?></th>
 							<th><?php echo esc_html__( 'Description', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Parent', 'shop-front' ); ?></th>
 							<th width="210"><?php echo esc_html__( 'Slug', 'shop-front' ); ?></th>
 							<th width="70"><?php echo esc_html__( 'Count', 'shop-front' ); ?></th>
 							<th class="text-right"><?php echo esc_html__( 'Action', 'shop-front' ); ?></th>
 						</tr>
 						<tbody>
 							<?php
-							$product_categories   = new Categories();
-							$categories_hierarchy = $product_categories->get_product_parent_and_subcategories_recursively();
-
-							if ( empty( $categories_hierarchy ) ) {
-								echo '<tr id="tag-category-not-found"><td colspan="5">';
+							if ( empty( $categories_data->categories ) ) {
+								echo '<tr id="tag-category-not-found"><td colspan="6">';
 								msf_get_template_part(
 									'not-found',
 									'',
@@ -72,12 +76,38 @@ do_action( 'msf_dashboard_wrapper_start' );
 								);
 								echo '</td></tr>';
 							} else {
-								$product_categories->display_categories_recursively( $categories_hierarchy );
+								foreach ( $categories_data->categories as $category_item ) {
+									$product_category = $category_item['category'];
+									$depth            = $category_item['depth'];
+									$parent           = $category_item['parent'];
+									$dash_prefix      = str_repeat( '&mdash; ', $depth );
+
+									$template_args = array(
+										'category'    => $product_category,
+										'dash_prefix' => $dash_prefix,
+										'parent'      => $parent,
+									);
+									msf_get_template_part( 'categories/category-list-table-row', '', $template_args );
+								}
 							}
 							?>
 						</tbody>
 					</thead>
 				</table>
+				<?php
+				if ( $categories_data->max_num_pages > 1 ) {
+					msf_get_template_part(
+						'pagination',
+						'',
+						array(
+							'total_items'  => $categories_data->total,
+							'total_pages'  => $categories_data->max_num_pages,
+							'current_page' => $current_page,
+							'per_page'     => $categories_per_page,
+						)
+					);
+				}
+				?>
 			</div>
 		</main>
 	</div>

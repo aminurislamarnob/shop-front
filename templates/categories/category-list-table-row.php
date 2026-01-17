@@ -1,6 +1,7 @@
 <tr id="category-row-<?php echo esc_attr( $category->term_id ); ?>">
 	<td><?php echo esc_html( $dash_prefix . $category->name ); ?></td>
 	<td><?php echo esc_html( wp_trim_words( $category->description, '9', '...' ) ); ?></td>
+	<td><?php echo esc_html( $parent ? $parent->name : '-' ); ?></td>
 	<td><?php echo esc_html( $category->slug ); ?></td>
 	<td><?php echo esc_html( $category->count ); ?></td>
 	<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'shop-front' ); ?>">
