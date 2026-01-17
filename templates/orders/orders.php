@@ -62,7 +62,10 @@ do_action( 'msf_dashboard_wrapper_start' );
 						</tr>
 						<tbody>
 							<?php
-							$orders = $orders_obj->get_all_orders();
+							$current_page    = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
+							$orders_per_page = apply_filters( 'msf_orders_per_page', 2 );
+							$orders          = $orders_obj->get_all_orders( $orders_per_page, $current_page );
+
 							if ( empty( $orders ) ) {
 								echo '<tr id="order-row-not-found"><td colspan="8">';
 								msf_get_template_part(
@@ -75,7 +78,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 								);
 								echo '</td></tr>';
 							} else {
-								foreach ( $orders as $order ) { // phpcs:ignore
+								foreach ( $orders->orders as $order ) { // phpcs:ignore
 									$item_count = $order->get_item_count();
 									?>
 								<tr>
@@ -140,6 +143,41 @@ do_action( 'msf_dashboard_wrapper_start' );
 						</tbody>
 					</thead>
 				</table>
+				<?php
+				if ( $orders->max_num_pages > 1 ) {
+					$start_order = ( $current_page - 1 ) * $orders_per_page + 1;
+					$end_order   = min( $orders->total, $current_page * $orders_per_page );
+					$big_num     = 999999999;
+					$page_links  = paginate_links(
+						array(
+							'base'      => str_replace( $big_num, '%#%', esc_url( get_pagenum_link( $big_num ) ) ),
+							'format'    => '?page=%#%',
+							'add_args'  => false,
+							'current'   => $current_page,
+							'total'     => $orders->max_num_pages,
+							'type'      => 'array', // list.
+							'prev_text' => '&larr;',
+							'next_text' => '&rarr;',
+							'end_size'  => 3,
+							'mid_size'  => 3,
+						)
+					);
+
+					echo '<div class="msfc-pagination-wrap">';
+
+					echo '<div class="msfc-result-text">';
+					/* translators: %1$s: Start Order, %2$s: End Order, %3$s: Total Orders */
+					printf( esc_html__( 'Showing %1$s to %2$s of %3$s', 'shop-front' ), esc_html( $start_order ), esc_html( $end_order ), esc_html( $orders->total ) );
+					echo '</div>';
+
+					if ( ! empty( $page_links ) ) {
+						echo '<ul class="msfc-pagination"><li>';
+						echo wp_kses_post( join( '</li><li>', $page_links ) );
+						echo '</li></ul>';
+					}
+					echo '</div>';
+				}
+				?>
 			</div>
 		</main>
 	</div>

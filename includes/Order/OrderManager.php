@@ -14,13 +14,18 @@ class OrderManager {
 	/**
 	 * Get all orders.
 	 *
-	 * @return array
+	 * @return object
 	 */
-	public function get_all_orders() {
+	public function get_all_orders( $orders_per_page, $current_page ) {
 		$orders = wc_get_orders(
 			array(
-				'limit' => -1,
-				'type'  => 'shop_order',
+				'type'     => 'shop_order',
+				'limit'    => $orders_per_page,
+				'page'     => $current_page,
+				'paginate' => true,
+				'order'    => 'DESC',
+				'orderby'  => 'date',
+				'return'   => 'objects',
 			)
 		);
 		return $orders;

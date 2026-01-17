@@ -93,6 +93,13 @@ class Rewrites {
 			'index.php?pagename=' . $this->store_front_base . '&products=1&paged=$matches[1]',
 			'top'
 		);
+
+		// Add rewrite rule for order list pagination.
+		add_rewrite_rule(
+			$this->store_front_base . '/orders/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&orders=1&paged=$matches[1]',
+			'top'
+		);
 	}
 
 	/**
@@ -129,12 +136,7 @@ class Rewrites {
 				$title = __( 'Edit Product', 'shop-front' );
 				break;
 			case 'orders':
-				if ( ! empty( $wp->query_vars['orders'] ) ) {
-					/* translators: %s: page */
-					$title = sprintf( __( 'Orders (page %d)', 'shop-front' ), intval( $wp->query_vars['orders'] ) );
-				} else {
-					$title = __( 'Orders', 'shop-front' );
-				}
+				$title = __( 'Orders', 'shop-front' );
 				break;
 			case 'add-new-order':
 				$title = __( 'Add New Order', 'shop-front' );
