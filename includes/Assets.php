@@ -203,7 +203,21 @@ class Assets {
 						'product_updating'               => __( 'Updating Product...', 'shop-front' ),
 						'product_updated_successfully'   => __( 'Product updated successfully!', 'shop-front' ),
 						'upload_image_text'              => __( 'Upload Image', 'shop-front' ),
+
+						// Coupon messages.
+						'coupon_code_required'           => __( 'Coupon code is required.', 'shop-front' ),
+						'coupon_amount_required'         => __( 'Coupon amount is required.', 'shop-front' ),
+						'coupon_adding'                  => __( 'Adding Coupon...', 'shop-front' ),
+						'coupon_added_successfully'      => __( 'Coupon added successfully!', 'shop-front' ),
+						'coupon_updating'                => __( 'Updating Coupon...', 'shop-front' ),
+						'coupon_updated_successfully'    => __( 'Coupon updated successfully!', 'shop-front' ),
+						'delete_coupon_warning'          => __( 'This will delete the coupon permanently. This action cannot be undone.', 'shop-front' ),
+						'deleting'                       => __( 'Deleting...', 'shop-front' ),
+						'are_you_sure'                   => __( 'Are you sure?', 'shop-front' ),
+						'yes_delete'                     => __( 'Yes, delete it!', 'shop-front' ),
+						'validation_error'               => __( 'Validation Error', 'shop-front' ),
 					),
+					'coupons_url'            => msfc_get_navigation_url( 'coupons' ),
 				)
 			);
 			wp_enqueue_media();

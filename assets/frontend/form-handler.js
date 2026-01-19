@@ -16,6 +16,9 @@
 			this.handleBrandAdd();
 			this.handleBrandEdit();
 			this.handleBrandDelete();
+			this.handleCouponAdd();
+			this.handleCouponEdit();
+			this.handleCouponDelete();
 		},
 
 		/**
@@ -614,6 +617,241 @@
 						},
 					} );
 				} );
+			} );
+		},
+
+		/**
+		 * Handle Coupon Add
+		 */
+		handleCouponAdd: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msf-add-coupon', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var formData = new FormData( this );
+
+				// Validate required fields
+				var couponCode = $form.find( '#coupon_code' ).val().trim();
+				var couponAmount = $form.find( '#coupon_amount' ).val().trim();
+
+				if ( ! couponCode ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text:
+							MSF_Form_Handler.i18n.coupon_code_required ||
+							'Coupon code is required.',
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				if ( ! couponAmount || parseFloat( couponAmount ) < 0 ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text:
+							MSF_Form_Handler.i18n.coupon_amount_required ||
+							'Coupon amount is required.',
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				self.showLoading();
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							setTimeout( function () {
+								window.location.href =
+									MSF_Form_Handler.coupons_url ||
+									window.location.href.replace(
+										'add-new-coupon',
+										'coupons'
+									);
+							}, 1500 );
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Coupon Edit
+		 */
+		handleCouponEdit: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msf-edit-coupon', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var formData = new FormData( this );
+
+				// Validate required fields
+				var couponCode = $form.find( '#coupon_code' ).val().trim();
+				var couponAmount = $form.find( '#coupon_amount' ).val().trim();
+
+				if ( ! couponCode ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text:
+							MSF_Form_Handler.i18n.coupon_code_required ||
+							'Coupon code is required.',
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				if ( ! couponAmount || parseFloat( couponAmount ) < 0 ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text:
+							MSF_Form_Handler.i18n.coupon_amount_required ||
+							'Coupon amount is required.',
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				self.showLoading();
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							setTimeout( function () {
+								window.location.href =
+									MSF_Form_Handler.coupons_url ||
+									window.location.href.replace(
+										/edit-coupon\/\d+/,
+										'coupons'
+									);
+							}, 1500 );
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Coupon Delete
+		 */
+		handleCouponDelete: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '.delete-coupon-form', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var couponId = $form.find( 'input[name="coupon_id"]' ).val();
+
+				if ( ! couponId ) {
+					return;
+				}
+
+				Swal.fire( {
+					title:
+						MSF_Form_Handler.i18n.are_you_sure || 'Are you sure?',
+					text:
+						MSF_Form_Handler.i18n.delete_coupon_warning ||
+						'This will delete the coupon permanently. This action cannot be undone.',
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText:
+						MSF_Form_Handler.i18n.yes_delete || 'Yes, delete it!',
+					cancelButtonText:
+						MSF_Form_Handler.i18n.cancel_button || 'Cancel',
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
+						return;
+					}
+
+					self.showLoading(
+						MSF_Form_Handler.i18n.deleting || 'Deleting...'
+					);
+
+					var formData = new FormData( $form[ 0 ] );
+
+					$.ajax( {
+						url: MSF_Form_Handler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$form
+									.closest( 'tr' )
+									.fadeOut( 300, function () {
+										$( this ).remove();
+										// Reload page if no coupons left
+										if (
+											$( '.single-coupon-item' )
+												.length === 0
+										) {
+											window.location.reload();
+										}
+									} );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
+					} );
+				} );
+
+				return false;
 			} );
 		},
 	};
