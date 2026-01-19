@@ -50,11 +50,23 @@ do_action( 'msf_dashboard_wrapper_start' );
 									?>
 								</select>
 							</div>
-							<div class="msf-form-group">
-								<label for="product_brand_description"><?php esc_html_e( 'Brand Description', 'shop-front' ); ?></label>
-								<textarea class="msf-form-control" id="product_brand_description" name="product_brand_description" placeholder="<?php echo esc_attr__( 'Product brand description', 'shop-front' ); ?>" rows="3"></textarea>
+						<div class="msf-form-group">
+							<label for="product_brand_description"><?php esc_html_e( 'Brand Description', 'shop-front' ); ?></label>
+							<textarea class="msf-form-control" id="product_brand_description" name="product_brand_description" placeholder="<?php echo esc_attr__( 'Product brand description', 'shop-front' ); ?>" rows="3"></textarea>
+						</div>
+						<div class="msf-form-group">
+							<label for="product_brand_thumbnail_id"><?php esc_html_e( 'Brand Image', 'shop-front' ); ?></label>
+							<input type="hidden" id="product_brand_thumbnail_id" name="product_brand_thumbnail_id" value="">
+							<input type="hidden" id="product_brand_thumbnail_url" name="product_brand_thumbnail_url" value="">
+							<div id="brand-single-image" class="image-drop-container">
+								<div id="brand_thumb_img" class="preview-image"></div>
+								<div class="image-drop-text">
+									<i class="las la-image"></i>
+									<span><?php esc_html_e( 'Upload Image', 'shop-front' ); ?></span>
+								</div>
 							</div>
-							<div class="msf-form-submission-group">
+						</div>
+						<div class="msf-form-submission-group">
 								<?php wp_nonce_field( '_msfc_add_product_brand_', 'msfc_add_product_brand_nonce' ); ?>
 								<input type="hidden" name="action" value="msfc_add_product_brand">
 								<div class="msf-button-group">

@@ -121,8 +121,17 @@ class Assets {
 				'my_shop_front_script',
 				'MSF_Front_Script',
 				array(
-					'upload_image_text' => __( 'Upload Image', 'shop-front' ),
-					'remove_image_text' => __( 'Remove Image', 'shop-front' ),
+					'upload_image_text'     => __( 'Upload Image', 'shop-front' ),
+					'remove_image_text'     => __( 'Remove Image', 'shop-front' ),
+					'upload_product_image'  => __( 'Upload Product Image', 'shop-front' ),
+					'insert_image'          => __( 'Insert Image', 'shop-front' ),
+					'product_image'         => __( 'Product Image', 'shop-front' ),
+					'product_gallery_image' => __( 'Product Gallery Image', 'shop-front' ),
+					'upload_category_image' => __( 'Upload Category Image', 'shop-front' ),
+					'category_image'        => __( 'Category Image', 'shop-front' ),
+					'upload_brand_image'    => __( 'Upload Brand Image', 'shop-front' ),
+					'brand_image'           => __( 'Brand Image', 'shop-front' ),
+					'upload_gallery_images' => __( 'Upload Product Gallery Images', 'shop-front' ),
 				)
 			);
 
@@ -193,6 +202,7 @@ class Assets {
 						'product_added_successfully'     => __( 'Product added successfully!', 'shop-front' ),
 						'product_updating'               => __( 'Updating Product...', 'shop-front' ),
 						'product_updated_successfully'   => __( 'Product updated successfully!', 'shop-front' ),
+						'upload_image_text'              => __( 'Upload Image', 'shop-front' ),
 					),
 				)
 			);

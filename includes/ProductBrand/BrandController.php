@@ -34,6 +34,7 @@ class BrandController {
 		$brand_name   = isset( $_POST['product_brand_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_brand_name'] ) ) : '';
 		$parent_brand = isset( $_POST['product_parent_brand'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_brand'] ) ) : '';
 		$description  = isset( $_POST['product_brand_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_brand_description'] ) ) : '';
+		$thumbnail_id = isset( $_POST['product_brand_thumbnail_id'] ) ? absint( $_POST['product_brand_thumbnail_id'] ) : 0;
 
 		if ( empty( $brand_name ) ) {
 			wp_send_json_error( array( 'error' => __( 'Brand Name is required', 'shop-front' ) ) );
@@ -55,6 +56,11 @@ class BrandController {
 
 		if ( is_wp_error( $new_brand ) ) {
 			wp_send_json_error( array( 'error' => $new_brand->get_error_message() ) );
+		}
+
+		// Save the brand thumbnail if provided.
+		if ( $thumbnail_id > 0 ) {
+			update_term_meta( $new_brand['term_id'], 'thumbnail_id', $thumbnail_id );
 		}
 
 		do_action( 'msf_product_brand_created', $new_brand );
@@ -82,6 +88,7 @@ class BrandController {
 		$brand_name   = isset( $_POST['product_brand_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_brand_name'] ) ) : '';
 		$parent_brand = isset( $_POST['product_parent_brand'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_brand'] ) ) : '';
 		$description  = isset( $_POST['product_brand_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_brand_description'] ) ) : '';
+		$thumbnail_id = isset( $_POST['product_brand_thumbnail_id'] ) ? absint( $_POST['product_brand_thumbnail_id'] ) : 0;
 
 		if ( empty( $brand_id ) ) {
 			wp_send_json_error( array( 'error' => __( 'Brand ID is required', 'shop-front' ) ) );
@@ -108,6 +115,13 @@ class BrandController {
 
 		if ( is_wp_error( $updated_brand ) ) {
 			wp_send_json_error( array( 'error' => $updated_brand->get_error_message() ) );
+		}
+
+		// Update the brand thumbnail.
+		if ( $thumbnail_id > 0 ) {
+			update_term_meta( $brand_id, 'thumbnail_id', $thumbnail_id );
+		} else {
+			delete_term_meta( $brand_id, 'thumbnail_id' );
 		}
 
 		do_action( 'msf_product_brand_updated', $updated_brand );

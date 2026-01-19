@@ -33,6 +33,16 @@ do_action( 'msf_dashboard_wrapper_start' );
 								echo '<div class="alert alert-danger">' . esc_html__( 'Category not found.', 'shop-front' ) . '</div>';
 								return;
 							}
+
+							// Get category thumbnail.
+							$thumbnail_id  = absint( get_term_meta( $category_id, 'thumbnail_id', true ) );
+							$thumbnail_url = '';
+							if ( $thumbnail_id ) {
+								$thumbnail_url = wp_get_attachment_image_url( $thumbnail_id, 'thumbnail' );
+							}
+
+							// Get display type.
+							$display_type = get_term_meta( $category_id, 'display_type', true );
 							?>
 						<form id="msfc-edit-category">
 							<div class="msf-form-group">
@@ -67,6 +77,35 @@ do_action( 'msf_dashboard_wrapper_start' );
 							<div class="msf-form-group">
 								<label for="product_category_description"><?php esc_html_e( 'Category Description', 'shop-front' ); ?></label>
 								<textarea class="msf-form-control" id="product_category_description" name="product_category_description" placeholder="<?php echo esc_attr__( 'Product category description', 'shop-front' ); ?>" rows="3"><?php echo esc_textarea( $category->description ); ?></textarea>
+							</div>
+							<div class="msf-form-group">
+								<label for="display_type"><?php esc_html_e( 'Display Type', 'shop-front' ); ?></label>
+								<select class="msf-form-control" id="display_type" name="display_type">
+									<option value="" <?php selected( $display_type, '' ); ?>><?php esc_html_e( 'Default', 'woocommerce' ); ?></option>
+									<option value="products" <?php selected( $display_type, 'products' ); ?>><?php esc_html_e( 'Products', 'woocommerce' ); ?></option>
+									<option value="subcategories" <?php selected( $display_type, 'subcategories' ); ?>><?php esc_html_e( 'Subcategories', 'woocommerce' ); ?></option>
+									<option value="both" <?php selected( $display_type, 'both' ); ?>><?php esc_html_e( 'Both', 'woocommerce' ); ?></option>
+								</select>
+							</div>
+							<div class="msf-form-group">
+								<label for="product_category_thumbnail_id"><?php esc_html_e( 'Category Image', 'shop-front' ); ?></label>
+								<input type="hidden" id="product_category_thumbnail_id" name="product_category_thumbnail_id" value="<?php echo esc_attr( $thumbnail_id ); ?>">
+								<input type="hidden" id="product_category_thumbnail_url" name="product_category_thumbnail_url" value="<?php echo esc_url( $thumbnail_url ); ?>">
+								<div id="category-single-image" class="image-drop-container<?php echo esc_attr( $thumbnail_id ? ' image-drop-bg' : '' ); ?>">
+									<div id="category_thumb_img" class="preview-image">
+										<?php if ( $thumbnail_url ) : ?>
+											<img src="<?php echo esc_url( $thumbnail_url ); ?>" alt="<?php esc_attr_e( 'Category thumbnail', 'shop-front' ); ?>">
+										<?php endif; ?>
+									</div>
+									<div class="image-drop-text">
+										<i class="las la-image"></i>
+										<?php if ( $thumbnail_id ) : ?>
+											<span><?php esc_html_e( 'Remove Image', 'shop-front' ); ?></span>
+										<?php else : ?>
+											<span><?php esc_html_e( 'Upload Image', 'shop-front' ); ?></span>
+										<?php endif; ?>
+									</div>
+								</div>
 							</div>
 							<div class="msf-form-submission-group">
 								<?php wp_nonce_field( '_msfc_edit_product_category_', 'msfc_edit_product_category_nonce' ); ?>

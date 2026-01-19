@@ -46,11 +46,32 @@ do_action( 'msf_dashboard_wrapper_start' );
 									<?php } ?>
 								</select>
 							</div>
-							<div class="msf-form-group">
-								<label for="product_category_description"><?php esc_html_e( 'Category Description', 'shop-front' ); ?></label>
-								<textarea class="msf-form-control" id="product_category_description" name="product_category_description" placeholder="<?php echo esc_attr__( 'Product category description', 'shop-front' ); ?>" rows="3"></textarea>
+						<div class="msf-form-group">
+							<label for="product_category_description"><?php esc_html_e( 'Category Description', 'shop-front' ); ?></label>
+							<textarea class="msf-form-control" id="product_category_description" name="product_category_description" placeholder="<?php echo esc_attr__( 'Product category description', 'shop-front' ); ?>" rows="3"></textarea>
+						</div>
+						<div class="msf-form-group">
+							<label for="display_type"><?php esc_html_e( 'Display Type', 'shop-front' ); ?></label>
+							<select class="msf-form-control" id="display_type" name="display_type">
+								<option value=""><?php esc_html_e( 'Default', 'woocommerce' ); ?></option>
+								<option value="products"><?php esc_html_e( 'Products', 'woocommerce' ); ?></option>
+								<option value="subcategories"><?php esc_html_e( 'Subcategories', 'woocommerce' ); ?></option>
+								<option value="both"><?php esc_html_e( 'Both', 'woocommerce' ); ?></option>
+							</select>
+						</div>
+						<div class="msf-form-group">
+							<label for="product_category_thumbnail_id"><?php esc_html_e( 'Category Image', 'shop-front' ); ?></label>
+							<input type="hidden" id="product_category_thumbnail_id" name="product_category_thumbnail_id" value="">
+							<input type="hidden" id="product_category_thumbnail_url" name="product_category_thumbnail_url" value="">
+							<div id="category-single-image" class="image-drop-container">
+								<div id="category_thumb_img" class="preview-image"></div>
+								<div class="image-drop-text">
+									<i class="las la-image"></i>
+									<span><?php esc_html_e( 'Upload Image', 'shop-front' ); ?></span>
+								</div>
 							</div>
-							<div class="msf-form-submission-group">
+						</div>
+						<div class="msf-form-submission-group">
 								<?php wp_nonce_field( '_msfc_add_product_category_', 'msfc_add_product_category_nonce' ); ?>
 								<input type="hidden" name="action" value="msfc_add_product_category">
 								<div class="msf-button-group">

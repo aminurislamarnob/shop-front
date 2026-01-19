@@ -34,6 +34,8 @@ class CategoryController {
 		$category_name   = isset( $_POST['product_category_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_category_name'] ) ) : '';
 		$parent_category = isset( $_POST['product_parent_category'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_category'] ) ) : '';
 		$description     = isset( $_POST['product_category_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_category_description'] ) ) : '';
+		$thumbnail_id    = isset( $_POST['product_category_thumbnail_id'] ) ? absint( $_POST['product_category_thumbnail_id'] ) : 0;
+		$display_type    = isset( $_POST['display_type'] ) ? sanitize_text_field( wp_unslash( $_POST['display_type'] ) ) : '';
 
 		if ( empty( $category_name ) ) {
 			wp_send_json_error( array( 'error' => __( 'Category Name is required', 'shop-front' ) ) );
@@ -55,6 +57,16 @@ class CategoryController {
 
 		if ( is_wp_error( $new_category ) ) {
 			wp_send_json_error( array( 'error' => $new_category->get_error_message() ) );
+		}
+
+		// Save the category thumbnail if provided.
+		if ( $thumbnail_id > 0 ) {
+			update_term_meta( $new_category['term_id'], 'thumbnail_id', $thumbnail_id );
+		}
+
+		// Save the display type if provided.
+		if ( ! empty( $display_type ) ) {
+			update_term_meta( $new_category['term_id'], 'display_type', $display_type );
 		}
 
 		do_action( 'msf_product_category_created', $new_category );
@@ -82,6 +94,8 @@ class CategoryController {
 		$category_name   = isset( $_POST['product_category_name'] ) ? sanitize_text_field( wp_unslash( $_POST['product_category_name'] ) ) : '';
 		$parent_category = isset( $_POST['product_parent_category'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_category'] ) ) : '';
 		$description     = isset( $_POST['product_category_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_category_description'] ) ) : '';
+		$thumbnail_id    = isset( $_POST['product_category_thumbnail_id'] ) ? absint( $_POST['product_category_thumbnail_id'] ) : 0;
+		$display_type    = isset( $_POST['display_type'] ) ? sanitize_text_field( wp_unslash( $_POST['display_type'] ) ) : '';
 
 		if ( empty( $category_id ) ) {
 			wp_send_json_error( array( 'error' => __( 'Category ID is required', 'shop-front' ) ) );
@@ -108,6 +122,20 @@ class CategoryController {
 
 		if ( is_wp_error( $updated_category ) ) {
 			wp_send_json_error( array( 'error' => $updated_category->get_error_message() ) );
+		}
+
+		// Update the category thumbnail.
+		if ( $thumbnail_id > 0 ) {
+			update_term_meta( $category_id, 'thumbnail_id', $thumbnail_id );
+		} else {
+			delete_term_meta( $category_id, 'thumbnail_id' );
+		}
+
+		// Update the display type.
+		if ( ! empty( $display_type ) ) {
+			update_term_meta( $category_id, 'display_type', $display_type );
+		} else {
+			delete_term_meta( $category_id, 'display_type' );
 		}
 
 		do_action( 'msf_product_category_updated', $updated_category );

@@ -100,6 +100,16 @@
 						if ( response.success ) {
 							self.showSuccess( response.data.message );
 							$form[ 0 ].reset();
+							// Clear category image.
+							$( '#product_category_thumbnail_id' ).val( '' );
+							$( '#product_category_thumbnail_url' ).val( '' );
+							$( '#category_thumb_img' ).html( '' );
+							$( '#category-single-image' ).removeClass(
+								'image-drop-bg'
+							);
+							$(
+								'#category-single-image .image-drop-text span'
+							).text( MSF_Form_Handler.i18n.upload_image_text );
 						} else {
 							self.showError( response.data.error );
 						}
@@ -458,6 +468,16 @@
 						if ( response.success ) {
 							self.showSuccess( response.data.message );
 							$form[ 0 ].reset();
+							// Clear brand image.
+							$( '#product_brand_thumbnail_id' ).val( '' );
+							$( '#product_brand_thumbnail_url' ).val( '' );
+							$( '#brand_thumb_img' ).html( '' );
+							$( '#brand-single-image' ).removeClass(
+								'image-drop-bg'
+							);
+							$(
+								'#brand-single-image .image-drop-text span'
+							).text( MSF_Form_Handler.i18n.upload_image_text );
 						} else {
 							self.showError( response.data.error );
 						}

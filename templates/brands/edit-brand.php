@@ -25,6 +25,13 @@ if ( ! $brand || is_wp_error( $brand ) ) {
 	wp_die( esc_html__( 'Brand not found', 'shop-front' ) );
 }
 
+// Get brand thumbnail.
+$thumbnail_id  = absint( get_term_meta( $brand_id, 'thumbnail_id', true ) );
+$thumbnail_url = '';
+if ( $thumbnail_id ) {
+	$thumbnail_url = wp_get_attachment_image_url( $thumbnail_id, 'thumbnail' );
+}
+
 do_action( 'msf_dashboard_wrapper_start' );
 ?>
 <div class="my-shop-front-container">
@@ -71,11 +78,31 @@ do_action( 'msf_dashboard_wrapper_start' );
 									?>
 								</select>
 							</div>
-							<div class="msf-form-group">
-								<label for="product_brand_description"><?php esc_html_e( 'Brand Description', 'shop-front' ); ?></label>
-								<textarea class="msf-form-control" id="product_brand_description" name="product_brand_description" placeholder="<?php echo esc_attr__( 'Product brand description', 'shop-front' ); ?>" rows="3"><?php echo esc_textarea( $brand->description ); ?></textarea>
+						<div class="msf-form-group">
+							<label for="product_brand_description"><?php esc_html_e( 'Brand Description', 'shop-front' ); ?></label>
+							<textarea class="msf-form-control" id="product_brand_description" name="product_brand_description" placeholder="<?php echo esc_attr__( 'Product brand description', 'shop-front' ); ?>" rows="3"><?php echo esc_textarea( $brand->description ); ?></textarea>
+						</div>
+						<div class="msf-form-group">
+							<label for="product_brand_thumbnail_id"><?php esc_html_e( 'Brand Image', 'shop-front' ); ?></label>
+							<input type="hidden" id="product_brand_thumbnail_id" name="product_brand_thumbnail_id" value="<?php echo esc_attr( $thumbnail_id ); ?>">
+							<input type="hidden" id="product_brand_thumbnail_url" name="product_brand_thumbnail_url" value="<?php echo esc_url( $thumbnail_url ); ?>">
+							<div id="brand-single-image" class="image-drop-container<?php echo esc_attr( $thumbnail_id ? ' image-drop-bg' : '' ); ?>">
+								<div id="brand_thumb_img" class="preview-image">
+									<?php if ( $thumbnail_url ) : ?>
+										<img src="<?php echo esc_url( $thumbnail_url ); ?>" alt="<?php esc_attr_e( 'Brand thumbnail', 'shop-front' ); ?>">
+									<?php endif; ?>
+								</div>
+								<div class="image-drop-text">
+									<i class="las la-image"></i>
+									<?php if ( $thumbnail_id ) : ?>
+										<span><?php esc_html_e( 'Remove Image', 'shop-front' ); ?></span>
+									<?php else : ?>
+										<span><?php esc_html_e( 'Upload Image', 'shop-front' ); ?></span>
+									<?php endif; ?>
+								</div>
 							</div>
-							<div class="msf-form-submission-group">
+						</div>
+						<div class="msf-form-submission-group">
 								<?php wp_nonce_field( '_msfc_edit_product_brand_', 'msfc_edit_product_brand_nonce' ); ?>
 								<input type="hidden" name="action" value="msfc_edit_product_brand">
 								<input type="hidden" name="brand_id" value="<?php echo esc_attr( $brand->term_id ); ?>">

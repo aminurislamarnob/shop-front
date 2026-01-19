@@ -9,6 +9,8 @@
 			this.uploadProductImage(); // Upload product image
 			this.uploadProductGallaryImages(); // Upload product gallery images
 			this.removeGalleryImage(); // Remove gallery image
+			this.uploadCategoryImage(); // Upload category image
+			this.uploadBrandImage(); // Upload brand image
 		},
 		handleDropdown: function () {
 			$( document ).on( 'click', '.msfc-dropdown-icon', function () {
@@ -50,9 +52,9 @@
 
 					// Create a new media frame
 					var frame = wp.media( {
-						title: 'Upload Product Image',
+						title: MSF_Front_Script.upload_product_image,
 						button: {
-							text: 'Insert Image',
+							text: MSF_Front_Script.insert_image,
 						},
 						multiple: false,
 					} );
@@ -71,7 +73,9 @@
 						$( '#product_thumb_img' ).html(
 							'<img src="' +
 								attachment.sizes.thumbnail.url +
-								'" alt="Product Image"/>'
+								'" alt="' +
+								MSF_Front_Script.product_image +
+								'"/>'
 						);
 						$( '#product_thumbnail_url' ).val(
 							attachment.sizes.thumbnail.url
@@ -101,9 +105,9 @@
 
 				// Create a new media frame
 				var gframe = wp.media( {
-					title: 'Upload Product Image',
+					title: MSF_Front_Script.upload_gallery_images,
 					button: {
-						text: 'Insert Image',
+						text: MSF_Front_Script.insert_image,
 					},
 					multiple: true,
 				} );
@@ -153,7 +157,9 @@
 									attachment.sizes.thumbnail.url +
 									'" data-id="' +
 									attachment.id +
-									'" alt="Product Gallery Image"/></div>'
+									'" alt="' +
+									MSF_Front_Script.product_gallery_image +
+									'"/></div>'
 							);
 						}
 					}
@@ -195,6 +201,136 @@
 					$( this ).closest( '.preview-image-box' ).remove();
 				}
 			);
+		},
+		uploadCategoryImage: function () {
+			$( '#category-single-image' ).click( function ( event ) {
+				event.preventDefault();
+
+				var image_id = $( '#product_category_thumbnail_url' ).val();
+				var targetContainer = $( this );
+
+				if ( image_id && image_id.length > 0 ) {
+					$( '#product_category_thumbnail_id' ).val( '' );
+					$( '#product_category_thumbnail_url' ).val( '' );
+					$( '#category_thumb_img' ).html( '' );
+					$( targetContainer )
+						.find( '.image-drop-text span' )
+						.text( MSF_Front_Script.upload_image_text );
+					$( targetContainer ).removeClass( 'image-drop-bg' );
+				} else {
+					// If the media frame already exists, reopen it.
+					if ( frame ) {
+						frame.open();
+						return false;
+					}
+
+					// Create a new media frame
+					var frame = wp.media( {
+						title: MSF_Front_Script.upload_category_image,
+						button: {
+							text: MSF_Front_Script.insert_image,
+						},
+						multiple: false,
+					} );
+
+					frame.on( 'select', function () {
+						var attachment = frame
+							.state()
+							.get( 'selection' )
+							.first()
+							.toJSON();
+
+						// Send the attachment id to our hidden input
+						$( '#product_category_thumbnail_id' ).val(
+							attachment.id
+						);
+
+						// Send the attachment URL to our custom image input field.
+						$( '#category_thumb_img' ).html(
+							'<img src="' +
+								attachment.sizes.thumbnail.url +
+								'" alt="' +
+								MSF_Front_Script.category_image +
+								'"/>'
+						);
+						$( '#product_category_thumbnail_url' ).val(
+							attachment.sizes.thumbnail.url
+						);
+
+						//add class to hide text normaly
+						$( targetContainer ).addClass( 'image-drop-bg' );
+						$(
+							'#category-single-image .image-drop-text span'
+						).text( MSF_Front_Script.remove_image_text );
+					} );
+
+					frame.open();
+				}
+			} );
+		},
+		uploadBrandImage: function () {
+			$( '#brand-single-image' ).click( function ( event ) {
+				event.preventDefault();
+
+				var image_id = $( '#product_brand_thumbnail_url' ).val();
+				var targetContainer = $( this );
+
+				if ( image_id && image_id.length > 0 ) {
+					$( '#product_brand_thumbnail_id' ).val( '' );
+					$( '#product_brand_thumbnail_url' ).val( '' );
+					$( '#brand_thumb_img' ).html( '' );
+					$( targetContainer )
+						.find( '.image-drop-text span' )
+						.text( MSF_Front_Script.upload_image_text );
+					$( targetContainer ).removeClass( 'image-drop-bg' );
+				} else {
+					// If the media frame already exists, reopen it.
+					if ( frame ) {
+						frame.open();
+						return false;
+					}
+
+					// Create a new media frame
+					var frame = wp.media( {
+						title: MSF_Front_Script.upload_brand_image,
+						button: {
+							text: MSF_Front_Script.insert_image,
+						},
+						multiple: false,
+					} );
+
+					frame.on( 'select', function () {
+						var attachment = frame
+							.state()
+							.get( 'selection' )
+							.first()
+							.toJSON();
+
+						// Send the attachment id to our hidden input
+						$( '#product_brand_thumbnail_id' ).val( attachment.id );
+
+						// Send the attachment URL to our custom image input field.
+						$( '#brand_thumb_img' ).html(
+							'<img src="' +
+								attachment.sizes.thumbnail.url +
+								'" alt="' +
+								MSF_Front_Script.brand_image +
+								'"/>'
+						);
+						$( '#product_brand_thumbnail_url' ).val(
+							attachment.sizes.thumbnail.url
+						);
+
+						//add class to hide text normaly
+						$( targetContainer ).addClass( 'image-drop-bg' );
+						$( '#brand-single-image .image-drop-text span' ).text(
+							MSF_Front_Script.remove_image_text
+						);
+					} );
+
+					frame.open();
+				}
+			} );
 		},
 	};
 	StoreFrontCommonConfig.init();
