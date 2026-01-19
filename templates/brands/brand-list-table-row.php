@@ -11,6 +11,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <tr id="brand-row-<?php echo esc_attr( $brand->term_id ); ?>">
+	<td class="brand-image" data-title="<?php esc_attr_e( 'Image', 'shop-front' ); ?>">
+		<?php
+		$thumbnail_id = absint( get_term_meta( $brand->term_id, 'thumbnail_id', true ) );
+		if ( $thumbnail_id ) {
+			$image_url = wp_get_attachment_image_url( $thumbnail_id, 'thumbnail' );
+			if ( $image_url ) {
+				?>
+				<img src="<?php echo esc_url( $image_url ); ?>" class="my-shop-front-thumb" alt="<?php echo esc_attr( $brand->name ); ?>">
+				<?php
+			} else {
+				?>
+				<img src="<?php echo esc_url( wc_placeholder_img_src( 'thumbnail' ) ); ?>" class="my-shop-front-thumb" alt="<?php esc_attr_e( 'Placeholder', 'shop-front' ); ?>">
+				<?php
+			}
+		} else {
+			?>
+			<img src="<?php echo esc_url( wc_placeholder_img_src( 'thumbnail' ) ); ?>" class="my-shop-front-thumb" alt="<?php esc_attr_e( 'Placeholder', 'shop-front' ); ?>">
+			<?php
+		}
+		?>
+	</td>
 	<td class="brand-name">
 		<?php echo wp_kses_post( $dash_prefix ); ?><?php echo esc_html( $brand->name ); ?>
 	</td>

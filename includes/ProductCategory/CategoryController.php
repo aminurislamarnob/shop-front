@@ -36,9 +36,21 @@ class CategoryController {
 		$description     = isset( $_POST['product_category_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_category_description'] ) ) : '';
 		$thumbnail_id    = isset( $_POST['product_category_thumbnail_id'] ) ? absint( $_POST['product_category_thumbnail_id'] ) : 0;
 		$display_type    = isset( $_POST['display_type'] ) ? sanitize_text_field( wp_unslash( $_POST['display_type'] ) ) : '';
+		$category_slug   = isset( $_POST['product_category_slug'] ) ? sanitize_title( wp_unslash( $_POST['product_category_slug'] ) ) : '';
 
 		if ( empty( $category_name ) ) {
 			wp_send_json_error( array( 'error' => __( 'Category Name is required', 'shop-front' ) ) );
+		}
+
+		// Generate slug from name if not provided.
+		if ( empty( $category_slug ) ) {
+			$category_slug = sanitize_title( $category_name );
+		}
+
+		// Check if slug already exists.
+		$existing_term = get_term_by( 'slug', $category_slug, 'product_cat' );
+		if ( $existing_term ) {
+			wp_send_json_error( array( 'error' => __( 'Category slug already exists. Please choose a different slug.', 'shop-front' ) ) );
 		}
 
 		// Check for parent category.
@@ -50,6 +62,7 @@ class CategoryController {
 			$category_name,
 			'product_cat',
 			array(
+				'slug'        => $category_slug,
 				'parent'      => $parent_id,
 				'description' => $description,
 			)
@@ -96,6 +109,7 @@ class CategoryController {
 		$description     = isset( $_POST['product_category_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_category_description'] ) ) : '';
 		$thumbnail_id    = isset( $_POST['product_category_thumbnail_id'] ) ? absint( $_POST['product_category_thumbnail_id'] ) : 0;
 		$display_type    = isset( $_POST['display_type'] ) ? sanitize_text_field( wp_unslash( $_POST['display_type'] ) ) : '';
+		$category_slug   = isset( $_POST['product_category_slug'] ) ? sanitize_title( wp_unslash( $_POST['product_category_slug'] ) ) : '';
 
 		if ( empty( $category_id ) ) {
 			wp_send_json_error( array( 'error' => __( 'Category ID is required', 'shop-front' ) ) );
@@ -103,6 +117,25 @@ class CategoryController {
 
 		if ( empty( $category_name ) ) {
 			wp_send_json_error( array( 'error' => __( 'Category Name is required', 'shop-front' ) ) );
+		}
+
+		// Get current category.
+		$current_category = get_term( $category_id, 'product_cat' );
+		if ( ! $current_category || is_wp_error( $current_category ) ) {
+			wp_send_json_error( array( 'error' => __( 'Category not found', 'shop-front' ) ) );
+		}
+
+		// Generate slug from name if not provided.
+		if ( empty( $category_slug ) ) {
+			$category_slug = sanitize_title( $category_name );
+		}
+
+		// Check if slug already exists (but allow it if it's the current category's slug).
+		if ( $category_slug !== $current_category->slug ) {
+			$existing_term = get_term_by( 'slug', $category_slug, 'product_cat' );
+			if ( $existing_term && $existing_term->term_id !== $category_id ) {
+				wp_send_json_error( array( 'error' => __( 'Category slug already exists. Please choose a different slug.', 'shop-front' ) ) );
+			}
 		}
 
 		// Check for parent category.
@@ -115,6 +148,7 @@ class CategoryController {
 			'product_cat',
 			array(
 				'name'        => $category_name,
+				'slug'        => $category_slug,
 				'parent'      => $parent_id,
 				'description' => $description,
 			)

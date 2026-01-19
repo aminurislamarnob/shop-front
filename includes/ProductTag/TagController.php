@@ -33,16 +33,29 @@ class TagController {
 		// Validate inputs.
 		$name        = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
 		$description = isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '';
+		$slug        = isset( $_POST['slug'] ) ? sanitize_title( wp_unslash( $_POST['slug'] ) ) : '';
 
 		if ( empty( $name ) ) {
 			wp_send_json_error( array( 'error' => __( 'Tag Name is required', 'shop-front' ) ) );
 		}
 
-		// Create a new category.
+		// Generate slug from name if not provided.
+		if ( empty( $slug ) ) {
+			$slug = sanitize_title( $name );
+		}
+
+		// Check if slug already exists.
+		$existing_term = get_term_by( 'slug', $slug, 'product_tag' );
+		if ( $existing_term ) {
+			wp_send_json_error( array( 'error' => __( 'Tag slug already exists. Please choose a different slug.', 'shop-front' ) ) );
+		}
+
+		// Create a new tag.
 		$new_category = wp_insert_term(
 			$name,
 			'product_tag',
 			array(
+				'slug'        => $slug,
 				'description' => $description,
 			)
 		);
@@ -73,6 +86,7 @@ class TagController {
 		$tag_id      = isset( $_POST['tag_id'] ) ? absint( $_POST['tag_id'] ) : 0;
 		$name        = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
 		$description = isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '';
+		$slug        = isset( $_POST['slug'] ) ? sanitize_title( wp_unslash( $_POST['slug'] ) ) : '';
 
 		if ( empty( $tag_id ) ) {
 			wp_send_json_error( array( 'error' => __( 'Tag ID is required', 'shop-front' ) ) );
@@ -82,12 +96,32 @@ class TagController {
 			wp_send_json_error( array( 'error' => __( 'Tag Name is required', 'shop-front' ) ) );
 		}
 
+		// Get current tag.
+		$current_tag = get_term( $tag_id, 'product_tag' );
+		if ( ! $current_tag || is_wp_error( $current_tag ) ) {
+			wp_send_json_error( array( 'error' => __( 'Tag not found', 'shop-front' ) ) );
+		}
+
+		// Generate slug from name if not provided.
+		if ( empty( $slug ) ) {
+			$slug = sanitize_title( $name );
+		}
+
+		// Check if slug already exists (but allow it if it's the current tag's slug).
+		if ( $slug !== $current_tag->slug ) {
+			$existing_term = get_term_by( 'slug', $slug, 'product_tag' );
+			if ( $existing_term && $existing_term->term_id !== $tag_id ) {
+				wp_send_json_error( array( 'error' => __( 'Tag slug already exists. Please choose a different slug.', 'shop-front' ) ) );
+			}
+		}
+
 		// Update the tag.
 		$updated_tag = wp_update_term(
 			$tag_id,
 			'product_tag',
 			array(
 				'name'        => $name,
+				'slug'        => $slug,
 				'description' => $description,
 			)
 		);

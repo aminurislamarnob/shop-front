@@ -41,6 +41,11 @@ do_action( 'msf_dashboard_wrapper_start' );
 								<input type="text" class="msf-form-control" id="name" name="name" placeholder="<?php echo esc_attr__( 'Product tag name', 'shop-front' ); ?>" value="<?php echo esc_attr( $product_tag->name ); ?>" required>
 							</div>
 							<div class="msf-form-group">
+								<label for="slug"><?php esc_html_e( 'Slug', 'shop-front' ); ?></label>
+								<input type="text" class="msf-form-control" id="slug" name="slug" placeholder="<?php echo esc_attr__( 'Tag slug', 'shop-front' ); ?>" value="<?php echo esc_attr( $product_tag->slug ); ?>">
+								<small class="msf-form-text"><?php esc_html_e( 'The "slug" is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.', 'shop-front' ); ?></small>
+							</div>
+							<div class="msf-form-group">
 								<label for="description"><?php esc_html_e( 'Tag Description', 'shop-front' ); ?></label>
 								<textarea class="msf-form-control" id="description" name="description" placeholder="<?php echo esc_attr__( 'Product tag description', 'shop-front' ); ?>" rows="3"><?php echo esc_textarea( $product_tag->description ); ?></textarea>
 							</div>

@@ -23,10 +23,15 @@ do_action( 'msf_dashboard_wrapper_start' );
 				<div class="col-md-6">
 					<div class="msf-card">
 						<form id="msfc-add-category">
-							<div class="msf-form-group">
-								<label for="product_category_name"><?php esc_html_e( 'Category Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-								<input type="text" class="msf-form-control" id="product_category_name" name="product_category_name" placeholder="<?php echo esc_attr__( 'Product category name', 'shop-front' ); ?>" required>
-							</div>
+						<div class="msf-form-group">
+							<label for="product_category_name"><?php esc_html_e( 'Category Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
+							<input type="text" class="msf-form-control" id="product_category_name" name="product_category_name" placeholder="<?php echo esc_attr__( 'Product category name', 'shop-front' ); ?>" required>
+						</div>
+						<div class="msf-form-group">
+							<label for="product_category_slug"><?php esc_html_e( 'Slug', 'shop-front' ); ?></label>
+							<input type="text" class="msf-form-control" id="product_category_slug" name="product_category_slug" placeholder="<?php echo esc_attr__( 'Category slug', 'shop-front' ); ?>">
+							<small class="msf-form-text"><?php esc_html_e( 'The "slug" is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.', 'shop-front' ); ?></small>
+						</div>
 							<div class="msf-form-group">
 								<label for="product_parent_category"><?php esc_html_e( 'Select Parent Category', 'shop-front' ); ?></label>
 								<select class="msf-form-control" id="product_parent_category" name="product_parent_category">

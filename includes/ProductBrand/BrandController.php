@@ -35,9 +35,21 @@ class BrandController {
 		$parent_brand = isset( $_POST['product_parent_brand'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_brand'] ) ) : '';
 		$description  = isset( $_POST['product_brand_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_brand_description'] ) ) : '';
 		$thumbnail_id = isset( $_POST['product_brand_thumbnail_id'] ) ? absint( $_POST['product_brand_thumbnail_id'] ) : 0;
+		$brand_slug   = isset( $_POST['product_brand_slug'] ) ? sanitize_title( wp_unslash( $_POST['product_brand_slug'] ) ) : '';
 
 		if ( empty( $brand_name ) ) {
 			wp_send_json_error( array( 'error' => __( 'Brand Name is required', 'shop-front' ) ) );
+		}
+
+		// Generate slug from name if not provided.
+		if ( empty( $brand_slug ) ) {
+			$brand_slug = sanitize_title( $brand_name );
+		}
+
+		// Check if slug already exists.
+		$existing_term = get_term_by( 'slug', $brand_slug, 'product_brand' );
+		if ( $existing_term ) {
+			wp_send_json_error( array( 'error' => __( 'Brand slug already exists. Please choose a different slug.', 'shop-front' ) ) );
 		}
 
 		// Check for parent brand.
@@ -49,6 +61,7 @@ class BrandController {
 			$brand_name,
 			'product_brand',
 			array(
+				'slug'        => $brand_slug,
 				'description' => $description,
 				'parent'      => $parent_id,
 			)
@@ -89,6 +102,7 @@ class BrandController {
 		$parent_brand = isset( $_POST['product_parent_brand'] ) ? sanitize_text_field( wp_unslash( $_POST['product_parent_brand'] ) ) : '';
 		$description  = isset( $_POST['product_brand_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['product_brand_description'] ) ) : '';
 		$thumbnail_id = isset( $_POST['product_brand_thumbnail_id'] ) ? absint( $_POST['product_brand_thumbnail_id'] ) : 0;
+		$brand_slug   = isset( $_POST['product_brand_slug'] ) ? sanitize_title( wp_unslash( $_POST['product_brand_slug'] ) ) : '';
 
 		if ( empty( $brand_id ) ) {
 			wp_send_json_error( array( 'error' => __( 'Brand ID is required', 'shop-front' ) ) );
@@ -96,6 +110,25 @@ class BrandController {
 
 		if ( empty( $brand_name ) ) {
 			wp_send_json_error( array( 'error' => __( 'Brand Name is required', 'shop-front' ) ) );
+		}
+
+		// Get current brand.
+		$current_brand = get_term( $brand_id, 'product_brand' );
+		if ( ! $current_brand || is_wp_error( $current_brand ) ) {
+			wp_send_json_error( array( 'error' => __( 'Brand not found', 'shop-front' ) ) );
+		}
+
+		// Generate slug from name if not provided.
+		if ( empty( $brand_slug ) ) {
+			$brand_slug = sanitize_title( $brand_name );
+		}
+
+		// Check if slug already exists (but allow it if it's the current brand's slug).
+		if ( $brand_slug !== $current_brand->slug ) {
+			$existing_term = get_term_by( 'slug', $brand_slug, 'product_brand' );
+			if ( $existing_term && $existing_term->term_id !== $brand_id ) {
+				wp_send_json_error( array( 'error' => __( 'Brand slug already exists. Please choose a different slug.', 'shop-front' ) ) );
+			}
 		}
 
 		// Check for parent brand.
@@ -108,6 +141,7 @@ class BrandController {
 			'product_brand',
 			array(
 				'name'        => $brand_name,
+				'slug'        => $brand_slug,
 				'description' => $description,
 				'parent'      => $parent_id,
 			)

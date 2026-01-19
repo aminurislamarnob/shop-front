@@ -10,6 +10,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <tr id="category-row-<?php echo esc_attr( $category->term_id ); ?>">
+	<td data-title="<?php esc_attr_e( 'Image', 'shop-front' ); ?>">
+		<?php
+		$thumbnail_id = absint( get_term_meta( $category->term_id, 'thumbnail_id', true ) );
+		if ( $thumbnail_id ) {
+			$image_url = wp_get_attachment_image_url( $thumbnail_id, 'thumbnail' );
+			if ( $image_url ) {
+				?>
+				<img src="<?php echo esc_url( $image_url ); ?>" class="my-shop-front-thumb" alt="<?php echo esc_attr( $category->name ); ?>">
+				<?php
+			} else {
+				?>
+				<img src="<?php echo esc_url( wc_placeholder_img_src( 'thumbnail' ) ); ?>" class="my-shop-front-thumb" alt="<?php esc_attr_e( 'Placeholder', 'shop-front' ); ?>">
+				<?php
+			}
+		} else {
+			?>
+			<img src="<?php echo esc_url( wc_placeholder_img_src( 'thumbnail' ) ); ?>" class="my-shop-front-thumb" alt="<?php esc_attr_e( 'Placeholder', 'shop-front' ); ?>">
+			<?php
+		}
+		?>
+	</td>
 	<td><?php echo esc_html( $dash_prefix . $category->name ); ?></td>
 	<td><?php echo esc_html( wp_trim_words( $category->description, '9', '...' ) ); ?></td>
 	<td><?php echo esc_html( $parent ? $parent->name : '-' ); ?></td>

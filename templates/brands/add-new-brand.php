@@ -23,10 +23,15 @@ do_action( 'msf_dashboard_wrapper_start' );
 				<div class="col-md-6">
 					<div class="msf-card">
 						<form id="msfc-add-brand">
-							<div class="msf-form-group">
-								<label for="product_brand_name"><?php esc_html_e( 'Brand Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-								<input type="text" class="msf-form-control" id="product_brand_name" name="product_brand_name" placeholder="<?php echo esc_attr__( 'Product brand name', 'shop-front' ); ?>" required>
-							</div>
+						<div class="msf-form-group">
+							<label for="product_brand_name"><?php esc_html_e( 'Brand Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
+							<input type="text" class="msf-form-control" id="product_brand_name" name="product_brand_name" placeholder="<?php echo esc_attr__( 'Product brand name', 'shop-front' ); ?>" required>
+						</div>
+						<div class="msf-form-group">
+							<label for="product_brand_slug"><?php esc_html_e( 'Slug', 'shop-front' ); ?></label>
+							<input type="text" class="msf-form-control" id="product_brand_slug" name="product_brand_slug" placeholder="<?php echo esc_attr__( 'Brand slug', 'shop-front' ); ?>">
+							<small class="msf-form-text"><?php esc_html_e( 'The "slug" is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.', 'shop-front' ); ?></small>
+						</div>
 							<div class="msf-form-group">
 								<label for="product_parent_brand"><?php esc_html_e( 'Parent Brand', 'shop-front' ); ?></label>
 								<select class="msf-form-control" id="product_parent_brand" name="product_parent_brand">

@@ -55,6 +55,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>
+							<th width="60"><?php esc_html_e( 'Image', 'shop-front' ); ?></th>
 							<th><?php esc_html_e( 'Name', 'shop-front' ); ?></th>
 							<th><?php esc_html_e( 'Description', 'shop-front' ); ?></th>
 							<th><?php esc_html_e( 'Parent', 'shop-front' ); ?></th>
@@ -66,7 +67,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 					<tbody>
 						<?php
 						if ( empty( $brands_data->brands ) ) {
-							echo '<tr id="brand-row-not-found"><td colspan="6">';
+							echo '<tr id="brand-row-not-found"><td colspan="7">';
 							msf_get_template_part(
 								'not-found',
 								'',
