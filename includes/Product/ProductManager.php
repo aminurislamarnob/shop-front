@@ -47,9 +47,27 @@ class ProductManager {
 			$is_updating = false;
 		}
 
+		// Handle slug.
+		$product_slug = '';
+		if ( isset( $data['product_slug'] ) && ! empty( $data['product_slug'] ) ) {
+			$product_slug = sanitize_title( $data['product_slug'] );
+		} else {
+			// Auto-generate slug from title.
+			$product_slug = sanitize_title( $data['product_title'] );
+		}
+
+		// Check for slug uniqueness.
+		if ( ! empty( $product_slug ) ) {
+			$slug_exists = get_page_by_path( $product_slug, OBJECT, 'product' );
+			if ( $slug_exists && ( ! $is_updating || $slug_exists->ID !== $post_arr['product_id'] ) ) {
+				return new WP_Error( 'slug-exists', __( 'This slug already exists. Please choose a different slug.', 'shop-front' ) );
+			}
+		}
+
 		$post_data = array(
 			'id'                => $is_updating ? $post_arr['product_id'] : '',
 			'name'              => sanitize_text_field( $data['product_title'] ),
+			'slug'              => $product_slug,
 			'type'              => ! empty( $data['post_type'] ) ? $data['post_type'] : 'simple',
 			'description'       => wp_kses_post( $data['product_description'] ),
 			'short_description' => wp_kses_post( $data['product_short_description'] ),

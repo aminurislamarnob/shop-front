@@ -17,7 +17,7 @@ class ProductController {
 		add_action( 'wp_ajax_msfc_add_product_action', array( $this, 'handle_add_product' ) );
 		add_action( 'wp_ajax_msfc_edit_product_action', array( $this, 'handle_edit_product' ) );
 	}
-	
+
 	/**
 	 * Load the new product template.
 	 *
@@ -98,17 +98,17 @@ class ProductController {
 		}
 
 		if ( is_int( $response ) ) {
-			wp_send_json_success( 
-				array( 
+			wp_send_json_success(
+				array(
 					'message' => __( 'Product successfully created', 'shop-front' ),
-					'context' => 'add'
-				) 
+					'context' => 'add',
+				)
 			);
 		} else {
 			wp_send_json_error(
 				array(
-					'error' => __( 'Something wrong, please try again later', 'shop-front' ),
-					'context' => 'add'
+					'error'   => __( 'Something wrong, please try again later', 'shop-front' ),
+					'context' => 'add',
 				)
 			);
 		}
@@ -135,21 +135,22 @@ class ProductController {
 		}
 
 		if ( is_int( $response ) ) {
-			wp_send_json_success( 
+			$product = wc_get_product( $response );
+			wp_send_json_success(
 				array(
-					'message' => __( 'Product successfully updated', 'shop-front' ),
-					'context' => 'edit'
+					'message'   => __( 'Product successfully updated', 'shop-front' ),
+					'context'   => 'edit',
+					'permalink' => get_permalink( $response ),
+					'slug'      => $product ? $product->get_slug() : '',
 				)
 			);
-			
 		} else {
 			wp_send_json_error(
 				array(
-					'error' => __( 'Something wrong, please try again later', 'shop-front' ),
-					'context' => 'edit'
+					'error'   => __( 'Something wrong, please try again later', 'shop-front' ),
+					'context' => 'edit',
 				)
 			);
 		}
 	}
-
 }

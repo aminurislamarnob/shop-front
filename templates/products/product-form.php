@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $product_id      = 0;
 $product         = null;
 $product_title   = '';
+$product_slug    = '';
 $product_content = '';
 $product_excerpt = '';
 $product_status  = 'publish';
@@ -59,6 +60,7 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 	if ( $product ) {
 		// Basic product data.
 		$product_title   = $product->get_name();
+		$product_slug    = $product->get_slug();
 		$product_content = $product->get_description();
 		$product_excerpt = $product->get_short_description();
 		$product_status  = $product->get_status();
@@ -126,12 +128,25 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 			<div class="col-md-8">
 				<div class="msf-card msf-mb-24">
 					<div class="msf-card-content">
-						<div class="msf-form-group">
-							<label for="product_title"><?php esc_html_e( 'Product Title', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
-							<input type="text" class="msf-form-control" id="product_title" name="product_title" placeholder="<?php echo esc_attr__( 'Product name', 'msfc-wfm' ); ?>" value="<?php echo esc_attr( $product_title ); ?>">
-						</div>
-						<div class="msf-form-group">
-							<label for="product_description"><?php esc_html_e( 'Product Description', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
+					<div class="msf-form-group">
+						<label for="product_title"><?php esc_html_e( 'Product Title', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
+						<input type="text" class="msf-form-control" id="product_title" name="product_title" placeholder="<?php echo esc_attr__( 'Product name', 'msfc-wfm' ); ?>" value="<?php echo esc_attr( $product_title ); ?>">
+					</div>
+					<div class="msf-form-group">
+						<label for="product_slug">
+							<?php esc_html_e( 'Product Slug', 'shop-front' ); ?>
+							<?php if ( $is_edit_mode && $product ) : ?>
+								<?php
+								$product_permalink = get_permalink( $product_id );
+								?>
+								<small>(<?php esc_html_e( 'Permalink: ', 'shop-front' ); ?><a href="<?php echo esc_url( $product_permalink ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $product_permalink ); ?></a>)</small>
+							<?php endif; ?>
+						</label>
+						<input type="text" class="msf-form-control" id="product_slug" name="product_slug" placeholder="<?php echo esc_attr__( 'Product slug', 'shop-front' ); ?>" value="<?php echo esc_attr( $product_slug ); ?>">
+						<small class="msf-form-text"><?php esc_html_e( 'It is usually all lowercase and contains only letters, numbers, and hyphens.', 'shop-front' ); ?></small>
+					</div>
+					<div class="msf-form-group">
+						<label for="product_description"><?php esc_html_e( 'Product Description', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
 							<?php
 							$editor_id = 'product_description';
 							$settings  = array(
