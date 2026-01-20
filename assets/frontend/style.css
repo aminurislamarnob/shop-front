@@ -448,6 +448,7 @@ template {
   color: var(--msf-input-text-color);
   margin-bottom: 5px;
 }
+
 .my-shop-front-container .msf-form-control{
   width: 100%;
 }

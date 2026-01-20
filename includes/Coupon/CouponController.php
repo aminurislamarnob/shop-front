@@ -187,14 +187,12 @@ class CouponController {
 			wp_send_json_error( array( 'error' => __( 'Invalid coupon ID.', 'shop-front' ) ) );
 		}
 
-		$coupon = new \WC_Coupon( $coupon_id );
+		// Use CouponManager so hooks like msf_coupon_deleted fire consistently.
+		$response = ( new CouponManager() )->delete_coupon( $coupon_id, false ); // Soft delete (move to trash).
 
-		if ( ! $coupon->get_id() ) {
-			wp_send_json_error( array( 'error' => __( 'Coupon not found.', 'shop-front' ) ) );
+		if ( is_wp_error( $response ) ) {
+			wp_send_json_error( array( 'error' => $response->get_error_message() ) );
 		}
-
-		// Soft delete (move to trash).
-		$coupon->delete();
 
 		wp_send_json_success( array( 'message' => __( 'Coupon successfully deleted', 'shop-front' ) ) );
 	}

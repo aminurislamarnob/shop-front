@@ -10,6 +10,48 @@ use WC_Coupon;
  */
 class CouponManager {
 	/**
+	 * Update coupon post status/visibility after saving WC_Coupon props.
+	 *
+	 * @param int   $coupon_id Coupon ID.
+	 * @param array $data Coupon request data.
+	 *
+	 * @return true|WP_Error
+	 */
+	private function update_coupon_post_state( $coupon_id, $data ) {
+		$status     = isset( $data['coupon_status'] ) ? sanitize_key( wp_unslash( $data['coupon_status'] ) ) : 'publish';
+		$visibility = isset( $data['coupon_visibility'] ) ? sanitize_key( wp_unslash( $data['coupon_visibility'] ) ) : 'public';
+
+		$allowed_statuses     = array( 'publish', 'pending', 'draft' );
+		$allowed_visibilities = array( 'public', 'private' );
+
+		if ( ! in_array( $status, $allowed_statuses, true ) ) {
+			$status = 'publish';
+		}
+
+		if ( ! in_array( $visibility, $allowed_visibilities, true ) ) {
+			$visibility = 'public';
+		}
+
+		$post_status = $status;
+
+		if ( 'private' === $visibility ) {
+			$post_status = 'private';
+		}
+
+		$post_arr = array(
+			'ID'          => $coupon_id,
+			'post_status' => $post_status,
+		);
+
+		$updated = wp_update_post( $post_arr, true );
+		if ( is_wp_error( $updated ) ) {
+			return $updated;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Create a new coupon
 	 *
 	 * @param array $data Coupon data.
@@ -51,6 +93,11 @@ class CouponManager {
 
 			// Save coupon.
 			$coupon_id = $coupon->save();
+
+			$post_state = $this->update_coupon_post_state( $coupon_id, $data );
+			if ( is_wp_error( $post_state ) ) {
+				return $post_state;
+			}
 
 			do_action( 'msf_new_coupon_created', $coupon_id, $data );
 
@@ -106,6 +153,11 @@ class CouponManager {
 			}
 
 			$coupon->save();
+
+			$post_state = $this->update_coupon_post_state( $coupon_id, $data );
+			if ( is_wp_error( $post_state ) ) {
+				return $post_state;
+			}
 
 			do_action( 'msf_coupon_updated', $coupon_id, $data );
 

@@ -4,6 +4,8 @@
 	var StoreFrontFormHandler = {
 		init: function () {
 			this.bindEvents();
+			this.initDatePicker();
+			this.initProductSearch();
 		},
 
 		bindEvents: function () {
@@ -19,6 +21,114 @@
 			this.handleCouponAdd();
 			this.handleCouponEdit();
 			this.handleCouponDelete();
+			this.handleGenerateCouponCode();
+		},
+
+		/**
+		 * Initialize datepicker for expiry date field
+		 */
+		initDatePicker: function () {
+			if ( $( '#expiry_date' ).length ) {
+				$( '#expiry_date' ).datepicker( {
+					defaultDate: '',
+					dateFormat: 'yy-mm-dd',
+					numberOfMonths: 1,
+					showButtonPanel: true,
+					minDate: 0, // Prevent selecting past dates
+				} );
+			}
+		},
+
+		/**
+		 * Initialize AJAX product search for coupon form
+		 */
+		initProductSearch: function () {
+			$( ':input.wc-product-search' )
+				.filter( ':not(.enhanced)' )
+				.each( function () {
+					var select2_args = {
+						allowClear: $( this ).data( 'allow_clear' )
+							? true
+							: false,
+						placeholder: $( this ).data( 'placeholder' ),
+						minimumInputLength: $( this ).data(
+							'minimum_input_length'
+						)
+							? $( this ).data( 'minimum_input_length' )
+							: '3',
+						escapeMarkup: function ( m ) {
+							return m;
+						},
+						ajax: {
+							url: MSF_Form_Handler.ajax_url,
+							dataType: 'json',
+							delay: 250,
+							data: function ( params ) {
+								return {
+									term: params.term,
+									action:
+										$( this ).data( 'action' ) ||
+										'woocommerce_json_search_products_and_variations',
+									security:
+										MSF_Form_Handler.search_products_nonce,
+									exclude: $( this ).data( 'exclude' ),
+									exclude_type:
+										$( this ).data( 'exclude_type' ),
+									include: $( this ).data( 'include' ),
+									limit: $( this ).data( 'limit' ),
+									display_stock:
+										$( this ).data( 'display_stock' ),
+								};
+							},
+							processResults: function ( data ) {
+								var terms = [];
+								if ( data ) {
+									$.each( data, function ( id, text ) {
+										terms.push( { id: id, text: text } );
+									} );
+								}
+								return {
+									results: terms,
+								};
+							},
+							cache: true,
+						},
+					};
+
+					$( this ).selectWoo( select2_args ).addClass( 'enhanced' );
+				} );
+		},
+
+		/**
+		 * Handle generate coupon code button click
+		 */
+		handleGenerateCouponCode: function () {
+			$( document ).on(
+				'click',
+				'.button.generate-coupon-code',
+				function ( e ) {
+					e.preventDefault();
+
+					var $coupon_code_field = $( '#coupon_code' ),
+						result = '',
+						generator = MSF_Form_Handler.coupon_code_generator;
+
+					// Generate random code
+					for ( var i = 0; i < generator.char_length; i++ ) {
+						result += generator.characters.charAt(
+							Math.floor(
+								Math.random() * generator.characters.length
+							)
+						);
+					}
+
+					// Add prefix and suffix
+					result = generator.prefix + result + generator.suffix;
+
+					// Set the generated code to the input field
+					$coupon_code_field.trigger( 'focus' ).val( result );
+				}
+			);
 		},
 
 		/**
@@ -580,8 +690,6 @@
 						return;
 					}
 
-					self.showLoading( MSF_Form_Handler.i18n.deleting );
-
 					var formData = new FormData();
 					formData.append( 'id', brandId );
 					formData.append( 'action', 'msfc_delete_product_brand' );
@@ -733,8 +841,6 @@
 
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
-
-				self.showLoading();
 
 				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
