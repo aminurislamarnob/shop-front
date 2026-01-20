@@ -640,9 +640,7 @@
 					Swal.fire( {
 						icon: 'warning',
 						title: MSF_Form_Handler.i18n.validation_error,
-						text:
-							MSF_Form_Handler.i18n.coupon_code_required ||
-							'Coupon code is required.',
+						text: MSF_Form_Handler.i18n.coupon_code_required,
 						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
 					} );
 					return;
@@ -652,9 +650,7 @@
 					Swal.fire( {
 						icon: 'warning',
 						title: MSF_Form_Handler.i18n.validation_error,
-						text:
-							MSF_Form_Handler.i18n.coupon_amount_required ||
-							'Coupon amount is required.',
+						text: MSF_Form_Handler.i18n.coupon_amount_required,
 						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
 					} );
 					return;
@@ -719,9 +715,7 @@
 					Swal.fire( {
 						icon: 'warning',
 						title: MSF_Form_Handler.i18n.validation_error,
-						text:
-							MSF_Form_Handler.i18n.coupon_code_required ||
-							'Coupon code is required.',
+						text: MSF_Form_Handler.i18n.coupon_code_required,
 						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
 					} );
 					return;
@@ -731,9 +725,7 @@
 					Swal.fire( {
 						icon: 'warning',
 						title: MSF_Form_Handler.i18n.validation_error,
-						text:
-							MSF_Form_Handler.i18n.coupon_amount_required ||
-							'Coupon amount is required.',
+						text: MSF_Form_Handler.i18n.coupon_amount_required,
 						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
 					} );
 					return;
@@ -795,25 +787,18 @@
 				}
 
 				Swal.fire( {
-					title:
-						MSF_Form_Handler.i18n.are_you_sure || 'Are you sure?',
-					text:
-						MSF_Form_Handler.i18n.delete_coupon_warning ||
-						'This will delete the coupon permanently. This action cannot be undone.',
+					title: MSF_Form_Handler.i18n.are_you_sure,
+					text: MSF_Form_Handler.i18n.delete_coupon_warning,
 					icon: 'warning',
 					showCancelButton: true,
-					confirmButtonText:
-						MSF_Form_Handler.i18n.yes_delete || 'Yes, delete it!',
-					cancelButtonText:
-						MSF_Form_Handler.i18n.cancel_button || 'Cancel',
+					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
+					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
 				} ).then( function ( result ) {
 					if ( ! result.isConfirmed ) {
 						return;
 					}
 
-					self.showLoading(
-						MSF_Form_Handler.i18n.deleting || 'Deleting...'
-					);
+					self.showLoading( MSF_Form_Handler.i18n.deleting );
 
 					var formData = new FormData( $form[ 0 ] );
 
