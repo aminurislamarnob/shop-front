@@ -134,20 +134,12 @@ do_action( 'msf_dashboard_wrapper_start' );
 									$usage_count = $coupon->get_usage_count();
 									$usage_limit = $coupon->get_usage_limit();
 
-									if ( $usage_limit ) {
-										printf(
-											/* translators: 1: usage count 2: usage limit */
-											esc_html__( '%1$d / %2$d', 'shop-front' ),
-											absint( $usage_count ),
-											absint( $usage_limit )
-										);
-									} else {
-										printf(
-											/* translators: %d: usage count */
-											esc_html__( '%d / &infin;', 'shop-front' ),
-											absint( $usage_count )
-										);
-									}
+									printf(
+										/* translators: 1: usage count 2: usage limit */
+										esc_html__( '%1$s / %2$s', 'shop-front' ),
+										esc_html( absint( $usage_count ) ),
+										$usage_limit ? esc_html( absint( $usage_limit ) ) : '&infin;'
+									);
 									?>
 								</td>
 								<td data-title="<?php esc_attr_e( 'Expiry Date', 'shop-front' ); ?>">

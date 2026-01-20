@@ -207,6 +207,15 @@ class Rewrites {
 			case 'edit-brand':
 				$title = __( 'Edit Product Brand', 'shop-front' );
 				break;
+			case 'coupons':
+				$title = __( 'Coupons', 'shop-front' );
+				break;
+			case 'add-new-coupon':
+				$title = __( 'Add New Coupon', 'shop-front' );
+				break;
+			case 'edit-coupon':
+				$title = __( 'Edit Coupon', 'shop-front' );
+				break;
 			default:
 				$title = '';
 				break;

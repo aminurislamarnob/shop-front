@@ -95,7 +95,7 @@ class CouponController {
 			wp_send_json_error( array( 'error' => $response->get_error_message() ) );
 		}
 
-		if ( is_int( $response ) ) {
+		if ( is_int( $response ) && $response > 0 ) {
 			wp_send_json_success(
 				array(
 					'message'   => __( 'Coupon successfully created', 'shop-front' ),
