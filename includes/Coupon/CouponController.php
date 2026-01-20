@@ -133,6 +133,17 @@ class CouponController {
 			wp_send_json_error( array( 'error' => __( 'Invalid coupon ID.', 'shop-front' ) ) );
 		}
 
+		// Validate coupon code if provided.
+		if ( isset( $_POST['coupon_code'] ) && ! empty( $_POST['coupon_code'] ) ) {
+			$coupon_code = wc_format_coupon_code( sanitize_text_field( wp_unslash( $_POST['coupon_code'] ) ) );
+			$existing_id = wc_get_coupon_id_by_code( $coupon_code );
+
+			// Check if the code exists and belongs to a different coupon.
+			if ( $existing_id && $existing_id !== $coupon_id ) {
+				wp_send_json_error( array( 'error' => __( 'Coupon code already exists. Please choose a different code.', 'shop-front' ) ) );
+			}
+		}
+
 		$response = ( new CouponManager() )->update_coupon( $coupon_id, $_POST );
 
 		if ( is_wp_error( $response ) ) {

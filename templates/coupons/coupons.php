@@ -84,7 +84,8 @@ do_action( 'msf_dashboard_wrapper_start' );
 							<th><?php esc_html_e( 'Status', 'shop-front' ); ?></th>
 							<th class="text-right"><?php esc_html_e( 'Actions', 'shop-front' ); ?></th>
 						</tr>
-						<tbody>
+					</thead>
+					<tbody>
 						<?php
 						while ( $coupon_query->have_posts() ) :
 							$coupon_query->the_post();
@@ -191,8 +192,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 						endwhile;
 						wp_reset_postdata();
 						?>
-						</tbody>
-					</thead>
+					</tbody>
 				</table>
 					<?php
 					$total_pages = $coupon_query->max_num_pages;
