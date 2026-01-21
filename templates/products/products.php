@@ -23,35 +23,57 @@ do_action( 'msf_dashboard_wrapper_start' );
 			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
 			<div class="msf-table-header-part">
 				<div class="row">
-					<div class="col-md-6">
-					<form action="" method="get">
-						<div class="msf-table-search-input">
-							<div class="msf-table-search-icon">
-								<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
-									<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
-								</svg>
-							</div>
-							<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Product', 'shop-front' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
+					<div class="col-md-3">
+						<form action="" method="get">
+							<div class="msf-table-search-input">
+								<div class="msf-table-search-icon">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
+									</svg>
+								</div>
+								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Product', 'shop-front' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
 							</div>
 						</form>
 					</div>
-					<div class="col-md-6 text-right">
-						<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-product' ) ); ?>" class="my-shop-front-button">
-							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
-								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
-							</svg>
-							<?php esc_html_e( 'Add Product', 'shop-front' ); ?>
-						</a>
+					<div class="col-md-9 text-right">
+						<div class="row justify-content-end">
+							<div class="col-md-auto">
+								<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-product' ) ); ?>" class="my-shop-front-button">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+										<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
+									</svg>
+									<?php esc_html_e( 'Add Product', 'shop-front' ); ?>
+								</a>
+							</div>
+							<div class="col-md-auto">
+								<button type="button" class="my-shop-front-button msf-filter-toggle" id="msf-filter-toggle">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+	<path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
+</svg>
+									<?php esc_html_e( 'Filter', 'shop-front' ); ?>
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
+			<!-- Off-canvas Filter -->
+			<?php msf_get_template_part( 'products/product-filters-offcanvas' ); ?>
 			<div class="msf-table-responsive">
 				<?php
 				$current_page = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 				$search_term  = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
 
+				// Get filter parameters
+				$filters = array(
+					'category'     => isset( $_GET['product_cat'] ) ? absint( $_GET['product_cat'] ) : '',
+					'product_type' => isset( $_GET['product_type'] ) ? sanitize_text_field( wp_unslash( $_GET['product_type'] ) ) : '',
+					'stock_status' => isset( $_GET['stock_status'] ) ? sanitize_text_field( wp_unslash( $_GET['stock_status'] ) ) : '',
+					'brand'        => isset( $_GET['product_brand'] ) ? absint( $_GET['product_brand'] ) : '',
+				);
+
 				$products_obj  = new Products();
-				$products_data = $products_obj->get_paginated_products( $current_page, $search_term );
+				$products_data = $products_obj->get_paginated_products( $current_page, $search_term, $filters );
 				$product_query = $products_data->products;
 
 				if ( $product_query->found_posts > 0 ) {

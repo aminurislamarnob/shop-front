@@ -17,9 +17,10 @@ class Products {
 	 *
 	 * @param int    $page Current page number.
 	 * @param string $search_term Search term to filter products.
+	 * @param array  $filters Filters array (category, product_type, stock_status, brand).
 	 * @return object
 	 */
-	public function get_paginated_products( $page = 1, $search_term = '' ) {
+	public function get_paginated_products( $page = 1, $search_term = '', $filters = array() ) {
 		// Get configuration from filters
 		$statuses = apply_filters( 'msf_product_listing_post_statuses', array( 'publish', 'draft', 'pending', 'future' ) );
 		$per_page = apply_filters( 'msf_products_per_page', 10 );
@@ -46,6 +47,9 @@ class Products {
 			);
 		}
 
+		// Apply filters (similar to WooCommerce admin)
+		$query = $this->apply_product_filters( $query, $filters );
+
 		$product_query = new \WP_Query( $query );
 
 		// Remove filter after query
@@ -60,7 +64,60 @@ class Products {
 			'current_page'  => $page,
 			'per_page'      => $per_page,
 			'search_term'   => $search_term,
+			'filters'       => $filters,
 		);
+	}
+
+	/**
+	 * Apply product filters to query (similar to WooCommerce admin).
+	 *
+	 * @param array $query WP_Query arguments.
+	 * @param array $filters Filters array.
+	 * @return array Modified query arguments.
+	 */
+	private function apply_product_filters( $query, $filters ) {
+		// Filter by category
+		if ( ! empty( $filters['category'] ) ) {
+			$query['tax_query'][] = array(
+				'taxonomy' => 'product_cat',
+				'field'    => 'term_id',
+				'terms'    => absint( $filters['category'] ),
+			);
+		}
+
+		// Filter by brand
+		if ( ! empty( $filters['brand'] ) ) {
+			$query['tax_query'][] = array(
+				'taxonomy' => 'product_brand',
+				'field'    => 'term_id',
+				'terms'    => absint( $filters['brand'] ),
+			);
+		}
+
+		// Filter by product type
+		if ( ! empty( $filters['product_type'] ) ) {
+			$query['tax_query'][] = array(
+				'taxonomy' => 'product_type',
+				'field'    => 'slug',
+				'terms'    => sanitize_text_field( $filters['product_type'] ),
+			);
+		}
+
+		// Filter by stock status
+		if ( ! empty( $filters['stock_status'] ) ) {
+			$query['meta_query'][] = array(
+				'key'     => '_stock_status',
+				'value'   => sanitize_text_field( $filters['stock_status'] ),
+				'compare' => '=',
+			);
+		}
+
+		// Set tax_query relation if multiple taxonomies
+		if ( isset( $query['tax_query'] ) && count( $query['tax_query'] ) > 1 ) {
+			$query['tax_query']['relation'] = 'AND';
+		}
+
+		return $query;
 	}
 
 	/**

@@ -11,6 +11,7 @@
 			this.removeGalleryImage(); // Remove gallery image
 			this.uploadCategoryImage(); // Upload category image
 			this.uploadBrandImage(); // Upload brand image
+			this.handleFilterOffcanvas(); // Handle filter off-canvas
 		},
 		handleDropdown: function () {
 			$( document ).on( 'click', '.msfc-dropdown-icon', function () {
@@ -329,6 +330,44 @@
 					} );
 
 					frame.open();
+				}
+			} );
+		},
+		handleFilterOffcanvas: function () {
+			var filterToggle = $( '#msf-filter-toggle' );
+			var filterOffcanvas = $( '#msf-filter-offcanvas' );
+			var filterClose = $( '#msf-filter-close' );
+			var filterOverlay = $( '#msf-filter-overlay' );
+
+			// Open off-canvas when filter button is clicked
+			filterToggle.on( 'click', function ( event ) {
+				event.preventDefault();
+				filterOffcanvas.addClass( 'active' );
+				filterOverlay.addClass( 'active' );
+				$( 'body' ).css( 'overflow', 'hidden' );
+			} );
+
+			// Close off-canvas when close button is clicked
+			filterClose.on( 'click', function ( event ) {
+				event.preventDefault();
+				filterOffcanvas.removeClass( 'active' );
+				filterOverlay.removeClass( 'active' );
+				$( 'body' ).css( 'overflow', 'auto' );
+			} );
+
+			// Close off-canvas when overlay is clicked
+			filterOverlay.on( 'click', function () {
+				filterOffcanvas.removeClass( 'active' );
+				filterOverlay.removeClass( 'active' );
+				$( 'body' ).css( 'overflow', 'auto' );
+			} );
+
+			// Close off-canvas on Escape key
+			$( document ).on( 'keydown', function ( event ) {
+				if ( event.key === 'Escape' ) {
+					filterOffcanvas.removeClass( 'active' );
+					filterOverlay.removeClass( 'active' );
+					$( 'body' ).css( 'overflow', 'auto' );
 				}
 			} );
 		},
