@@ -76,15 +76,29 @@ do_action( 'msf_dashboard_wrapper_start' );
 						</form>
 					</div>
 					<div class="col-md-6 text-right">
-						<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-order' ) ); ?>" class="my-shop-front-button">
-							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
-								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
-							</svg>
-							<?php esc_html_e( 'Add Order', 'shop-front' ); ?>
-						</a>
+						<div class="row justify-content-end">
+							<div class="col-md-auto">
+								<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-order' ) ); ?>" class="my-shop-front-button">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+										<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
+									</svg>
+									<?php esc_html_e( 'Add Order', 'shop-front' ); ?>
+								</a>
+							</div>
+							<div class="col-md-auto">
+								<button type="button" class="my-shop-front-button msf-filter-toggle" id="msf-order-filter-toggle">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+										<path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
+									</svg>
+									<?php esc_html_e( 'Filter', 'shop-front' ); ?>
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
+			<!-- Off-canvas Order Filter -->
+			<?php msf_get_template_part( 'orders/order-filters-offcanvas' ); ?>
 			<div class="msf-table-responsive">
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
@@ -103,9 +117,18 @@ do_action( 'msf_dashboard_wrapper_start' );
 							<?php
 							$current_page    = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
 							$orders_per_page = apply_filters( 'msf_orders_per_page', 10 );
-							$search_term     = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
-							$search_filter   = isset( $_GET['search-filter'] ) ? sanitize_text_field( wp_unslash( $_GET['search-filter'] ) ) : 'all';
-							$orders          = $orders_obj->get_all_orders( $orders_per_page, $current_page, $search_term, $search_filter );
+
+							// Build filters array
+							$filters = array(
+								'search_term'    => isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '',
+								'search_filter'  => isset( $_GET['search-filter'] ) ? sanitize_text_field( wp_unslash( $_GET['search-filter'] ) ) : 'all',
+								'order_status'   => isset( $_GET['order_status'] ) ? sanitize_text_field( wp_unslash( $_GET['order_status'] ) ) : '',
+								'_customer_user' => isset( $_GET['_customer_user'] ) ? sanitize_text_field( wp_unslash( $_GET['_customer_user'] ) ) : '',
+								'order_channel'  => isset( $_GET['order_channel'] ) ? sanitize_text_field( wp_unslash( $_GET['order_channel'] ) ) : '',
+								'm'              => isset( $_GET['m'] ) ? sanitize_text_field( wp_unslash( $_GET['m'] ) ) : '',
+							);
+
+							$orders = $orders_obj->get_all_orders( $orders_per_page, $current_page, $filters );
 
 							if ( empty( $orders ) ) {
 								echo '<tr id="order-row-not-found"><td colspan="8">';

@@ -12,6 +12,7 @@
 			this.uploadCategoryImage(); // Upload category image
 			this.uploadBrandImage(); // Upload brand image
 			this.handleFilterOffcanvas(); // Handle filter off-canvas
+			this.handleOrderFilterOffcanvas(); // Handle order filter off-canvas
 		},
 		handleDropdown: function () {
 			$( document ).on( 'click', '.msfc-dropdown-icon', function () {
@@ -367,6 +368,44 @@
 				if ( event.key === 'Escape' ) {
 					filterOffcanvas.removeClass( 'active' );
 					filterOverlay.removeClass( 'active' );
+					$( 'body' ).css( 'overflow', 'auto' );
+				}
+			} );
+		},
+		handleOrderFilterOffcanvas: function () {
+			var orderFilterToggle = $( '#msf-order-filter-toggle' );
+			var orderFilterOffcanvas = $( '#msf-order-filter-offcanvas' );
+			var orderFilterClose = $( '#msf-order-filter-close' );
+			var orderFilterOverlay = $( '#msf-order-filter-overlay' );
+
+			// Open off-canvas when filter button is clicked
+			orderFilterToggle.on( 'click', function ( event ) {
+				event.preventDefault();
+				orderFilterOffcanvas.addClass( 'active' );
+				orderFilterOverlay.addClass( 'active' );
+				$( 'body' ).css( 'overflow', 'hidden' );
+			} );
+
+			// Close off-canvas when close button is clicked
+			orderFilterClose.on( 'click', function ( event ) {
+				event.preventDefault();
+				orderFilterOffcanvas.removeClass( 'active' );
+				orderFilterOverlay.removeClass( 'active' );
+				$( 'body' ).css( 'overflow', 'auto' );
+			} );
+
+			// Close off-canvas when overlay is clicked
+			orderFilterOverlay.on( 'click', function () {
+				orderFilterOffcanvas.removeClass( 'active' );
+				orderFilterOverlay.removeClass( 'active' );
+				$( 'body' ).css( 'overflow', 'auto' );
+			} );
+
+			// Close off-canvas on Escape key
+			$( document ).on( 'keydown', function ( event ) {
+				if ( event.key === 'Escape' ) {
+					orderFilterOffcanvas.removeClass( 'active' );
+					orderFilterOverlay.removeClass( 'active' );
 					$( 'body' ).css( 'overflow', 'auto' );
 				}
 			} );
