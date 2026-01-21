@@ -36,6 +36,75 @@
 			);
 		},
 		/**
+		 * Common validation function for required fields
+		 * Makes field border red and shows error message below invalid field
+		 *
+		 * @param {jQuery} $form - The form element
+		 * @param {Array} fields - Array of objects with selector and message properties
+		 * @return {boolean} - Returns true if all fields are valid, false otherwise
+		 */
+		validateRequiredFields: function ( $form, fields ) {
+			var isValid = true;
+			var self = this;
+
+			// Clear all previous errors
+			$form.find( '.msf-field-error' ).remove();
+			$form
+				.find( '.msf-form-control' )
+				.removeClass( 'msf-field-invalid' );
+
+			// Validate each field
+			$.each( fields, function ( index, field ) {
+				var $field = $form.find( field.selector );
+				var value = $field.val();
+
+				// Check if field is empty or invalid
+				var isEmpty = false;
+				if ( $field.is( 'select' ) ) {
+					isEmpty = ! value || value === '';
+				} else if ( field.type === 'number' ) {
+					isEmpty =
+						! value ||
+						value.trim() === '' ||
+						parseFloat( value ) < 0;
+				} else {
+					isEmpty = ! value || value.trim() === '';
+				}
+
+				if ( isEmpty ) {
+					isValid = false;
+					self.markFieldAsInvalid( $field, field.message );
+				}
+			} );
+
+			return isValid;
+		},
+
+		/**
+		 * Mark a field as invalid by adding red border and error message
+		 *
+		 * @param {jQuery} $field - The field element
+		 * @param {string} message - Error message to display
+		 */
+		markFieldAsInvalid: function ( $field, message ) {
+			// Add invalid class to field
+			$field.addClass( 'msf-field-invalid' );
+
+			// Create error message element
+			var $errorMsg = $(
+				'<span class="msf-field-error">' + message + '</span>'
+			);
+
+			// Insert error message after the field
+			$field.after( $errorMsg );
+
+			// Remove error on field change
+			$field.one( 'input change', function () {
+				$( this ).removeClass( 'msf-field-invalid' );
+				$( this ).siblings( '.msf-field-error' ).remove();
+			} );
+		},
+		/**
 		 * Handle Product Submit (Add/Edit)
 		 */
 		handleProductSubmit: function () {
@@ -45,6 +114,27 @@
 				e.preventDefault();
 
 				var $form = $( this );
+
+				// Define required fields for validation
+				var requiredFields = [
+					{
+						selector: '#product_title',
+						message: MSF_Form_Handler.i18n.product_title_required,
+					},
+					{
+						selector: '#post_type',
+						message: MSF_Form_Handler.i18n.product_type_required,
+					},
+					{
+						selector: '#post_status',
+						message: MSF_Form_Handler.i18n.product_status_required,
+					},
+				];
+
+				// Validate required fields
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
+					return;
+				}
 
 				// Force TinyMCE editor content to update the textarea
 				if ( typeof tinyMCE !== 'undefined' ) {

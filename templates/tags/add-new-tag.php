@@ -25,7 +25,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 						<form id="msfc-add-tag">
 						<div class="msf-form-group">
 							<label for="name"><?php esc_html_e( 'Tag Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-							<input type="text" class="msf-form-control" id="name" name="name" placeholder="<?php echo esc_attr__( 'Product tag name', 'shop-front' ); ?>" required>
+							<input type="text" class="msf-form-control" id="name" name="name" placeholder="<?php echo esc_attr__( 'Product tag name', 'shop-front' ); ?>">
 						</div>
 						<div class="msf-form-group">
 							<label for="slug"><?php esc_html_e( 'Slug', 'shop-front' ); ?></label>

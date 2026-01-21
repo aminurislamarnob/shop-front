@@ -252,7 +252,7 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 						<div class="row">
 							<div class="col-md-12">
 								<div class="msf-form-group">
-									<label for="product_category"><?php esc_html_e( 'Select Category', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
+									<label for="product_category"><?php esc_html_e( 'Select Category', 'msfc-wfm' ); ?></label>
 									<select class="msf-form-control msf-select2" id="product_category" name="product_category[]" data-placeholder="<?php esc_attr_e( 'Select category', 'msfc-wfm' ); ?>" data-allow_clear="true" multiple>
 										<?php
 										$all_categories = get_categories(

@@ -25,7 +25,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 						<form id="msfc-add-brand">
 						<div class="msf-form-group">
 							<label for="product_brand_name"><?php esc_html_e( 'Brand Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-							<input type="text" class="msf-form-control" id="product_brand_name" name="product_brand_name" placeholder="<?php echo esc_attr__( 'Product brand name', 'shop-front' ); ?>" required>
+							<input type="text" class="msf-form-control" id="product_brand_name" name="product_brand_name" placeholder="<?php echo esc_attr__( 'Product brand name', 'shop-front' ); ?>">
 						</div>
 						<div class="msf-form-group">
 							<label for="product_brand_slug"><?php esc_html_e( 'Slug', 'shop-front' ); ?></label>
