@@ -3011,3 +3011,51 @@ table.msf-table.order-items .wc-order-item-thumbnail img {
   background: #94a3b8;
 }
 
+/* Order Search Form Styles */
+.msf-search-form.msf-order-search-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.msf-search-form.msf-order-search-form .msf-form-group{
+  margin-bottom: 0;
+}
+
+.msf-search-form.msf-order-search-form .msf-table-search-input {
+  min-width: 290px;
+}
+
+.msf-search-form.msf-order-search-form #order-search-filter {
+  width: 170px;
+  padding: 8px 12px;
+  border: 1px solid var(--msf-input-border-color);
+  border-radius: 4px;
+  background-color: #ffffff;
+  font-size: 14px;
+  color: var(--msf-input-text-color);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.msf-search-form.msf-order-search-form #order-search-filter:focus {
+  outline: none;
+  border-color: var(--primary-bg);
+  box-shadow: 0 0 0 3px rgba(45, 91, 219, 0.1);
+}
+
+@media (max-width: 768px) {
+  .msf-search-form.msf-order-search-form {
+    flex-direction: column;
+  }
+
+  .msf-search-form.msf-order-search-form #order-search-filter {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+.msf-filter-offcanvas-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
