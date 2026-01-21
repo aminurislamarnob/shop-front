@@ -205,6 +205,8 @@ class Assets {
 
 						// Product messages.
 						'product_title_required'         => __( 'Please enter product title.', 'shop-front' ),
+						'product_type_required'          => __( 'Please select a product type.', 'shop-front' ),
+						'product_status_required'        => __( 'Please select a product status.', 'shop-front' ),
 						'product_description_required'   => __( 'Please enter product description.', 'shop-front' ),
 						'product_category_required'      => __( 'Please select at least one category.', 'shop-front' ),
 						'product_price_required'         => __( 'Please enter product price.', 'shop-front' ),
@@ -216,6 +218,7 @@ class Assets {
 
 						// Coupon messages.
 						'coupon_code_required'           => __( 'Coupon code is required.', 'shop-front' ),
+						'coupon_discount_type_required'  => __( 'Please select a discount type.', 'shop-front' ),
 						'coupon_amount_required'         => __( 'Coupon amount is required.', 'shop-front' ),
 						'coupon_adding'                  => __( 'Adding Coupon...', 'shop-front' ),
 						'coupon_added_successfully'      => __( 'Coupon added successfully!', 'shop-front' ),

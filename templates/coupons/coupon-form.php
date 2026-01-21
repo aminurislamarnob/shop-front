@@ -91,14 +91,14 @@ $discount_types = wc_get_coupon_types();
 					<div class="msf-form-group">
 						<label for="coupon_code"><?php esc_html_e( 'Coupon Code', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
 						<div class="msf-coupon-code-wrapper">
-							<input type="text" class="msf-form-control" id="coupon_code" name="coupon_code" placeholder="<?php echo esc_attr__( 'Enter coupon code', 'shop-front' ); ?>" value="<?php echo esc_attr( $coupon_code ); ?>" required>
+							<input type="text" class="msf-form-control" id="coupon_code" name="coupon_code" placeholder="<?php echo esc_attr__( 'Enter coupon code', 'shop-front' ); ?>" value="<?php echo esc_attr( $coupon_code ); ?>">
 						</div>
 						<small class="msf-form-text"><a href="#" class="button generate-coupon-code"><?php esc_html_e( 'Generate coupon code', 'shop-front' ); ?></a></small>
 					</div>
 
 					<div class="msf-form-group">
 						<label for="discount_type"><?php esc_html_e( 'Discount Type', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-						<select class="msf-form-control" id="discount_type" name="discount_type" required>
+						<select class="msf-form-control" id="discount_type" name="discount_type">
 							<?php foreach ( $discount_types as $discount_type_key => $discount_type_label ) : ?>
 								<option value="<?php echo esc_attr( $discount_type_key ); ?>" <?php selected( $discount_type, $discount_type_key ); ?>><?php echo esc_html( $discount_type_label ); ?></option>
 							<?php endforeach; ?>
@@ -107,7 +107,7 @@ $discount_types = wc_get_coupon_types();
 
 					<div class="msf-form-group">
 						<label for="coupon_amount"><?php esc_html_e( 'Coupon Amount', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-						<input type="number" step="0.01" min="0" class="msf-form-control" id="coupon_amount" name="coupon_amount" placeholder="<?php echo esc_attr__( '0.00', 'shop-front' ); ?>" value="<?php echo esc_attr( $coupon_amount ); ?>" required>
+						<input type="number" step="0.01" min="0" class="msf-form-control" id="coupon_amount" name="coupon_amount" placeholder="<?php echo esc_attr__( '0.00', 'shop-front' ); ?>" value="<?php echo esc_attr( $coupon_amount ); ?>">
 						<small class="msf-form-text"><?php esc_html_e( 'Value of the coupon.', 'shop-front' ); ?></small>
 					</div>
 

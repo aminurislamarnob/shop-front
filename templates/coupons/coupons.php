@@ -44,7 +44,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 			</div>
 			<div class="msf-table-responsive">
 				<?php
-				$coupon_statuses = apply_filters( 'msf_coupon_listing_post_statuses', array( 'publish', 'draft', 'pending' ) );
+				$coupon_statuses = apply_filters( 'msf_coupon_listing_post_statuses', array( 'publish', 'draft', 'pending', 'private' ) );
 
 				$posts_per_page = apply_filters( 'msf_coupons_per_page', 10 );
 				$current_page   = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;

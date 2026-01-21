@@ -34,10 +34,6 @@ class ProductManager {
 			return new WP_Error( 'no-title', __( 'Please enter product title', 'dokan-lite' ) );
 		}
 
-		if ( empty( $data['product_category'] ) ) {
-			return new WP_Error( 'no-category', __( 'Please select a category', 'dokan-lite' ) );
-		}
-
 		$post_status = ! empty( $data['post_status'] ) ? sanitize_text_field( $data['post_status'] ) : 'publish';
 
 		if ( ! empty( $data['product_id'] ) ) {

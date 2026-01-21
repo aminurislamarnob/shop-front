@@ -25,6 +25,81 @@
 		},
 
 		/**
+		 * Common validation function for required fields
+		 * Makes field border red and shows error message below invalid field
+		 *
+		 * @param {jQuery} $form - The form element
+		 * @param {Array} fields - Array of objects with selector and message properties
+		 * @return {boolean} - Returns true if all fields are valid, false otherwise
+		 */
+		validateRequiredFields: function ( $form, fields ) {
+			var isValid = true;
+			var self = this;
+
+			// Clear all previous errors
+			$form.find( '.msf-field-error' ).remove();
+			$form
+				.find( '.msf-form-control' )
+				.removeClass( 'msf-field-invalid' );
+
+			// Validate each field
+			$.each( fields, function ( index, field ) {
+				var $field = $form.find( field.selector );
+				var value = $field.val();
+
+				// Check if field is empty or invalid
+				var isEmpty = false;
+				if ( $field.is( 'select' ) ) {
+					isEmpty = ! value || value === '';
+				} else if ( field.type === 'number' ) {
+					isEmpty =
+						! value ||
+						value.trim() === '' ||
+						parseFloat( value ) < 0;
+				} else {
+					isEmpty = ! value || value.trim() === '';
+				}
+
+				if ( isEmpty ) {
+					isValid = false;
+					self.markFieldAsInvalid( $field, field.message );
+				}
+			} );
+
+			return isValid;
+		},
+
+		/**
+		 * Mark a field as invalid by adding red border and error message
+		 *
+		 * @param {jQuery} $field - The field element
+		 * @param {string} message - Error message to display
+		 */
+		markFieldAsInvalid: function ( $field, message ) {
+			// Add invalid class to field
+			$field.addClass( 'msf-field-invalid' );
+
+			// Create error message element
+			var $errorMsg = $(
+				'<span class="msf-field-error">' + message + '</span>'
+			);
+
+			// Insert error message after the field or its wrapper
+			if ( $field.parent().hasClass( 'msf-coupon-code-wrapper' ) ) {
+				$field.parent().after( $errorMsg );
+			} else {
+				$field.after( $errorMsg );
+			}
+
+			// Remove error on field change
+			$field.one( 'input change', function () {
+				$( this ).removeClass( 'msf-field-invalid' );
+				$( this ).siblings( '.msf-field-error' ).remove();
+				$( this ).parent().siblings( '.msf-field-error' ).remove();
+			} );
+		},
+
+		/**
 		 * Initialize datepicker for expiry date field
 		 */
 		initDatePicker: function () {
@@ -126,7 +201,11 @@
 					result = generator.prefix + result + generator.suffix;
 
 					// Set the generated code to the input field
-					$coupon_code_field.trigger( 'focus' ).val( result );
+					$coupon_code_field
+						.trigger( 'focus' )
+						.val( result )
+						.trigger( 'input' )
+						.trigger( 'change' );
 				}
 			);
 		},
@@ -180,24 +259,21 @@
 				e.preventDefault();
 
 				var $form = $( this );
-				var formData = new FormData( this );
+
+				// Define required fields for validation
+				var requiredFields = [
+					{
+						selector: '#product_category_name',
+						message: MSF_Form_Handler.i18n.category_name_required,
+					},
+				];
 
 				// Validate required fields
-				var categoryName = $form
-					.find( '#product_category_name' )
-					.val()
-					.trim();
-
-				if ( ! categoryName ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.category_name_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
+				var formData = new FormData( this );
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 
@@ -248,24 +324,21 @@
 				e.preventDefault();
 
 				var $form = $( this );
-				var formData = new FormData( this );
+
+				// Define required fields for validation
+				var requiredFields = [
+					{
+						selector: '#product_category_name',
+						message: MSF_Form_Handler.i18n.category_name_required,
+					},
+				];
 
 				// Validate required fields
-				var categoryName = $form
-					.find( '#product_category_name' )
-					.val()
-					.trim();
-
-				if ( ! categoryName ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.category_name_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
+				var formData = new FormData( this );
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 
@@ -372,21 +445,21 @@
 				e.preventDefault();
 
 				var $form = $( this );
-				var formData = new FormData( this );
+
+				// Define required fields for validation
+				var requiredFields = [
+					{
+						selector: '#name',
+						message: MSF_Form_Handler.i18n.tag_name_required,
+					},
+				];
 
 				// Validate required fields
-				var tagName = $form.find( '#name' ).val().trim();
-
-				if ( ! tagName ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.tag_name_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
+				var formData = new FormData( this );
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 
@@ -427,21 +500,21 @@
 				e.preventDefault();
 
 				var $form = $( this );
-				var formData = new FormData( this );
+
+				// Define required fields for validation
+				var requiredFields = [
+					{
+						selector: '#name',
+						message: MSF_Form_Handler.i18n.tag_name_required,
+					},
+				];
 
 				// Validate required fields
-				var tagName = $form.find( '#name' ).val().trim();
-
-				if ( ! tagName ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.tag_name_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
+				var formData = new FormData( this );
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 
@@ -548,24 +621,21 @@
 				e.preventDefault();
 
 				var $form = $( this );
-				var formData = new FormData( this );
+
+				// Define required fields for validation
+				var requiredFields = [
+					{
+						selector: '#product_brand_name',
+						message: MSF_Form_Handler.i18n.brand_name_required,
+					},
+				];
 
 				// Validate required fields
-				var brandName = $form
-					.find( '#product_brand_name' )
-					.val()
-					.trim();
-
-				if ( ! brandName ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.brand_name_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
+				var formData = new FormData( this );
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 
@@ -616,24 +686,21 @@
 				e.preventDefault();
 
 				var $form = $( this );
-				var formData = new FormData( this );
+
+				// Define required fields for validation
+				var requiredFields = [
+					{
+						selector: '#product_brand_name',
+						message: MSF_Form_Handler.i18n.brand_name_required,
+					},
+				];
 
 				// Validate required fields
-				var brandName = $form
-					.find( '#product_brand_name' )
-					.val()
-					.trim();
-
-				if ( ! brandName ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.brand_name_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
+				var formData = new FormData( this );
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 
@@ -738,32 +805,31 @@
 				e.preventDefault();
 
 				var $form = $( this );
-				var formData = new FormData( this );
+
+				// Define required fields for validation
+				var requiredFields = [
+					{
+						selector: '#coupon_code',
+						message: MSF_Form_Handler.i18n.coupon_code_required,
+					},
+					{
+						selector: '#discount_type',
+						message:
+							MSF_Form_Handler.i18n.coupon_discount_type_required,
+					},
+					{
+						selector: '#coupon_amount',
+						message: MSF_Form_Handler.i18n.coupon_amount_required,
+						type: 'number',
+					},
+				];
 
 				// Validate required fields
-				var couponCode = $form.find( '#coupon_code' ).val().trim();
-				var couponAmount = $form.find( '#coupon_amount' ).val().trim();
-
-				if ( ! couponCode ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.coupon_code_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				if ( ! couponAmount || parseFloat( couponAmount ) < 0 ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.coupon_amount_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
-					return;
-				}
-
+				var formData = new FormData( this );
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 
@@ -811,32 +877,31 @@
 				e.preventDefault();
 
 				var $form = $( this );
-				var formData = new FormData( this );
+
+				// Define required fields for validation
+				var requiredFields = [
+					{
+						selector: '#coupon_code',
+						message: MSF_Form_Handler.i18n.coupon_code_required,
+					},
+					{
+						selector: '#discount_type',
+						message:
+							MSF_Form_Handler.i18n.coupon_discount_type_required,
+					},
+					{
+						selector: '#coupon_amount',
+						message: MSF_Form_Handler.i18n.coupon_amount_required,
+						type: 'number',
+					},
+				];
 
 				// Validate required fields
-				var couponCode = $form.find( '#coupon_code' ).val().trim();
-				var couponAmount = $form.find( '#coupon_amount' ).val().trim();
-
-				if ( ! couponCode ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.coupon_code_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				if ( ! couponAmount || parseFloat( couponAmount ) < 0 ) {
-					Swal.fire( {
-						icon: 'warning',
-						title: MSF_Form_Handler.i18n.validation_error,
-						text: MSF_Form_Handler.i18n.coupon_amount_required,
-						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-					} );
-					return;
-				}
-
+				var formData = new FormData( this );
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 

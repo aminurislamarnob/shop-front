@@ -25,7 +25,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 						<form id="msfc-add-category">
 						<div class="msf-form-group">
 							<label for="product_category_name"><?php esc_html_e( 'Category Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-							<input type="text" class="msf-form-control" id="product_category_name" name="product_category_name" placeholder="<?php echo esc_attr__( 'Product category name', 'shop-front' ); ?>" required>
+						<input type="text" class="msf-form-control" id="product_category_name" name="product_category_name" placeholder="<?php echo esc_attr__( 'Product category name', 'shop-front' ); ?>">
 						</div>
 						<div class="msf-form-group">
 							<label for="product_category_slug"><?php esc_html_e( 'Slug', 'shop-front' ); ?></label>

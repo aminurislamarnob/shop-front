@@ -91,6 +91,7 @@ function msf_get_post_status( $status = '' ) {
 			'publish' => __( 'Online', 'shop-front' ),
 			'draft'   => __( 'Draft', 'shop-front' ),
 			'pending' => __( 'Pending Review', 'shop-front' ),
+			'private' => __( 'Private', 'shop-front' ),
 			'future'  => __( 'Scheduled', 'shop-front' ),
 		)
 	);
@@ -116,6 +117,7 @@ function msf_get_post_status_class( $status = '' ) {
 			'publish' => 'success',
 			'draft'   => 'default',
 			'pending' => 'warning',
+			'private' => 'secondary',
 			'future'  => 'info',
 		)
 	);
@@ -291,12 +293,12 @@ function msf_get_id_from_query_vars( $query_var ) {
  *
  * @return bool
  */
-function msfc_is_page( $endpoint ){
-	if( empty( $endpoint ) ){
+function msfc_is_page( $endpoint ) {
+	if ( empty( $endpoint ) ) {
 		return false;
 	}
 
-	if ( ! is_msf_dashboard_page() ){
+	if ( ! is_msf_dashboard_page() ) {
 		return false;
 	}
 
