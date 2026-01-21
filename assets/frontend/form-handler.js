@@ -767,8 +767,6 @@
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 
-				self.showLoading();
-
 				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
@@ -903,8 +901,6 @@
 					if ( ! result.isConfirmed ) {
 						return;
 					}
-
-					self.showLoading( MSF_Form_Handler.i18n.deleting );
 
 					var formData = new FormData( $form[ 0 ] );
 

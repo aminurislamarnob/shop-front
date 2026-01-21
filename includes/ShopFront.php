@@ -239,7 +239,6 @@ final class ShopFront {
 		$this->container['msf_order_hooks']                 = new Order\OrderHooks();
 		$this->container['msf_coupon_controller']           = new Coupon\CouponController();
 		$this->container['msf_coupon_manager']              = new Coupon\CouponManager();
-		$this->container['msf_coupon_hooks']                = new Coupon\CouponHooks();
 	}
 
 	/**
