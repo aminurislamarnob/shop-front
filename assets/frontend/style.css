@@ -3043,6 +3043,9 @@ table.msf-table.order-items .wc-order-item-thumbnail img {
   border-color: var(--primary-bg);
   box-shadow: 0 0 0 3px rgba(45, 91, 219, 0.1);
 }
+form.msf-search-form.msf-order-search-form .my-shop-front-button {
+    max-width: 100px;
+}
 
 @media (max-width: 768px) {
   .msf-search-form.msf-order-search-form {

@@ -89,29 +89,15 @@ class OrderManager {
 	private function search_orders_by_product( &$args, $search_term ) {
 		global $wpdb;
 
-		// Get order IDs that contain products with matching name
+		// Search in WooCommerce order items table (proper way like WooCommerce core)
 		$order_ids = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT DISTINCT opm.post_id FROM {$wpdb->postmeta} opm
-				INNER JOIN {$wpdb->posts} op ON opm.post_id = op.ID
-				WHERE op.post_type = 'shop_order'
-				AND opm.meta_key = '_line_items'
-				AND opm.meta_value LIKE %s",
+				"SELECT DISTINCT order_id FROM {$wpdb->prefix}woocommerce_order_items
+				WHERE order_item_type = 'line_item'
+				AND order_item_name LIKE %s",
 				'%' . $wpdb->esc_like( $search_term ) . '%'
 			)
 		);
-
-		// If no results from postmeta, try searching in WooCommerce order items
-		if ( empty( $order_ids ) ) {
-			$order_ids = $wpdb->get_col(
-				$wpdb->prepare(
-					"SELECT DISTINCT order_id FROM {$wpdb->prefix}woocommerce_order_items
-					WHERE order_item_type = 'line_item'
-					AND order_item_name LIKE %s",
-					'%' . $wpdb->esc_like( $search_term ) . '%'
-				)
-			);
-		}
 
 		if ( ! empty( $order_ids ) ) {
 			$args['post__in'] = array_map( 'absint', $order_ids );
