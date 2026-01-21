@@ -45,7 +45,7 @@ class Assets {
 		wp_register_script( 'my_shop_front_script', $frontend_script, array(), SHOP_FRONT_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
-		wp_register_script( 'my_shop_front_form_handler_script', $frontend_form_handler_script, array(), filemtime( SHOP_FRONT_DIR . '/assets/frontend/form-handler.js' ), true );
+		wp_register_script( 'my_shop_front_form_handler_script', $frontend_form_handler_script, array( 'my_shop_front_selectWoo', 'jquery-ui-datepicker' ), filemtime( SHOP_FRONT_DIR . '/assets/frontend/form-handler.js' ), true );
 		wp_register_script( 'my_shop_front_sweetalert2_script', $frontend_sweetalert2, array(), '11.14.5', true );
 
 		// Order scripts.
@@ -137,6 +137,8 @@ class Assets {
 
 			wp_enqueue_style( 'my_shop_front_poppins' );
 			wp_enqueue_style( 'my_shop_front_sweetalert2_style' );
+			wp_enqueue_style( 'my_shop_front_jquery-ui-style' );
+			wp_enqueue_script( 'my_shop_front_selectWoo' );
 			wp_enqueue_script( 'my_shop_front_sweetalert2_script' );
 			wp_enqueue_script( 'my_shop_front_form_handler_script' );
 			wp_localize_script(
@@ -145,6 +147,14 @@ class Assets {
 				array(
 					'ajax_url'               => admin_url( 'admin-ajax.php' ),
 					'msfc_woo_delete_nonce_' => wp_create_nonce( '_msfc_delete_nonce_' ),
+					'search_products_nonce'  => wp_create_nonce( 'search-products' ),
+					'coupon_code_generator'  => array(
+						'generate_button_text' => esc_html__( 'Generate coupon code', 'shop-front' ),
+						'characters'           => apply_filters( 'woocommerce_coupon_code_generator_characters', 'ABCDEFGHJKMNPQRSTUVWXYZ23456789' ),
+						'char_length'          => apply_filters( 'woocommerce_coupon_code_generator_character_length', 8 ),
+						'prefix'               => apply_filters( 'woocommerce_coupon_code_generator_prefix', '' ),
+						'suffix'               => apply_filters( 'woocommerce_coupon_code_generator_suffix', '' ),
+					),
 					'i18n'                   => array(
 						// Common messages.
 						'processing'                     => __( 'Processing...', 'shop-front' ),
@@ -203,7 +213,21 @@ class Assets {
 						'product_updating'               => __( 'Updating Product...', 'shop-front' ),
 						'product_updated_successfully'   => __( 'Product updated successfully!', 'shop-front' ),
 						'upload_image_text'              => __( 'Upload Image', 'shop-front' ),
+
+						// Coupon messages.
+						'coupon_code_required'           => __( 'Coupon code is required.', 'shop-front' ),
+						'coupon_amount_required'         => __( 'Coupon amount is required.', 'shop-front' ),
+						'coupon_adding'                  => __( 'Adding Coupon...', 'shop-front' ),
+						'coupon_added_successfully'      => __( 'Coupon added successfully!', 'shop-front' ),
+						'coupon_updating'                => __( 'Updating Coupon...', 'shop-front' ),
+						'coupon_updated_successfully'    => __( 'Coupon updated successfully!', 'shop-front' ),
+						'delete_coupon_warning'          => __( 'This will delete the coupon permanently. This action cannot be undone.', 'shop-front' ),
+						'deleting'                       => __( 'Deleting...', 'shop-front' ),
+						'are_you_sure'                   => __( 'Are you sure?', 'shop-front' ),
+						'yes_delete'                     => __( 'Yes, delete it!', 'shop-front' ),
+						'validation_error'               => __( 'Validation Error', 'shop-front' ),
 					),
+					'coupons_url'            => msfc_get_navigation_url( 'coupons' ),
 				)
 			);
 			wp_enqueue_media();

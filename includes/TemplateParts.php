@@ -52,6 +52,8 @@ class TemplateParts {
 				$endpoint = 'tags';
 			} elseif ( 'add-new-brand' === $endpoint || 'edit-brand' === $endpoint ) {
 				$endpoint = 'brands';
+			} elseif ( 'add-new-coupon' === $endpoint || 'edit-coupon' === $endpoint ) {
+				$endpoint = 'coupons';
 			} elseif ( 'order-details' === $endpoint ) {
 				$endpoint = 'orders';
 			}

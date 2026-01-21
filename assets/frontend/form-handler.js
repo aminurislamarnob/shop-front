@@ -4,6 +4,8 @@
 	var StoreFrontFormHandler = {
 		init: function () {
 			this.bindEvents();
+			this.initDatePicker();
+			this.initProductSearch();
 		},
 
 		bindEvents: function () {
@@ -16,6 +18,117 @@
 			this.handleBrandAdd();
 			this.handleBrandEdit();
 			this.handleBrandDelete();
+			this.handleCouponAdd();
+			this.handleCouponEdit();
+			this.handleCouponDelete();
+			this.handleGenerateCouponCode();
+		},
+
+		/**
+		 * Initialize datepicker for expiry date field
+		 */
+		initDatePicker: function () {
+			if ( $( '#expiry_date' ).length ) {
+				$( '#expiry_date' ).datepicker( {
+					defaultDate: '',
+					dateFormat: 'yy-mm-dd',
+					numberOfMonths: 1,
+					showButtonPanel: true,
+					minDate: 0, // Prevent selecting past dates
+				} );
+			}
+		},
+
+		/**
+		 * Initialize AJAX product search for coupon form
+		 */
+		initProductSearch: function () {
+			$( ':input.wc-product-search' )
+				.filter( ':not(.enhanced)' )
+				.each( function () {
+					var select2_args = {
+						allowClear: $( this ).data( 'allow_clear' )
+							? true
+							: false,
+						placeholder: $( this ).data( 'placeholder' ),
+						minimumInputLength: $( this ).data(
+							'minimum_input_length'
+						)
+							? $( this ).data( 'minimum_input_length' )
+							: '3',
+						escapeMarkup: function ( m ) {
+							return m;
+						},
+						ajax: {
+							url: MSF_Form_Handler.ajax_url,
+							dataType: 'json',
+							delay: 250,
+							data: function ( params ) {
+								return {
+									term: params.term,
+									action:
+										$( this ).data( 'action' ) ||
+										'woocommerce_json_search_products_and_variations',
+									security:
+										MSF_Form_Handler.search_products_nonce,
+									exclude: $( this ).data( 'exclude' ),
+									exclude_type:
+										$( this ).data( 'exclude_type' ),
+									include: $( this ).data( 'include' ),
+									limit: $( this ).data( 'limit' ),
+									display_stock:
+										$( this ).data( 'display_stock' ),
+								};
+							},
+							processResults: function ( data ) {
+								var terms = [];
+								if ( data ) {
+									$.each( data, function ( id, text ) {
+										terms.push( { id: id, text: text } );
+									} );
+								}
+								return {
+									results: terms,
+								};
+							},
+							cache: true,
+						},
+					};
+
+					$( this ).selectWoo( select2_args ).addClass( 'enhanced' );
+				} );
+		},
+
+		/**
+		 * Handle generate coupon code button click
+		 */
+		handleGenerateCouponCode: function () {
+			$( document ).on(
+				'click',
+				'.button.generate-coupon-code',
+				function ( e ) {
+					e.preventDefault();
+
+					var $coupon_code_field = $( '#coupon_code' ),
+						result = '',
+						generator = MSF_Form_Handler.coupon_code_generator;
+
+					// Generate random code
+					for ( var i = 0; i < generator.char_length; i++ ) {
+						result += generator.characters.charAt(
+							Math.floor(
+								Math.random() * generator.characters.length
+							)
+						);
+					}
+
+					// Add prefix and suffix
+					result = generator.prefix + result + generator.suffix;
+
+					// Set the generated code to the input field
+					$coupon_code_field.trigger( 'focus' ).val( result );
+				}
+			);
 		},
 
 		/**
@@ -577,8 +690,6 @@
 						return;
 					}
 
-					self.showLoading( MSF_Form_Handler.i18n.deleting );
-
 					var formData = new FormData();
 					formData.append( 'id', brandId );
 					formData.append( 'action', 'msfc_delete_product_brand' );
@@ -614,6 +725,220 @@
 						},
 					} );
 				} );
+			} );
+		},
+
+		/**
+		 * Handle Coupon Add
+		 */
+		handleCouponAdd: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msf-add-coupon', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var formData = new FormData( this );
+
+				// Validate required fields
+				var couponCode = $form.find( '#coupon_code' ).val().trim();
+				var couponAmount = $form.find( '#coupon_amount' ).val().trim();
+
+				if ( ! couponCode ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.coupon_code_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				if ( ! couponAmount || parseFloat( couponAmount ) < 0 ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.coupon_amount_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							setTimeout( function () {
+								window.location.href =
+									MSF_Form_Handler.coupons_url ||
+									window.location.href.replace(
+										'add-new-coupon',
+										'coupons'
+									);
+							}, 1500 );
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Coupon Edit
+		 */
+		handleCouponEdit: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msf-edit-coupon', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var formData = new FormData( this );
+
+				// Validate required fields
+				var couponCode = $form.find( '#coupon_code' ).val().trim();
+				var couponAmount = $form.find( '#coupon_amount' ).val().trim();
+
+				if ( ! couponCode ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.coupon_code_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				if ( ! couponAmount || parseFloat( couponAmount ) < 0 ) {
+					Swal.fire( {
+						icon: 'warning',
+						title: MSF_Form_Handler.i18n.validation_error,
+						text: MSF_Form_Handler.i18n.coupon_amount_required,
+						confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+					} );
+					return;
+				}
+
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						Swal.close();
+
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							setTimeout( function () {
+								window.location.href =
+									MSF_Form_Handler.coupons_url ||
+									window.location.href.replace(
+										/edit-coupon\/\d+/,
+										'coupons'
+									);
+							}, 1500 );
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function ( xhr, status, error ) {
+						Swal.close();
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Handle Coupon Delete
+		 */
+		handleCouponDelete: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '.delete-coupon-form', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+				var couponId = $form.find( 'input[name="coupon_id"]' ).val();
+
+				if ( ! couponId ) {
+					return;
+				}
+
+				Swal.fire( {
+					title: MSF_Form_Handler.i18n.are_you_sure,
+					text: MSF_Form_Handler.i18n.delete_coupon_warning,
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
+					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
+						return;
+					}
+
+					var formData = new FormData( $form[ 0 ] );
+
+					$.ajax( {
+						url: MSF_Form_Handler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$form
+									.closest( 'tr' )
+									.fadeOut( 300, function () {
+										$( this ).remove();
+										// Reload page if no coupons left
+										if (
+											$( '.single-coupon-item' )
+												.length === 0
+										) {
+											window.location.reload();
+										}
+									} );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
+					} );
+				} );
+
+				return false;
 			} );
 		},
 	};

@@ -52,6 +52,9 @@ class Rewrites {
 				'brands'           => get_option( 'msf_myshop_brands_endpoint', 'brands' ),
 				'add-new-brand'    => get_option( 'msf_myshop_new_brand_endpoint', 'add-new-brand' ),
 				'edit-brand'       => get_option( 'msf_myshop_edit_brand_endpoint', 'edit-brand' ),
+				'coupons'          => get_option( 'msf_myshop_coupons_endpoint', 'coupons' ),
+				'add-new-coupon'   => get_option( 'msf_myshop_new_coupon_endpoint', 'add-new-coupon' ),
+				'edit-coupon'      => get_option( 'msf_myshop_edit_coupon_endpoint', 'edit-coupon' ),
 			)
 		);
 	}
@@ -119,6 +122,13 @@ class Rewrites {
 		add_rewrite_rule(
 			$this->store_front_base . '/tags/page/([^/]+)/?$',
 			'index.php?pagename=' . $this->store_front_base . '&tags=1&paged=$matches[1]',
+			'top'
+		);
+
+		// Add rewrite rule for coupon list pagination.
+		add_rewrite_rule(
+			$this->store_front_base . '/coupons/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&coupons=1&paged=$matches[1]',
 			'top'
 		);
 	}
@@ -196,6 +206,15 @@ class Rewrites {
 				break;
 			case 'edit-brand':
 				$title = __( 'Edit Product Brand', 'shop-front' );
+				break;
+			case 'coupons':
+				$title = __( 'Coupons', 'shop-front' );
+				break;
+			case 'add-new-coupon':
+				$title = __( 'Add New Coupon', 'shop-front' );
+				break;
+			case 'edit-coupon':
+				$title = __( 'Edit Coupon', 'shop-front' );
 				break;
 			default:
 				$title = '';

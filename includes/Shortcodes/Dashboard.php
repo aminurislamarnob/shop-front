@@ -126,6 +126,27 @@ class Dashboard extends MyShopFrontShortcode {
 			return ob_get_clean();
 		}
 
+		if ( isset( $wp->query_vars['coupons'] ) ) {
+			do_action( 'msf_load_coupons_template', $wp->query_vars );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['add-new-coupon'] ) ) {
+			$template_args = array(
+				'query_vars' => $wp->query_vars,
+			);
+			msf_get_template_part( 'coupons/add-new-coupon', '', $template_args );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['edit-coupon'] ) ) {
+			$template_args = array(
+				'query_vars' => $wp->query_vars,
+			);
+			msf_get_template_part( 'coupons/edit-coupon', '', $template_args );
+			return ob_get_clean();
+		}
+
 		do_action( 'msf_load_custom_template', $wp->query_vars );
 
 		return ob_get_clean();
