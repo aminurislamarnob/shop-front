@@ -8,6 +8,9 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+use PluginizeLab\ShopFront\Product\Products;
+
 do_action( 'msf_dashboard_wrapper_start' );
 ?>
 <div class="my-shop-front-container">
@@ -21,14 +24,14 @@ do_action( 'msf_dashboard_wrapper_start' );
 			<div class="msf-table-header-part">
 				<div class="row">
 					<div class="col-md-6">
-						<form action="">
-							<div class="msf-table-search-input">
-								<div class="msf-table-search-icon">
-									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
-										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
-									</svg>
-								</div>
-								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Product', 'shop-front' ); ?>" />
+					<form action="" method="get">
+						<div class="msf-table-search-input">
+							<div class="msf-table-search-icon">
+								<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+									<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
+								</svg>
+							</div>
+							<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Product', 'shop-front' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
 							</div>
 						</form>
 					</div>
@@ -44,21 +47,13 @@ do_action( 'msf_dashboard_wrapper_start' );
 			</div>
 			<div class="msf-table-responsive">
 				<?php
-				$product_statuses = apply_filters( 'msf_product_listing_post_statuses', array( 'publish', 'draft', 'pending', 'future' ) );
-				$stock_statuses   = apply_filters( 'msf_product_stock_statuses', array( 'instock', 'outofstock' ) );
-				$product_types    = apply_filters( 'msf_product_types', array( 'simple' => __( 'Simple', 'shop-front' ) ) );
+				$current_page = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+				$search_term  = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
 
-				$posts_per_page = apply_filters( 'msf_products_per_page', 10 );
-				$current_page   = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1; // Get current page number, default to 1.
+				$products_obj  = new Products();
+				$products_data = $products_obj->get_paginated_products( $current_page, $search_term );
+				$product_query = $products_data->products;
 
-				$query = array(
-					'posts_per_page' => $posts_per_page,
-					'post_type'      => 'product',
-					'post_status'    => $product_statuses,
-					'paged'          => $current_page,
-				);
-
-				$product_query = new WP_Query( $query );
 				if ( $product_query->found_posts > 0 ) {
 					?>
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
@@ -201,7 +196,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 								'total_items'  => $total_products,
 								'total_pages'  => $total_pages,
 								'current_page' => $current_page_num,
-								'per_page'     => $posts_per_page,
+								'per_page'     => $products_data->per_page,
 							)
 						);
 					}

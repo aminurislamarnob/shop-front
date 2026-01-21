@@ -14,20 +14,28 @@ class OrderManager {
 	/**
 	 * Get all orders.
 	 *
+	 * @param int    $orders_per_page Number of orders per page.
+	 * @param int    $current_page Current page number.
+	 * @param string $search_term Search term to filter orders.
 	 * @return object
 	 */
-	public function get_all_orders( $orders_per_page, $current_page ) {
-		$orders = wc_get_orders(
-			array(
-				'type'     => 'shop_order',
-				'limit'    => $orders_per_page,
-				'page'     => $current_page,
-				'paginate' => true,
-				'order'    => 'DESC',
-				'orderby'  => 'date',
-				'return'   => 'objects',
-			)
+	public function get_all_orders( $orders_per_page, $current_page, $search_term = '' ) {
+		$args = array(
+			'type'     => 'shop_order',
+			'limit'    => $orders_per_page,
+			'page'     => $current_page,
+			'paginate' => true,
+			'order'    => 'DESC',
+			'orderby'  => 'date',
+			'return'   => 'objects',
 		);
+
+		// Add search parameter if provided (WooCommerce will search in order ID, billing name, email, etc.)
+		if ( ! empty( $search_term ) ) {
+			$args['s'] = $search_term;
+		}
+
+		$orders = wc_get_orders( $args );
 		return $orders;
 	}
 

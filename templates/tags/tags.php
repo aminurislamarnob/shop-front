@@ -24,14 +24,14 @@ do_action( 'msf_dashboard_wrapper_start' );
 			<div class="msf-table-header-part">
 				<div class="row">
 					<div class="col-md-6">
-						<form action="">
-							<div class="msf-table-search-input">
-								<div class="msf-table-search-icon">
-									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
-										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
-									</svg>
-								</div>
-								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Tag', 'shop-front' ); ?>" />
+					<form action="" method="get">
+						<div class="msf-table-search-input">
+							<div class="msf-table-search-icon">
+								<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+									<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
+								</svg>
+							</div>
+							<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Tag', 'shop-front' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
 							</div>
 						</form>
 					</div>
@@ -48,8 +48,9 @@ do_action( 'msf_dashboard_wrapper_start' );
 			<?php
 			$current_page  = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
 			$tags_per_page = apply_filters( 'msf_tags_per_page', 10 );
+			$search_term   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
 			$product_tags  = new Tags();
-			$tags_data     = $product_tags->get_paginated_tags( $tags_per_page, $current_page );
+			$tags_data     = $product_tags->get_paginated_tags( $tags_per_page, $current_page, $search_term );
 			?>
 			<div class="msf-table-responsive">
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">

@@ -83,9 +83,17 @@ class Categories {
 	/**
 	 * Get all categories as flat list (with caching).
 	 *
+	 * @param string $search_term Search term to filter categories.
 	 * @return array
 	 */
-	private function get_all_flat() {
+	private function get_all_flat( $search_term = '' ) {
+		// Don't use cache when searching
+		if ( ! empty( $search_term ) ) {
+			$hierarchy = $this->build_hierarchy();
+			$all       = $this->flatten( $hierarchy );
+			return $this->filter_by_search( $all, $search_term );
+		}
+
 		$cached = Cache::get( 'flat_categories' );
 
 		if ( false !== $cached ) {
@@ -101,6 +109,40 @@ class Categories {
 	}
 
 	/**
+	 * Filter categories by search term.
+	 * Searches in name, slug, and description (similar to WooCommerce admin).
+	 *
+	 * @param array  $categories Array of categories.
+	 * @param string $search_term Search term.
+	 * @return array Filtered categories.
+	 */
+	private function filter_by_search( $categories, $search_term ) {
+		if ( empty( $search_term ) ) {
+			return $categories;
+		}
+
+		$search_term = strtolower( $search_term );
+		$filtered    = array();
+
+		foreach ( $categories as $category_data ) {
+			$category = $category_data['category'];
+
+			// Search in name, slug, and description
+			$name        = strtolower( $category->name );
+			$slug        = strtolower( $category->slug );
+			$description = strtolower( $category->description );
+
+			if ( strpos( $name, $search_term ) !== false ||
+				strpos( $slug, $search_term ) !== false ||
+				strpos( $description, $search_term ) !== false ) {
+				$filtered[] = $category_data;
+			}
+		}
+
+		return $filtered;
+	}
+
+	/**
 	 * Clear categories cache.
 	 *
 	 * @return void
@@ -112,12 +154,13 @@ class Categories {
 	/**
 	 * Get paginated categories.
 	 *
-	 * @param int $per_page Items per page.
-	 * @param int $page Current page number.
+	 * @param int    $per_page Items per page.
+	 * @param int    $page Current page number.
+	 * @param string $search_term Search term to filter categories.
 	 * @return object
 	 */
-	public function get_paginated_categories_with_children( $per_page = 10, $page = 1 ) {
-		$all        = $this->get_all_flat();
+	public function get_paginated_categories_with_children( $per_page = 10, $page = 1, $search_term = '' ) {
+		$all        = $this->get_all_flat( $search_term );
 		$total      = count( $all );
 		$max_pages  = ceil( $total / $per_page );
 		$offset     = ( $page - 1 ) * $per_page;
@@ -129,6 +172,7 @@ class Categories {
 			'max_num_pages' => $max_pages,
 			'current_page'  => $page,
 			'per_page'      => $per_page,
+			'search_term'   => $search_term,
 		);
 	}
 }
