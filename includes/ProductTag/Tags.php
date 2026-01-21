@@ -15,34 +15,34 @@ class Tags {
 	/**
 	 * Get paginated tags.
 	 *
-	 * @param int $per_page Items per page.
-	 * @param int $page Current page number.
+	 * @param int    $per_page Items per page.
+	 * @param int    $page Current page number.
+	 * @param string $search_term Search term to filter tags.
 	 * @return object
 	 */
-	public function get_paginated_tags( $per_page = 10, $page = 1 ) {
+	public function get_paginated_tags( $per_page = 10, $page = 1, $search_term = '' ) {
 		$offset = ( $page - 1 ) * $per_page;
 
-		// Get total count for pagination.
-		$total_tags = wp_count_terms(
-			array(
-				'taxonomy'   => 'product_tag',
-				'hide_empty' => false,
-			)
+		$args = array(
+			'taxonomy'   => 'product_tag',
+			'hide_empty' => false,
+			'orderby'    => 'name',
+			'order'      => 'ASC',
 		);
 
-		$total = is_wp_error( $total_tags ) ? 0 : $total_tags;
+		// Add search parameter if provided
+		if ( ! empty( $search_term ) ) {
+			$args['search'] = $search_term;
+		}
+
+		// Get total count for pagination.
+		$total_tags = wp_count_terms( $args );
+		$total      = is_wp_error( $total_tags ) ? 0 : $total_tags;
 
 		// Get paginated tags.
-		$tags = get_terms(
-			array(
-				'taxonomy'   => 'product_tag',
-				'hide_empty' => false,
-				'orderby'    => 'name',
-				'order'      => 'ASC',
-				'number'     => $per_page,
-				'offset'     => $offset,
-			)
-		);
+		$args['number'] = $per_page;
+		$args['offset'] = $offset;
+		$tags           = get_terms( $args );
 
 		$tags      = is_wp_error( $tags ) ? array() : $tags;
 		$max_pages = ceil( $total / $per_page );
@@ -53,6 +53,7 @@ class Tags {
 			'max_num_pages' => $max_pages,
 			'current_page'  => $page,
 			'per_page'      => $per_page,
+			'search_term'   => $search_term,
 		);
 	}
 

@@ -1,0 +1,139 @@
+<?php
+/**
+ * Product List Filters - Off-Canvas
+ *
+ * @package ShopFront
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+// Get current filter values
+$current_category = isset( $_GET['product_cat'] ) ? absint( $_GET['product_cat'] ) : '';
+$current_type     = isset( $_GET['product_type'] ) ? sanitize_text_field( wp_unslash( $_GET['product_type'] ) ) : '';
+$current_stock    = isset( $_GET['stock_status'] ) ? sanitize_text_field( wp_unslash( $_GET['stock_status'] ) ) : '';
+$current_brand    = isset( $_GET['product_brand'] ) ? absint( $_GET['product_brand'] ) : '';
+$current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
+?>
+
+<div class="msf-filter-offcanvas-overlay" id="msf-filter-overlay"></div>
+<div class="msf-filter-offcanvas" id="msf-filter-offcanvas">
+	<div class="msf-filter-offcanvas-header">
+		<h3><?php esc_html_e( 'Filters', 'shop-front' ); ?></h3>
+		<button type="button" class="msf-filter-close" id="msf-filter-close">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+				<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
+			</svg>
+		</button>
+	</div>
+
+	<div class="msf-filter-offcanvas-body">
+		<form method="get" class="msf-filters-form-offcanvas">
+			<?php if ( ! empty( $current_search ) ) : ?>
+				<input type="hidden" name="search_by" value="<?php echo esc_attr( $current_search ); ?>">
+			<?php endif; ?>
+
+			<!-- Filter by Category -->
+			<div class="msf-form-group">
+				<label><?php esc_html_e( 'Filter by category', 'shop-front' ); ?></label>
+				<select name="product_cat" class="msf-form-control">
+					<option value=""><?php esc_html_e( 'All Categories', 'shop-front' ); ?></option>
+					<?php
+					$categories = get_terms(
+						array(
+							'taxonomy'   => 'product_cat',
+							'hide_empty' => true,
+							'orderby'    => 'name',
+							'order'      => 'ASC',
+						)
+					);
+					if ( ! empty( $categories ) && ! is_wp_error( $categories ) ) {
+						foreach ( $categories as $category ) {
+							printf(
+								'<option value="%s" %s>%s (%d)</option>',
+								esc_attr( $category->term_id ),
+								selected( $current_category, $category->term_id, false ),
+								esc_html( $category->name ),
+								absint( $category->count )
+							);
+						}
+					}
+					?>
+				</select>
+			</div>
+
+			<!-- Filter by Product Type -->
+			<div class="msf-form-group">
+				<label><?php esc_html_e( 'Filter by product type', 'shop-front' ); ?></label>
+				<select name="product_type" class="msf-form-control">
+					<option value=""><?php esc_html_e( 'All Types', 'shop-front' ); ?></option>
+					<?php
+					$product_types = wc_get_product_types();
+					foreach ( $product_types as $type_key => $type_label ) {
+						printf(
+							'<option value="%s" %s>%s</option>',
+							esc_attr( $type_key ),
+							selected( $current_type, $type_key, false ),
+							esc_html( $type_label )
+						);
+					}
+					?>
+				</select>
+			</div>
+
+			<!-- Filter by Stock Status -->
+			<div class="msf-form-group">
+				<label><?php esc_html_e( 'Filter by stock status', 'shop-front' ); ?></label>
+				<select name="stock_status" class="msf-form-control">
+					<option value=""><?php esc_html_e( 'All Stock Status', 'shop-front' ); ?></option>
+					<?php
+					$stock_statuses = wc_get_product_stock_status_options();
+					foreach ( $stock_statuses as $status_key => $status_label ) {
+						printf(
+							'<option value="%s" %s>%s</option>',
+							esc_attr( $status_key ),
+							selected( $current_stock, $status_key, false ),
+							esc_html( $status_label )
+						);
+					}
+					?>
+				</select>
+			</div>
+
+			<!-- Filter by Brand -->
+			<div class="msf-form-group">
+				<label><?php esc_html_e( 'Filter by brand', 'shop-front' ); ?></label>
+				<select name="product_brand" class="msf-form-control">
+					<option value=""><?php esc_html_e( 'All Brands', 'shop-front' ); ?></option>
+					<?php
+					$brands = get_terms(
+						array(
+							'taxonomy'   => 'product_brand',
+							'hide_empty' => true,
+							'orderby'    => 'name',
+							'order'      => 'ASC',
+						)
+					);
+					if ( ! empty( $brands ) && ! is_wp_error( $brands ) ) {
+						foreach ( $brands as $brand ) {
+							printf(
+								'<option value="%s" %s>%s (%d)</option>',
+								esc_attr( $brand->term_id ),
+								selected( $current_brand, $brand->term_id, false ),
+								esc_html( $brand->name ),
+								absint( $brand->count )
+							);
+						}
+					}
+					?>
+				</select>
+			</div>
+
+			<div class="msf-filter-offcanvas-footer">
+				<button type="submit" class="my-shop-front-button"><?php esc_html_e( 'Filter Products', 'shop-front' ); ?></button>
+				<a href="?" class="my-shop-front-button msf-filter-reset"><?php esc_html_e( 'Reset', 'shop-front' ); ?></a>
+			</div>
+		</form>
+	</div>
+</div>

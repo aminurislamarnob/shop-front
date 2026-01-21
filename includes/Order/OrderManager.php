@@ -14,21 +14,97 @@ class OrderManager {
 	/**
 	 * Get all orders.
 	 *
+	 * @param int    $orders_per_page Number of orders per page.
+	 * @param int    $current_page Current page number.
+	 * @param string $search_term Search term to filter orders.
+	 * @param string $search_filter Filter type (all, order_id, customer_email, customers, products).
 	 * @return object
 	 */
-	public function get_all_orders( $orders_per_page, $current_page ) {
-		$orders = wc_get_orders(
-			array(
-				'type'     => 'shop_order',
-				'limit'    => $orders_per_page,
-				'page'     => $current_page,
-				'paginate' => true,
-				'order'    => 'DESC',
-				'orderby'  => 'date',
-				'return'   => 'objects',
+	public function get_all_orders( $orders_per_page, $current_page, $search_term = '', $search_filter = 'all' ) {
+		$args = array(
+			'type'     => 'shop_order',
+			'limit'    => $orders_per_page,
+			'page'     => $current_page,
+			'paginate' => true,
+			'order'    => 'DESC',
+			'orderby'  => 'date',
+			'return'   => 'objects',
+		);
+
+		// Add search parameter if provided
+		if ( ! empty( $search_term ) ) {
+			switch ( $search_filter ) {
+				case 'order_id':
+					// Search by order ID
+					$args['s'] = $search_term;
+					break;
+
+				case 'customer_email':
+					// Search by customer email
+					$args['billing_email'] = $search_term;
+					break;
+
+				case 'customers':
+					// Search by customer name (billing first name, last name, or display name)
+					global $wpdb;
+					$args['meta_query'] = array(
+						'relation' => 'OR',
+						array(
+							'key'     => '_billing_first_name',
+							'value'   => $search_term,
+							'compare' => 'LIKE',
+						),
+						array(
+							'key'     => '_billing_last_name',
+							'value'   => $search_term,
+							'compare' => 'LIKE',
+						),
+					);
+					break;
+
+				case 'products':
+					// Search by product name in order items
+					$this->search_orders_by_product( $args, $search_term );
+					break;
+
+				case 'all':
+				default:
+					// Search in all fields (order number, billing name, email, etc.)
+					$args['s'] = $search_term;
+					break;
+			}
+		}
+
+		$orders = wc_get_orders( $args );
+		return $orders;
+	}
+
+	/**
+	 * Search orders by product name.
+	 *
+	 * @param array  $args WC_Order query arguments.
+	 * @param string $search_term Product name to search.
+	 * @return void
+	 */
+	private function search_orders_by_product( &$args, $search_term ) {
+		global $wpdb;
+
+		// Search in WooCommerce order items table (proper way like WooCommerce core)
+		$order_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT order_id FROM {$wpdb->prefix}woocommerce_order_items
+				WHERE order_item_type = 'line_item'
+				AND order_item_name LIKE %s",
+				'%' . $wpdb->esc_like( $search_term ) . '%'
 			)
 		);
-		return $orders;
+
+		if ( ! empty( $order_ids ) ) {
+			$args['post__in'] = array_map( 'absint', $order_ids );
+		} else {
+			// Return empty result if no matching products found
+			$args['post__in'] = array( 0 );
+		}
 	}
 
 	/**

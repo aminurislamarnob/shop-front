@@ -83,9 +83,17 @@ class Brands {
 	/**
 	 * Get all brands as flat list (with caching).
 	 *
+	 * @param string $search_term Search term to filter brands.
 	 * @return array
 	 */
-	private function get_all_flat() {
+	private function get_all_flat( $search_term = '' ) {
+		// Don't use cache when searching
+		if ( ! empty( $search_term ) ) {
+			$hierarchy = $this->build_hierarchy();
+			$all       = $this->flatten( $hierarchy );
+			return $this->filter_by_search( $all, $search_term );
+		}
+
 		$cached = Cache::get( 'flat_brands' );
 
 		if ( false !== $cached ) {
@@ -101,6 +109,40 @@ class Brands {
 	}
 
 	/**
+	 * Filter brands by search term.
+	 * Searches in name, slug, and description (similar to WooCommerce admin).
+	 *
+	 * @param array  $brands Array of brands.
+	 * @param string $search_term Search term.
+	 * @return array Filtered brands.
+	 */
+	private function filter_by_search( $brands, $search_term ) {
+		if ( empty( $search_term ) ) {
+			return $brands;
+		}
+
+		$search_term = strtolower( $search_term );
+		$filtered    = array();
+
+		foreach ( $brands as $brand_data ) {
+			$brand = $brand_data['brand'];
+
+			// Search in name, slug, and description
+			$name        = strtolower( $brand->name );
+			$slug        = strtolower( $brand->slug );
+			$description = strtolower( $brand->description );
+
+			if ( strpos( $name, $search_term ) !== false ||
+				strpos( $slug, $search_term ) !== false ||
+				strpos( $description, $search_term ) !== false ) {
+				$filtered[] = $brand_data;
+			}
+		}
+
+		return $filtered;
+	}
+
+	/**
 	 * Clear brands cache.
 	 *
 	 * @return void
@@ -112,12 +154,13 @@ class Brands {
 	/**
 	 * Get paginated brands.
 	 *
-	 * @param int $per_page Items per page.
-	 * @param int $page Current page number.
+	 * @param int    $per_page Items per page.
+	 * @param int    $page Current page number.
+	 * @param string $search_term Search term to filter brands.
 	 * @return object
 	 */
-	public function get_paginated_brands_with_children( $per_page = 10, $page = 1 ) {
-		$all       = $this->get_all_flat();
+	public function get_paginated_brands_with_children( $per_page = 10, $page = 1, $search_term = '' ) {
+		$all       = $this->get_all_flat( $search_term );
 		$total     = count( $all );
 		$max_pages = ceil( $total / $per_page );
 		$offset    = ( $page - 1 ) * $per_page;
@@ -129,6 +172,7 @@ class Brands {
 			'max_num_pages' => $max_pages,
 			'current_page'  => $page,
 			'per_page'      => $per_page,
+			'search_term'   => $search_term,
 		);
 	}
 

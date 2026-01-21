@@ -25,14 +25,53 @@ do_action( 'msf_dashboard_wrapper_start' );
 			<div class="msf-table-header-part">
 				<div class="row">
 					<div class="col-md-6">
-						<form action="">
-							<div class="msf-table-search-input">
+						<form action="" method="get" class="msf-search-form msf-order-search-form">
+							<div class="msf-table-search-input msf-form-group">
 								<div class="msf-table-search-icon">
 									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
-								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Order', 'shop-front' ); ?>" />
+								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Order', 'shop-front' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
+							</div>
+							<div class="msf-form-group">
+								<?php
+								$options = array(
+									'order_id'       => __( 'Order ID', 'woocommerce' ),
+									'customer_email' => __( 'Customer Email', 'woocommerce' ),
+									'customers'      => __( 'Customers', 'woocommerce' ),
+									'products'       => __( 'Products', 'woocommerce' ),
+									'all'            => __( 'All', 'woocommerce' ),
+								);
+
+								/**
+								 * Filters the search filters available in the admin order search. Can be used to add new or remove existing filters.
+								 * When adding new filters, `woocommerce_hpos_generate_where_for_search_filter` should also be used to generate the WHERE clause for the new filter
+								 *
+								 * @param $options array List of available filters.
+								 */
+								$options       = apply_filters( 'woocommerce_hpos_admin_search_filters', $options );
+								$saved_setting = get_user_setting( 'wc-search-filter-hpos-admin', 'all' );
+								$selected      = sanitize_text_field( wp_unslash( $_REQUEST['search-filter'] ?? $saved_setting ) );
+								if ( $saved_setting !== $selected ) {
+									set_user_setting( 'wc-search-filter-hpos-admin', $selected );
+								}
+								?>
+								<select name="search-filter" id="order-search-filter" class="msf-form-control">
+									<?php foreach ( $options as $value => $label ) { ?>
+										<option value="<?php echo esc_attr( wp_unslash( sanitize_text_field( $value ) ) ); ?>" <?php selected( $value, sanitize_text_field( wp_unslash( $selected ) ) ); ?>><?php echo esc_html( $label ); ?></option>
+									<?php } ?>
+								</select>
+							</div>
+							<div class="msf-form-group">
+								<button type="submit" class="my-shop-front-button">
+									<div class="msf-table-search-icon">
+										<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+											<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
+										</svg>
+									</div>
+									<?php esc_html_e( 'Search', 'shop-front' ); ?>
+								</button>
 							</div>
 						</form>
 					</div>
@@ -64,7 +103,9 @@ do_action( 'msf_dashboard_wrapper_start' );
 							<?php
 							$current_page    = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
 							$orders_per_page = apply_filters( 'msf_orders_per_page', 10 );
-							$orders          = $orders_obj->get_all_orders( $orders_per_page, $current_page );
+							$search_term     = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
+							$search_filter   = isset( $_GET['search-filter'] ) ? sanitize_text_field( wp_unslash( $_GET['search-filter'] ) ) : 'all';
+							$orders          = $orders_obj->get_all_orders( $orders_per_page, $current_page, $search_term, $search_filter );
 
 							if ( empty( $orders ) ) {
 								echo '<tr id="order-row-not-found"><td colspan="8">';
