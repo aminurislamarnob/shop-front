@@ -120,7 +120,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 						<tr>
 							<th class="check-column">
 								<label class="my-shop-front-checkbox">
-									<input type="checkbox" id="cb-select-all-1" class="my-shop-front-checkbox-input">
+									<input type="checkbox" id="cb-select-all-orders" class="my-shop-front-checkbox-input">
 									<span class="my-shop-front-checkbox-back"></span>
 									<span class="my-shop-front-tick">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
@@ -131,7 +131,6 @@ do_action( 'msf_dashboard_wrapper_start' );
 							</th>
 							<th><?php echo esc_html__( 'Order', 'shop-front' ); ?></th>
 							<th><?php echo esc_html__( 'Status', 'shop-front' ); ?></th>
-							<!-- <th width="20%"><?php // echo esc_html__( 'Billing & Shipping', 'shop-front' ); ?></th> -->
 							<th><?php echo esc_html__( 'Order Total', 'shop-front' ); ?></th>
 							<th><?php echo esc_html__( 'Total Items', 'shop-front' ); ?></th>
 							<th><?php echo esc_html__( 'Customer', 'shop-front' ); ?></th>
@@ -156,7 +155,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 
 							$orders = $orders_obj->get_all_orders( $orders_per_page, $current_page, $filters );
 
-							if ( empty( $orders ) ) {
+							if ( empty( $orders->orders ) ) {
 								echo '<tr id="order-row-not-found"><td colspan="9">';
 								msf_get_template_part(
 									'not-found',
@@ -253,11 +252,3 @@ do_action( 'msf_dashboard_wrapper_start' );
 	</div>
 </div>
 <?php do_action( 'msf_dashboard_wrapper_end' ); ?>
-<script type="text/javascript">
-	jQuery(document).ready(function($) {
-		$('#cb-select-all-1').on('click', function() {
-			var isChecked = $(this).prop('checked');
-			$('input[name="post[]"]').prop('checked', isChecked);
-		});
-	});
-</script>

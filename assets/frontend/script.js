@@ -13,6 +13,16 @@
 			this.uploadBrandImage(); // Upload brand image
 			this.handleFilterOffcanvas(); // Handle filter off-canvas
 			this.handleOrderFilterOffcanvas(); // Handle order filter off-canvas
+			this.handleBulkActionCheckbox(); // Handle bulk action checkbox
+		},
+		handleBulkActionCheckbox: function () {
+			$( '#cb-select-all-orders' ).on( 'click', function () {
+				var isChecked = $( this ).prop( 'checked' );
+				$( 'input[name="bulk_order_ids[]"]' ).prop(
+					'checked',
+					isChecked
+				);
+			} );
 		},
 		handleDropdown: function () {
 			$( document ).on( 'click', '.msfc-dropdown-icon', function () {
