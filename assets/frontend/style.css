@@ -2725,6 +2725,12 @@ table.msf-table.order-items .wc-order-item-thumbnail img {
   height: 38px;
   border-radius: 4px;
 }
+.my-shop-front-wrapper .msf-form-group.msf-bulk-order-actions {
+    gap: 10px;
+}
+.msf-bulk-order-actions select.msf-form-control{
+  width: 255px;
+}
 
 
 /* Hide the default checkbox */
