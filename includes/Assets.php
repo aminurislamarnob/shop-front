@@ -137,8 +137,6 @@ class Assets {
 
 			wp_enqueue_style( 'my_shop_front_poppins' );
 			wp_enqueue_style( 'my_shop_front_sweetalert2_style' );
-			wp_enqueue_style( 'my_shop_front_jquery-ui-style' );
-			wp_enqueue_script( 'my_shop_front_selectWoo' );
 			wp_enqueue_script( 'my_shop_front_sweetalert2_script' );
 			wp_enqueue_script( 'my_shop_front_form_handler_script' );
 			wp_localize_script(
