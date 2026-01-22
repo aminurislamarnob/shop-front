@@ -165,7 +165,7 @@ $discount_types = wc_get_coupon_types();
 						<?php
 						$excluded_product_types = array_diff( array_keys( wc_get_product_types() ), array( 'simple', 'variable' ) );
 						?>
-						<select class="msf-form-control wc-product-search" id="product_ids" name="product_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'shop-front' ); ?>" data-allow_clear="true" multiple>
+						<select class="msf-form-control wc-product-search wc-coupon-product-search" id="product_ids" name="product_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'shop-front' ); ?>" data-allow_clear="true" multiple>
 							<?php
 							if ( ! empty( $product_ids ) ) {
 								foreach ( $product_ids as $product_id ) {
@@ -181,7 +181,7 @@ $discount_types = wc_get_coupon_types();
 
 					<div class="msf-form-group">
 						<label for="exclude_product_ids"><?php esc_html_e( 'Exclude Products', 'shop-front' ); ?></label>
-						<select class="msf-form-control wc-product-search" id="exclude_product_ids" name="exclude_product_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'shop-front' ); ?>" data-allow_clear="true" multiple>
+						<select class="msf-form-control wc-product-search wc-coupon-product-search" id="exclude_product_ids" name="exclude_product_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'shop-front' ); ?>" data-allow_clear="true" multiple>
 							<?php
 							if ( ! empty( $exclude_product_ids ) ) {
 								foreach ( $exclude_product_ids as $product_id ) {

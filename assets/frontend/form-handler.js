@@ -118,7 +118,7 @@
 		 * Initialize AJAX product search for coupon form
 		 */
 		initProductSearch: function () {
-			$( ':input.wc-product-search' )
+			$( ':input.wc-coupon-product-search' )
 				.filter( ':not(.enhanced)' )
 				.each( function () {
 					var select2_args = {
