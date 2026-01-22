@@ -24,7 +24,20 @@ do_action( 'msf_dashboard_wrapper_start' );
 			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
 			<div class="msf-table-header-part">
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-auto">
+						<div class="msf-form-group d-flex align-items-center msf-bulk-order-actions">
+							<select name="action" id="bulk-action-selector-top" class="msf-form-control" form="msf-order-bulk-actions">
+								<option value="-1"><?php esc_html_e( 'Bulk actions', 'shop-front' ); ?></option>
+								<option value="mark_processing"><?php esc_html_e( 'Change status to processing', 'shop-front' ); ?></option>
+								<option value="mark_on-hold"><?php esc_html_e( 'Change status to on-hold', 'shop-front' ); ?></option>
+								<option value="mark_completed"><?php esc_html_e( 'Change status to completed', 'shop-front' ); ?></option>
+								<option value="mark_cancelled"><?php esc_html_e( 'Change status to cancelled', 'shop-front' ); ?></option>
+								<option value="trash"><?php esc_html_e( 'Move to Trash', 'shop-front' ); ?></option>
+							</select>
+							<button type="submit" id="doaction" class="my-shop-front-button" form="msf-order-bulk-actions"><?php esc_html_e( 'Apply', 'shop-front' ); ?></button>
+						</div>
+					</div>
+					<div class="col-md-auto">
 						<form action="" method="get" class="msf-search-form msf-order-search-form">
 							<div class="msf-table-search-input msf-form-group">
 								<div class="msf-table-search-icon">
@@ -75,7 +88,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-6 text-right">
+					<div class="col-md-4 text-right">
 						<div class="row justify-content-end">
 							<div class="col-md-auto">
 								<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-order' ) ); ?>" class="my-shop-front-button">
@@ -99,13 +112,25 @@ do_action( 'msf_dashboard_wrapper_start' );
 			</div>
 			<!-- Off-canvas Order Filter -->
 			<?php msf_get_template_part( 'orders/order-filters-offcanvas' ); ?>
-			<div class="msf-table-responsive">
+			<form id="msf-order-bulk-actions" method="post">
+				<?php wp_nonce_field( 'msf_order_bulk_action', 'msf_bulk_action_nonce' ); ?>
+				<div class="msf-table-responsive">
 				<table class="my-shop-front-tbl my-shop-front-product-list-table">
 					<thead>
 						<tr>
+							<th class="check-column">
+								<label class="my-shop-front-checkbox">
+									<input type="checkbox" id="cb-select-all-orders" class="my-shop-front-checkbox-input">
+									<span class="my-shop-front-checkbox-back"></span>
+									<span class="my-shop-front-tick">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+											<path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"></path>
+										</svg>
+									</span>
+								</label>
+							</th>
 							<th><?php echo esc_html__( 'Order', 'shop-front' ); ?></th>
 							<th><?php echo esc_html__( 'Status', 'shop-front' ); ?></th>
-							<!-- <th width="20%"><?php // echo esc_html__( 'Billing & Shipping', 'shop-front' ); ?></th> -->
 							<th><?php echo esc_html__( 'Order Total', 'shop-front' ); ?></th>
 							<th><?php echo esc_html__( 'Total Items', 'shop-front' ); ?></th>
 							<th><?php echo esc_html__( 'Customer', 'shop-front' ); ?></th>
@@ -130,8 +155,8 @@ do_action( 'msf_dashboard_wrapper_start' );
 
 							$orders = $orders_obj->get_all_orders( $orders_per_page, $current_page, $filters );
 
-							if ( empty( $orders ) ) {
-								echo '<tr id="order-row-not-found"><td colspan="8">';
+							if ( empty( $orders->orders ) ) {
+								echo '<tr id="order-row-not-found"><td colspan="9">';
 								msf_get_template_part(
 									'not-found',
 									'',
@@ -145,6 +170,17 @@ do_action( 'msf_dashboard_wrapper_start' );
 								foreach ( $orders->orders as $order ) { // phpcs:ignore
 									?>
 								<tr>
+									<td class="check-column">
+										<label class="my-shop-front-checkbox">
+											<input type="checkbox" name="bulk_order_ids[]" value="<?php echo esc_attr( $order->get_id() ); ?>" class="my-shop-front-checkbox-input">
+											<span class="my-shop-front-checkbox-back"></span>
+											<span class="my-shop-front-tick">
+												<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+													<path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"></path>
+												</svg>
+											</span>
+										</label>
+									</td>
 									<td data-title="<?php echo esc_attr__( 'Order', 'shop-front' ); ?>">
 										<?php $orders_obj->get_order_number_column_value( $order ); ?>
 									</td>
@@ -210,7 +246,8 @@ do_action( 'msf_dashboard_wrapper_start' );
 					);
 				}
 				?>
-			</div>
+				</div>
+			</form>
 		</main>
 	</div>
 </div>

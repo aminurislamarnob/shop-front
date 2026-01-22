@@ -16,6 +16,7 @@ class OrderController {
 		add_action( 'wp_ajax_msfc_add_shipping_to_order', array( $this, 'msfc_add_shipping_to_order' ) );
 		add_action( 'wp_ajax_msfc_set_customer_to_order', array( $this, 'msfc_set_customer_to_order' ) );
 		add_action( 'wp_ajax_msfc_create_order', array( $this, 'msfc_create_order' ) );
+		add_action( 'template_redirect', array( $this, 'handle_order_bulk_actions' ) );
 	}
 
 	/**
@@ -384,4 +385,64 @@ class OrderController {
 		// wp_send_json_success must be outside the try block not to break phpunit tests.
 		wp_send_json_success( $response );
 	}
+
+	/**
+	 * Handle order bulk actions.
+	 */
+	public function handle_order_bulk_actions() {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! isset( $_POST['msf_bulk_action_nonce'] ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! wp_verify_nonce( wp_unslash( $_POST['msf_bulk_action_nonce'] ), 'msf_order_bulk_action' ) ) {
+			wp_safe_redirect( msfc_get_navigation_url( 'orders' ) );
+			exit;
+		}
+
+		if ( ! isset( $_POST['bulk_order_ids'] ) || empty( $_POST['bulk_order_ids'] ) ) {
+			wp_safe_redirect( msfc_get_navigation_url( 'orders' ) );
+			exit;
+		}
+
+		$action = isset( $_POST['action'] ) ? sanitize_text_field( wp_unslash( $_POST['action'] ) ) : '';
+
+		if ( '-1' === $action || empty( $action ) ) {
+			wp_safe_redirect( msfc_get_navigation_url( 'orders' ) );
+			exit;
+		}
+
+		$order_ids = array_map( 'absint', $_POST['bulk_order_ids'] );
+
+		foreach ( $order_ids as $order_id ) {
+			$order = wc_get_order( $order_id );
+			if ( ! $order ) {
+				continue;
+			}
+
+			switch ( $action ) {
+				case 'mark_processing':
+					$order->update_status( 'processing' );
+					break;
+				case 'mark_on-hold':
+					$order->update_status( 'on-hold' );
+					break;
+				case 'mark_completed':
+					$order->update_status( 'completed' );
+					break;
+				case 'mark_cancelled':
+					$order->update_status( 'cancelled' );
+					break;
+				case 'trash':
+					$order->delete();
+					break;
+			}
+		}
+
+		// Redirect back.
+		wp_safe_redirect( msfc_get_navigation_url( 'orders' ) );
+		exit;
+	}
 }
+
