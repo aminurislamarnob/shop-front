@@ -2676,7 +2676,7 @@ button.remove_order_item_meta.button:hover {
 .msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column address p:last-child {
   margin-bottom: 0;
 }
-.customer-address-box, .msf-billing-address-fields, .msf-shipping-address-fields{
+.customer-address-box.hide-address, .msf-billing-address-fields, .msf-shipping-address-fields{
   display: none;
 }
 .customer-billing-address, .customer-shipping-address {
@@ -3066,5 +3066,64 @@ form.msf-search-form.msf-order-search-form .my-shop-front-button {
 
 .msf-filter-offcanvas-body::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Premium Loader Overlay */
+.msfc-loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  border-radius: inherit;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.msfc-loader-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.msfc-loader-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(139, 92, 246, 0.15);
+  border-left-color: #8b5cf6;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: msfc-rotation 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+.msfc-loader-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+  letter-spacing: 0.5px;
+}
+
+@keyframes msfc-rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ensure the container is relative for the absolute overlay */
+.msfc-dashboard-order-details {
+  position: relative;
 }
 

@@ -221,6 +221,9 @@ do_action( 'msf_dashboard_wrapper_start' );
 												<li>
 													<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'order-details' ) . '%s', $order->get_id() ) ); ?>" class="dropdown-link"><?php esc_html_e( 'View', 'shop-front' ); ?></a>
 												</li>
+												<li>
+													<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-order' ) . '%s', $order->get_id() ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
+												</li>
 											</ul>
 										</div>
 									</td>

@@ -247,6 +247,11 @@ class Assets {
 			);
 
 			$order_id = absint( get_query_var( 'order-details' ) );
+
+			if ( ! $order_id ) {
+				$order_id = absint( get_query_var( 'edit-order' ) );
+			}
+
 			if ( ! $order_id ) {
 				global $theorder;
 				$order_id = \Automattic\WooCommerce\Utilities\OrderUtil::get_post_or_order_id( $theorder );
@@ -302,8 +307,6 @@ class Assets {
 					'remove_item_notice'              => __( 'Are you sure you want to remove the selected items?', 'woocommerce' ),
 					'remove_fee_notice'               => __( 'Are you sure you want to remove the selected fees?', 'woocommerce' ),
 					'remove_shipping_notice'          => __( 'Are you sure you want to remove the selected shipping?', 'woocommerce' ),
-					'placeholder_name'                => esc_attr__( 'Name (required)', 'woocommerce' ),
-					'placeholder_value'               => esc_attr__( 'Value (required)', 'woocommerce' ),
 					'remove_item_meta'                => __( 'Remove this item meta?', 'woocommerce' ),
 					'mon_decimal_point'               => wc_get_price_decimal_separator(),
 					'rounding_precision'              => wc_get_rounding_precision(),

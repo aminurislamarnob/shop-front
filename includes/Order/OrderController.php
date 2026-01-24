@@ -11,12 +11,50 @@ class OrderController {
 	 * The constructor.
 	 */
 	public function __construct() {
+		add_action( 'msf_dashboard_order_form', array( $this, 'load_order_add_form' ) );
+		add_action( 'msf_dashboard_order_edit_form', array( $this, 'load_order_edit_form' ) );
 		add_action( 'wp_ajax_msfc_add_order_note', array( $this, 'handle_add_order_note' ) );
 		add_action( 'wp_ajax_msfc_delete_order_note', array( $this, 'handle_delete_order_note' ) );
 		add_action( 'wp_ajax_msfc_add_shipping_to_order', array( $this, 'msfc_add_shipping_to_order' ) );
 		add_action( 'wp_ajax_msfc_set_customer_to_order', array( $this, 'msfc_set_customer_to_order' ) );
 		add_action( 'wp_ajax_msfc_create_order', array( $this, 'msfc_create_order' ) );
 		add_action( 'template_redirect', array( $this, 'handle_order_bulk_actions' ) );
+	}
+
+	public function load_order_add_form() {
+		global $theorder;
+
+		$template_args = array(
+			'order'   => $theorder,
+			'context' => 'add',
+		);
+
+		msf_get_template_part( 'orders/order-form', '', $template_args );
+	}
+
+	public function load_order_edit_form( $query_vars ) {
+		if ( ! isset( $query_vars['edit-order'] ) ) {
+			return;
+		}
+
+		$order_id = absint( $query_vars['edit-order'] );
+
+		if ( ! $order_id ) {
+			return;
+		}
+
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order ) {
+			return;
+		}
+
+		$template_args = array(
+			'order'   => $order,
+			'context' => 'edit',
+		);
+
+		msf_get_template_part( 'orders/order-form', '', $template_args );
 	}
 
 	/**
@@ -363,6 +401,7 @@ class OrderController {
 			// Set to order
 			$order->set_date_created( $date );
 			$order->set_status( $order_status );
+			// $order->calculate_totals();
 			$order->save();
 
 			ob_start();
