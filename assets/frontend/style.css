@@ -2676,7 +2676,7 @@ button.remove_order_item_meta.button:hover {
 .msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column address p:last-child {
   margin-bottom: 0;
 }
-.customer-address-box, .msf-billing-address-fields, .msf-shipping-address-fields{
+.customer-address-box.hide-address, .msf-billing-address-fields, .msf-shipping-address-fields{
   display: none;
 }
 .customer-billing-address, .customer-shipping-address {

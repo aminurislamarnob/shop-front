@@ -230,7 +230,9 @@
 					type: 'POST',
 					success: function ( response ) {
 						if ( response && response.billing ) {
-							$( '.customer-address-box' ).show();
+							$( '.customer-address-box' ).addClass(
+								'show-address'
+							);
 							$.each( response.billing, function ( key, data ) {
 								$( ':input#_billing_' + key )
 									.val( data )

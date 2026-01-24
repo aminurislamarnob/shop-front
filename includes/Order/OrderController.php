@@ -25,7 +25,8 @@ class OrderController {
 		global $theorder;
 
 		$template_args = array(
-			'order' => $theorder,
+			'order'   => $theorder,
+			'context' => 'add',
 		);
 
 		msf_get_template_part( 'orders/order-form', '', $template_args );
@@ -49,7 +50,8 @@ class OrderController {
 		}
 
 		$template_args = array(
-			'order' => $order,
+			'order'   => $order,
+			'context' => 'edit',
 		);
 
 		msf_get_template_part( 'orders/order-form', '', $template_args );
@@ -399,6 +401,7 @@ class OrderController {
 			// Set to order
 			$order->set_date_created( $date );
 			$order->set_status( $order_status );
+			// $order->calculate_totals();
 			$order->save();
 
 			ob_start();

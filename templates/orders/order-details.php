@@ -70,6 +70,12 @@ do_action( 'msf_dashboard_wrapper_start' );
 							</svg>
 							<?php esc_html_e( 'Add Order', 'shop-front' ); ?>
 						</a>
+						<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-order' ) . '%s', $order->get_id() ) ); ?>" class="my-shop-front-button">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+								<path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+							</svg>
+							<?php esc_html_e( 'Edit Order', 'shop-front' ); ?>
+						</a>
 					</div>
 				</div>
 			</div>
@@ -95,20 +101,22 @@ do_action( 'msf_dashboard_wrapper_start' );
 									<tbody id="order_items_list">
 									<?php
 									$order_items = $order->get_items( apply_filters( 'woocommerce_admin_order_item_types', array( 'line_item' ) ) );
-	
+
 									foreach ( $order_items as $item_id => $item ) {
 										do_action( 'woocommerce_before_order_item_' . $item['type'] . '_html', $item_id, $item, $order );
-	
+
 										$_product = $item->get_product();
 										msf_get_template_part(
-											'orders/order-item-html', '', array(
-												'order' => $order,
-												'item_id' => $item_id,
+											'orders/order-item-html',
+											'',
+											array(
+												'order'    => $order,
+												'item_id'  => $item_id,
 												'_product' => $_product,
 												'item'     => $item,
 											)
 										);
-	
+
 										do_action( 'woocommerce_order_item_' . $item['type'] . '_html', $item_id, $item, $order );
 									}
 									?>
@@ -133,7 +141,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 	
 								<?php
 								$coupons = $order->get_items( 'coupon' );
-	
+
 								if ( $coupons ) {
 									?>
 									<table class="msf-table order-items">
@@ -142,9 +150,10 @@ do_action( 'msf_dashboard_wrapper_start' );
 											<td>
 												<ul class="list-inline">
 													<?php
+													global $wpdb;
 													foreach ( $coupons as $item_id => $item ) {
 														$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_title = %s AND post_type = 'shop_coupon' AND post_status = 'publish' LIMIT 1;", $item['name'] ) ); // phpcs:ignore
-	
+
 														echo '<li><span>' . esc_html( $item['name'] ) . '</span></li>';
 													}
 													?>
@@ -163,10 +172,10 @@ do_action( 'msf_dashboard_wrapper_start' );
 	
 							<!-- <div class="" style="width: 100%">
 								<div class="msf-panel msf-panel-default">
-									<div class="msf-panel-heading"><strong><?php //esc_html_e( 'Downloadable Product Permission', 'shop-front' ); ?></strong></div>
+									<div class="msf-panel-heading"><strong><?php // esc_html_e( 'Downloadable Product Permission', 'shop-front' ); ?></strong></div>
 									<div class="msf-panel-body">
 										<?php
-										//msf_get_template_part( 'orders/downloadable', '', array( 'order' => $order ) );
+										// msf_get_template_part( 'orders/downloadable', '', array( 'order' => $order ) );
 										?>
 									</div>
 								</div>

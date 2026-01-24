@@ -38,7 +38,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 
 				<div id="woocommerce-order-items" class="msf-card msfc-order-items-box">
-					<div class="inside"></div>
+					<div class="inside">
+						<?php
+						require WC()->plugin_path() . '/includes/admin/meta-boxes/views/html-order-items.php';
+						?>
+					</div>
 				</div>
 
 				<!-- Discounts & Fees and Order Summary Section -->
@@ -98,7 +102,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<!-- Billing & Shipping Address Section -->
 				<div class="row">
 					<div class="col-md-6">
-						<div class="msf-card customer-address-box">
+						<div class="msf-card customer-address-box <?php echo 'edit' === $context ? 'show-address' : 'hide-address'; ?>">
 							<h3 class="msf-card-title">
 								<?php esc_html_e( 'Billing Address', 'shop-front' ); ?>
 								<button class="edit-msf-order-address edit-msf-order-billing-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
@@ -107,43 +111,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<ul>
 									<li class="_billing_first_name">
 										<strong><?php esc_html_e( 'Full Name', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() ); ?></span>
 									</li>
 									<li class="_billing_company">
 										<strong><?php esc_html_e( 'Company', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_company() ); ?></span>
 									</li>
 									<li class="_billing_address_1">
 										<strong><?php esc_html_e( 'Address Line 1', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_address_1() ); ?></span>
 									</li>
 									<li class="_billing_address_2">
 										<strong><?php esc_html_e( 'Address Line 2', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_address_2() ); ?></span>
 									</li>
 									<li class="_billing_city">
 										<strong><?php esc_html_e( 'City', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_city() ); ?></span>
 									</li>
 									<li class="_billing_postcode">
 										<strong><?php esc_html_e( 'Postcode / ZIP', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_postcode() ); ?></span>
 									</li>
 									<li class="_billing_country">
 										<strong><?php esc_html_e( 'Country / Region', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_country() ); ?></span>
 									</li>
 									<li class="_billing_state">
 										<strong><?php esc_html_e( 'State / County', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_state() ); ?></span>
 									</li>
 									<li class="_billing_email">
 										<strong><?php esc_html_e( 'Email Address', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_email() ); ?></span>
 									</li>
 									<li class="_billing_phone">
 										<strong><?php esc_html_e( 'Phone', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_billing_phone() ); ?></span>
 									</li>
 								</ul>
 							</div>
@@ -152,31 +156,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_billing_first_name"><?php esc_html_e( 'First Name', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_first_name" name="_billing_first_name" value="">
+											<input type="text" class="msf-form-control" id="_billing_first_name" name="_billing_first_name" value="<?php echo esc_attr( $order->get_billing_first_name() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_billing_last_name"><?php esc_html_e( 'Last Name', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_last_name" name="_billing_last_name" value="">
+											<input type="text" class="msf-form-control" id="_billing_last_name" name="_billing_last_name" value="<?php echo esc_attr( $order->get_billing_last_name() ); ?>">
 										</div>
 									</div>
 								</div>
 								<div class="msf-form-group">
 									<label for="_billing_company"><?php esc_html_e( 'Company', 'shop-front' ); ?></label>
-									<input type="text" class="msf-form-control" id="_billing_company" name="_billing_company" value="">
+									<input type="text" class="msf-form-control" id="_billing_company" name="_billing_company" value="<?php echo esc_attr( $order->get_billing_company() ); ?>">
 								</div>
 								<div class="row">
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_billing_address_1"><?php esc_html_e( 'Address Line 1', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_address_1" name="_billing_address_1" value="">
+											<input type="text" class="msf-form-control" id="_billing_address_1" name="_billing_address_1" value="<?php echo esc_attr( $order->get_billing_address_1() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_billing_address_2"><?php esc_html_e( 'Address Line 2', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_address_2" name="_billing_address_2" value="CA">
+											<input type="text" class="msf-form-control" id="_billing_address_2" name="_billing_address_2" value="<?php echo esc_attr( $order->get_billing_address_2() ); ?>">
 										</div>
 									</div>
 								</div>
@@ -184,13 +188,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_billing_city"><?php esc_html_e( 'City', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_city" name="_billing_city" value="">
+											<input type="text" class="msf-form-control" id="_billing_city" name="_billing_city" value="<?php echo esc_attr( $order->get_billing_city() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_billing_postcode"><?php esc_html_e( 'Postcode / ZIP', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_postcode" name="_billing_postcode" value="">
+											<input type="text" class="msf-form-control" id="_billing_postcode" name="_billing_postcode" value="<?php echo esc_attr( $order->get_billing_postcode() ); ?>">
 										</div>
 									</div>
 								</div>
@@ -259,13 +263,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_billing_email"><?php esc_html_e( 'Email Address', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_email" name="_billing_email" value="">
+											<input type="text" class="msf-form-control" id="_billing_email" name="_billing_email" value="<?php echo esc_attr( $order->get_billing_email() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_billing_phone"><?php esc_html_e( 'Phone', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_phone" name="_billing_phone" value="">
+											<input type="text" class="msf-form-control" id="_billing_phone" name="_billing_phone" value="<?php echo esc_attr( $order->get_billing_phone() ); ?>">
 										</div>
 									</div>
 								</div>
@@ -313,7 +317,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 					</div>
 					<div class="col-md-6">
-						<div class="msf-card customer-address-box">
+						<div class="msf-card customer-address-box <?php echo 'edit' === $context ? 'show-address' : 'hide-address'; ?>">
 							<h3 class="msf-card-title">
 								<?php esc_html_e( 'Shipping Address', 'shop-front' ); ?>
 								<button class="edit-msf-order-address edit-msf-order-shipping-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
@@ -322,43 +326,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<ul>
 									<li class="_shipping_first_name">
 										<strong><?php esc_html_e( 'Full Name', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_shipping_first_name() . ' ' . $order->get_shipping_last_name() ); ?></span>
 									</li>
 									<li class="_shipping_company">
 										<strong><?php esc_html_e( 'Company', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_shipping_company() ); ?></span>
 									</li>
 									<li class="_shipping_address_1">
 										<strong><?php esc_html_e( 'Address Line 1', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_shipping_address_1() ); ?></span>
 									</li>
 									<li class="_shipping_address_2">
 										<strong><?php esc_html_e( 'Address Line 2', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_shipping_address_2() ); ?></span>
 									</li>
 									<li class="_shipping_city">
 										<strong><?php esc_html_e( 'City', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_shipping_city() ); ?></span>
 									</li>
 									<li class="_shipping_postcode">
 										<strong><?php esc_html_e( 'Postcode / ZIP', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_shipping_postcode() ); ?></span>
 									</li>
 									<li class="_shipping_country">
 										<strong><?php esc_html_e( 'Country / Region', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_shipping_country() ); ?></span>
 									</li>
 									<li class="_shipping_state">
 										<strong><?php esc_html_e( 'State / County', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_shipping_state() ); ?></span>
 									</li>
 									<li class="_shipping_phone">
 										<strong><?php esc_html_e( 'Phone', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_shipping_phone() ); ?></span>
 									</li>
 									<li class="customer_note">
 										<strong><?php esc_html_e( 'Note', 'shop-front' ); ?>:</strong>
-										<span></span>
+										<span><?php echo esc_html( $order->get_customer_note() ); ?></span>
 									</li>
 								</ul>
 							</div>
@@ -367,31 +371,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_shipping_first_name"><?php esc_html_e( 'First Name', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_first_name" name="_shipping_first_name" value="">
+											<input type="text" class="msf-form-control" id="_shipping_first_name" name="_shipping_first_name" value="<?php echo esc_attr( $order->get_shipping_first_name() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_shipping_last_name"><?php esc_html_e( 'Last Name', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_last_name" name="_shipping_last_name" value="">
+											<input type="text" class="msf-form-control" id="_shipping_last_name" name="_shipping_last_name" value="<?php echo esc_attr( $order->get_shipping_last_name() ); ?>">
 										</div>
 									</div>
 								</div>
 								<div class="msf-form-group">
 									<label for="_shipping_company"><?php esc_html_e( 'Company', 'shop-front' ); ?></label>
-									<input type="text" class="msf-form-control" id="_shipping_company" name="_shipping_company" value="">
+									<input type="text" class="msf-form-control" id="_shipping_company" name="_shipping_company" value="<?php echo esc_attr( $order->get_shipping_company() ); ?>">
 								</div>
 								<div class="row">
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_shipping_address_1"><?php esc_html_e( 'Address Line 1', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_address_1" name="_shipping_address_1" value="">
+											<input type="text" class="msf-form-control" id="_shipping_address_1" name="_shipping_address_1" value="<?php echo esc_attr( $order->get_shipping_address_1() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_shipping_address_2"><?php esc_html_e( 'Address Line 2', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_address_2" name="_shipping_address_2" value="CA">
+											<input type="text" class="msf-form-control" id="_shipping_address_2" name="_shipping_address_2" value="<?php echo esc_attr( $order->get_shipping_address_2() ); ?>">
 										</div>
 									</div>
 								</div>
@@ -399,13 +403,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_shipping_city"><?php esc_html_e( 'City', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_city" name="_shipping_city" value="">
+											<input type="text" class="msf-form-control" id="_shipping_city" name="_shipping_city" value="<?php echo esc_attr( $order->get_shipping_city() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
 											<label for="_shipping_postcode"><?php esc_html_e( 'Postcode / ZIP', 'shop-front' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_postcode" name="_shipping_postcode" value="">
+											<input type="text" class="msf-form-control" id="_shipping_postcode" name="_shipping_postcode" value="<?php echo esc_attr( $order->get_shipping_postcode() ); ?>">
 										</div>
 									</div>
 								</div>
@@ -471,7 +475,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								</div>
 								<div class="msf-form-group">
 									<label for="_shipping_phone"><?php esc_html_e( 'Phone', 'shop-front' ); ?></label>
-									<input type="text" class="msf-form-control" id="_shipping_phone" name="_shipping_phone" value="">
+									<input type="text" class="msf-form-control" id="_shipping_phone" name="_shipping_phone" value="<?php echo esc_attr( $order->get_shipping_phone() ); ?>">
 								</div>
 								<?php
 								if ( apply_filters( 'woocommerce_enable_order_notes_field', 'yes' === get_option( 'woocommerce_enable_order_comments', 'yes' ) ) ) {
@@ -495,22 +499,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="msf-card-content">
 						<div class="msf-form-group search-group">
 							<?php
+							$user_id     = $order->get_customer_id();
 							$user_string = '';
-							$user_id     = '';
+							if ( $user_id ) {
+								$user = get_user_by( 'id', $user_id );
+								if ( $user ) {
+									$user_string = sprintf(
+										/* translators: 1: user display name 2: user ID 3: user email */
+										esc_html__( '%1$s (#%2$s &ndash; %3$s)', 'shop-front' ),
+										$user->display_name,
+										$user->ID,
+										$user->user_email
+									);
+								}
+							}
 							?>
 							<label for="date_created"><?php esc_html_e( 'Customer', 'shop-front' ); ?></label>
 							<select class="wc-customer-search" id="customer_user" name="customer_user" data-placeholder="<?php esc_attr_e( 'Guest', 'woocommerce' ); ?>" data-allow_clear="true">
-								<?php
-                                // phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment
-								/**
-								 * Filter to customize the display of the currently selected customer for an order in the order edit page.
-								 * This is the same filter used in the ajax call for customer search in the same metabox.
-								 *
-								 * @param array @user_info An array containing one item with the name and email of the user currently selected as the customer for the order.
-								 */
-								?>
-								<option value="<?php echo esc_attr( $user_id ); ?>" selected="selected"><?php echo esc_html( htmlspecialchars( wp_kses_post( current( apply_filters( 'woocommerce_json_search_found_customers', array( $user_string ) ) ) ) ) ); ?></option>
-                                <?php // phpcs:enable WooCommerce.Commenting.CommentHooks.MissingHookComment ?>
+								<option value="<?php echo esc_attr( $user_id ); ?>" selected="selected"><?php echo esc_html( htmlspecialchars( wp_kses_post( $user_string ) ) ); ?></option>
 							</select>
 						</div>
 						<div class="msf-form-group">
@@ -533,7 +539,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php
 									$statuses = wc_get_order_statuses();
 								foreach ( $statuses as $status => $status_name ) {
-									echo '<option value="' . esc_attr( $status ) . '">' . esc_html( $status_name ) . '</option>';
+									echo '<option value="' . esc_attr( $status ) . '" ' . selected( $status, 'wc-' . $order->get_status(), false ) . '>' . esc_html( $status_name ) . '</option>';
 								}
 								?>
 							</select>
@@ -564,7 +570,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<!-- Action Buttons -->
 				<div class="action-buttons">
-					<button type="submit" class="create-order-btn"><?php esc_html_e( 'Create Order', 'shop-front' ); ?></button>
+					<button type="submit" class="create-order-btn"><?php echo ( 'auto-draft' === $order->get_status() ) ? esc_html__( 'Create Order', 'shop-front' ) : esc_html__( 'Update Order', 'shop-front' ); ?></button>
 					<button type="button" class="save-draft-btn"><?php esc_html_e( 'Save as Draft', 'shop-front' ); ?></button>
 				</div>
 
@@ -574,11 +580,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="msf-card-content">
 						<!-- Existing Notes -->
 						<ul class="existing-notes order_notes">
-							<li class="note no-items">
-								<div class="note_content">
-									<p><?php esc_html_e( 'There are no notes yet.', 'shop-front' ); ?></p>
-								</div>
-							</li>
+							<?php
+							$existing_notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
+							if ( $existing_notes ) {
+								foreach ( $existing_notes as $note ) {
+									$is_customer_note = get_comment_meta( $note->id, 'is_customer_note', true );
+									$note_classes     = array( 'note' );
+									$note_classes[]   = $is_customer_note ? 'customer-note' : '';
+									$note_classes     = apply_filters( 'woocommerce_order_note_class', array_filter( $note_classes ), $note );
+									?>
+									<li rel="<?php echo absint( $note->id ); ?>" data-id="<?php echo absint( $note->id ); ?>" class="<?php echo esc_attr( implode( ' ', $note_classes ) ); ?>">
+										<div class="note_content">
+										<?php echo wp_kses_post( wpautop( wptexturize( make_clickable( $note->content ) ) ) ); ?>
+										</div>
+										<p class="meta">
+											<abbr class="exact-date" title="<?php echo esc_attr( $note->date_created->date( 'Y-m-d H:i:s' ) ); ?>">
+											<?php
+											/* translators: $1: Date created, $2 Time created */
+											printf(
+												esc_html__( 'added on %1$s at %2$s', 'woocommerce' ),
+												esc_html( $note->date_created->date_i18n( wc_date_format() ) ),
+												esc_html( $note->date_created->date_i18n( wc_time_format() ) )
+											);
+											?>
+											</abbr>
+												<?php
+												if ( 'system' !== $note->added_by ) :
+													/* translators: %s: note author */
+													printf( ' ' . esc_html__( 'by %s', 'woocommerce' ), esc_html( $note->added_by ) );
+												endif;
+												?>
+											<a href="#" class="delete_note" x-on:click.prevent="handleDeleteNote" role="button"><?php esc_html_e( 'Delete note', 'woocommerce' ); ?></a>
+										</p>
+									</li>
+									<?php
+								}
+							} else {
+								?>
+								<li class="note no-items">
+									<div class="note_content">
+										<p><?php esc_html_e( 'There are no notes yet.', 'shop-front' ); ?></p>
+									</div>
+								</li>
+								<?php
+							}
+							?>
 						</ul>
 						
 						<!-- Add Note Section -->
