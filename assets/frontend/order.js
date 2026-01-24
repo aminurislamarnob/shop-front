@@ -1292,7 +1292,7 @@
 		deleteOrderItem: function () {
 			$( document ).on( 'click', 'a.delete-order-item', function ( e ) {
 				var prod_search_for_order_box = $(
-					'.product-serach-for-order-box'
+					'.msfc-dashboard-order-details'
 				);
 				var notice = My_Shop_Front_Order.remove_item_notice;
 

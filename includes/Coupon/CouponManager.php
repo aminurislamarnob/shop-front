@@ -133,18 +133,18 @@ class CouponManager {
 					'description'                 => isset( $data['description'] ) ? sanitize_textarea_field( wp_unslash( $data['description'] ) ) : $coupon->get_description(),
 					'date_expires'                => isset( $data['expiry_date'] ) ? sanitize_text_field( wp_unslash( $data['expiry_date'] ) ) : $coupon->get_date_expires(),
 					'individual_use'              => isset( $data['individual_use'] ),
-					'product_ids'                 => isset( $data['product_ids'] ) ? array_filter( array_map( 'intval', (array) $data['product_ids'] ) ) : $coupon->get_product_ids(),
-					'excluded_product_ids'        => isset( $data['exclude_product_ids'] ) ? array_filter( array_map( 'intval', (array) $data['exclude_product_ids'] ) ) : $coupon->get_excluded_product_ids(),
+					'product_ids'                 => isset( $data['product_ids'] ) ? array_filter( array_map( 'intval', (array) $data['product_ids'] ) ) : array(),
+					'excluded_product_ids'        => isset( $data['exclude_product_ids'] ) ? array_filter( array_map( 'intval', (array) $data['exclude_product_ids'] ) ) : array(),
 					'usage_limit'                 => isset( $data['usage_limit'] ) ? absint( $data['usage_limit'] ) : $coupon->get_usage_limit(),
 					'usage_limit_per_user'        => isset( $data['usage_limit_per_user'] ) ? absint( $data['usage_limit_per_user'] ) : $coupon->get_usage_limit_per_user(),
 					'limit_usage_to_x_items'      => isset( $data['limit_usage_to_x_items'] ) ? absint( $data['limit_usage_to_x_items'] ) : $coupon->get_limit_usage_to_x_items(),
 					'free_shipping'               => isset( $data['free_shipping'] ),
-					'product_categories'          => isset( $data['product_categories'] ) ? array_filter( array_map( 'intval', (array) $data['product_categories'] ) ) : $coupon->get_product_categories(),
-					'excluded_product_categories' => isset( $data['exclude_product_categories'] ) ? array_filter( array_map( 'intval', (array) $data['exclude_product_categories'] ) ) : $coupon->get_excluded_product_categories(),
+					'product_categories'          => isset( $data['product_categories'] ) ? array_filter( array_map( 'intval', (array) $data['product_categories'] ) ) : array(),
+					'excluded_product_categories' => isset( $data['exclude_product_categories'] ) ? array_filter( array_map( 'intval', (array) $data['exclude_product_categories'] ) ) : array(),
 					'exclude_sale_items'          => isset( $data['exclude_sale_items'] ),
 					'minimum_amount'              => isset( $data['minimum_amount'] ) ? wc_format_decimal( wp_unslash( $data['minimum_amount'] ) ) : $coupon->get_minimum_amount(),
 					'maximum_amount'              => isset( $data['maximum_amount'] ) ? wc_format_decimal( wp_unslash( $data['maximum_amount'] ) ) : $coupon->get_maximum_amount(),
-					'email_restrictions'          => isset( $data['customer_email'] ) ? array_filter( array_map( 'trim', explode( ',', sanitize_text_field( wp_unslash( $data['customer_email'] ) ) ) ) ) : $coupon->get_email_restrictions(),
+					'email_restrictions'          => isset( $data['customer_email'] ) ? array_filter( array_map( 'trim', explode( ',', sanitize_text_field( wp_unslash( $data['customer_email'] ) ) ) ) ) : array(),
 				)
 			);
 
