@@ -1,4 +1,29 @@
 ( function ( $ ) {
+	var msfcLoader = {
+		block: function ( $container, text ) {
+			text = text || 'Processing...';
+			if ( $container.find( '.msfc-loader-overlay' ).length === 0 ) {
+				$container.append(
+					'<div class="msfc-loader-overlay">' +
+						'<span class="msfc-loader-spinner"></span>' +
+						'<span class="msfc-loader-text">' +
+						text +
+						'</span>' +
+						'</div>'
+				);
+			} else {
+				$container.find( '.msfc-loader-text' ).text( text );
+			}
+
+			setTimeout( function () {
+				$container.find( '.msfc-loader-overlay' ).addClass( 'active' );
+			}, 10 );
+		},
+		unblock: function ( $container ) {
+			$container.find( '.msfc-loader-overlay' ).removeClass( 'active' );
+		},
+	};
+
 	var StoreFrontOrderConfig = {
 		init: function () {
 			this.bindEvents();
@@ -175,7 +200,7 @@
 			var prod_search_for_order_box = $(
 				'.product-serach-for-order-box'
 			);
-			prod_search_for_order_box.block();
+			msfcLoader.block( prod_search_for_order_box );
 
 			$.ajax( {
 				url: My_Shop_Front_Order.ajax_url,
@@ -185,9 +210,9 @@
 					if ( response.success ) {
 						// $( '#woocommerce-order-items' ).find( '.inside' ).empty();
 						// $( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
-						prod_search_for_order_box.unblock();
+						msfcLoader.unblock( prod_search_for_order_box );
 					} else {
-						prod_search_for_order_box.unblock();
+						msfcLoader.unblock( prod_search_for_order_box );
 						window.alert( response.data.error );
 					}
 				},
@@ -214,15 +239,7 @@
 					security: My_Shop_Front_Order.get_customer_details_nonce,
 				};
 
-				$( this )
-					.closest( 'div.edit_address' )
-					.block( {
-						message: null,
-						overlayCSS: {
-							background: '#fff',
-							opacity: 0.6,
-						},
-					} );
+				msfcLoader.block( $( this ).closest( 'div.edit_address' ) );
 
 				$.ajax( {
 					url: My_Shop_Front_Order.ajax_url,
@@ -247,7 +264,7 @@
 								}
 							} );
 						}
-						$( 'div.edit_address' ).unblock();
+						msfcLoader.unblock( $( 'div.edit_address' ) );
 					},
 				} );
 			}
@@ -273,15 +290,7 @@
 					security: My_Shop_Front_Order.get_customer_details_nonce,
 				};
 
-				$( this )
-					.closest( 'div.edit_address' )
-					.block( {
-						message: null,
-						overlayCSS: {
-							background: '#fff',
-							opacity: 0.6,
-						},
-					} );
+				msfcLoader.block( $( this ).closest( 'div.edit_address' ) );
 
 				$.ajax( {
 					url: My_Shop_Front_Order.ajax_url,
@@ -305,7 +314,7 @@
 								}
 							} );
 						}
-						$( 'div.edit_address' ).unblock();
+						msfcLoader.unblock( $( 'div.edit_address' ) );
 					},
 				} );
 			}
@@ -360,13 +369,7 @@
 				return;
 			}
 
-			$( '#new_order_notes' ).block( {
-				message: null,
-				overlayCSS: {
-					background: '#fff',
-					opacity: 0.6,
-				},
-			} );
+			msfcLoader.block( $( '#new_order_notes' ) );
 
 			var data = {
 				action: 'woocommerce_add_order_note',
@@ -379,7 +382,7 @@
 			$.post( My_Shop_Front_Order.ajax_url, data, function ( response ) {
 				$( 'ul.order_notes .no-items' ).remove();
 				$( 'ul.order_notes' ).prepend( response );
-				$( '#new_order_notes' ).unblock();
+				msfcLoader.unblock( $( '#new_order_notes' ) );
 				$( '#add_order_note' ).val( '' );
 				// console.log( response );
 				// window.wcTracks.recordEvent( 'order_edit_add_order_note', {
@@ -396,13 +399,7 @@
 			if ( window.confirm( My_Shop_Front_Order.i18n_delete_note ) ) {
 				var note = $( this ).closest( 'li.note' );
 
-				$( note ).block( {
-					message: null,
-					overlayCSS: {
-						background: '#fff',
-						opacity: 0.6,
-					},
-				} );
+				msfcLoader.block( $( note ) );
 
 				var data = {
 					action: 'woocommerce_delete_order_note',
@@ -644,7 +641,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				prod_search_for_order_box.block();
+				msfcLoader.block( prod_search_for_order_box );
 
 				var item_table = $( '#search-order-items table.msf-table' ),
 					item_table_body = item_table.find( 'tbody' ),
@@ -707,9 +704,9 @@
 							}
 
 							// prod_search_for_order_box.reloaded_items();
-							prod_search_for_order_box.unblock();
+							msfcLoader.unblock( prod_search_for_order_box );
 						} else {
-							prod_search_for_order_box.unblock();
+							msfcLoader.unblock( prod_search_for_order_box );
 							window.alert( response.data.error );
 						}
 					},
@@ -831,7 +828,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				prod_search_for_order_box.block();
+				msfcLoader.block( prod_search_for_order_box );
 
 				var user_id = $( '#customer_user' ).val();
 				var user_email = $( '#_billing_email' ).val();
@@ -870,11 +867,11 @@
 							}
 
 							// wc_meta_boxes_order_items.reloaded_items();
-							prod_search_for_order_box.unblock();
+							msfcLoader.unblock( prod_search_for_order_box );
 						} else {
 							window.alert( response.data.error );
 						}
-						prod_search_for_order_box.unblock();
+						msfcLoader.unblock( prod_search_for_order_box );
 					},
 					complete: function () {},
 				} );
@@ -888,7 +885,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				prod_search_for_order_box.block();
+				msfcLoader.block( prod_search_for_order_box );
 
 				var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
 					action: 'woocommerce_remove_order_coupon',
@@ -919,11 +916,11 @@
 									$( response.data.notes_html ).find( 'li' )
 								);
 							}
-							prod_search_for_order_box.unblock();
+							msfcLoader.unblock( prod_search_for_order_box );
 						} else {
 							window.alert( response.data.error );
 						}
-						prod_search_for_order_box.unblock();
+						msfcLoader.unblock( prod_search_for_order_box );
 					}
 				);
 			} );
@@ -938,7 +935,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				prod_search_for_order_box.block();
+				msfcLoader.block( prod_search_for_order_box );
 
 				var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
 					action: 'woocommerce_add_order_fee',
@@ -961,11 +958,11 @@
 							$( '#woocommerce-order-items' )
 								.find( '.inside' )
 								.append( response.data.html );
-							prod_search_for_order_box.unblock();
+							msfcLoader.unblock( prod_search_for_order_box );
 						} else {
 							window.alert( response.data.error );
 						}
-						prod_search_for_order_box.unblock();
+						msfcLoader.unblock( prod_search_for_order_box );
 					}
 				);
 			} );
@@ -992,7 +989,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				prod_search_for_order_box.block();
+				msfcLoader.block( prod_search_for_order_box );
 
 				$.ajax( {
 					url: My_Shop_Front_Order.ajax_url,
@@ -1006,9 +1003,9 @@
 							$( '#woocommerce-order-items' )
 								.find( '.inside' )
 								.append( response.data.html );
-							prod_search_for_order_box.unblock();
+							msfcLoader.unblock( prod_search_for_order_box );
 						} else {
-							prod_search_for_order_box.unblock();
+							msfcLoader.unblock( prod_search_for_order_box );
 							window.alert( response.data.error );
 						}
 					},
@@ -1027,7 +1024,7 @@
 					var prod_search_for_order_box = $(
 						'.product-serach-for-order-box'
 					);
-					prod_search_for_order_box.block();
+					msfcLoader.block( prod_search_for_order_box );
 
 					var data = $.extend(
 						{},
@@ -1060,7 +1057,7 @@
 							$( '#woocommerce-order-items' )
 								.find( '.inside' )
 								.append( response );
-							prod_search_for_order_box.unblock();
+							msfcLoader.unblock( prod_search_for_order_box );
 
 							$( document.body ).trigger(
 								'order-totals-recalculate-success',
@@ -1103,7 +1100,7 @@
 					var prod_search_for_order_box = $(
 						'.product-serach-for-order-box'
 					);
-					prod_search_for_order_box.block();
+					msfcLoader.block( prod_search_for_order_box );
 
 					$.ajax( {
 						url: My_Shop_Front_Order.ajax_url,
@@ -1129,9 +1126,9 @@
 								}
 
 								// wc_meta_boxes_order_items.reloaded_items();
-								prod_search_for_order_box.unblock();
+								msfcLoader.unblock( prod_search_for_order_box );
 							} else {
-								prod_search_for_order_box.unblock();
+								msfcLoader.unblock( prod_search_for_order_box );
 								window.alert( response.data.error );
 							}
 						},
@@ -1202,10 +1199,10 @@
 					security: My_Shop_Front_Order.order_item_nonce,
 				};
 
-				var prod_search_for_order_box = $(
-					'.product-serach-for-order-box'
-				);
-				prod_search_for_order_box.block();
+				var container = $( '.msfc-dashboard-order-details' );
+
+				// Show premium loader
+				msfcLoader.block( container );
 
 				$.ajax( {
 					url: My_Shop_Front_Order.ajax_url,
@@ -1227,14 +1224,13 @@
 									$( response.data.notes_html ).find( 'li' )
 								);
 							}
-
-							prod_search_for_order_box.unblock();
 						} else {
-							prod_search_for_order_box.unblock();
 							window.alert( response.data.error );
 						}
 					},
-					complete: function () {},
+					complete: function () {
+						msfcLoader.unblock( container );
+					},
 				} );
 			} );
 		},
@@ -1321,7 +1317,7 @@
 					);
 					var order_item_id = $item.attr( 'data-order_item_id' );
 
-					prod_search_for_order_box.block();
+					msfcLoader.block( prod_search_for_order_box );
 
 					var data = $.extend(
 						{},
@@ -1369,11 +1365,11 @@
 									);
 								}
 
-								prod_search_for_order_box.unblock();
+								msfcLoader.unblock( prod_search_for_order_box );
 							} else {
 								window.alert( response.data.error );
 							}
-							prod_search_for_order_box.unblock();
+							msfcLoader.unblock( prod_search_for_order_box );
 						},
 						complete: function () {},
 					} );

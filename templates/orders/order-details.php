@@ -134,20 +134,14 @@ do_action( 'msf_dashboard_wrapper_start' );
 											<?php
 										}
 									}
-									?>
-									</tfoot>
-	
-								</table>
-	
-								<?php
-								$coupons = $order->get_items( 'coupon' );
 
-								if ( $coupons ) {
-									?>
-									<table class="msf-table order-items">
+									$coupons = $order->get_items( 'coupon' );
+
+									if ( $coupons ) {
+										?>
 										<tr>
-											<th><?php esc_html_e( 'Coupons', 'shop-front' ); ?></th>
-											<td>
+											<th colspan="2"><?php esc_html_e( 'Coupons', 'shop-front' ); ?></th>
+											<td colspan="2" class="value">
 												<ul class="list-inline">
 													<?php
 													global $wpdb;
@@ -160,26 +154,13 @@ do_action( 'msf_dashboard_wrapper_start' );
 												</ul>
 											</td>
 										</tr>
-									</table>
-									<?php
-								}
-								?>
-							</div>
-	
-							<?php do_action( 'msf_after_order_items_table', $order ); ?>
-	
-							<div class="clear"></div>
-	
-							<!-- <div class="" style="width: 100%">
-								<div class="msf-panel msf-panel-default">
-									<div class="msf-panel-heading"><strong><?php // esc_html_e( 'Downloadable Product Permission', 'shop-front' ); ?></strong></div>
-									<div class="msf-panel-body">
 										<?php
-										// msf_get_template_part( 'orders/downloadable', '', array( 'order' => $order ) );
-										?>
-									</div>
-								</div>
-							</div> -->
+									}
+									?>
+									</tfoot>
+								</table>
+							</div>
+							<?php do_action( 'msf_after_order_items_table', $order ); ?>
 						</div>
 						<?php
 						/**
@@ -189,7 +170,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 						 */
 						do_action( 'woocommerce_after_order_details', $order );
 
-						wc_get_template( 'order/order-details-customer.php', array( 'order' => $order ) );
+						msf_get_template_part( 'orders/order-details-customer', '', array( 'order' => $order ) );
 						?>
 					</div>
 					<div class="col-md-3">

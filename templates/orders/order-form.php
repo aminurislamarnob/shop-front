@@ -40,7 +40,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div id="woocommerce-order-items" class="msf-card msfc-order-items-box">
 					<div class="inside">
 						<?php
-						require WC()->plugin_path() . '/includes/admin/meta-boxes/views/html-order-items.php';
+						if ( $order->get_item_count() > 0 ) {
+							require WC()->plugin_path() . '/includes/admin/meta-boxes/views/html-order-items.php';
+						}
 						?>
 					</div>
 				</div>
@@ -516,7 +518,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							?>
 							<label for="date_created"><?php esc_html_e( 'Customer', 'shop-front' ); ?></label>
 							<select class="wc-customer-search" id="customer_user" name="customer_user" data-placeholder="<?php esc_attr_e( 'Guest', 'woocommerce' ); ?>" data-allow_clear="true">
-								<option value="<?php echo esc_attr( $user_id ); ?>" selected="selected"><?php echo esc_html( htmlspecialchars( wp_kses_post( $user_string ) ) ); ?></option>
+								<option value="<?php echo $user_id ? esc_attr( $user_id ) : ''; ?>"><?php echo $user_id ? esc_html( htmlspecialchars( wp_kses_post( $user_string ) ) ) : esc_html__( 'Guest', 'woocommerce' ); ?></option>
 							</select>
 						</div>
 						<div class="msf-form-group">
@@ -552,8 +554,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<label for="order_action"><?php esc_html_e( 'Order Actions', 'shop-front' ); ?></label>
 							<select class="msf-form-control" id="order_action" name="order_action">
 								<option value=""><?php esc_html_e( 'Choose an action...', 'shop-front' ); ?></option>
-								<?php foreach ( $order_actions as $action => $title ) { ?>
-									<option value="<?php echo esc_attr( $action ); ?>"><?php echo esc_html( $title ); ?></option>
+								<?php foreach ( $order_actions as $order_action => $order_action_title ) { ?>
+									<option value="<?php echo esc_attr( $order_action ); ?>"><?php echo esc_html( $order_action_title ); ?></option>
 								<?php } ?>
 							</select>
 						</div>
@@ -571,7 +573,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<!-- Action Buttons -->
 				<div class="action-buttons">
 					<button type="submit" class="create-order-btn"><?php echo ( 'auto-draft' === $order->get_status() ) ? esc_html__( 'Create Order', 'shop-front' ) : esc_html__( 'Update Order', 'shop-front' ); ?></button>
-					<button type="button" class="save-draft-btn"><?php esc_html_e( 'Save as Draft', 'shop-front' ); ?></button>
 				</div>
 
 				<!-- Order Notes Section -->
