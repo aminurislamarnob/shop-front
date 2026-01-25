@@ -18,10 +18,10 @@ do_action( 'msf_dashboard_wrapper_start' );
 	<div class="my-shop-front-wrapper">
 		<?php do_action( 'msf_dashboard_content_before' ); ?>
 		<main class="my-shop-front-page-content">
-			<?php // do_action( 'msf_dashboard_before_main_content' ); ?>
+			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
 			<div class="row">
-				<div class="col-md-6">
-					<div class="msf-card"></div>
+				<div class="col-12">
+					<?php do_action( 'msf_dashboard_home_widgets' ); ?>
 				</div>
 			</div>
 		</main>

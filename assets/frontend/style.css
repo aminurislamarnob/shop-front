@@ -1802,6 +1802,125 @@ span.select2-selection__clear {
   border-bottom: 1px solid #e5e7eb;
 }
 
+/* Dashboard KPI (Store performance) */
+.msf-store-performance .msf-card-title small {
+  font-weight: 400;
+  color: var(--msf-text-color-light);
+}
+
+.msf-kpi-summary {
+  border: 1px solid var(--msf-border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.msf-kpi-card {
+  height: 100%;
+  background: #fff;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--msf-border-color);
+}
+
+.msf-kpi-label {
+  font-size: 13px;
+  color: var(--msf-gray);
+  margin-bottom: 6px;
+}
+
+.msf-kpi-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.msf-kpi-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.msf-kpi-change {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--msf-text-color-light);
+  white-space: nowrap;
+}
+
+/* Make internal dividers single-line like WooCommerce summary */
+@media (min-width: 576px) {
+  .msf-kpi-summary .col .msf-kpi-card {
+    border-right: 1px solid var(--msf-border-color);
+  }
+  .msf-kpi-summary .col:nth-child(2n) .msf-kpi-card {
+    border-right: none;
+  }
+  .msf-kpi-summary .col:nth-last-child(-n + 2) .msf-kpi-card {
+    border-bottom: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .msf-kpi-summary .col:nth-child(2n) .msf-kpi-card {
+    border-right: 1px solid var(--msf-border-color);
+  }
+  .msf-kpi-summary .col:nth-child(3n) .msf-kpi-card {
+    border-right: none;
+  }
+  .msf-kpi-summary .col:nth-last-child(-n + 3) .msf-kpi-card {
+    border-bottom: none;
+  }
+}
+
+@media (min-width: 992px) {
+  .msf-kpi-summary .col:nth-child(3n) .msf-kpi-card {
+    border-right: 1px solid var(--msf-border-color);
+  }
+  .msf-kpi-summary .col:nth-child(4n) .msf-kpi-card {
+    border-right: none;
+  }
+  .msf-kpi-summary .col:nth-last-child(-n + 4) .msf-kpi-card {
+    border-bottom: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .msf-kpi-summary .col:nth-child(4n) .msf-kpi-card {
+    border-right: 1px solid var(--msf-border-color);
+  }
+  .msf-kpi-summary .col:nth-child(5n) .msf-kpi-card {
+    border-right: none;
+  }
+  .msf-kpi-summary .col:nth-last-child(-n + 5) .msf-kpi-card {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .msf-kpi-summary .col .msf-kpi-card {
+    border-right: none;
+  }
+  .msf-kpi-summary .col:last-child .msf-kpi-card {
+    border-bottom: none;
+  }
+}
+
+.msf-kpi-card--up .msf-kpi-change {
+  color: #059669;
+}
+
+.msf-kpi-card--down .msf-kpi-change {
+  color: #dc2626;
+}
+
+.msf-kpi-card--flat .msf-kpi-change,
+.msf-kpi-card--na .msf-kpi-change {
+  color: var(--msf-text-color-light);
+}
+
+
 .my-shop-front-wrapper .msf-form-group {
   margin-bottom: 16px;
   position: relative;
