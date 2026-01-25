@@ -24,6 +24,7 @@ class Dashboard {
 	public function __construct() {
 		// Render dashboard widgets inside the dashboard template.
 		add_action( 'msf_dashboard_home_widgets', array( $this, 'render_store_performance' ), 10 );
+		add_action( 'msf_dashboard_home_widgets', array( $this, 'render_top_products_items_sold' ), 20 );
 	}
 
 	/**
@@ -89,6 +90,86 @@ class Dashboard {
 								</div>
 							<?php endforeach; ?>
 						</div>
+					</div>
+				<?php endif; ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render "Top products - Items sold" leaderboard table.
+	 *
+	 * @return void
+	 */
+	public function render_top_products_items_sold() {
+		$enabled = apply_filters( 'msf_dashboard_enable_top_products_items_sold', true );
+		if ( true !== $enabled ) {
+			return;
+		}
+
+		$date_range = apply_filters( 'msf_dashboard_top_products_items_sold_date_range', $this->get_store_performance_date_range() );
+		$start      = isset( $date_range['start'] ) ? (string) $date_range['start'] : '';
+		$end        = isset( $date_range['end'] ) ? (string) $date_range['end'] : '';
+		$label      = isset( $date_range['label'] ) ? (string) $date_range['label'] : '';
+
+		$per_page = (int) apply_filters( 'msf_dashboard_top_products_items_sold_per_page', 5 );
+		$per_page = max( 1, $per_page );
+
+		$rows = $this->get_top_products_items_sold_rows( $start, $end, $per_page );
+		?>
+		<div class="msf-card msf-card-with-header msf-dashboard-top-products">
+			<h2 class="msf-card-title">
+				<?php echo esc_html__( 'Top products - Items sold', 'shop-front' ); ?>
+				<?php if ( '' !== $label ) : ?>
+					<small>(<?php echo esc_html( $label ); ?>)</small>
+				<?php endif; ?>
+			</h2>
+			<div class="msf-card-content">
+				<?php if ( is_wp_error( $rows ) ) : ?>
+					<p><?php echo esc_html( $rows->get_error_message() ); ?></p>
+				<?php elseif ( empty( $rows ) ) : ?>
+					<p><?php echo esc_html__( 'No products found for this period.', 'shop-front' ); ?></p>
+				<?php else : ?>
+					<div class="msf-table-responsive">
+						<table class="my-shop-front-tbl msf-dashboard-leaderboard-table">
+							<thead>
+								<tr>
+									<th><?php echo esc_html__( 'Product', 'shop-front' ); ?></th>
+									<th><?php echo esc_html__( 'Items sold', 'shop-front' ); ?></th>
+									<th><?php echo esc_html__( 'Net sales', 'shop-front' ); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ( $rows as $row ) : ?>
+									<tr>
+										<td>
+											<?php
+											$product_name = isset( $row['product_name'] ) ? (string) $row['product_name'] : '';
+											$product_id   = isset( $row['product_id'] ) ? (int) $row['product_id'] : 0;
+
+											if ( $product_id > 0 && function_exists( 'msfc_get_navigation_url' ) ) {
+												$edit_url = sprintf( msfc_get_navigation_url( 'edit-product' ) . '%s', $product_id );
+												printf(
+													'<a href="%s">%s</a>',
+													esc_url( $edit_url ),
+													esc_html( $product_name )
+												);
+											} else {
+												echo esc_html( $product_name );
+											}
+											?>
+										</td>
+										<td><?php echo esc_html( number_format_i18n( (float) ( $row['items_sold'] ?? 0 ) ) ); ?></td>
+										<td>
+											<?php
+											echo $this->format_value( $row['net_revenue'] ?? null, 'currency' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+											?>
+										</td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
 					</div>
 				<?php endif; ?>
 			</div>
@@ -361,6 +442,112 @@ class Dashboard {
 		}
 
 		return ( ( $current - $previous ) / abs( $previous ) ) * 100;
+	}
+
+	/**
+	 * Get top products rows for "Items sold" leaderboard.
+	 *
+	 * @param string $start Period start datetime string.
+	 * @param string $end   Period end datetime string.
+	 * @param int    $limit Number of rows to return.
+	 * @return array<int,array<string,mixed>>|\WP_Error
+	 */
+	protected function get_top_products_items_sold_rows( string $start, string $end, int $limit ) {
+		$limit = max( 1, $limit );
+
+		// Prefer WooCommerce Analytics DataStore (gives us product_id + numeric values).
+		$data_store_class = '\Automattic\WooCommerce\Admin\API\Reports\Products\DataStore';
+		if ( class_exists( $data_store_class ) ) {
+			try {
+				$data_store = new $data_store_class();
+				$args       = apply_filters(
+					'msf_dashboard_top_products_items_sold_query_args',
+					array(
+						'orderby'       => 'items_sold',
+						'order'         => 'desc',
+						'after'         => $start,
+						'before'        => $end,
+						'per_page'      => $limit,
+						'extended_info' => true,
+					),
+					$start,
+					$end,
+					$limit
+				);
+
+				$result = is_object( $data_store ) && is_callable( array( $data_store, 'get_data' ) ) ? $data_store->get_data( $args ) : null;
+				if ( is_object( $result ) && isset( $result->data ) && is_array( $result->data ) ) {
+					$rows = array();
+					foreach ( $result->data as $product ) {
+						if ( ! is_array( $product ) ) {
+							continue;
+						}
+
+						$rows[] = array(
+							'product_id'   => isset( $product['product_id'] ) ? (int) $product['product_id'] : 0,
+							'product_name' => isset( $product['extended_info']['name'] ) ? (string) $product['extended_info']['name'] : '',
+							'items_sold'   => isset( $product['items_sold'] ) ? (float) $product['items_sold'] : 0,
+							'net_revenue'  => isset( $product['net_revenue'] ) ? (float) $product['net_revenue'] : 0,
+						);
+					}
+
+					return $rows;
+				}
+			} catch ( \Exception $e ) {
+				// Fallback to REST request below.
+			}
+		}
+
+		// Fallback to REST leaderboard endpoint.
+		if ( ! class_exists( 'WP_REST_Request' ) || ! function_exists( 'rest_do_request' ) ) {
+			return new \WP_Error( 'msf_rest_unavailable', __( 'REST API is not available.', 'shop-front' ) );
+		}
+
+		$request = new \WP_REST_Request( 'GET', '/wc-analytics/leaderboards/products' );
+		$request->set_query_params(
+			array(
+				'after'    => $start,
+				'before'   => $end,
+				'per_page' => $limit,
+			)
+		);
+
+		$response = rest_do_request( $request );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		if ( ! is_callable( array( $response, 'get_status' ) ) || 200 !== $response->get_status() ) {
+			return new \WP_Error( 'msf_top_products_failed', __( 'Sorry, fetching top products failed.', 'shop-front' ) );
+		}
+
+		$data = $response->get_data();
+		if ( ! is_array( $data ) || empty( $data[0]['rows'] ) || ! is_array( $data[0]['rows'] ) ) {
+			return array();
+		}
+
+		$rows = array();
+		foreach ( $data[0]['rows'] as $row ) {
+			if ( ! is_array( $row ) || ! isset( $row[0], $row[1], $row[2] ) ) {
+				continue;
+			}
+
+			$product_name = '';
+			if ( isset( $row[0]['value'] ) ) {
+				$product_name = (string) $row[0]['value'];
+			} elseif ( isset( $row[0]['display'] ) ) {
+				$product_name = wp_strip_all_tags( (string) $row[0]['display'] );
+			}
+
+			$rows[] = array(
+				'product_id'   => 0,
+				'product_name' => $product_name,
+				'items_sold'   => isset( $row[1]['value'] ) ? (float) $row[1]['value'] : 0,
+				'net_revenue'  => isset( $row[2]['value'] ) ? (float) $row[2]['value'] : 0,
+			);
+		}
+
+		return $rows;
 	}
 }
 
