@@ -24,7 +24,10 @@ class Dashboard {
 	public function __construct() {
 		// Render dashboard widgets inside the dashboard template.
 		add_action( 'msf_dashboard_home_widgets', array( $this, 'render_store_performance' ), 10 );
-		add_action( 'msf_dashboard_home_widgets', array( $this, 'render_top_products_items_sold' ), 20 );
+		add_action( 'msf_dashboard_item_solds_widgets', array( $this, 'render_top_products_items_sold' ), 20 );
+		add_action( 'msf_dashboard_item_solds_widgets', array( $this, 'render_top_categories_items_sold' ), 30 );
+		add_action( 'msf_dashboard_item_solds_widgets', array( $this, 'render_top_customers_total_spend' ), 40 );
+		add_action( 'msf_dashboard_item_solds_widgets', array( $this, 'render_top_coupons_orders_count' ), 50 );
 	}
 
 	/**
@@ -84,6 +87,96 @@ class Dashboard {
 		);
 
 		msf_get_template_part( 'dashboard/top-products-items-sold', '', $template_args );
+	}
+
+	/**
+	 * Render "Top categories - Items sold" leaderboard table.
+	 *
+	 * @return void
+	 */
+	public function render_top_categories_items_sold() {
+		$enabled = apply_filters( 'msf_dashboard_enable_top_categories_items_sold', true );
+		if ( true !== $enabled ) {
+			return;
+		}
+
+		$date_range = apply_filters( 'msf_dashboard_top_categories_items_sold_date_range', $this->get_store_performance_date_range() );
+		$start      = isset( $date_range['start'] ) ? (string) $date_range['start'] : '';
+		$end        = isset( $date_range['end'] ) ? (string) $date_range['end'] : '';
+		$label      = isset( $date_range['label'] ) ? (string) $date_range['label'] : '';
+
+		$per_page = (int) apply_filters( 'msf_dashboard_top_categories_items_sold_per_page', 5 );
+		$per_page = max( 1, $per_page );
+
+		$rows = $this->get_top_categories_items_sold_rows( $start, $end, $per_page );
+
+		$template_args = array(
+			'label'     => $label,
+			'rows'      => $rows,
+			'dashboard' => $this,
+		);
+
+		msf_get_template_part( 'dashboard/top-categories-items-sold', '', $template_args );
+	}
+
+	/**
+	 * Render "Top customers - Total spend" leaderboard table.
+	 *
+	 * @return void
+	 */
+	public function render_top_customers_total_spend() {
+		$enabled = apply_filters( 'msf_dashboard_enable_top_customers_total_spend', true );
+		if ( true !== $enabled ) {
+			return;
+		}
+
+		$date_range = apply_filters( 'msf_dashboard_top_customers_total_spend_date_range', $this->get_store_performance_date_range() );
+		$start      = isset( $date_range['start'] ) ? (string) $date_range['start'] : '';
+		$end        = isset( $date_range['end'] ) ? (string) $date_range['end'] : '';
+		$label      = isset( $date_range['label'] ) ? (string) $date_range['label'] : '';
+
+		$per_page = (int) apply_filters( 'msf_dashboard_top_customers_total_spend_per_page', 5 );
+		$per_page = max( 1, $per_page );
+
+		$rows = $this->get_top_customers_total_spend_rows( $start, $end, $per_page );
+
+		$template_args = array(
+			'label'     => $label,
+			'rows'      => $rows,
+			'dashboard' => $this,
+		);
+
+		msf_get_template_part( 'dashboard/top-customers-total-spend', '', $template_args );
+	}
+
+	/**
+	 * Render "Top coupons - Number of orders" leaderboard table.
+	 *
+	 * @return void
+	 */
+	public function render_top_coupons_orders_count() {
+		$enabled = apply_filters( 'msf_dashboard_enable_top_coupons_orders_count', true );
+		if ( true !== $enabled ) {
+			return;
+		}
+
+		$date_range = apply_filters( 'msf_dashboard_top_coupons_orders_count_date_range', $this->get_store_performance_date_range() );
+		$start      = isset( $date_range['start'] ) ? (string) $date_range['start'] : '';
+		$end        = isset( $date_range['end'] ) ? (string) $date_range['end'] : '';
+		$label      = isset( $date_range['label'] ) ? (string) $date_range['label'] : '';
+
+		$per_page = (int) apply_filters( 'msf_dashboard_top_coupons_orders_count_per_page', 5 );
+		$per_page = max( 1, $per_page );
+
+		$rows = $this->get_top_coupons_orders_count_rows( $start, $end, $per_page );
+
+		$template_args = array(
+			'label'     => $label,
+			'rows'      => $rows,
+			'dashboard' => $this,
+		);
+
+		msf_get_template_part( 'dashboard/top-coupons-orders-count', '', $template_args );
 	}
 
 	/**
@@ -453,6 +546,323 @@ class Dashboard {
 				'product_name' => $product_name,
 				'items_sold'   => isset( $row[1]['value'] ) ? (float) $row[1]['value'] : 0,
 				'net_revenue'  => isset( $row[2]['value'] ) ? (float) $row[2]['value'] : 0,
+			);
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Get top categories rows for "Items sold" leaderboard.
+	 *
+	 * @param string $start Period start datetime string.
+	 * @param string $end   Period end datetime string.
+	 * @param int    $limit Number of rows to return.
+	 * @return array<int,array<string,mixed>>|\WP_Error
+	 */
+	protected function get_top_categories_items_sold_rows( string $start, string $end, int $limit ) {
+		$limit = max( 1, $limit );
+
+		// Prefer WooCommerce Analytics DataStore (gives us category_id + numeric values).
+		$data_store_class = '\Automattic\WooCommerce\Admin\API\Reports\Categories\DataStore';
+		if ( class_exists( $data_store_class ) ) {
+			try {
+				$data_store = new $data_store_class();
+				$args       = apply_filters(
+					'msf_dashboard_top_categories_items_sold_query_args',
+					array(
+						'orderby'       => 'items_sold',
+						'order'         => 'desc',
+						'after'         => $start,
+						'before'        => $end,
+						'per_page'      => $limit,
+						'extended_info' => true,
+					),
+					$start,
+					$end,
+					$limit
+				);
+
+				$result = is_object( $data_store ) && is_callable( array( $data_store, 'get_data' ) ) ? $data_store->get_data( $args ) : null;
+				if ( is_object( $result ) && isset( $result->data ) && is_array( $result->data ) ) {
+					$rows = array();
+					foreach ( $result->data as $category ) {
+						if ( ! is_array( $category ) ) {
+							continue;
+						}
+
+						$rows[] = array(
+							'category_id'   => isset( $category['category_id'] ) ? (int) $category['category_id'] : 0,
+							'category_name' => isset( $category['extended_info']['name'] ) ? (string) $category['extended_info']['name'] : '',
+							'items_sold'    => isset( $category['items_sold'] ) ? (float) $category['items_sold'] : 0,
+							'net_revenue'   => isset( $category['net_revenue'] ) ? (float) $category['net_revenue'] : 0,
+						);
+					}
+
+					return $rows;
+				}
+			} catch ( \Exception $e ) {
+				// Fallback to REST request below.
+			}
+		}
+
+		// Fallback to REST leaderboard endpoint.
+		if ( ! class_exists( 'WP_REST_Request' ) || ! function_exists( 'rest_do_request' ) ) {
+			return new \WP_Error( 'msf_rest_unavailable', __( 'REST API is not available.', 'shop-front' ) );
+		}
+
+		$request = new \WP_REST_Request( 'GET', '/wc-analytics/leaderboards/categories' );
+		$request->set_query_params(
+			array(
+				'after'    => $start,
+				'before'   => $end,
+				'per_page' => $limit,
+			)
+		);
+
+		$response = rest_do_request( $request );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		if ( ! is_callable( array( $response, 'get_status' ) ) || 200 !== $response->get_status() ) {
+			return new \WP_Error( 'msf_top_categories_failed', __( 'Sorry, fetching top categories failed.', 'shop-front' ) );
+		}
+
+		$data = $response->get_data();
+		if ( ! is_array( $data ) || empty( $data[0]['rows'] ) || ! is_array( $data[0]['rows'] ) ) {
+			return array();
+		}
+
+		$rows = array();
+		foreach ( $data[0]['rows'] as $row ) {
+			if ( ! is_array( $row ) || ! isset( $row[0], $row[1], $row[2] ) ) {
+				continue;
+			}
+
+			$category_name = '';
+			if ( isset( $row[0]['value'] ) ) {
+				$category_name = (string) $row[0]['value'];
+			} elseif ( isset( $row[0]['display'] ) ) {
+				$category_name = wp_strip_all_tags( (string) $row[0]['display'] );
+			}
+
+			$rows[] = array(
+				'category_id'   => 0,
+				'category_name' => $category_name,
+				'items_sold'    => isset( $row[1]['value'] ) ? (float) $row[1]['value'] : 0,
+				'net_revenue'   => isset( $row[2]['value'] ) ? (float) $row[2]['value'] : 0,
+			);
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Get top customers rows for "Total spend" leaderboard.
+	 *
+	 * @param string $start Period start datetime string.
+	 * @param string $end   Period end datetime string.
+	 * @param int    $limit Number of rows to return.
+	 * @return array<int,array<string,mixed>>|\WP_Error
+	 */
+	protected function get_top_customers_total_spend_rows( string $start, string $end, int $limit ) {
+		$limit = max( 1, $limit );
+
+		// Prefer WooCommerce Analytics DataStore (gives us customer_id + numeric values).
+		$data_store_class = '\Automattic\WooCommerce\Admin\API\Reports\Customers\DataStore';
+		if ( class_exists( $data_store_class ) ) {
+			try {
+				$data_store = new $data_store_class();
+				$args       = apply_filters(
+					'msf_dashboard_top_customers_total_spend_query_args',
+					array(
+						'orderby'      => 'total_spend',
+						'order'        => 'desc',
+						'order_after'  => $start,
+						'order_before' => $end,
+						'per_page'     => $limit,
+					),
+					$start,
+					$end,
+					$limit
+				);
+
+				$result = is_object( $data_store ) && is_callable( array( $data_store, 'get_data' ) ) ? $data_store->get_data( $args ) : null;
+				if ( is_object( $result ) && isset( $result->data ) && is_array( $result->data ) ) {
+					$rows = array();
+					foreach ( $result->data as $customer ) {
+						if ( ! is_array( $customer ) ) {
+							continue;
+						}
+
+						$rows[] = array(
+							'customer_id'   => isset( $customer['id'] ) ? (int) $customer['id'] : 0,
+							'customer_name' => isset( $customer['name'] ) ? (string) $customer['name'] : '',
+							'orders_count'  => isset( $customer['orders_count'] ) ? (int) $customer['orders_count'] : 0,
+							'total_spend'   => isset( $customer['total_spend'] ) ? (float) $customer['total_spend'] : 0,
+						);
+					}
+
+					return $rows;
+				}
+			} catch ( \Exception $e ) {
+				// Fallback to REST request below.
+			}
+		}
+
+		// Fallback to REST leaderboard endpoint.
+		if ( ! class_exists( 'WP_REST_Request' ) || ! function_exists( 'rest_do_request' ) ) {
+			return new \WP_Error( 'msf_rest_unavailable', __( 'REST API is not available.', 'shop-front' ) );
+		}
+
+		$request = new \WP_REST_Request( 'GET', '/wc-analytics/leaderboards/customers' );
+		$request->set_query_params(
+			array(
+				'after'    => $start,
+				'before'   => $end,
+				'per_page' => $limit,
+			)
+		);
+
+		$response = rest_do_request( $request );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		if ( ! is_callable( array( $response, 'get_status' ) ) || 200 !== $response->get_status() ) {
+			return new \WP_Error( 'msf_top_customers_failed', __( 'Sorry, fetching top customers failed.', 'shop-front' ) );
+		}
+
+		$data = $response->get_data();
+		if ( ! is_array( $data ) || empty( $data[0]['rows'] ) || ! is_array( $data[0]['rows'] ) ) {
+			return array();
+		}
+
+		$rows = array();
+		foreach ( $data[0]['rows'] as $row ) {
+			if ( ! is_array( $row ) || ! isset( $row[0], $row[1], $row[2] ) ) {
+				continue;
+			}
+
+			$customer_name = '';
+			if ( isset( $row[0]['value'] ) ) {
+				$customer_name = (string) $row[0]['value'];
+			} elseif ( isset( $row[0]['display'] ) ) {
+				$customer_name = wp_strip_all_tags( (string) $row[0]['display'] );
+			}
+
+			$rows[] = array(
+				'customer_id'   => 0,
+				'customer_name' => $customer_name,
+				'orders_count'  => isset( $row[1]['value'] ) ? (int) $row[1]['value'] : 0,
+				'total_spend'   => isset( $row[2]['value'] ) ? (float) $row[2]['value'] : 0,
+			);
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Get top coupons rows for "Number of orders" leaderboard.
+	 *
+	 * @param string $start Period start datetime string.
+	 * @param string $end   Period end datetime string.
+	 * @param int    $limit Number of rows to return.
+	 * @return array<int,array<string,mixed>>|\WP_Error
+	 */
+	protected function get_top_coupons_orders_count_rows( string $start, string $end, int $limit ) {
+		$limit = max( 1, $limit );
+
+		// Prefer WooCommerce Analytics DataStore (gives us coupon_id + numeric values).
+		$data_store_class = '\Automattic\WooCommerce\Admin\API\Reports\Coupons\DataStore';
+		if ( class_exists( $data_store_class ) ) {
+			try {
+				$data_store = new $data_store_class();
+				$args       = apply_filters(
+					'msf_dashboard_top_coupons_orders_count_query_args',
+					array(
+						'orderby'       => 'orders_count',
+						'order'         => 'desc',
+						'after'         => $start,
+						'before'        => $end,
+						'per_page'      => $limit,
+						'extended_info' => true,
+					),
+					$start,
+					$end,
+					$limit
+				);
+
+				$result = is_object( $data_store ) && is_callable( array( $data_store, 'get_data' ) ) ? $data_store->get_data( $args ) : null;
+				if ( is_object( $result ) && isset( $result->data ) && is_array( $result->data ) ) {
+					$rows = array();
+					foreach ( $result->data as $coupon ) {
+						if ( ! is_array( $coupon ) ) {
+							continue;
+						}
+
+						$rows[] = array(
+							'coupon_id'    => isset( $coupon['coupon_id'] ) ? (int) $coupon['coupon_id'] : 0,
+							'coupon_code'  => isset( $coupon['extended_info']['code'] ) ? (string) $coupon['extended_info']['code'] : '',
+							'orders_count' => isset( $coupon['orders_count'] ) ? (int) $coupon['orders_count'] : 0,
+							'amount'       => isset( $coupon['amount'] ) ? (float) $coupon['amount'] : 0,
+						);
+					}
+
+					return $rows;
+				}
+			} catch ( \Exception $e ) {
+				// Fallback to REST request below.
+			}
+		}
+
+		// Fallback to REST leaderboard endpoint.
+		if ( ! class_exists( 'WP_REST_Request' ) || ! function_exists( 'rest_do_request' ) ) {
+			return new \WP_Error( 'msf_rest_unavailable', __( 'REST API is not available.', 'shop-front' ) );
+		}
+
+		$request = new \WP_REST_Request( 'GET', '/wc-analytics/leaderboards/coupons' );
+		$request->set_query_params(
+			array(
+				'after'    => $start,
+				'before'   => $end,
+				'per_page' => $limit,
+			)
+		);
+
+		$response = rest_do_request( $request );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		if ( ! is_callable( array( $response, 'get_status' ) ) || 200 !== $response->get_status() ) {
+			return new \WP_Error( 'msf_top_coupons_failed', __( 'Sorry, fetching top coupons failed.', 'shop-front' ) );
+		}
+
+		$data = $response->get_data();
+		if ( ! is_array( $data ) || empty( $data[0]['rows'] ) || ! is_array( $data[0]['rows'] ) ) {
+			return array();
+		}
+
+		$rows = array();
+		foreach ( $data[0]['rows'] as $row ) {
+			if ( ! is_array( $row ) || ! isset( $row[0], $row[1], $row[2] ) ) {
+				continue;
+			}
+
+			$coupon_code = '';
+			if ( isset( $row[0]['value'] ) ) {
+				$coupon_code = (string) $row[0]['value'];
+			} elseif ( isset( $row[0]['display'] ) ) {
+				$coupon_code = wp_strip_all_tags( (string) $row[0]['display'] );
+			}
+
+			$rows[] = array(
+				'coupon_id'    => 0,
+				'coupon_code'  => $coupon_code,
+				'orders_count' => isset( $row[1]['value'] ) ? (int) $row[1]['value'] : 0,
+				'amount'       => isset( $row[2]['value'] ) ? (float) $row[2]['value'] : 0,
 			);
 		}
 

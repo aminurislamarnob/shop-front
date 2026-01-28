@@ -889,7 +889,7 @@ table .action-buttons a.view {
   -o-border-radius: 5px;
 }
 
-table.my-shop-front-product-list-table tbody tr td{
+table.my-shop-front-tbl tbody tr td{
   border-top: 1px solid var(--table-border-color)!important;
 }
 .inline-button {
@@ -3245,4 +3245,14 @@ form.msf-search-form.msf-order-search-form .my-shop-front-button {
 .msfc-dashboard-order-details {
   position: relative;
 }
+table.my-shop-front-tbl.msf-dashboard-leaderboard-table thead tr th:first-child, table.my-shop-front-tbl.msf-dashboard-leaderboard-table tbody tr td:first-child {
+  padding-left: 24px!important;
+}
 
+table.my-shop-front-tbl.msf-dashboard-leaderboard-table tr td:first-child a {
+  color: #222222;
+}
+
+table.my-shop-front-tbl.msf-dashboard-leaderboard-table thead tr th {
+  background: #f8f9fa;
+}

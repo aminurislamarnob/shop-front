@@ -24,6 +24,9 @@ do_action( 'msf_dashboard_wrapper_start' );
 					<?php do_action( 'msf_dashboard_home_widgets' ); ?>
 				</div>
 			</div>
+			<div class="row">
+				<?php do_action( 'msf_dashboard_item_solds_widgets' ); ?>
+			</div>
 		</main>
 	</div>
 </div>
