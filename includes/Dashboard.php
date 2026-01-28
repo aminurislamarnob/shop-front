@@ -44,57 +44,16 @@ class Dashboard {
 
 		$current_values = $this->get_kpi_values( $start, $end, $stats_config );
 		$prev_values    = ( $prev_range['start'] && $prev_range['end'] ) ? $this->get_kpi_values( $prev_range['start'], $prev_range['end'], $stats_config ) : array();
-		?>
-		<div class="msf-card msf-card-with-header msf-store-performance">
-			<h2 class="msf-card-title">
-				<?php echo esc_html__( 'Store performance', 'shop-front' ); ?>
-				<small>(<?php echo esc_html( $label ); ?>)</small>
-			</h2>
-			<div class="msf-card-content">
-				<?php if ( is_wp_error( $current_values ) ) : ?>
-					<p><?php echo esc_html( $current_values->get_error_message() ); ?></p>
-				<?php else : ?>
-					<div class="msf-kpi-summary">
-						<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-0">
-							<?php foreach ( $stats_config as $stat_config ) : ?>
-								<?php
-								$stat_key = isset( $stat_config['stat'] ) ? (string) $stat_config['stat'] : '';
-								if ( '' === $stat_key ) {
-									continue;
-								}
 
-								$value       = $current_values[ $stat_key ] ?? null;
-								$prev_value  = is_array( $prev_values ) ? ( $prev_values[ $stat_key ] ?? null ) : null;
-								$change      = $this->calculate_percent_change( $value, $prev_value );
-								$change_text = null === $change ? esc_html__( '—', 'shop-front' ) : sprintf( '%s%%', number_format_i18n( $change, 0 ) );
-								$change_dir  = 'na';
-								if ( null !== $change ) {
-									$change_dir = 'flat';
-									if ( $change > 0 ) {
-										$change_dir = 'up';
-									} elseif ( $change < 0 ) {
-										$change_dir = 'down';
-									}
-								}
-								?>
-								<div class="col">
-									<div class="msf-kpi-card msf-kpi-card--<?php echo esc_attr( $change_dir ); ?>">
-										<div class="msf-kpi-label"><?php echo esc_html( $stat_config['label'] ?? $stat_key ); ?></div>
-										<div class="msf-kpi-row">
-											<div class="msf-kpi-value">
-												<?php echo $this->format_value( $value, $stat_config['format'] ?? 'number' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-											</div>
-											<div class="msf-kpi-change"><?php echo esc_html( $change_text ); ?></div>
-										</div>
-									</div>
-								</div>
-							<?php endforeach; ?>
-						</div>
-					</div>
-				<?php endif; ?>
-			</div>
-		</div>
-		<?php
+		$template_args = array(
+			'stats_config'   => $stats_config,
+			'label'          => $label,
+			'current_values' => $current_values,
+			'prev_values'    => $prev_values,
+			'dashboard'      => $this,
+		);
+
+		msf_get_template_part( 'dashboard/store-performance', '', $template_args );
 	}
 
 	/**
@@ -117,64 +76,14 @@ class Dashboard {
 		$per_page = max( 1, $per_page );
 
 		$rows = $this->get_top_products_items_sold_rows( $start, $end, $per_page );
-		?>
-		<div class="msf-card msf-card-with-header msf-dashboard-top-products">
-			<h2 class="msf-card-title">
-				<?php echo esc_html__( 'Top products - Items sold', 'shop-front' ); ?>
-				<?php if ( '' !== $label ) : ?>
-					<small>(<?php echo esc_html( $label ); ?>)</small>
-				<?php endif; ?>
-			</h2>
-			<div class="msf-card-content">
-				<?php if ( is_wp_error( $rows ) ) : ?>
-					<p><?php echo esc_html( $rows->get_error_message() ); ?></p>
-				<?php elseif ( empty( $rows ) ) : ?>
-					<p><?php echo esc_html__( 'No products found for this period.', 'shop-front' ); ?></p>
-				<?php else : ?>
-					<div class="msf-table-responsive">
-						<table class="my-shop-front-tbl msf-dashboard-leaderboard-table">
-							<thead>
-								<tr>
-									<th><?php echo esc_html__( 'Product', 'shop-front' ); ?></th>
-									<th><?php echo esc_html__( 'Items sold', 'shop-front' ); ?></th>
-									<th><?php echo esc_html__( 'Net sales', 'shop-front' ); ?></th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php foreach ( $rows as $row ) : ?>
-									<tr>
-										<td>
-											<?php
-											$product_name = isset( $row['product_name'] ) ? (string) $row['product_name'] : '';
-											$product_id   = isset( $row['product_id'] ) ? (int) $row['product_id'] : 0;
 
-											if ( $product_id > 0 && function_exists( 'msfc_get_navigation_url' ) ) {
-												$edit_url = sprintf( msfc_get_navigation_url( 'edit-product' ) . '%s', $product_id );
-												printf(
-													'<a href="%s">%s</a>',
-													esc_url( $edit_url ),
-													esc_html( $product_name )
-												);
-											} else {
-												echo esc_html( $product_name );
-											}
-											?>
-										</td>
-										<td><?php echo esc_html( number_format_i18n( (float) ( $row['items_sold'] ?? 0 ) ) ); ?></td>
-										<td>
-											<?php
-											echo $this->format_value( $row['net_revenue'] ?? null, 'currency' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-											?>
-										</td>
-									</tr>
-								<?php endforeach; ?>
-							</tbody>
-						</table>
-					</div>
-				<?php endif; ?>
-			</div>
-		</div>
-		<?php
+		$template_args = array(
+			'label'     => $label,
+			'rows'      => $rows,
+			'dashboard' => $this,
+		);
+
+		msf_get_template_part( 'dashboard/top-products-items-sold', '', $template_args );
 	}
 
 	/**
@@ -406,7 +315,7 @@ class Dashboard {
 	 * @param string $format currency|number
 	 * @return string
 	 */
-	protected function format_value( $value, string $format ): string {
+	public function format_value( $value, string $format ): string {
 		if ( null === $value ) {
 			return esc_html__( '—', 'shop-front' );
 		}
@@ -429,7 +338,7 @@ class Dashboard {
 	 * @param mixed $previous Previous period value.
 	 * @return float|null
 	 */
-	protected function calculate_percent_change( $current, $previous ) {
+	public function calculate_percent_change( $current, $previous ) {
 		$current  = is_numeric( $current ) ? (float) $current : null;
 		$previous = is_numeric( $previous ) ? (float) $previous : null;
 
@@ -550,4 +459,3 @@ class Dashboard {
 		return $rows;
 	}
 }
-
