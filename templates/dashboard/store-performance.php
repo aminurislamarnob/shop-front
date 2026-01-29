@@ -19,7 +19,6 @@ defined( 'ABSPATH' ) || exit;
 <div class="msf-card msf-card-with-header msf-store-performance">
 	<h2 class="msf-card-title">
 		<?php echo esc_html__( 'Store performance', 'shop-front' ); ?>
-		<small>(<?php echo esc_html( $label ); ?>)</small>
 	</h2>
 	<div class="msf-card-content">
 		<?php if ( is_wp_error( $current_values ) ) : ?>

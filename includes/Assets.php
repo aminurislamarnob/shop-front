@@ -42,7 +42,9 @@ class Assets {
 		$frontend_sweetalert2         = SHOP_FRONT_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 
 		wp_register_script( 'my_shop_front_admin_script', $admin_script, array( 'my_shop_front-block-editor-script' ), SHOP_FRONT_PLUGIN_VERSION, true );
-		wp_register_script( 'my_shop_front_script', $frontend_script, array(), SHOP_FRONT_PLUGIN_VERSION, true );
+		wp_register_script( 'my_shop_front_moment', 'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js', array(), '2.29.4', true );
+		wp_register_script( 'my_shop_front_daterangepicker', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array( 'jquery', 'my_shop_front_moment' ), '3.1.0', true );
+		wp_register_script( 'my_shop_front_script', $frontend_script, array( 'jquery', 'my_shop_front_daterangepicker' ), SHOP_FRONT_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
 		wp_register_script( 'my_shop_front_form_handler_script', $frontend_form_handler_script, array( 'my_shop_front_selectWoo', 'jquery-ui-datepicker' ), filemtime( SHOP_FRONT_DIR . '/assets/frontend/form-handler.js' ), true );
@@ -69,6 +71,7 @@ class Assets {
 		wp_register_style( 'my_shop_front_admin_style', $admin_style, array(), SHOP_FRONT_PLUGIN_VERSION );
 		wp_register_style( 'my_shop_front_style', $frontend_style, array(), SHOP_FRONT_PLUGIN_VERSION );
 		wp_register_style( 'my_shop_front_bs_grid', $bs_grid_style, array(), SHOP_FRONT_PLUGIN_VERSION );
+		wp_register_style( 'my_shop_front_daterangepicker', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css', array(), '3.1.0' );
 
 		wp_register_style( 'my_shop_front_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 		wp_register_style( 'my_shop_front_poppins', 'https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap', array() );
@@ -116,6 +119,7 @@ class Assets {
 			wp_enqueue_style( 'select2' );
 			wp_enqueue_style( 'my_shop_front_style' );
 			wp_enqueue_style( 'my_shop_front_bs_grid' );
+			wp_enqueue_style( 'my_shop_front_daterangepicker' );
 			wp_enqueue_script( 'my_shop_front_script' );
 			wp_localize_script(
 				'my_shop_front_script',
@@ -132,6 +136,19 @@ class Assets {
 					'upload_brand_image'    => __( 'Upload Brand Image', 'shop-front' ),
 					'brand_image'           => __( 'Brand Image', 'shop-front' ),
 					'upload_gallery_images' => __( 'Upload Product Gallery Images', 'shop-front' ),
+				)
+			);
+
+			wp_localize_script(
+				'my_shop_front_script',
+				'MSF_Dashboard_DateRanges_I18n',
+				array(
+					'today'      => __( 'Today', 'shop-front' ),
+					'yesterday'  => __( 'Yesterday', 'shop-front' ),
+					'last7'      => __( 'Last 7 Days', 'shop-front' ),
+					'last30'     => __( 'Last 30 Days', 'shop-front' ),
+					'this_month' => __( 'This Month', 'shop-front' ),
+					'last_month' => __( 'Last Month', 'shop-front' ),
 				)
 			);
 

@@ -60,13 +60,15 @@ class TemplateParts {
 
 			$parent_endpoint_title = $dashboard_menu->get_dashboard_menus()[ $endpoint ]['title'] ?? '';
 			$parent_endpoint_url   = $dashboard_menu->get_dashboard_menus()[ $endpoint ]['url'] ?? '';
+
+			$template_args = array(
+				'page_title'            => $title,
+				'parent_endpoint_title' => $parent_endpoint_title,
+				'parent_endpoint_url'   => $parent_endpoint_url,
+			);
+			msf_get_template_part( 'dashboard-title', '', $template_args );
 		}
 
-		$template_args = array(
-			'page_title'            => $title,
-			'parent_endpoint_title' => $parent_endpoint_title,
-			'parent_endpoint_url'   => $parent_endpoint_url,
-		);
-		msf_get_template_part( 'dashboard-title', '', $template_args );
+		return $title;
 	}
 }

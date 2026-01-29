@@ -18,26 +18,31 @@ defined( 'ABSPATH' ) || exit;
 	<div class="msf-card msf-card-with-header msf-dashboard-top-products">
 		<h2 class="msf-card-title">
 			<?php echo esc_html__( 'Top products - Items sold', 'shop-front' ); ?>
-			<?php if ( '' !== $label ) : ?>
-				<small>(<?php echo esc_html( $label ); ?>)</small>
-			<?php endif; ?>
 		</h2>
 		<div>
-			<?php if ( is_wp_error( $rows ) ) : ?>
-				<p><?php echo esc_html( $rows->get_error_message() ); ?></p>
-			<?php elseif ( empty( $rows ) ) : ?>
-				<p><?php echo esc_html__( 'No products found for this period.', 'shop-front' ); ?></p>
-			<?php else : ?>
-				<div class="msf-table-responsive">
-					<table class="my-shop-front-tbl msf-dashboard-leaderboard-table">
-						<thead>
+			<div class="msf-table-responsive">
+				<table class="my-shop-front-tbl msf-dashboard-leaderboard-table">
+					<thead>
+						<tr>
+							<th><?php echo esc_html__( 'Product', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Items sold', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Net sales', 'shop-front' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php if ( is_wp_error( $rows ) ) : ?>
 							<tr>
-								<th><?php echo esc_html__( 'Product', 'shop-front' ); ?></th>
-								<th><?php echo esc_html__( 'Items sold', 'shop-front' ); ?></th>
-								<th><?php echo esc_html__( 'Net sales', 'shop-front' ); ?></th>
+								<td colspan="3">
+									<?php echo esc_html( $rows->get_error_message() ); ?>
+								</td>
 							</tr>
-						</thead>
-						<tbody>
+						<?php elseif ( empty( $rows ) ) : ?>
+							<tr>
+								<td colspan="3">
+									<?php echo esc_html__( 'No products found for this period.', 'shop-front' ); ?>
+								</td>
+							</tr>
+						<?php else : ?>
 							<?php foreach ( $rows as $row ) : ?>
 								<tr>
 									<td>
@@ -65,10 +70,10 @@ defined( 'ABSPATH' ) || exit;
 									</td>
 								</tr>
 							<?php endforeach; ?>
-						</tbody>
-					</table>
-				</div>
-			<?php endif; ?>
+						<?php endif; ?>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>

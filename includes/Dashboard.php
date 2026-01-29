@@ -283,8 +283,38 @@ class Dashboard {
 		$tz  = function_exists( 'wp_timezone' ) ? wp_timezone() : new \DateTimeZone( 'UTC' );
 		$now = new \DateTimeImmutable( 'now', $tz );
 
+		// Default: current month.
 		$start_dt = $now->modify( 'first day of this month' )->setTime( 0, 0, 0 );
-		$end_dt   = $now->setTime( 23, 59, 59 );
+		$end_dt   = $now->modify( 'last day of this month' )->setTime( 23, 59, 59 );
+		$label    = __( 'This month', 'shop-front' );
+
+		// Override from dashboard date range picker when both dates are present and valid.
+		$start_param = isset( $_GET['msf_dashboard_start'] ) ? \sanitize_text_field( \wp_unslash( $_GET['msf_dashboard_start'] ) ) : '';
+		$end_param   = isset( $_GET['msf_dashboard_end'] ) ? \sanitize_text_field( \wp_unslash( $_GET['msf_dashboard_end'] ) ) : '';
+
+		if ( '' !== $start_param && '' !== $end_param ) {
+			try {
+				$start_input = new \DateTimeImmutable( $start_param, $tz );
+				$end_input   = new \DateTimeImmutable( $end_param, $tz );
+
+				if ( $end_input < $start_input ) {
+					// Swap if user accidentally picked reversed range.
+					$tmp         = $start_input;
+					$start_input = $end_input;
+					$end_input   = $tmp;
+				}
+
+				$start_dt = $start_input->setTime( 0, 0, 0 );
+				$end_dt   = $end_input->setTime( 23, 59, 59 );
+				$label    = sprintf(
+					'%s – %s',
+					$start_input->format( 'M j, Y' ),
+					$end_input->format( 'M j, Y' )
+				);
+			} catch ( \Exception $e ) {
+				// Fall back to default month range.
+			}
+		}
 
 		$start = $start_dt->format( 'Y-m-d H:i:s' );
 		$end   = $end_dt->format( 'Y-m-d H:i:s' );
@@ -294,14 +324,14 @@ class Dashboard {
 			array(
 				'start' => $start,
 				'end'   => $end,
-				'label' => __( 'This month', 'shop-front' ),
+				'label' => $label,
 			)
 		);
 
 		return array(
 			'start' => isset( $args['start'] ) ? (string) $args['start'] : $start,
 			'end'   => isset( $args['end'] ) ? (string) $args['end'] : $end,
-			'label' => isset( $args['label'] ) ? (string) $args['label'] : __( 'This month', 'shop-front' ),
+			'label' => isset( $args['label'] ) ? (string) $args['label'] : $label,
 		);
 	}
 

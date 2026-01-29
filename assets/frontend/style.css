@@ -3256,3 +3256,18 @@ table.my-shop-front-tbl.msf-dashboard-leaderboard-table tr td:first-child a {
 table.my-shop-front-tbl.msf-dashboard-leaderboard-table thead tr th {
   background: #f8f9fa;
 }
+form.msf-dashboard-date-range-form {
+  display: flex;
+}
+
+form.msf-dashboard-date-range-form input#msf_dashboard_range {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0px;
+  min-width: 250px;
+  border-right: 0;
+}
+
+form.msf-dashboard-date-range-form button.my-shop-front-button.msf-dashboard-date-apply {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
