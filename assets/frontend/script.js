@@ -14,6 +14,87 @@
 			this.handleFilterOffcanvas(); // Handle filter off-canvas
 			this.handleOrderFilterOffcanvas(); // Handle order filter off-canvas
 			this.handleBulkActionCheckbox(); // Handle bulk action checkbox
+			this.initDashboardDateRangePicker(); // Dashboard date range picker
+		},
+		/**
+		 * Initialize dashboard date range picker with predefined ranges.
+		 */
+		initDashboardDateRangePicker: function () {
+			var $range = $( '#msf_dashboard_range' );
+			var $start = $( '#msf_dashboard_start' );
+			var $end = $( '#msf_dashboard_end' );
+
+			if (
+				! $range.length ||
+				! $.fn.daterangepicker ||
+				! window.moment
+			) {
+				return;
+			}
+
+			var initialStart = $start.val();
+			var initialEnd = $end.val();
+
+			var start = initialStart
+				? moment( initialStart, 'YYYY-MM-DD' )
+				: moment().startOf( 'month' );
+			var end = initialEnd
+				? moment( initialEnd, 'YYYY-MM-DD' )
+				: moment().endOf( 'month' );
+
+			function msfUpdateDashboardRange( startDate, endDate ) {
+				$start.val( startDate.format( 'YYYY-MM-DD' ) );
+				$end.val( endDate.format( 'YYYY-MM-DD' ) );
+				$range.val(
+					startDate.format( 'YYYY-MM-DD' ) +
+						' - ' +
+						endDate.format( 'YYYY-MM-DD' )
+				);
+			}
+
+			var labels = window.MSF_Dashboard_DateRanges_I18n || {};
+			var ranges = {};
+
+			ranges[ labels.today || 'Today' ] = [ moment(), moment() ];
+			ranges[ labels.yesterday || 'Yesterday' ] = [
+				moment().subtract( 1, 'days' ),
+				moment().subtract( 1, 'days' ),
+			];
+			ranges[ labels.last7 || 'Last 7 Days' ] = [
+				moment().subtract( 6, 'days' ),
+				moment(),
+			];
+			ranges[ labels.last30 || 'Last 30 Days' ] = [
+				moment().subtract( 29, 'days' ),
+				moment(),
+			];
+			ranges[ labels.this_month || 'This Month' ] = [
+				moment().startOf( 'month' ),
+				moment().endOf( 'month' ),
+			];
+			ranges[ labels.last_month || 'Last Month' ] = [
+				moment().subtract( 1, 'month' ).startOf( 'month' ),
+				moment().subtract( 1, 'month' ).endOf( 'month' ),
+			];
+
+			$range.daterangepicker(
+				{
+					startDate: start,
+					endDate: end,
+					autoUpdateInput: false,
+					locale: {
+						format: 'YYYY-MM-DD',
+						separator: ' - ',
+					},
+					ranges: ranges,
+				},
+				function ( startDate, endDate ) {
+					msfUpdateDashboardRange( startDate, endDate );
+				}
+			);
+
+			// Initialize display/value on load.
+			msfUpdateDashboardRange( start, end );
 		},
 		handleBulkActionCheckbox: function () {
 			$( '#cb-select-all-orders' ).on( 'click', function () {

@@ -220,6 +220,7 @@ final class ShopFront {
 		$this->container['msf_helper']                      = new Helper();
 		$this->container['msf_rewrites']                    = new Rewrites();
 		$this->container['msf_dashboard_menu']              = new DashboardMenu();
+		$this->container['msf_dashboard']                   = new Dashboard();
 		$this->container['msf_dashboard_header']            = new TemplateParts();
 		$this->container['msf_shortcode']                   = new Shortcodes\Shortcodes();
 		$this->container['msf_admin_settings']              = new Admin\Settings();
