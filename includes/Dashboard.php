@@ -312,7 +312,13 @@ class Dashboard {
 					$end_input->format( 'M j, Y' )
 				);
 			} catch ( \Exception $e ) {
-				// Fall back to default month range.
+				storesuite_log(
+					sprintf(
+						'Error to get store performance date range: %s',
+						$e->getMessage()
+					),
+					'error'
+				);
 			}
 		}
 
@@ -522,15 +528,13 @@ class Dashboard {
 					return $rows;
 				}
 			} catch ( \Exception $e ) {
-				// Log error for debugging.
-				if ( function_exists( 'error_log' ) ) {
-					error_log(
-						sprintf(
-							'[Shop Front] Error fetching top products: %s',
-							$e->getMessage()
-						)
-					);
-				}
+				storesuite_log(
+					sprintf(
+						'Error fetching top products: %s',
+						$e->getMessage()
+					),
+					'error'
+				);
 
 				// Return empty array on error (no REST fallback).
 				return array();
@@ -591,15 +595,13 @@ class Dashboard {
 					return $rows;
 				}
 			} catch ( \Exception $e ) {
-				// Log error for debugging.
-				if ( function_exists( 'error_log' ) ) {
-					error_log(
-						sprintf(
-							'[Shop Front] Error fetching top categories: %s',
-							$e->getMessage()
-						)
-					);
-				}
+				storesuite_log(
+					sprintf(
+						'Error fetching top categories: %s',
+						$e->getMessage()
+					),
+					'error'
+				);
 
 				// Return empty array on error (no REST fallback).
 				return array();
@@ -659,15 +661,13 @@ class Dashboard {
 					return $rows;
 				}
 			} catch ( \Exception $e ) {
-				// Log error for debugging.
-				if ( function_exists( 'error_log' ) ) {
-					error_log(
-						sprintf(
-							'[Shop Front] Error fetching top customers: %s',
-							$e->getMessage()
-						)
-					);
-				}
+				storesuite_log(
+					sprintf(
+						'Error fetching top customers: %s',
+						$e->getMessage()
+					),
+					'error'
+				);
 
 				// Return empty array on error (no REST fallback).
 				return array();
@@ -728,15 +728,13 @@ class Dashboard {
 					return $rows;
 				}
 			} catch ( \Exception $e ) {
-				// Log error for debugging.
-				if ( function_exists( 'error_log' ) ) {
-					error_log(
-						sprintf(
-							'[Shop Front] Error fetching top coupons: %s',
-							$e->getMessage()
-						)
-					);
-				}
+				storesuite_log(
+					sprintf(
+						'Error fetching top coupons: %s',
+						$e->getMessage()
+					),
+					'error'
+				);
 
 				// Return empty array on error.
 				return array();

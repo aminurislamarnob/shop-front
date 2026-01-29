@@ -307,3 +307,21 @@ function msfc_is_page( $endpoint ) {
 	$query_var = $wp->query_vars;
 	return array_key_exists( $endpoint, $query_var );
 }
+
+
+/**
+ * Custom WooCommerce logger
+ *
+ * @param string $message
+ * @param string $level
+ * @return void
+ */
+function storesuite_log( $message, $level = 'debug' ) {
+	if ( ! function_exists( 'wc_get_logger' ) ) {
+		return;
+	}
+
+	$logger  = wc_get_logger();
+	$context = array( 'source' => 'storesuite' );
+	$logger->log( $level, $message, $context );
+}
