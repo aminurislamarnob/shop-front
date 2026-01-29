@@ -522,9 +522,23 @@ class Dashboard {
 					return $rows;
 				}
 			} catch ( \Exception $e ) {
-				// Fallback to REST request below.
+				// Log error for debugging.
+				if ( function_exists( 'error_log' ) ) {
+					error_log(
+						sprintf(
+							'[Shop Front] Error fetching top products: %s',
+							$e->getMessage()
+						)
+					);
+				}
+
+				// Return empty array on error (no REST fallback).
+				return array();
 			}
 		}
+
+		// Return empty array if class doesn't exist or no data returned.
+		return array();
 	}
 
 	/**
@@ -577,9 +591,23 @@ class Dashboard {
 					return $rows;
 				}
 			} catch ( \Exception $e ) {
-				// Fallback to REST request below.
+				// Log error for debugging.
+				if ( function_exists( 'error_log' ) ) {
+					error_log(
+						sprintf(
+							'[Shop Front] Error fetching top categories: %s',
+							$e->getMessage()
+						)
+					);
+				}
+
+				// Return empty array on error (no REST fallback).
+				return array();
 			}
 		}
+
+		// Return empty array if class doesn't exist or no data returned.
+		return array();
 	}
 
 	/**
@@ -631,9 +659,23 @@ class Dashboard {
 					return $rows;
 				}
 			} catch ( \Exception $e ) {
-				// Fallback to REST request below.
+				// Log error for debugging.
+				if ( function_exists( 'error_log' ) ) {
+					error_log(
+						sprintf(
+							'[Shop Front] Error fetching top customers: %s',
+							$e->getMessage()
+						)
+					);
+				}
+
+				// Return empty array on error (no REST fallback).
+				return array();
 			}
 		}
+
+		// Return empty array if class doesn't exist or no data returned.
+		return array();
 	}
 
 	/**
@@ -686,8 +728,22 @@ class Dashboard {
 					return $rows;
 				}
 			} catch ( \Exception $e ) {
-				// Fallback to REST request below.
+				// Log error for debugging.
+				if ( function_exists( 'error_log' ) ) {
+					error_log(
+						sprintf(
+							'[Shop Front] Error fetching top coupons: %s',
+							$e->getMessage()
+						)
+					);
+				}
+
+				// Return empty array on error.
+				return array();
 			}
 		}
+
+		// Return empty array if class doesn't exist or no data returned.
+		return array();
 	}
 }
