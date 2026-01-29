@@ -376,10 +376,6 @@ class Dashboard {
 	 * @return array<string,mixed>|\WP_Error
 	 */
 	protected function get_kpi_values( string $start, string $end, array $stats ) {
-		if ( ! class_exists( 'WP_REST_Request' ) || ! function_exists( 'rest_do_request' ) ) {
-			return new \WP_Error( 'msf_rest_unavailable', __( 'REST API is not available.', 'shop-front' ) );
-		}
-
 		$stat_keys = array();
 		foreach ( $stats as $item ) {
 			if ( ! is_array( $item ) || ! isset( $item['stat'] ) ) {
@@ -529,57 +525,6 @@ class Dashboard {
 				// Fallback to REST request below.
 			}
 		}
-
-		// Fallback to REST leaderboard endpoint.
-		if ( ! class_exists( 'WP_REST_Request' ) || ! function_exists( 'rest_do_request' ) ) {
-			return new \WP_Error( 'msf_rest_unavailable', __( 'REST API is not available.', 'shop-front' ) );
-		}
-
-		$request = new \WP_REST_Request( 'GET', '/wc-analytics/leaderboards/products' );
-		$request->set_query_params(
-			array(
-				'after'    => $start,
-				'before'   => $end,
-				'per_page' => $limit,
-			)
-		);
-
-		$response = rest_do_request( $request );
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		if ( ! is_callable( array( $response, 'get_status' ) ) || 200 !== $response->get_status() ) {
-			return new \WP_Error( 'msf_top_products_failed', __( 'Sorry, fetching top products failed.', 'shop-front' ) );
-		}
-
-		$data = $response->get_data();
-		if ( ! is_array( $data ) || empty( $data[0]['rows'] ) || ! is_array( $data[0]['rows'] ) ) {
-			return array();
-		}
-
-		$rows = array();
-		foreach ( $data[0]['rows'] as $row ) {
-			if ( ! is_array( $row ) || ! isset( $row[0], $row[1], $row[2] ) ) {
-				continue;
-			}
-
-			$product_name = '';
-			if ( isset( $row[0]['value'] ) ) {
-				$product_name = (string) $row[0]['value'];
-			} elseif ( isset( $row[0]['display'] ) ) {
-				$product_name = wp_strip_all_tags( (string) $row[0]['display'] );
-			}
-
-			$rows[] = array(
-				'product_id'   => 0,
-				'product_name' => $product_name,
-				'items_sold'   => isset( $row[1]['value'] ) ? (float) $row[1]['value'] : 0,
-				'net_revenue'  => isset( $row[2]['value'] ) ? (float) $row[2]['value'] : 0,
-			);
-		}
-
-		return $rows;
 	}
 
 	/**
@@ -635,57 +580,6 @@ class Dashboard {
 				// Fallback to REST request below.
 			}
 		}
-
-		// Fallback to REST leaderboard endpoint.
-		if ( ! class_exists( 'WP_REST_Request' ) || ! function_exists( 'rest_do_request' ) ) {
-			return new \WP_Error( 'msf_rest_unavailable', __( 'REST API is not available.', 'shop-front' ) );
-		}
-
-		$request = new \WP_REST_Request( 'GET', '/wc-analytics/leaderboards/categories' );
-		$request->set_query_params(
-			array(
-				'after'    => $start,
-				'before'   => $end,
-				'per_page' => $limit,
-			)
-		);
-
-		$response = rest_do_request( $request );
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		if ( ! is_callable( array( $response, 'get_status' ) ) || 200 !== $response->get_status() ) {
-			return new \WP_Error( 'msf_top_categories_failed', __( 'Sorry, fetching top categories failed.', 'shop-front' ) );
-		}
-
-		$data = $response->get_data();
-		if ( ! is_array( $data ) || empty( $data[0]['rows'] ) || ! is_array( $data[0]['rows'] ) ) {
-			return array();
-		}
-
-		$rows = array();
-		foreach ( $data[0]['rows'] as $row ) {
-			if ( ! is_array( $row ) || ! isset( $row[0], $row[1], $row[2] ) ) {
-				continue;
-			}
-
-			$category_name = '';
-			if ( isset( $row[0]['value'] ) ) {
-				$category_name = (string) $row[0]['value'];
-			} elseif ( isset( $row[0]['display'] ) ) {
-				$category_name = wp_strip_all_tags( (string) $row[0]['display'] );
-			}
-
-			$rows[] = array(
-				'category_id'   => 0,
-				'category_name' => $category_name,
-				'items_sold'    => isset( $row[1]['value'] ) ? (float) $row[1]['value'] : 0,
-				'net_revenue'   => isset( $row[2]['value'] ) ? (float) $row[2]['value'] : 0,
-			);
-		}
-
-		return $rows;
 	}
 
 	/**
@@ -740,57 +634,6 @@ class Dashboard {
 				// Fallback to REST request below.
 			}
 		}
-
-		// Fallback to REST leaderboard endpoint.
-		if ( ! class_exists( 'WP_REST_Request' ) || ! function_exists( 'rest_do_request' ) ) {
-			return new \WP_Error( 'msf_rest_unavailable', __( 'REST API is not available.', 'shop-front' ) );
-		}
-
-		$request = new \WP_REST_Request( 'GET', '/wc-analytics/leaderboards/customers' );
-		$request->set_query_params(
-			array(
-				'after'    => $start,
-				'before'   => $end,
-				'per_page' => $limit,
-			)
-		);
-
-		$response = rest_do_request( $request );
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		if ( ! is_callable( array( $response, 'get_status' ) ) || 200 !== $response->get_status() ) {
-			return new \WP_Error( 'msf_top_customers_failed', __( 'Sorry, fetching top customers failed.', 'shop-front' ) );
-		}
-
-		$data = $response->get_data();
-		if ( ! is_array( $data ) || empty( $data[0]['rows'] ) || ! is_array( $data[0]['rows'] ) ) {
-			return array();
-		}
-
-		$rows = array();
-		foreach ( $data[0]['rows'] as $row ) {
-			if ( ! is_array( $row ) || ! isset( $row[0], $row[1], $row[2] ) ) {
-				continue;
-			}
-
-			$customer_name = '';
-			if ( isset( $row[0]['value'] ) ) {
-				$customer_name = (string) $row[0]['value'];
-			} elseif ( isset( $row[0]['display'] ) ) {
-				$customer_name = wp_strip_all_tags( (string) $row[0]['display'] );
-			}
-
-			$rows[] = array(
-				'customer_id'   => 0,
-				'customer_name' => $customer_name,
-				'orders_count'  => isset( $row[1]['value'] ) ? (int) $row[1]['value'] : 0,
-				'total_spend'   => isset( $row[2]['value'] ) ? (float) $row[2]['value'] : 0,
-			);
-		}
-
-		return $rows;
 	}
 
 	/**
@@ -846,56 +689,5 @@ class Dashboard {
 				// Fallback to REST request below.
 			}
 		}
-
-		// Fallback to REST leaderboard endpoint.
-		if ( ! class_exists( 'WP_REST_Request' ) || ! function_exists( 'rest_do_request' ) ) {
-			return new \WP_Error( 'msf_rest_unavailable', __( 'REST API is not available.', 'shop-front' ) );
-		}
-
-		$request = new \WP_REST_Request( 'GET', '/wc-analytics/leaderboards/coupons' );
-		$request->set_query_params(
-			array(
-				'after'    => $start,
-				'before'   => $end,
-				'per_page' => $limit,
-			)
-		);
-
-		$response = rest_do_request( $request );
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		if ( ! is_callable( array( $response, 'get_status' ) ) || 200 !== $response->get_status() ) {
-			return new \WP_Error( 'msf_top_coupons_failed', __( 'Sorry, fetching top coupons failed.', 'shop-front' ) );
-		}
-
-		$data = $response->get_data();
-		if ( ! is_array( $data ) || empty( $data[0]['rows'] ) || ! is_array( $data[0]['rows'] ) ) {
-			return array();
-		}
-
-		$rows = array();
-		foreach ( $data[0]['rows'] as $row ) {
-			if ( ! is_array( $row ) || ! isset( $row[0], $row[1], $row[2] ) ) {
-				continue;
-			}
-
-			$coupon_code = '';
-			if ( isset( $row[0]['value'] ) ) {
-				$coupon_code = (string) $row[0]['value'];
-			} elseif ( isset( $row[0]['display'] ) ) {
-				$coupon_code = wp_strip_all_tags( (string) $row[0]['display'] );
-			}
-
-			$rows[] = array(
-				'coupon_id'    => 0,
-				'coupon_code'  => $coupon_code,
-				'orders_count' => isset( $row[1]['value'] ) ? (int) $row[1]['value'] : 0,
-				'amount'       => isset( $row[2]['value'] ) ? (float) $row[2]['value'] : 0,
-			);
-		}
-
-		return $rows;
 	}
 }
