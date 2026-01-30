@@ -7,6 +7,10 @@
 
 namespace PluginizeLab\StoreSuite\ProductCategory;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use PluginizeLab\StoreSuite\Cache;
 
 /**

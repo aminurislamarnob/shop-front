@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\ProductCategory;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Plugin product categories controller class
  */

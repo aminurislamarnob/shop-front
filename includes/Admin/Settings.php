@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Admin;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Plugin admin page settings class
  */
@@ -20,7 +24,7 @@ class Settings {
 	 */
 	public function add_admin_settings_menu() {
 		add_submenu_page(
-			'woocommerce',
+			'storesuite',
 			'StoreSuite Settings',
 			'StoreSuite',
 			'manage_options',

@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Order;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Plugin order controller class
  */
@@ -101,9 +105,9 @@ class OrderController {
 				<p class="meta">
 					<abbr class="exact-date" title="<?php echo esc_attr( $note->date_created->date( 'Y-m-d H:i:s' ) ); ?>">
 					<?php
-					/* translators: $1: Date created, $2 Time created */
 					printf(
-						esc_html__( 'added on %1$s at %2$s', 'woocommerce' ),
+						/* translators: $1: Date created, $2 Time created */
+						esc_html__( 'added on %1$s at %2$s', 'storesuite' ),
 						esc_html( $note->date_created->date_i18n( wc_date_format() ) ),
 						esc_html( $note->date_created->date_i18n( wc_time_format() ) )
 					);
@@ -112,10 +116,10 @@ class OrderController {
 						<?php
 						if ( 'system' !== $note->added_by ) :
 							/* translators: %s: note author */
-							printf( ' ' . esc_html__( 'by %s', 'woocommerce' ), esc_html( $note->added_by ) );
+							printf( ' ' . esc_html__( 'by %s', 'storesuite' ), esc_html( $note->added_by ) );
 						endif;
 						?>
-					<a href="#" class="delete_note" x-on:click.prevent="handleDeleteNote" role="button"><?php esc_html_e( 'Delete note', 'woocommerce' ); ?></a>
+					<a href="#" class="delete_note" x-on:click.prevent="handleDeleteNote" role="button"><?php esc_html_e( 'Delete note', 'storesuite' ); ?></a>
 				</p>
 			</li>
 			<?php
@@ -177,7 +181,7 @@ class OrderController {
 			$order    = wc_get_order( $order_id );
 
 			if ( ! $order ) {
-				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
+				throw new \Exception( __( 'Invalid order', 'storesuite' ) );
 			}
 
 			$shipping_method_title = isset( $_POST['shipping_method_title'] ) ? sanitize_text_field( $_POST['shipping_method_title'] ) : __( 'Shipping', 'storesuite' );
@@ -224,7 +228,7 @@ class OrderController {
 			$order    = wc_get_order( $order_id );
 
 			if ( ! $order ) {
-				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
+				throw new \Exception( __( 'Invalid order', 'storesuite' ) );
 			}
 
 			// Set customer id
@@ -264,7 +268,7 @@ class OrderController {
 			$order    = wc_get_order( $order_id );
 
 			if ( ! $order ) {
-				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
+				throw new \Exception( __( 'Invalid order', 'storesuite' ) );
 			}
 
 			// Handle button actions.
@@ -286,7 +290,7 @@ class OrderController {
 					WC()->mailer()->customer_invoice( $order );
 
 					// Note the event.
-					$order->add_order_note( __( 'Order details manually sent to customer.', 'woocommerce' ), false, true );
+					$order->add_order_note( __( 'Order details manually sent to customer.', 'storesuite' ), false, true );
 
 					/**
 					 * Fires after an order email has been resent.
@@ -324,7 +328,7 @@ class OrderController {
 				$date = time();
 			} else {
 				if ( ! isset( $_POST['order_date_hour'] ) || ! isset( $_POST['order_date_minute'] ) || ! isset( $_POST['order_date_second'] ) ) {
-					throw new \Exception( __( 'Order date, hour, minute and/or second are missing.', 'woocommerce' ), 400 );
+					throw new \Exception( __( 'Order date, hour, minute and/or second are missing.', 'storesuite' ), 400 );
 				}
 				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 				$date = gmdate( 'Y-m-d H:i:s', strtotime( sanitize_text_field( wp_unslash( $_POST['order_date'] ) ) . ' ' . absint( $_POST['order_date_hour'] ) . ':' . absint( $_POST['order_date_minute'] ) . ':' . absint( $_POST['order_date_second'] ) ) );

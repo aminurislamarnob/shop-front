@@ -1,3 +1,14 @@
+<?php
+/**
+ * Page template for StoreSuite dashboard.
+ *
+ * @package StoreSuite
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 	<head>

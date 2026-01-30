@@ -75,11 +75,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<div class="msf-card-content">
 									<div class="msf-form-group">
 										<div class="coupon-group">
-											<input type="text" class="shipping_method_title msf-form-control" placeholder="<?php esc_attr_e( 'Shipping name', 'woocommerce' ); ?>" name="storesuite_shipping_method_title" value="<?php echo esc_attr__( 'Shipping', 'woocommerce' ); ?>" />
+											<input type="text" class="shipping_method_title msf-form-control" placeholder="<?php esc_attr_e( 'Shipping name', 'storesuite' ); ?>" name="storesuite_shipping_method_title" value="<?php echo esc_attr__( 'Shipping', 'storesuite' ); ?>" />
 											<input type="text" name="storesuite_shipping_cost" placeholder="0" class="msf-form-control" />
 											<select class="shipping_method msf-form-control" name="storesuite_shipping_method">
-												<optgroup label="<?php esc_attr_e( 'Shipping method', 'woocommerce' ); ?>">
-													<option value=""><?php esc_html_e( 'N/A', 'woocommerce' ); ?></option>
+												<optgroup label="<?php esc_attr_e( 'Shipping method', 'storesuite' ); ?>">
+													<option value=""><?php esc_html_e( 'N/A', 'storesuite' ); ?></option>
 													<?php
 													$found_method     = false;
 													$shipping_methods = WC()->shipping() ? WC()->shipping()->load_shipping_methods() : array();
@@ -88,7 +88,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 														echo '<option value="' . esc_attr( $method->id ) . '" ' . selected( true, $is_active, false ) . '>' . esc_html( $method->get_method_title() ) . '</option>';
 													}
 
-													echo '<option value="other">' . esc_html__( 'Other', 'woocommerce' ) . '</option>';
+													echo '<option value="other">' . esc_html__( 'Other', 'storesuite' ) . '</option>';
 													?>
 												</optgroup>
 											</select>
@@ -280,7 +280,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<div class="msf-form-group">
 											<label for="_payment_method"><?php esc_html_e( 'Payment Method', 'storesuite' ); ?></label>
 											<select name="_payment_method" id="_payment_method" class=" msf-form-control">
-												<option value=""><?php esc_html_e( 'N/A', 'woocommerce' ); ?></option>
+												<option value=""><?php esc_html_e( 'N/A', 'storesuite' ); ?></option>
 												<?php
 												if ( WC()->payment_gateways() ) {
 													$payment_gateways = WC()->payment_gateways->payment_gateways();
@@ -300,9 +300,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 												}
 
 												if ( ! $found_method && ! empty( $payment_method ) ) {
-													echo '<option value="' . esc_attr( $payment_method ) . '" selected="selected">' . esc_html__( 'Other', 'woocommerce' ) . '</option>';
+													echo '<option value="' . esc_attr( $payment_method ) . '" selected="selected">' . esc_html__( 'Other', 'storesuite' ) . '</option>';
 												} else {
-													echo '<option value="other">' . esc_html__( 'Other', 'woocommerce' ) . '</option>';
+													echo '<option value="other">' . esc_html__( 'Other', 'storesuite' ) . '</option>';
 												}
 												?>
 											</select>
@@ -484,7 +484,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									?>
 								<div class="msf-form-group">
 									<label for="customer_note"><?php esc_html_e( 'Customer Provided Note', 'storesuite' ); ?></label>
-									<textarea rows="3" cols="40" class="msf-form-control" name="customer_note" tabindex="6" id="customer_note" placeholder="<?php esc_attr_e( 'Customer notes about the order', 'woocommerce' ); ?>"><?php echo wp_kses( $order->get_customer_note(), array( 'br' => array() ) ); ?></textarea>
+									<textarea rows="3" cols="40" class="msf-form-control" name="customer_note" tabindex="6" id="customer_note" placeholder="<?php esc_attr_e( 'Customer notes about the order', 'storesuite' ); ?>"><?php echo wp_kses( $order->get_customer_note(), array( 'br' => array() ) ); ?></textarea>
 								</div>
 								<?php } ?>
 							</div>
@@ -517,8 +517,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 							}
 							?>
 							<label for="date_created"><?php esc_html_e( 'Customer', 'storesuite' ); ?></label>
-							<select class="wc-customer-search" id="customer_user" name="customer_user" data-placeholder="<?php esc_attr_e( 'Guest', 'woocommerce' ); ?>" data-allow_clear="true">
-								<option value="<?php echo $user_id ? esc_attr( $user_id ) : ''; ?>"><?php echo $user_id ? esc_html( htmlspecialchars( wp_kses_post( $user_string ) ) ) : esc_html__( 'Guest', 'woocommerce' ); ?></option>
+							<select class="wc-customer-search" id="customer_user" name="customer_user" data-placeholder="<?php esc_attr_e( 'Guest', 'storesuite' ); ?>" data-allow_clear="true">
+								<option value="<?php echo $user_id ? esc_attr( $user_id ) : ''; ?>"><?php echo $user_id ? esc_html( htmlspecialchars( wp_kses_post( $user_string ) ) ) : esc_html__( 'Guest', 'storesuite' ); ?></option>
 							</select>
 						</div>
 						<div class="msf-form-group">
@@ -529,8 +529,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 								?>
 								<input type="date" class="date-picker msf-form-control date-input" name="order_date" maxlength="10" value="<?php echo esc_attr( date_i18n( 'Y-m-d', $order_date_created_localised ) ); ?>" pattern="<?php echo esc_attr( apply_filters( 'woocommerce_date_input_html_pattern', '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])' ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment ?>" />@
 								&lrm;
-								<input type="number" class="hour msf-form-control time-input" placeholder="<?php esc_attr_e( 'h', 'woocommerce' ); ?>" name="order_date_hour" min="0" max="23" step="1" value="<?php echo esc_attr( date_i18n( 'H', $order_date_created_localised ) ); ?>" pattern="([01]?[0-9]{1}|2[0-3]{1})" />:
-								<input type="number" class="minute msf-form-control time-input" placeholder="<?php esc_attr_e( 'm', 'woocommerce' ); ?>" name="order_date_minute" min="0" max="59" step="1" value="<?php echo esc_attr( date_i18n( 'i', $order_date_created_localised ) ); ?>" pattern="[0-5]{1}[0-9]{1}" />
+								<input type="number" class="hour msf-form-control time-input" placeholder="<?php esc_attr_e( 'h', 'storesuite' ); ?>" name="order_date_hour" min="0" max="23" step="1" value="<?php echo esc_attr( date_i18n( 'H', $order_date_created_localised ) ); ?>" pattern="([01]?[0-9]{1}|2[0-3]{1})" />:
+								<input type="number" class="minute msf-form-control time-input" placeholder="<?php esc_attr_e( 'm', 'storesuite' ); ?>" name="order_date_minute" min="0" max="59" step="1" value="<?php echo esc_attr( date_i18n( 'i', $order_date_created_localised ) ); ?>" pattern="[0-5]{1}[0-9]{1}" />
 								<input type="hidden" name="order_date_second" value="<?php echo esc_attr( date_i18n( 's', $order_date_created_localised ) ); ?>" />
 							</div>
 						</div>
@@ -597,9 +597,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<p class="meta">
 											<abbr class="exact-date" title="<?php echo esc_attr( $note->date_created->date( 'Y-m-d H:i:s' ) ); ?>">
 											<?php
-											/* translators: $1: Date created, $2 Time created */
 											printf(
-												esc_html__( 'added on %1$s at %2$s', 'woocommerce' ),
+												/* translators: $1: Date created, $2 Time created */
+												esc_html__( 'added on %1$s at %2$s', 'storesuite' ),
 												esc_html( $note->date_created->date_i18n( wc_date_format() ) ),
 												esc_html( $note->date_created->date_i18n( wc_time_format() ) )
 											);
@@ -608,10 +608,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 												<?php
 												if ( 'system' !== $note->added_by ) :
 													/* translators: %s: note author */
-													printf( ' ' . esc_html__( 'by %s', 'woocommerce' ), esc_html( $note->added_by ) );
+													printf( ' ' . esc_html__( 'by %s', 'storesuite' ), esc_html( $note->added_by ) );
 												endif;
 												?>
-											<a href="#" class="delete_note" x-on:click.prevent="handleDeleteNote" role="button"><?php esc_html_e( 'Delete note', 'woocommerce' ); ?></a>
+											<a href="#" class="delete_note" x-on:click.prevent="handleDeleteNote" role="button"><?php esc_html_e( 'Delete note', 'storesuite' ); ?></a>
 										</p>
 									</li>
 									<?php

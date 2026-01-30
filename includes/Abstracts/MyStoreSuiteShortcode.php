@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Abstracts;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 abstract class MyStoreSuiteShortcode {
 
     protected $shortcode = '';

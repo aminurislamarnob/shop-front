@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Order;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use WC_Order;
 use Automattic\WooCommerce\Enums\OrderStatus;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
@@ -324,9 +328,9 @@ class OrderManager {
 	 */
 	public static function get_available_order_actions_for_order( $order ) {
 		$actions = array(
-			'send_order_details'              => __( 'Send order details to customer', 'woocommerce' ),
-			'send_order_details_admin'        => __( 'Resend new order notification', 'woocommerce' ),
-			'regenerate_download_permissions' => __( 'Regenerate download permissions', 'woocommerce' ),
+			'send_order_details'              => __( 'Send order details to customer', 'storesuite' ),
+			'send_order_details_admin'        => __( 'Resend new order notification', 'storesuite' ),
+			'regenerate_download_permissions' => __( 'Regenerate download permissions', 'storesuite' ),
 		);
 
 		/**

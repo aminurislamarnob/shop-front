@@ -7,6 +7,10 @@
 
 namespace PluginizeLab\StoreSuite\ProductTag;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Tags class
  */

@@ -129,8 +129,8 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 				<div class="msf-card msf-mb-24">
 					<div class="msf-card-content">
 					<div class="msf-form-group">
-						<label for="product_title"><?php esc_html_e( 'Product Title', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
-						<input type="text" class="msf-form-control" id="product_title" name="product_title" placeholder="<?php echo esc_attr__( 'Product name', 'msfc-wfm' ); ?>" value="<?php echo esc_attr( $product_title ); ?>">
+						<label for="product_title"><?php esc_html_e( 'Product Title', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></strong></label>
+						<input type="text" class="msf-form-control" id="product_title" name="product_title" placeholder="<?php echo esc_attr__( 'Product name', 'storesuite' ); ?>" value="<?php echo esc_attr( $product_title ); ?>">
 					</div>
 					<div class="msf-form-group">
 						<label for="product_slug">
@@ -146,7 +146,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<small class="msf-form-text"><?php esc_html_e( 'It is usually all lowercase and contains only letters, numbers, and hyphens.', 'storesuite' ); ?></small>
 					</div>
 					<div class="msf-form-group">
-						<label for="product_description"><?php esc_html_e( 'Product Description', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
+						<label for="product_description"><?php esc_html_e( 'Product Description', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></strong></label>
 							<?php
 							$editor_id = 'product_description';
 							$settings  = array(
@@ -166,13 +166,13 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 							?>
 						</div>
 						<div class="msf-form-group">
-							<label for="product_short_description"><?php esc_html_e( 'Prduct Short Description', 'msfc-wfm' ); ?></strong></label>
-							<textarea class="msf-form-control" id="product_short_description" name="product_short_description" placeholder="<?php echo esc_attr__( 'Product short description', 'msfc-wfm' ); ?>" rows="4"><?php echo esc_textarea( $product_excerpt ); ?></textarea>
+							<label for="product_short_description"><?php esc_html_e( 'Prduct Short Description', 'storesuite' ); ?></strong></label>
+							<textarea class="msf-form-control" id="product_short_description" name="product_short_description" placeholder="<?php echo esc_attr__( 'Product short description', 'storesuite' ); ?>" rows="4"><?php echo esc_textarea( $product_excerpt ); ?></textarea>
 						</div>
 						<div class="msf-form-group">
 							<div class="row">
 								<div class="col-md-3">
-									<label for="product_thumbnail_id"><?php esc_html_e( 'Prouduct Image', 'msfc-wfm' ); ?></label>
+									<label for="product_thumbnail_id"><?php esc_html_e( 'Prouduct Image', 'storesuite' ); ?></label>
 									<?php
 									$thumbnail_url = '';
 									if ( $thumbnail_id ) {
@@ -190,15 +190,15 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 										<div class="image-drop-text">
 											<i class="las la-image"></i>
 											<?php if ( $thumbnail_id ) : ?>
-												<span><?php esc_html_e( 'Remove Image', 'msfc-wfm' ); ?></span>
+												<span><?php esc_html_e( 'Remove Image', 'storesuite' ); ?></span>
 											<?php else : ?>
-												<span><?php esc_html_e( 'Upload Image', 'msfc-wfm' ); ?></span>
+												<span><?php esc_html_e( 'Upload Image', 'storesuite' ); ?></span>
 											<?php endif; ?>
 										</div>
 									</div>
 								</div>
 								<div class="col-md-9">
-									<label for="product_image_gallery"><?php esc_html_e( 'Prouduct Gallery Images', 'msfc-wfm' ); ?></label>
+									<label for="product_image_gallery"><?php esc_html_e( 'Prouduct Gallery Images', 'storesuite' ); ?></label>
 									<?php
 									$gallery_ids_string = '';
 									$gallery_urls       = array();
@@ -242,7 +242,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 														<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"></path>
 													</svg>
 												</span>
-												<span class="add-gl-img-text"><?php esc_html_e( 'Upload Gallery Images', 'msfc-wfm' ); ?></span>
+												<span class="add-gl-img-text"><?php esc_html_e( 'Upload Gallery Images', 'storesuite' ); ?></span>
 											</div>
 										</div>
 									</div>
@@ -252,8 +252,8 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<div class="row">
 							<div class="col-md-12">
 								<div class="msf-form-group">
-									<label for="product_category"><?php esc_html_e( 'Select Category', 'msfc-wfm' ); ?></label>
-									<select class="msf-form-control msf-select2" id="product_category" name="product_category[]" data-placeholder="<?php esc_attr_e( 'Select category', 'msfc-wfm' ); ?>" data-allow_clear="true" multiple>
+									<label for="product_category"><?php esc_html_e( 'Select Category', 'storesuite' ); ?></label>
+									<select class="msf-form-control msf-select2" id="product_category" name="product_category[]" data-placeholder="<?php esc_attr_e( 'Select category', 'storesuite' ); ?>" data-allow_clear="true" multiple>
 										<?php
 										$all_categories = get_categories(
 											array(
@@ -280,7 +280,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<div class="row">
 							<div class="col-md-6">
 								<div class="msf-form-group">
-									<label for="regular_price"><?php esc_html_e( 'Regular Price', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
+									<label for="regular_price"><?php esc_html_e( 'Regular Price', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></label>
 									<input type="number" class="msf-form-control" id="regular_price" name="regular_price" step="any" value="<?php echo esc_attr( $regular_price ); ?>">
 								</div>
 							</div>
@@ -288,11 +288,11 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 								<div class="msf-form-group">
 									<div class="row">
 										<div class="col-md-8">
-											<label for="sale_price"><?php esc_html_e( 'Sale Price', 'msfc-wfm' ); ?></label>
+											<label for="sale_price"><?php esc_html_e( 'Sale Price', 'storesuite' ); ?></label>
 										</div>
 										<div class="col-md-4 text-right">
-											<a href="#" class="sale_schedule"><?php esc_html_e( 'Schedule', 'msfc-wfm' ); ?></a>
-											<a href="#" class="cancel_sale_schedule"><?php esc_html_e( 'Cancel', 'msfc-wfm' ); ?></a>
+											<a href="#" class="sale_schedule"><?php esc_html_e( 'Schedule', 'storesuite' ); ?></a>
+											<a href="#" class="cancel_sale_schedule"><?php esc_html_e( 'Cancel', 'storesuite' ); ?></a>
 										</div>
 									</div>
 									<input type="number" class="msf-form-control" id="sale_price" name="sale_price" step="any" value="<?php echo esc_attr( $sale_price ); ?>">
@@ -302,13 +302,13 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 								<div class="row sale_price_dates_fields">
 									<div class="col-md-6">
 										<div class="msf-form-group">
-											<label for="_sale_price_dates_from"><?php esc_html_e( 'Sale Price Date From', 'msfc-wfm' ); ?></label>
+											<label for="_sale_price_dates_from"><?php esc_html_e( 'Sale Price Date From', 'storesuite' ); ?></label>
 											<input type="text" class="msf-form-control" id="_sale_price_dates_from" name="_sale_price_dates_from" value="<?php echo esc_attr( $sale_price_dates_from ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
-											<label for="_sale_price_dates_to"><?php esc_html_e( 'Sale Price Date To', 'msfc-wfm' ); ?></label>
+											<label for="_sale_price_dates_to"><?php esc_html_e( 'Sale Price Date To', 'storesuite' ); ?></label>
 											<input type="text" class="msf-form-control" id="_sale_price_dates_to" name="_sale_price_dates_to" value="<?php echo esc_attr( $sale_price_dates_to ); ?>">
 										</div>
 									</div>
@@ -323,43 +323,43 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<div class="row">
 							<div class="col-md-6">
 								<div class="msf-form-group">
-									<label for="_sku"><?php esc_html_e( 'SKU', 'msfc-wfm' ); ?></label>
+									<label for="_sku"><?php esc_html_e( 'SKU', 'storesuite' ); ?></label>
 									<input type="text" class="msf-form-control" id="_sku" name="_sku" value="<?php echo esc_attr( $sku ); ?>">
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="msf-form-group">
-									<label for="_global_unique_id"><?php esc_html_e( 'GTIN, UPC, EAN, or ISBN', 'msfc-wfm' ); ?></label>
+									<label for="_global_unique_id"><?php esc_html_e( 'GTIN, UPC, EAN, or ISBN', 'storesuite' ); ?></label>
 									<input type="text" class="msf-form-control" id="_global_unique_id" name="_global_unique_id" value="<?php echo esc_attr( $global_unique_id ); ?>">
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="msf-form-group msf-form-switch">
 									<input type="checkbox" class="msf-form-control" id="_manage_stock" name="_manage_stock" value="yes" <?php checked( $manage_stock, 'yes' ); ?>>
-									<label for="_manage_stock"><?php esc_html_e( 'Enable product stock management', 'msfc-wfm' ); ?></label>
+									<label for="_manage_stock"><?php esc_html_e( 'Enable product stock management', 'storesuite' ); ?></label>
 								</div>
 							</div>
 							<div class="col-md-12 show_if_stock_management">
 								<div class="row">
 									<div class="col-md-6">
 										<div class="msf-form-group">
-											<label for="_stock_quantity"><?php esc_html_e( 'Quantity', 'msfc-wfm' ); ?></label>
+											<label for="_stock_quantity"><?php esc_html_e( 'Quantity', 'storesuite' ); ?></label>
 											<input type="number" class="msf-form-control" id="_stock_quantity" name="_stock_quantity" step="any" value="<?php echo esc_attr( $stock_quantity ? $stock_quantity : 1 ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
-											<label for="_low_stock_amount"><?php esc_html_e( 'Low Stock Threshold', 'msfc-wfm' ); ?></label>
+											<label for="_low_stock_amount"><?php esc_html_e( 'Low Stock Threshold', 'storesuite' ); ?></label>
 											<input type="number" class="msf-form-control" id="_low_stock_amount" name="_low_stock_amount" step="any" value="<?php echo esc_attr( $low_stock_amount ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
-											<label for="_backorders"><?php esc_html_e( 'Allow Backorders?', 'msfc-wfm' ); ?></label>
+											<label for="_backorders"><?php esc_html_e( 'Allow Backorders?', 'storesuite' ); ?></label>
 											<select class="msf-form-control" id="_backorders" name="_backorders">
-												<option value="no" <?php selected( $backorders, 'no' ); ?>><?php esc_html_e( 'Do not allow', 'msfc-wfm' ); ?></option>
-												<option value="notify" <?php selected( $backorders, 'notify' ); ?>><?php esc_html_e( 'Allow but notify customer', 'msfc-wfm' ); ?></option>
-												<option value="yes" <?php selected( $backorders, 'yes' ); ?>><?php esc_html_e( 'Allow', 'msfc-wfm' ); ?></option>
+												<option value="no" <?php selected( $backorders, 'no' ); ?>><?php esc_html_e( 'Do not allow', 'storesuite' ); ?></option>
+												<option value="notify" <?php selected( $backorders, 'notify' ); ?>><?php esc_html_e( 'Allow but notify customer', 'storesuite' ); ?></option>
+												<option value="yes" <?php selected( $backorders, 'yes' ); ?>><?php esc_html_e( 'Allow', 'storesuite' ); ?></option>
 											</select>
 										</div>
 									</div>
@@ -367,7 +367,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 							</div>
 							<div class="col-md-6 _stock_status_field">
 								<div class="msf-form-group">
-									<label for="_stock_status"><?php esc_html_e( 'Stock Status', 'msfc-wfm' ); ?></label>
+									<label for="_stock_status"><?php esc_html_e( 'Stock Status', 'storesuite' ); ?></label>
 									<select class="msf-form-control" id="_stock_status" name="_stock_status">
 										<?php foreach ( wc_get_product_stock_status_options() as $key => $value ) { ?>
 										<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $stock_status, $key ); ?>><?php echo esc_html( $value ); ?></option>
@@ -378,7 +378,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 							<div class="col-md-12">
 								<div class="msf-form-group msf-form-switch">
 									<input type="checkbox" class="msf-form-control" id="_sold_individually" name="_sold_individually" value="yes" <?php checked( $sold_individually, 'yes' ); ?>>
-									<label for="_sold_individually"><?php esc_html_e( 'Limit Purchases to 1 Item Per Order?', 'msfc-wfm' ); ?></label>
+									<label for="_sold_individually"><?php esc_html_e( 'Limit Purchases to 1 Item Per Order?', 'storesuite' ); ?></label>
 								</div>
 							</div>
 						</div>
@@ -390,22 +390,22 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<div class="row">
 							<div class="col-md-4">
 								<div class="msf-form-group">
-									<label for="weight"><?php esc_html_e( 'Weight', 'msfc-wfm' ); ?> (<?php echo esc_html( get_option( 'woocommerce_weight_unit' ) ); ?>)</label>
-									<input type="text" class="msf-form-control" id="weight" name="weight" placeholder="<?php echo esc_attr__( 'Weight in decimal form', 'msfc-wfm' ); ?>" value="<?php echo esc_attr( $weight ); ?>">
+									<label for="weight"><?php esc_html_e( 'Weight', 'storesuite' ); ?> (<?php echo esc_html( get_option( 'woocommerce_weight_unit' ) ); ?>)</label>
+									<input type="text" class="msf-form-control" id="weight" name="weight" placeholder="<?php echo esc_attr__( 'Weight in decimal form', 'storesuite' ); ?>" value="<?php echo esc_attr( $weight ); ?>">
 								</div>
 							</div>
 							<div class="col-md-8">
 								<div class="msf-form-group">
-									<label for="length"><?php esc_html_e( 'Dimensions', 'msfc-wfm' ); ?> (<?php echo esc_html( get_option( 'woocommerce_dimension_unit' ) ); ?>)</label>
+									<label for="length"><?php esc_html_e( 'Dimensions', 'storesuite' ); ?> (<?php echo esc_html( get_option( 'woocommerce_dimension_unit' ) ); ?>)</label>
 									<div class="row">
 										<div class="col-md-4">
-											<input type="number" class="msf-form-control" id="length" name="length" placeholder="<?php echo esc_attr__( 'Length', 'msfc-wfm' ); ?>" step="any" value="<?php echo esc_attr( $length ); ?>">
+											<input type="number" class="msf-form-control" id="length" name="length" placeholder="<?php echo esc_attr__( 'Length', 'storesuite' ); ?>" step="any" value="<?php echo esc_attr( $length ); ?>">
 										</div>
 										<div class="col-md-4">
-											<input type="number" class="msf-form-control" id="width" name="width" placeholder="<?php echo esc_attr__( 'Width', 'msfc-wfm' ); ?>" step="any" value="<?php echo esc_attr( $width ); ?>">
+											<input type="number" class="msf-form-control" id="width" name="width" placeholder="<?php echo esc_attr__( 'Width', 'storesuite' ); ?>" step="any" value="<?php echo esc_attr( $width ); ?>">
 										</div>
 										<div class="col-md-4">
-											<input type="number" class="msf-form-control" id="height" name="height" placeholder="<?php echo esc_attr__( 'Height', 'msfc-wfm' ); ?>" step="any" value="<?php echo esc_attr( $height ); ?>">
+											<input type="number" class="msf-form-control" id="height" name="height" placeholder="<?php echo esc_attr__( 'Height', 'storesuite' ); ?>" step="any" value="<?php echo esc_attr( $height ); ?>">
 										</div>
 									</div>
 								</div>
@@ -416,7 +416,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									$shipping_class_args = array(
 										'taxonomy'         => 'product_shipping_class',
 										'hide_empty'       => 0,
-										'show_option_none' => __( 'No shipping class', 'woocommerce' ),
+										'show_option_none' => __( 'No shipping class', 'storesuite' ),
 										'name'             => 'product_shipping_class',
 										'id'               => 'product_shipping_class',
 										'selected'         => $shipping_class_id,
@@ -424,7 +424,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 										'orderby'          => 'name',
 									);
 									?>
-									<label for="product_shipping_class"><?php esc_html_e( 'Shipping Class', 'msfc-wfm' ); ?></label>
+									<label for="product_shipping_class"><?php esc_html_e( 'Shipping Class', 'storesuite' ); ?></label>
 									<?php wp_dropdown_categories( $shipping_class_args ); ?>
 								</div>
 							</div>
@@ -437,12 +437,12 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<div class="row">
 							<div class="col-md-6">
 								<div class="msf-form-group search-group">
-									<label for="upsell_ids"><?php esc_html_e( 'Upsells', 'msfc-wfm' ); ?></label>
+									<label for="upsell_ids"><?php esc_html_e( 'Upsells', 'storesuite' ); ?></label>
 									<?php
 										// phpcs:enable WordPress.Security.NonceVerification.Recommended
 										$excluded_product_types = array_diff( array_keys( wc_get_product_types() ), array( 'simple', 'variable' ) );
 									?>
-									<select class="msf-form-control wc-product-search" id="upsell_ids" name="upsell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'woocommerce' ); ?>" data-allow_clear="true" multiple>
+									<select class="msf-form-control wc-product-search" id="upsell_ids" name="upsell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'storesuite' ); ?>" data-allow_clear="true" multiple>
 										<?php
 										if ( ! empty( $upsell_ids ) ) {
 											foreach ( $upsell_ids as $upsell_id ) {
@@ -458,8 +458,8 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 							</div>
 							<div class="col-md-6">
 								<div class="msf-form-group">
-									<label for="crosssell_ids"><?php esc_html_e( 'Cross-sells', 'msfc-wfm' ); ?></label>
-									<select class="msf-form-control wc-product-search" id="crosssell_ids" name="crosssell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'woocommerce' ); ?>" data-allow_clear="true" multiple>
+									<label for="crosssell_ids"><?php esc_html_e( 'Cross-sells', 'storesuite' ); ?></label>
+									<select class="msf-form-control wc-product-search" id="crosssell_ids" name="crosssell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'storesuite' ); ?>" data-allow_clear="true" multiple>
 										<?php
 										if ( ! empty( $crosssell_ids ) ) {
 											foreach ( $crosssell_ids as $crosssell_id ) {
@@ -482,30 +482,30 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<div class="row">
 							<div class="col-md-6">
 								<div class="msf-form-group">
-									<label for="_visibility"><?php esc_html_e( 'Catalog Visibility', 'msfc-wfm' ); ?></label>
+									<label for="_visibility"><?php esc_html_e( 'Catalog Visibility', 'storesuite' ); ?></label>
 									<select class="msf-form-control" id="_visibility" name="_visibility">
-										<option value="visible" <?php selected( $visibility, 'visible' ); ?>><?php esc_html_e( 'Shop and search results', 'msfc-wfm' ); ?></option>
-										<option value="catalog" <?php selected( $visibility, 'catalog' ); ?>><?php esc_html_e( 'Shop only', 'msfc-wfm' ); ?></option>
-										<option value="search" <?php selected( $visibility, 'search' ); ?>><?php esc_html_e( 'Search results only', 'msfc-wfm' ); ?></option>
-										<option value="hidden" <?php selected( $visibility, 'hidden' ); ?>><?php esc_html_e( 'Hidden', 'msfc-wfm' ); ?></option>
+										<option value="visible" <?php selected( $visibility, 'visible' ); ?>><?php esc_html_e( 'Shop and search results', 'storesuite' ); ?></option>
+										<option value="catalog" <?php selected( $visibility, 'catalog' ); ?>><?php esc_html_e( 'Shop only', 'storesuite' ); ?></option>
+										<option value="search" <?php selected( $visibility, 'search' ); ?>><?php esc_html_e( 'Search results only', 'storesuite' ); ?></option>
+										<option value="hidden" <?php selected( $visibility, 'hidden' ); ?>><?php esc_html_e( 'Hidden', 'storesuite' ); ?></option>
 									</select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="msf-form-group">
-									<label for="menu_order"><?php esc_html_e( 'Menu Order', 'msfc-wfm' ); ?></label>
+									<label for="menu_order"><?php esc_html_e( 'Menu Order', 'storesuite' ); ?></label>
 									<input type="number" class="msf-form-control" id="menu_order" name="menu_order" value="<?php echo esc_attr( $product_menu_order ); ?>">
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="msf-form-group msf-form-switch">
 									<input type="checkbox" class="msf-form-control" id="_featured" name="_featured" value="yes" <?php checked( $featured, 'yes' ); ?>>
-									<label for="_featured"><?php esc_html_e( 'Mark this product as featured.', 'msfc-wfm' ); ?></label>
+									<label for="_featured"><?php esc_html_e( 'Mark this product as featured.', 'storesuite' ); ?></label>
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="msf-form-group">
-									<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'msfc-wfm' ); ?></strong></label>
+									<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'storesuite' ); ?></strong></label>
 									<textarea class="msf-form-control" id="_purchase_note" name="_purchase_note" rows="2" cols="20"><?php echo esc_textarea( $purchase_note ); ?></textarea>
 								</div>
 							</div>
@@ -518,7 +518,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 					<h3 class="msf-card-title"><?php esc_html_e( 'General Informations', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="msf-form-group">
-							<label for="post_type"><?php esc_html_e( 'Type', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
+							<label for="post_type"><?php esc_html_e( 'Type', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></label>
 							<select class="msf-form-control" id="post_type" name="post_type">
 								<?php foreach ( $product_types as $key => $value ) : ?>
 									<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $product_type, $key ); ?>><?php echo esc_html( $value ); ?></option>
@@ -526,7 +526,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 							</select>
 						</div>
 						<div class="msf-form-group">
-							<label for="post_status"><?php esc_html_e( 'Status', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
+							<label for="post_status"><?php esc_html_e( 'Status', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></label>
 							<select class="msf-form-control" id="post_status" name="post_status">
 								<?php foreach ( $product_statuses as $key => $value ) : ?>
 									<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $product_status, $key ); ?>><?php echo esc_html( $value ); ?></option>
@@ -534,17 +534,17 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 							</select>
 						</div>
 						<div class="msf-form-group">
-							<label for="product_brand"><?php esc_html_e( 'Brand', 'msfc-wfm' ); ?></label>
+							<label for="product_brand"><?php esc_html_e( 'Brand', 'storesuite' ); ?></label>
 							<select class="msf-form-control" id="product_brand" name="product_brand">
-									<option value=""><?php echo esc_html__( 'Select brand', 'msfc-wfm' ); ?></option>
+									<option value=""><?php echo esc_html__( 'Select brand', 'storesuite' ); ?></option>
 								<?php foreach ( $product_brands as $brand ) : ?>
 									<option value="<?php echo esc_attr( $brand->term_id ); ?>" <?php selected( $product_brand, $brand->term_id ); ?>><?php echo esc_html( $brand->name ); ?></option>
 								<?php endforeach; ?>
 							</select>
 						</div>
 						<div class="msf-form-group">
-							<label for="product_tags"><?php esc_html_e( 'Tags', 'msfc-wfm' ); ?></label>
-							<select class="msf-form-control msf-select2" id="product_tags" name="product_tags[]" data-placeholder="<?php esc_attr_e( 'Select tags', 'msfc-wfm' ); ?>" data-allow_clear="true" multiple>
+							<label for="product_tags"><?php esc_html_e( 'Tags', 'storesuite' ); ?></label>
+							<select class="msf-form-control msf-select2" id="product_tags" name="product_tags[]" data-placeholder="<?php esc_attr_e( 'Select tags', 'storesuite' ); ?>" data-allow_clear="true" multiple>
 								<?php
 								$all_tags = get_terms(
 									array(
@@ -566,10 +566,10 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 							</select>
 						</div>
 						<div class="msf-form-group">
-							<label for="comment_status"><?php esc_html_e( 'Enable Reviews?', 'msfc-wfm' ); ?></label>
+							<label for="comment_status"><?php esc_html_e( 'Enable Reviews?', 'storesuite' ); ?></label>
 							<select class="msf-form-control" id="comment_status" name="comment_status">
-								<option value="yes" <?php selected( $is_reviews_allowed, true ); ?>><?php esc_html_e( 'Yes', 'msfc-wfm' ); ?></option>
-								<option value="no" <?php selected( $is_reviews_allowed, false ); ?>><?php esc_html_e( 'No', 'msfc-wfm' ); ?></option>
+								<option value="yes" <?php selected( $is_reviews_allowed, true ); ?>><?php esc_html_e( 'Yes', 'storesuite' ); ?></option>
+								<option value="no" <?php selected( $is_reviews_allowed, false ); ?>><?php esc_html_e( 'No', 'storesuite' ); ?></option>
 							</select>
 						</div>
 					</div>

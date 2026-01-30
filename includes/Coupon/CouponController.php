@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Coupon;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Plugin coupon controller class
  */

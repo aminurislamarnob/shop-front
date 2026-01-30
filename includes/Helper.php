@@ -1,5 +1,10 @@
 <?php
+
 namespace PluginizeLab\StoreSuite;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 class Helper {
 	public static function storesuite_get_page_id( $page ) {

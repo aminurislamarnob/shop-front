@@ -1,5 +1,10 @@
 <?php
+
 namespace PluginizeLab\StoreSuite;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 class Rewrites {
 	/**

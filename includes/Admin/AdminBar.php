@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Admin;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use WP_Admin_Bar;
 
 /**

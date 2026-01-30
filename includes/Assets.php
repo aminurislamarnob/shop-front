@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Assets {
 	/**
 	 * The constructor.
@@ -40,10 +44,10 @@ class Assets {
 		$frontend_product_script      = STORESUITE_PLUGIN_ASSET . '/frontend/product.js';
 		$frontend_form_handler_script = STORESUITE_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
+		$storesuite_daterangepicker   = STORESUITE_PLUGIN_ASSET . '/frontend/library/daterangepicker.min.js';
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array( 'storesuite-block-editor-script' ), STORESUITE_PLUGIN_VERSION, true );
-		wp_register_script( 'storesuite_moment', 'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js', array(), '2.29.4', true );
-		wp_register_script( 'storesuite_daterangepicker', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array( 'jquery', 'storesuite_moment' ), '3.1.0', true );
+		wp_register_script( 'storesuite_daterangepicker', $storesuite_daterangepicker, array( 'jquery', 'moment' ), '3.1.0', true );
 		wp_register_script( 'storesuite_script', $frontend_script, array( 'jquery', 'storesuite_daterangepicker' ), STORESUITE_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
@@ -63,15 +67,16 @@ class Assets {
 	 * @return void
 	 */
 	public function register_styles() {
-		$admin_style                = STORESUITE_PLUGIN_ASSET . '/admin/style.css';
-		$frontend_style             = STORESUITE_PLUGIN_ASSET . '/frontend/style.css';
-		$bs_grid_style              = STORESUITE_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
-		$frontend_sweetalert2_style = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
+		$admin_style                      = STORESUITE_PLUGIN_ASSET . '/admin/style.css';
+		$frontend_style                   = STORESUITE_PLUGIN_ASSET . '/frontend/style.css';
+		$bs_grid_style                    = STORESUITE_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
+		$frontend_sweetalert2_style       = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
+		$storesuite_daterangepicker_style = STORESUITE_PLUGIN_ASSET . '/frontend/library/daterangepicker.css';
 
 		wp_register_style( 'storesuite_admin_style', $admin_style, array(), STORESUITE_PLUGIN_VERSION );
 		wp_register_style( 'storesuite_style', $frontend_style, array(), STORESUITE_PLUGIN_VERSION );
 		wp_register_style( 'storesuite_bs_grid', $bs_grid_style, array(), STORESUITE_PLUGIN_VERSION );
-		wp_register_style( 'storesuite_daterangepicker', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css', array(), '3.1.0' );
+		wp_register_style( 'storesuite_daterangepicker', $storesuite_daterangepicker_style, array(), '3.1.0' );
 
 		wp_register_style( 'storesuite_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 		wp_register_style( 'storesuite_poppins', 'https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap', array() );
@@ -160,17 +165,17 @@ class Assets {
 				'storesuite_form_handler_script',
 				'MSF_Form_Handler',
 				array(
-					'ajax_url'               => admin_url( 'admin-ajax.php' ),
+					'ajax_url'                     => admin_url( 'admin-ajax.php' ),
 					'storesuite_woo_delete_nonce_' => wp_create_nonce( '_storesuite_delete_nonce_' ),
-					'search_products_nonce'  => wp_create_nonce( 'search-products' ),
-					'coupon_code_generator'  => array(
+					'search_products_nonce'        => wp_create_nonce( 'search-products' ),
+					'coupon_code_generator'        => array(
 						'generate_button_text' => esc_html__( 'Generate coupon code', 'storesuite' ),
 						'characters'           => apply_filters( 'woocommerce_coupon_code_generator_characters', 'ABCDEFGHJKMNPQRSTUVWXYZ23456789' ),
 						'char_length'          => apply_filters( 'woocommerce_coupon_code_generator_character_length', 8 ),
 						'prefix'               => apply_filters( 'woocommerce_coupon_code_generator_prefix', '' ),
 						'suffix'               => apply_filters( 'woocommerce_coupon_code_generator_suffix', '' ),
 					),
-					'i18n'                   => array(
+					'i18n'                         => array(
 						// Common messages.
 						'processing'                     => __( 'Processing...', 'storesuite' ),
 						'please_wait'                    => __( 'Please wait while we process your request.', 'storesuite' ),
@@ -245,7 +250,7 @@ class Assets {
 						'yes_delete'                     => __( 'Yes, delete it!', 'storesuite' ),
 						'validation_error'               => __( 'Validation Error', 'storesuite' ),
 					),
-					'coupons_url'            => storesuite_get_navigation_url( 'coupons' ),
+					'coupons_url'                  => storesuite_get_navigation_url( 'coupons' ),
 				)
 			);
 			wp_enqueue_media();
@@ -279,16 +284,16 @@ class Assets {
 				'storesuite_order_script',
 				'StoreSuite_Order',
 				array(
-					'i18n_no_matches'                 => _x( 'No matches found', 'enhanced select', 'woocommerce' ),
-					'i18n_ajax_error'                 => _x( 'Loading failed', 'enhanced select', 'woocommerce' ),
-					'i18n_input_too_short_1'          => _x( 'Please enter 1 or more characters', 'enhanced select', 'woocommerce' ),
-					'i18n_input_too_short_n'          => _x( 'Please enter %qty% or more characters', 'enhanced select', 'woocommerce' ),
-					'i18n_input_too_long_1'           => _x( 'Please delete 1 character', 'enhanced select', 'woocommerce' ),
-					'i18n_input_too_long_n'           => _x( 'Please delete %qty% characters', 'enhanced select', 'woocommerce' ),
-					'i18n_selection_too_long_1'       => _x( 'You can only select 1 item', 'enhanced select', 'woocommerce' ),
-					'i18n_selection_too_long_n'       => _x( 'You can only select %qty% items', 'enhanced select', 'woocommerce' ),
-					'i18n_load_more'                  => _x( 'Loading more results&hellip;', 'enhanced select', 'woocommerce' ),
-					'i18n_searching'                  => _x( 'Searching&hellip;', 'enhanced select', 'woocommerce' ),
+					'i18n_no_matches'                 => _x( 'No matches found', 'enhanced select', 'storesuite' ),
+					'i18n_ajax_error'                 => _x( 'Loading failed', 'enhanced select', 'storesuite' ),
+					'i18n_input_too_short_1'          => _x( 'Please enter 1 or more characters', 'enhanced select', 'storesuite' ),
+					'i18n_input_too_short_n'          => _x( 'Please enter %qty% or more characters', 'enhanced select', 'storesuite' ),
+					'i18n_input_too_long_1'           => _x( 'Please delete 1 character', 'enhanced select', 'storesuite' ),
+					'i18n_input_too_long_n'           => _x( 'Please delete %qty% characters', 'enhanced select', 'storesuite' ),
+					'i18n_selection_too_long_1'       => _x( 'You can only select 1 item', 'enhanced select', 'storesuite' ),
+					'i18n_selection_too_long_n'       => _x( 'You can only select %qty% items', 'enhanced select', 'storesuite' ),
+					'i18n_load_more'                  => _x( 'Loading more results&hellip;', 'enhanced select', 'storesuite' ),
+					'i18n_searching'                  => _x( 'Searching&hellip;', 'enhanced select', 'storesuite' ),
 					'ajax_url'                        => admin_url( 'admin-ajax.php' ),
 					'search_products_nonce'           => wp_create_nonce( 'search-products' ),
 					'search_customers_nonce'          => wp_create_nonce( 'search-customers' ),
@@ -297,10 +302,10 @@ class Assets {
 					'search_product_attributes_nonce' => wp_create_nonce( 'search-product-attributes' ),
 					'search_pages_nonce'              => wp_create_nonce( 'search-pages' ),
 					'search_order_metakeys_nonce'     => wp_create_nonce( 'search-order-metakeys' ),
-					'copy_billing'                    => __( 'Copy billing information to shipping information? This will remove any currently entered shipping information.', 'woocommerce' ),
-					'load_billing'                    => __( "Load the customer's billing information? This will remove any currently entered billing information.", 'woocommerce' ),
-					'load_shipping'                   => __( "Load the customer's shipping information? This will remove any currently entered shipping information.", 'woocommerce' ),
-					'no_customer_selected'            => __( 'No customer selected', 'woocommerce' ),
+					'copy_billing'                    => __( 'Copy billing information to shipping information? This will remove any currently entered shipping information.', 'storesuite' ),
+					'load_billing'                    => __( "Load the customer's billing information? This will remove any currently entered billing information.", 'storesuite' ),
+					'load_shipping'                   => __( "Load the customer's shipping information? This will remove any currently entered shipping information.", 'storesuite' ),
+					'no_customer_selected'            => __( 'No customer selected', 'storesuite' ),
 					'get_customer_details_nonce'      => wp_create_nonce( 'get-customer-details' ),
 					'add_order_note_nonce'            => wp_create_nonce( 'add-order-note' ),
 					'delete_order_note_nonce'         => wp_create_nonce( 'delete-order-note' ),
@@ -310,21 +315,21 @@ class Assets {
 					'add_new_customer_form'           => __( 'add a new customer', 'storesuite' ),
 					'new_customer_or'                 => __( 'Or', 'storesuite' ),
 					'tax_based_on'                    => esc_attr( get_option( 'woocommerce_tax_based_on' ) ),
-					'i18n_apply_coupon'               => __( 'Enter a coupon code to apply. Discounts are applied to line totals, before taxes.', 'woocommerce' ),
+					'i18n_apply_coupon'               => __( 'Enter a coupon code to apply. Discounts are applied to line totals, before taxes.', 'storesuite' ),
 					'i18n_add_fee'                    => __( 'Enter a fixed amount or percentage.', 'storesuite' ),
 					'calc_totals_nonce'               => wp_create_nonce( 'calc-totals' ),
 					'countries'                       => wp_json_encode( array_merge( WC()->countries->get_allowed_country_states(), WC()->countries->get_shipping_country_states() ) ),
-					'i18n_select_state_text'          => esc_attr__( 'Select an option&hellip;', 'woocommerce' ),
+					'i18n_select_state_text'          => esc_attr__( 'Select an option&hellip;', 'storesuite' ),
 					'default_country'                 => isset( $default_location['country'] ) ? $default_location['country'] : '',
 					'default_state'                   => isset( $default_location['state'] ) ? $default_location['state'] : '',
-					'placeholder_name'                => esc_attr__( 'Name (required)', 'woocommerce' ),
-					'placeholder_value'               => esc_attr__( 'Value (required)', 'woocommerce' ),
-					'i18n_delete_note'                => __( 'Are you sure you wish to delete this note? This action cannot be undone.', 'woocommerce' ),
-					'i18n_no_notes'                   => __( 'There are no notes yet.', 'woocommerce' ),
-					'remove_item_notice'              => __( 'Are you sure you want to remove the selected items?', 'woocommerce' ),
-					'remove_fee_notice'               => __( 'Are you sure you want to remove the selected fees?', 'woocommerce' ),
-					'remove_shipping_notice'          => __( 'Are you sure you want to remove the selected shipping?', 'woocommerce' ),
-					'remove_item_meta'                => __( 'Remove this item meta?', 'woocommerce' ),
+					'placeholder_name'                => esc_attr__( 'Name (required)', 'storesuite' ),
+					'placeholder_value'               => esc_attr__( 'Value (required)', 'storesuite' ),
+					'i18n_delete_note'                => __( 'Are you sure you wish to delete this note? This action cannot be undone.', 'storesuite' ),
+					'i18n_no_notes'                   => __( 'There are no notes yet.', 'storesuite' ),
+					'remove_item_notice'              => __( 'Are you sure you want to remove the selected items?', 'storesuite' ),
+					'remove_fee_notice'               => __( 'Are you sure you want to remove the selected fees?', 'storesuite' ),
+					'remove_shipping_notice'          => __( 'Are you sure you want to remove the selected shipping?', 'storesuite' ),
+					'remove_item_meta'                => __( 'Remove this item meta?', 'storesuite' ),
 					'mon_decimal_point'               => wc_get_price_decimal_separator(),
 					'rounding_precision'              => wc_get_rounding_precision(),
 				)
@@ -336,7 +341,7 @@ class Assets {
 
 			// Prepare product script data.
 			$product_script_data = array(
-				'i18n_global_unique_id_error' => __( 'Please enter only numbers and hyphens (-).', 'woocommerce' ),
+				'i18n_global_unique_id_error' => __( 'Please enter only numbers and hyphens (-).', 'storesuite' ),
 				'ajax_url'                    => admin_url( 'admin-ajax.php' ),
 				'search_products_nonce'       => wp_create_nonce( 'search-products' ),
 				'i18n'                        => array(

@@ -50,11 +50,11 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<div class="msf-form-group">
 								<?php
 								$options = array(
-									'order_id'       => __( 'Order ID', 'woocommerce' ),
-									'customer_email' => __( 'Customer Email', 'woocommerce' ),
-									'customers'      => __( 'Customers', 'woocommerce' ),
-									'products'       => __( 'Products', 'woocommerce' ),
-									'all'            => __( 'All', 'woocommerce' ),
+									'order_id'       => __( 'Order ID', 'storesuite' ),
+									'customer_email' => __( 'Customer Email', 'storesuite' ),
+									'customers'      => __( 'Customers', 'storesuite' ),
+									'products'       => __( 'Products', 'storesuite' ),
+									'all'            => __( 'All', 'storesuite' ),
 								);
 
 								/**

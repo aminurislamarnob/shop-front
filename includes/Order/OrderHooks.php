@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Order;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use WC_Order;
 use Automattic\WooCommerce\Admin\API\Reports\Customers\Query as CustomersQuery;
 use Automattic\WooCommerce\Internal\Traits\OrderAttributionMeta;

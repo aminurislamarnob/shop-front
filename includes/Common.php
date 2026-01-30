@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Common {
 	/**
 	 * The constructor.

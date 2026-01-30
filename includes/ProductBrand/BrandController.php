@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\ProductBrand;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Plugin product brands controller class
  */

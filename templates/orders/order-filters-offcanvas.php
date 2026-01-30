@@ -69,7 +69,7 @@ global $wp_locale;
 
 					$user_string = sprintf(
 						/* translators: 1: user display name 2: user ID 3: user email */
-						esc_html__( '%1$s (#%2$s &ndash; %3$s)', 'woocommerce' ),
+						esc_html__( '%1$s (#%2$s &ndash; %3$s)', 'storesuite' ),
 						$user->display_name,
 						absint( $user->ID ),
 						$user->user_email
@@ -78,7 +78,7 @@ global $wp_locale;
 
 				// Note: use of htmlspecialchars (below) is to prevent XSS when rendered by selectWoo.
 				?>
-				<select class="wc-customer-search msf-form-control" name="_customer_user" data-placeholder="<?php esc_attr_e( 'Filter by registered customer', 'woocommerce' ); ?>" data-allow_clear="true">
+				<select class="wc-customer-search msf-form-control" name="_customer_user" data-placeholder="<?php esc_attr_e( 'Filter by registered customer', 'storesuite' ); ?>" data-allow_clear="true">
 					<option value="<?php echo esc_attr( $user_id ); ?>" selected="selected"><?php echo htmlspecialchars( wp_kses_post( $user_string ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></option>
 				</select>
 			</div>
@@ -89,10 +89,10 @@ global $wp_locale;
 				<select name="order_channel" class="msf-form-control">
 					<?php
 					$created_via_options = array(
-						''                   => __( 'All sales channels', 'woocommerce' ),
-						'admin'              => __( 'Admin', 'woocommerce' ),
-						'checkout,store-api' => __( 'Checkout', 'woocommerce' ),
-						'pos-rest-api'       => __( 'Point of Sale', 'woocommerce' ),
+						''                   => __( 'All sales channels', 'storesuite' ),
+						'admin'              => __( 'Admin', 'storesuite' ),
+						'checkout,store-api' => __( 'Checkout', 'storesuite' ),
+						'pos-rest-api'       => __( 'Point of Sale', 'storesuite' ),
 					);
 					foreach ( $created_via_options as $value => $label ) {
 						printf(

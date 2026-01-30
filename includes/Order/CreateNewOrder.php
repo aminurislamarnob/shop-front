@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Order;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Plugin order controller class
  */
@@ -35,17 +39,17 @@ class CreateNewOrder {
 	}
 
 	/**
-     * Check if we're on the new order page and create empty order if needed
-     */
-    public function maybe_create_empty_order() {
-        // Check if we're on your specific page
-        if ( ! storesuite_is_page( 'add-new-order' ) ) {
-            return;
-        }
-        
-        // Create empty order
-        $this->create_empty_order();
-    }
+	 * Check if we're on the new order page and create empty order if needed
+	 */
+	public function maybe_create_empty_order() {
+		// Check if we're on your specific page
+		if ( ! storesuite_is_page( 'add-new-order' ) ) {
+			return;
+		}
+
+		// Create empty order
+		$this->create_empty_order();
+	}
 
 	/**
 	 * Verify that user has permission to edit orders.
@@ -54,19 +58,19 @@ class CreateNewOrder {
 	 */
 	private function verify_edit_permission() {
 		if ( 'edit_order' === $this->current_action && ( ! isset( $this->order ) || ! $this->order ) ) {
-			wp_die( esc_html__( 'You attempted to edit an order that does not exist. Perhaps it was deleted?', 'woocommerce' ) );
+			wp_die( esc_html__( 'You attempted to edit an order that does not exist. Perhaps it was deleted?', 'storesuite' ) );
 		}
 
 		if ( $this->order->get_type() !== $this->order_type ) {
-			wp_die( esc_html__( 'Order type mismatch.', 'woocommerce' ) );
+			wp_die( esc_html__( 'Order type mismatch.', 'storesuite' ) );
 		}
 
 		if ( ! current_user_can( get_post_type_object( $this->order_type )->cap->edit_post, $this->order->get_id() ) && ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You do not have permission to edit this order', 'woocommerce' ) );
+			wp_die( esc_html__( 'You do not have permission to edit this order', 'storesuite' ) );
 		}
 
 		if ( 'trash' === $this->order->get_status() ) {
-			wp_die( esc_html__( 'You cannot edit this item because it is in the Trash. Please restore it and try again.', 'woocommerce' ) );
+			wp_die( esc_html__( 'You cannot edit this item because it is in the Trash. Please restore it and try again.', 'storesuite' ) );
 		}
 	}
 
@@ -77,7 +81,7 @@ class CreateNewOrder {
 	 */
 	private function verify_create_permission() {
 		if ( ! current_user_can( get_post_type_object( $this->order_type )->cap->publish_posts ) && ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'You don\'t have permission to create a new order', 'woocommerce' ) );
+			wp_die( esc_html__( 'You don\'t have permission to create a new order', 'storesuite' ) );
 		}
 
 		if ( isset( $this->order ) ) {
@@ -147,7 +151,7 @@ class CreateNewOrder {
 
 		add_action(
 			'admin_footer',
-			function() use ( $edit_lock ) {
+			function () use ( $edit_lock ) {
 				$edit_lock->render_dialog( $this->order );
 			}
 		);
@@ -160,7 +164,7 @@ class CreateNewOrder {
 	 *
 	 * @return string Edit link.
 	 */
-	public function get_edit_url( int $order_id ) : string {
+	public function get_edit_url( int $order_id ): string {
 		if ( ! wc_get_container()->get( \Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled() ) {
 			return storesuite_get_navigation_url( 'edit-order' ) . $order_id;
 		}
@@ -173,7 +177,7 @@ class CreateNewOrder {
 			wc_get_logger()->debug(
 				sprintf(
 					/* translators: %d order ID. */
-					__( 'Attempted to determine the edit URL for order %d, however the order does not exist.', 'woocommerce' ),
+					__( 'Attempted to determine the edit URL for order %d, however the order does not exist.', 'storesuite' ),
 					$order_id
 				)
 			);

@@ -58,10 +58,10 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 						<div class="msf-form-group">
 							<label for="display_type"><?php esc_html_e( 'Display Type', 'storesuite' ); ?></label>
 							<select class="msf-form-control" id="display_type" name="display_type">
-								<option value=""><?php esc_html_e( 'Default', 'woocommerce' ); ?></option>
-								<option value="products"><?php esc_html_e( 'Products', 'woocommerce' ); ?></option>
-								<option value="subcategories"><?php esc_html_e( 'Subcategories', 'woocommerce' ); ?></option>
-								<option value="both"><?php esc_html_e( 'Both', 'woocommerce' ); ?></option>
+								<option value=""><?php esc_html_e( 'Default', 'storesuite' ); ?></option>
+								<option value="products"><?php esc_html_e( 'Products', 'storesuite' ); ?></option>
+								<option value="subcategories"><?php esc_html_e( 'Subcategories', 'storesuite' ); ?></option>
+								<option value="both"><?php esc_html_e( 'Both', 'storesuite' ); ?></option>
 							</select>
 						</div>
 						<div class="msf-form-group">

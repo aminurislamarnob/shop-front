@@ -7,6 +7,10 @@
 
 namespace PluginizeLab\StoreSuite\Product;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Products class
  */

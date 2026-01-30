@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\REST;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use WP_REST_Controller;
 use WP_REST_Server;
 

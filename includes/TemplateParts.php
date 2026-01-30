@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use PluginizeLab\StoreSuite\DashboardMenu as StoreSuiteDashboardMenu;
 
 class TemplateParts {

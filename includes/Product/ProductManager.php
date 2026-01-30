@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Product;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use WP_Error;
 
 /**
@@ -31,7 +35,7 @@ class ProductManager {
 		// dd( $data );
 
 		if ( empty( $data['product_title'] ) ) {
-			return new WP_Error( 'no-title', __( 'Please enter product title', 'dokan-lite' ) );
+			return new WP_Error( 'no-title', __( 'Please enter product title', 'storesuite' ) );
 		}
 
 		$post_status = ! empty( $data['post_status'] ) ? sanitize_text_field( $data['post_status'] ) : 'publish';

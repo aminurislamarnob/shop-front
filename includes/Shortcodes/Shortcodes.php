@@ -2,6 +2,10 @@
 
 namespace PluginizeLab\StoreSuite\Shortcodes;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use PluginizeLab\StoreSuite\Shortcodes\Dashboard;
 
 class Shortcodes {
