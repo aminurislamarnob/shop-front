@@ -2,7 +2,7 @@
 /**
  * Product List Filters
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,7 +28,7 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 			<div class="col-md-auto">
 				<div class="msf-form-group">
 			<select name="product_cat" class="msf-form-control">
-			<option value=""><?php esc_html_e( 'Filter by category', 'shop-front' ); ?></option>
+			<option value=""><?php esc_html_e( 'Filter by category', 'storesuite' ); ?></option>
 			<?php
 			$categories = get_terms(
 				array(
@@ -58,7 +58,7 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 			<div class="col-md-auto">
 				<div class="msf-form-group">
 			<select name="product_type" class="msf-form-control">
-			<option value=""><?php esc_html_e( 'Filter by product type', 'shop-front' ); ?></option>
+			<option value=""><?php esc_html_e( 'Filter by product type', 'storesuite' ); ?></option>
 			<?php
 			$product_types = wc_get_product_types();
 			foreach ( $product_types as $type_key => $type_label ) {
@@ -78,7 +78,7 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 			<div class="col-md-auto">
 				<div class="msf-form-group">
 			<select name="stock_status" class="msf-form-control">
-			<option value=""><?php esc_html_e( 'Filter by stock status', 'shop-front' ); ?></option>
+			<option value=""><?php esc_html_e( 'Filter by stock status', 'storesuite' ); ?></option>
 			<?php
 			$stock_statuses = wc_get_product_stock_status_options();
 			foreach ( $stock_statuses as $status_key => $status_label ) {
@@ -98,7 +98,7 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 			<div class="col-md-auto">
 				<div class="msf-form-group">
 			<select name="product_brand" class="msf-form-control">
-			<option value=""><?php esc_html_e( 'Filter by brand', 'shop-front' ); ?></option>
+			<option value=""><?php esc_html_e( 'Filter by brand', 'storesuite' ); ?></option>
 			<?php
 			$brands = get_terms(
 				array(
@@ -124,7 +124,7 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 				</div>
 			</div>
 			<div class="col-md-auto">
-				<button type="submit" class="my-shop-front-button"><?php esc_html_e( 'Filter', 'shop-front' ); ?></button>
+				<button type="submit" class="my-storesuite-button"><?php esc_html_e( 'Filter', 'storesuite' ); ?></button>
 			</div>
 		</div>
 

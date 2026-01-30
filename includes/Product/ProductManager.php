@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Product;
+namespace PluginizeLab\StoreSuite\Product;
 
 use WP_Error;
 
@@ -15,7 +15,7 @@ class ProductManager {
 	 *
 	 * @return int|bool|WP_Error
 	 */
-	public function msf_save_product( $args ) {
+	public function storesuite_save_product( $args ) {
 		$defaults = array(
 			'post_title'   => '',
 			'post_content' => '',
@@ -56,7 +56,7 @@ class ProductManager {
 		if ( ! empty( $product_slug ) ) {
 			$slug_exists = get_page_by_path( $product_slug, OBJECT, 'product' );
 			if ( $slug_exists && ( ! $is_updating || $slug_exists->ID !== $post_arr['product_id'] ) ) {
-				return new WP_Error( 'slug-exists', __( 'This slug already exists. Please choose a different slug.', 'shop-front' ) );
+				return new WP_Error( 'slug-exists', __( 'This slug already exists. Please choose a different slug.', 'storesuite' ) );
 			}
 		}
 
@@ -201,9 +201,9 @@ class ProductManager {
 		$product = $this->create_product( $post_data );
 
 		if ( ! $is_updating ) {
-			do_action( 'msf_new_product_added', $product->get_id(), $data );
+			do_action( 'storesuite_new_product_added', $product->get_id(), $data );
 		} else {
-			do_action( 'msf_product_updated', $product->get_id(), $data );
+			do_action( 'storesuite_product_updated', $product->get_id(), $data );
 		}
 
 		if ( $product ) {

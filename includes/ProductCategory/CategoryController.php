@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\ProductCategory;
+namespace PluginizeLab\StoreSuite\ProductCategory;
 
 /**
  * Plugin product categories controller class
@@ -10,9 +10,9 @@ class CategoryController {
 	 * The constructor.
 	 */
 	public function __construct() {
-		add_action( 'wp_ajax_msfc_add_product_category', array( $this, 'handle_add_category' ) );
-		add_action( 'wp_ajax_msfc_edit_product_category', array( $this, 'handle_edit_category' ) );
-		add_action( 'wp_ajax_msfc_delete_product_category', array( $this, 'handle_delete_category' ) );
+		add_action( 'wp_ajax_storesuite_add_product_category', array( $this, 'handle_add_category' ) );
+		add_action( 'wp_ajax_storesuite_edit_product_category', array( $this, 'handle_edit_category' ) );
+		add_action( 'wp_ajax_storesuite_delete_product_category', array( $this, 'handle_delete_category' ) );
 	}
 
 	/**
@@ -21,13 +21,13 @@ class CategoryController {
 	public function handle_add_category() {
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['msfc_add_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_add_product_category_nonce'] ), '_msfc_add_product_category_' ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		if ( ! isset( $_POST['storesuite_add_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_add_product_category_nonce'] ), '_storesuite_add_product_category_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
 		// Check user permissions.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
 		}
 
 		// Validate inputs.
@@ -39,7 +39,7 @@ class CategoryController {
 		$category_slug   = isset( $_POST['product_category_slug'] ) ? sanitize_title( wp_unslash( $_POST['product_category_slug'] ) ) : '';
 
 		if ( empty( $category_name ) ) {
-			wp_send_json_error( array( 'error' => __( 'Category Name is required', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Category Name is required', 'storesuite' ) ) );
 		}
 
 		// Generate slug from name if not provided.
@@ -50,7 +50,7 @@ class CategoryController {
 		// Check if slug already exists.
 		$existing_term = get_term_by( 'slug', $category_slug, 'product_cat' );
 		if ( $existing_term ) {
-			wp_send_json_error( array( 'error' => __( 'Category slug already exists. Please choose a different slug.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Category slug already exists. Please choose a different slug.', 'storesuite' ) ) );
 		}
 
 		// Check for parent category.
@@ -82,9 +82,9 @@ class CategoryController {
 			update_term_meta( $new_category['term_id'], 'display_type', $display_type );
 		}
 
-		do_action( 'msf_product_category_created', $new_category );
+		do_action( 'storesuite_product_category_created', $new_category );
 
-		wp_send_json_success( array( 'message' => __( 'Category successfully created', 'shop-front' ) ) );
+		wp_send_json_success( array( 'message' => __( 'Category successfully created', 'storesuite' ) ) );
 	}
 
 	/**
@@ -93,13 +93,13 @@ class CategoryController {
 	public function handle_edit_category() {
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['msfc_edit_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_edit_product_category_nonce'] ), '_msfc_edit_product_category_' ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		if ( ! isset( $_POST['storesuite_edit_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_edit_product_category_nonce'] ), '_storesuite_edit_product_category_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
 		// Check user permissions.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
 		}
 
 		// Validate inputs.
@@ -112,17 +112,17 @@ class CategoryController {
 		$category_slug   = isset( $_POST['product_category_slug'] ) ? sanitize_title( wp_unslash( $_POST['product_category_slug'] ) ) : '';
 
 		if ( empty( $category_id ) ) {
-			wp_send_json_error( array( 'error' => __( 'Category ID is required', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Category ID is required', 'storesuite' ) ) );
 		}
 
 		if ( empty( $category_name ) ) {
-			wp_send_json_error( array( 'error' => __( 'Category Name is required', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Category Name is required', 'storesuite' ) ) );
 		}
 
 		// Get current category.
 		$current_category = get_term( $category_id, 'product_cat' );
 		if ( ! $current_category || is_wp_error( $current_category ) ) {
-			wp_send_json_error( array( 'error' => __( 'Category not found', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Category not found', 'storesuite' ) ) );
 		}
 
 		// Generate slug from name if not provided.
@@ -134,7 +134,7 @@ class CategoryController {
 		if ( $category_slug !== $current_category->slug ) {
 			$existing_term = get_term_by( 'slug', $category_slug, 'product_cat' );
 			if ( $existing_term && $existing_term->term_id !== $category_id ) {
-				wp_send_json_error( array( 'error' => __( 'Category slug already exists. Please choose a different slug.', 'shop-front' ) ) );
+				wp_send_json_error( array( 'error' => __( 'Category slug already exists. Please choose a different slug.', 'storesuite' ) ) );
 			}
 		}
 
@@ -172,9 +172,9 @@ class CategoryController {
 			delete_term_meta( $category_id, 'display_type' );
 		}
 
-		do_action( 'msf_product_category_updated', $updated_category );
+		do_action( 'storesuite_product_category_updated', $updated_category );
 
-		wp_send_json_success( array( 'message' => __( 'Category successfully updated', 'shop-front' ) ) );
+		wp_send_json_success( array( 'message' => __( 'Category successfully updated', 'storesuite' ) ) );
 	}
 
 	/**
@@ -182,19 +182,19 @@ class CategoryController {
 	 */
 	public function handle_delete_category() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['msfc_delete_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_delete_product_category_nonce'] ), '_msfc_delete_nonce_' ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		if ( ! isset( $_POST['storesuite_delete_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_delete_product_category_nonce'] ), '_storesuite_delete_nonce_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
 		// Check user permissions.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
 		}
 
 		// Validate category ID.
 		$category_id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
 		if ( ! $category_id || ! term_exists( $category_id, 'product_cat' ) ) {
-			wp_send_json_error( array( 'error' => __( 'Invalid category ID', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Invalid category ID', 'storesuite' ) ) );
 		}
 
 		// Attempt to delete the category.
@@ -203,11 +203,11 @@ class CategoryController {
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'error' => $result->get_error_message() ) );
 		} elseif ( $result === false ) {
-			wp_send_json_error( array( 'error' => __( 'Failed to delete category', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Failed to delete category', 'storesuite' ) ) );
 		}
 
-		do_action( 'msf_product_category_deleted', $category_id );
+		do_action( 'storesuite_product_category_deleted', $category_id );
 
-		wp_send_json_success( array( 'message' => __( 'Category successfully deleted', 'shop-front' ) ) );
+		wp_send_json_success( array( 'message' => __( 'Category successfully deleted', 'storesuite' ) ) );
 	}
 }

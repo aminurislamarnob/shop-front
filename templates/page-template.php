@@ -23,9 +23,9 @@
 		/**
 		 * Fires after msf dashboard finished loading.
 		 *
-		 * @hooked msf_dashboard_after_footer
+		 * @hooked storesuite_dashboard_after_footer
 		 */
-		do_action( 'msf_dashboard_after_footer' );
+		do_action( 'storesuite_dashboard_after_footer' );
 	?>
 	</body>
 </html>

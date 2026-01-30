@@ -1,13 +1,13 @@
 <?php
 
-namespace PluginizeLab\ShopFront;
+namespace PluginizeLab\StoreSuite;
 
 /**
- * MyShopFront class
+ * MyStoreSuite class
  *
- * @class MyShopFront The class that holds the entire MyShopFront plugin
+ * @class MyStoreSuite The class that holds the entire MyStoreSuite plugin
  */
-final class ShopFront {
+final class StoreSuite {
 
 	/**
 	 * Plugin version
@@ -19,7 +19,7 @@ final class ShopFront {
 	/**
 	 * Instance of self
 	 *
-	 * @var ShopFront
+	 * @var StoreSuite
 	 */
 	private static $instance = null;
 
@@ -33,7 +33,7 @@ final class ShopFront {
 	private $container = array();
 
 	/**
-	 * Constructor for the MyShopFront class
+	 * Constructor for the MyStoreSuite class
 	 *
 	 * Sets up all the appropriate hooks and actions
 	 * within our plugin.
@@ -41,22 +41,23 @@ final class ShopFront {
 	private function __construct() {
 		$this->define_constants();
 
-		register_activation_hook( SHOP_FRONT_FILE, array( $this, 'activate' ) );
-		register_deactivation_hook( SHOP_FRONT_FILE, array( $this, 'deactivate' ) );
+		register_activation_hook( STORESUITE_FILE, array( $this, 'activate' ) );
+		register_deactivation_hook( STORESUITE_FILE, array( $this, 'deactivate' ) );
 
 		add_action( 'plugins_loaded', array( $this, 'init_plugin' ) );
 		add_action( 'woocommerce_flush_rewrite_rules', array( $this, 'flush_rewrite_rules' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_route' ) );
 		add_action( 'before_woocommerce_init', array( $this, 'make_wc_hpos_compatible' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( STORESUITE_FILE ), array( $this, 'plugin_action_links' ) );
 	}
 
 	/**
-	 * Initializes the MyShopFront() class
+	 * Initializes the MyStoreSuite() class
 	 *
-	 * Checks for an existing MyShopFront instance
+	 * Checks for an existing MyStoreSuite instance
 	 * and if it doesn't find one then create a new one.
 	 *
-	 * @return MyShopFront
+	 * @return MyStoreSuite
 	 */
 	public static function init() {
 		if ( self::$instance === null ) {
@@ -88,7 +89,7 @@ final class ShopFront {
 	 */
 	public function activate() {
 
-		// Rewrite rules during SHOP_FRONT activation.
+		// Rewrite rules during StoreSuite activation.
 		if ( $this->has_woocommerce() ) {
 			$this->flush_rewrite_rules();
 		}
@@ -103,7 +104,7 @@ final class ShopFront {
 	 * @return void
 	 */
 	public function register_rest_route() {
-		$this->container['msf_admin_settings_controller']->register_routes();
+		$this->container['storesuite_admin_settings_controller']->register_routes();
 	}
 
 	/**
@@ -118,9 +119,19 @@ final class ShopFront {
 	}
 
 	/**
-	 * Flush rewrite rules after SHOP_FRONT is activated or woocommerce is activated
+	 * Plugin action links
 	 *
-	 * @since 3.2.8
+	 * @param array $links
+	 *
+	 * @return array
+	 */
+	public function plugin_action_links( $links ) {
+		$links[] = '<a href="' . admin_url( 'admin.php?page=storesuite' ) . '">' . __( 'Settings', 'storesuite' ) . '</a>';
+		return $links;
+	}
+
+	/**
+	 * Flush rewrite rules after StoreSuite is activated or woocommerce is activated
 	 */
 	public function flush_rewrite_rules() {
 		// fix rewrite rules.
@@ -140,16 +151,16 @@ final class ShopFront {
 	 * @return void
 	 */
 	public function define_constants() {
-		defined( 'SHOP_FRONT_PLUGIN_VERSION' ) || define( 'SHOP_FRONT_PLUGIN_VERSION', $this->version );
-		defined( 'SHOP_FRONT_DIR' ) || define( 'SHOP_FRONT_DIR', dirname( SHOP_FRONT_FILE ) );
-		defined( 'SHOP_FRONT_INC_DIR' ) || define( 'SHOP_FRONT_INC_DIR', SHOP_FRONT_DIR . '/includes' );
-		defined( 'SHOP_FRONT_TEMPLATE_DIR' ) || define( 'SHOP_FRONT_TEMPLATE_DIR', SHOP_FRONT_DIR . '/templates' );
-		defined( 'SHOP_FRONT_PLUGIN_ASSET' ) || define( 'SHOP_FRONT_PLUGIN_ASSET', plugins_url( 'assets', SHOP_FRONT_FILE ) );
-		defined( 'SHOP_FRONT_NONCE_SALT' ) || define( 'SHOP_FRONT_NONCE_SALT', 'iG685CuXEZI2J?@~-t 3v)*_z]e,+CXh/Mu#8Fq4W<B^w9m^c]C8XGn(V~#:dn%C' );
+		defined( 'STORESUITE_PLUGIN_VERSION' ) || define( 'STORESUITE_PLUGIN_VERSION', $this->version );
+		defined( 'STORESUITE_DIR' ) || define( 'STORESUITE_DIR', dirname( STORESUITE_FILE ) );
+		defined( 'STORESUITE_INC_DIR' ) || define( 'STORESUITE_INC_DIR', STORESUITE_DIR . '/includes' );
+		defined( 'STORESUITE_TEMPLATE_DIR' ) || define( 'STORESUITE_TEMPLATE_DIR', STORESUITE_DIR . '/templates' );
+		defined( 'STORESUITE_PLUGIN_ASSET' ) || define( 'STORESUITE_PLUGIN_ASSET', plugins_url( 'assets', STORESUITE_FILE ) );
+		defined( 'STORESUITE_NONCE_SALT' ) || define( 'STORESUITE_NONCE_SALT', 'iG685CuXEZI2J?@~-t 3v)*_z]e,+CXh/Mu#8Fq4W<B^w9m^c]C8XGn(V~#:dn%C' );
 
 		// give a way to turn off loading styles and scripts from parent theme.
-		defined( 'SHOP_FRONT_LOAD_STYLE' ) || define( 'SHOP_FRONT_LOAD_STYLE', true );
-		defined( 'SHOP_FRONT_LOAD_SCRIPTS' ) || define( 'SHOP_FRONT_LOAD_SCRIPTS', true );
+		defined( 'STORESUITE_LOAD_STYLE' ) || define( 'STORESUITE_LOAD_STYLE', true );
+		defined( 'STORESUITE_LOAD_SCRIPTS' ) || define( 'STORESUITE_LOAD_SCRIPTS', true );
 	}
 
 	/**
@@ -172,7 +183,7 @@ final class ShopFront {
 	 * @return void
 	 */
 	public function init_plugin() {
-		// Check SHOP_FRONT dependency plugins.
+		// Check StoreSuite dependency plugins.
 		if ( ! $this->has_woocommerce() ) {
 			add_action( 'admin_notices', array( $this, 'admin_error_notice_for_dependency_missing' ) );
 			return;
@@ -181,7 +192,7 @@ final class ShopFront {
 		$this->includes();
 		$this->init_hooks();
 
-		do_action( 'shop_front_loaded' );
+		do_action( 'storesuite_loaded' );
 	}
 
 	/**
@@ -211,35 +222,35 @@ final class ShopFront {
 	 * @return void
 	 */
 	public function init_classes() {
-		require_once SHOP_FRONT_INC_DIR . '/functions.php';
+		require_once STORESUITE_INC_DIR . '/functions.php';
 
-		$this->container['cache']                           = new Cache();
-		$this->container['scripts']                         = new Assets();
-		$this->container['msf_installer']                   = new Installer();
-		$this->container['msf_common']                      = new Common();
-		$this->container['msf_helper']                      = new Helper();
-		$this->container['msf_rewrites']                    = new Rewrites();
-		$this->container['msf_dashboard_menu']              = new DashboardMenu();
-		$this->container['msf_dashboard']                   = new Dashboard();
-		$this->container['msf_dashboard_header']            = new TemplateParts();
-		$this->container['msf_shortcode']                   = new Shortcodes\Shortcodes();
-		$this->container['msf_admin_settings']              = new Admin\Settings();
-		$this->container['msf_admin_bar']                   = new Admin\AdminBar();
-		$this->container['msf_admin_settings_controller']   = new REST\SettingsController();
-		$this->container['msf_product_categories']          = new ProductCategory\Categories();
-		$this->container['msf_product_category_controller'] = new ProductCategory\CategoryController();
-		$this->container['msf_product_brands']              = new ProductBrand\Brands();
-		$this->container['msf_product_brand_controller']    = new ProductBrand\BrandController();
-		$this->container['msf_product_tags']                = new ProductTag\Tags();
-		$this->container['msf_product_tag_controller']      = new ProductTag\TagController();
-		$this->container['msf_product_controller']          = new Product\ProductController();
-		$this->container['msf_product_hooks']               = new Product\ProductHooks();
-		$this->container['msf_order_controller']            = new Order\OrderController();
-		$this->container['msf_create_new_order']            = new Order\CreateNewOrder();
-		$this->container['msf_order_manager']               = new Order\OrderManager();
-		$this->container['msf_order_hooks']                 = new Order\OrderHooks();
-		$this->container['msf_coupon_controller']           = new Coupon\CouponController();
-		$this->container['msf_coupon_manager']              = new Coupon\CouponManager();
+		$this->container['cache']                                  = new Cache();
+		$this->container['scripts']                                = new Assets();
+		$this->container['storesuite_installer']                   = new Installer();
+		$this->container['storesuite_common']                      = new Common();
+		$this->container['storesuite_helper']                      = new Helper();
+		$this->container['storesuite_rewrites']                    = new Rewrites();
+		$this->container['storesuite_dashboard_menu']              = new DashboardMenu();
+		$this->container['storesuite_dashboard']                   = new Dashboard();
+		$this->container['storesuite_dashboard_header']            = new TemplateParts();
+		$this->container['storesuite_shortcode']                   = new Shortcodes\Shortcodes();
+		$this->container['storesuite_admin_settings']              = new Admin\Settings();
+		$this->container['storesuite_admin_bar']                   = new Admin\AdminBar();
+		$this->container['storesuite_admin_settings_controller']   = new REST\SettingsController();
+		$this->container['storesuite_product_categories']          = new ProductCategory\Categories();
+		$this->container['storesuite_product_category_controller'] = new ProductCategory\CategoryController();
+		$this->container['storesuite_product_brands']              = new ProductBrand\Brands();
+		$this->container['storesuite_product_brand_controller']    = new ProductBrand\BrandController();
+		$this->container['storesuite_product_tags']                = new ProductTag\Tags();
+		$this->container['storesuite_product_tag_controller']      = new ProductTag\TagController();
+		$this->container['storesuite_product_controller']          = new Product\ProductController();
+		$this->container['storesuite_product_hooks']               = new Product\ProductHooks();
+		$this->container['storesuite_order_controller']            = new Order\OrderController();
+		$this->container['storesuite_create_new_order']            = new Order\CreateNewOrder();
+		$this->container['storesuite_order_manager']               = new Order\OrderManager();
+		$this->container['storesuite_order_hooks']                 = new Order\OrderHooks();
+		$this->container['storesuite_coupon_controller']           = new Coupon\CouponController();
+		$this->container['storesuite_coupon_manager']              = new Coupon\CouponManager();
 	}
 
 	/**
@@ -248,15 +259,13 @@ final class ShopFront {
 	 * @return void
 	 */
 	public function init_plugin_textdomain() {
-		load_plugin_textdomain( 'shop-front', false, SHOP_FRONT_DIR . '/languages' );
+		load_plugin_textdomain( 'storesuite', false, STORESUITE_DIR . '/languages' );
 	}
 
 	/**
 	 * Executed after all plugins are loaded
 	 *
-	 * At this point SHOP_FRONT Pro is loaded
-	 *
-	 * @since 2.8.7
+	 * At this point StoreSuite Pro is loaded
 	 *
 	 * @return void
 	 */
@@ -267,8 +276,6 @@ final class ShopFront {
 	/**
 	 * Check whether woocommerce is installed and active
 	 *
-	 * @since 2.9.16
-	 *
 	 * @return bool
 	 */
 	public function has_woocommerce() {
@@ -277,8 +284,6 @@ final class ShopFront {
 
 	/**
 	 * Check whether woocommerce is installed
-	 *
-	 * @since 3.2.8
 	 *
 	 * @return bool
 	 */
@@ -292,7 +297,7 @@ final class ShopFront {
 	 * @return void
 	 */
 	protected function get_dependency_message() {
-		return __( 'My Shop Front plugin is enabled but not effective. It requires dependency plugins to work.', 'shop-front' );
+		return __( 'My StoreSuite plugin is enabled but not effective. It requires dependency plugins to work.', 'storesuite' );
 	}
 
 	/**
@@ -311,7 +316,7 @@ final class ShopFront {
 	 * @return string
 	 */
 	public function plugin_url() {
-		return untrailingslashit( plugins_url( '/', SHOP_FRONT_FILE ) );
+		return untrailingslashit( plugins_url( '/', STORESUITE_FILE ) );
 	}
 
 	/**
@@ -321,9 +326,9 @@ final class ShopFront {
 	 * @return string
 	 */
 	public function get_template( $name ) {
-		$template = untrailingslashit( SHOP_FRONT_TEMPLATE_DIR ) . '/' . untrailingslashit( $name );
+		$template = untrailingslashit( STORESUITE_TEMPLATE_DIR ) . '/' . untrailingslashit( $name );
 
-		return apply_filters( 'shop_front_template', $template, $name );
+		return apply_filters( 'storesuite_template', $template, $name );
 	}
 
 	/**
@@ -341,16 +346,16 @@ final class ShopFront {
 	 * @return string
 	 */
 	public function template_path() {
-		return apply_filters( 'msf_template_path', 'my-shop-front/' );
+		return apply_filters( 'storesuite_template_path', 'my-storesuite/' );
 	}
 
 	/**
 	 * Access rewrites query globally by plugin main class
-	 * Ex: pluginizelab_shop_front()->get_msf_query()->get_current_endpoint();
+	 * Ex: pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
 	 *
 	 * @return object
 	 */
-	public function get_msf_query() {
+	public function get_storesuite_query() {
 		return new Rewrites();
 	}
 }

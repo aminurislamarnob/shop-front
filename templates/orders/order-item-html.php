@@ -29,16 +29,16 @@ $item_name = apply_filters( 'woocommerce_order_item_name', $item->get_name(), $i
 
         <?php
         if ( $_product && $_product->get_sku() ) {
-			echo '<div class="wc-order-item-sku"><strong>' . esc_html__( 'SKU:', 'shop-front' ) . '</strong> ' . esc_html( $_product->get_sku() ) . '</div>';
+			echo '<div class="wc-order-item-sku"><strong>' . esc_html__( 'SKU:', 'storesuite' ) . '</strong> ' . esc_html( $_product->get_sku() ) . '</div>';
 		}
 
 		if ( $item->get_variation_id() ) {
-			echo '<div class="wc-order-item-variation"><strong>' . esc_html__( 'Variation ID:', 'shop-front' ) . '</strong> ';
+			echo '<div class="wc-order-item-variation"><strong>' . esc_html__( 'Variation ID:', 'storesuite' ) . '</strong> ';
 			if ( 'product_variation' === get_post_type( $item->get_variation_id() ) ) {
 				echo esc_html( $item->get_variation_id() );
 			} else {
 				/* translators: %s: variation id */
-				printf( esc_html__( '%s (No longer exists)', 'shop-front' ), esc_html( $item->get_variation_id() ) );
+				printf( esc_html__( '%s (No longer exists)', 'storesuite' ), esc_html( $item->get_variation_id() ) );
 			}
 			echo '</div>';
 		}
@@ -46,7 +46,7 @@ $item_name = apply_filters( 'woocommerce_order_item_name', $item->get_name(), $i
         <?php 
         do_action( 'woocommerce_before_order_itemmeta', $item_id, $item, $_product );
         
-        msf_get_template_part(
+        storesuite_get_template_part(
             'orders/html-order-item-meta', '', array(
                 'item'     => $item,
             )

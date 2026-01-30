@@ -4,12 +4,12 @@
  *
  * This template displays the top customers by total spend leaderboard on the dashboard.
  *
- * @package ShopFront
+ * @package StoreSuite
  * @version 1.0.0
  *
  * @var string                           $label     Date range label.
  * @var array|\WP_Error                  $rows      Customer rows data.
- * @var \PluginizeLab\ShopFront\Dashboard $dashboard Dashboard instance for helper methods.
+ * @var \PluginizeLab\StoreSuite\Dashboard $dashboard Dashboard instance for helper methods.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -17,16 +17,16 @@ defined( 'ABSPATH' ) || exit;
 <div class="col-md-6">
 	<div class="msf-card msf-card-with-header msf-dashboard-top-customers">
 		<h2 class="msf-card-title">
-			<?php echo esc_html__( 'Top customers - Total spend', 'shop-front' ); ?>
+			<?php echo esc_html__( 'Top customers - Total spend', 'storesuite' ); ?>
 		</h2>
 		<div>
 			<div class="msf-table-responsive">
-				<table class="my-shop-front-tbl msf-dashboard-leaderboard-table">
+				<table class="my-storesuite-tbl msf-dashboard-leaderboard-table">
 					<thead>
 						<tr>
-							<th><?php echo esc_html__( 'Customer name', 'shop-front' ); ?></th>
-							<th><?php echo esc_html__( 'Orders', 'shop-front' ); ?></th>
-							<th><?php echo esc_html__( 'Total spend', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Customer name', 'storesuite' ); ?></th>
+							<th><?php echo esc_html__( 'Orders', 'storesuite' ); ?></th>
+							<th><?php echo esc_html__( 'Total spend', 'storesuite' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -39,7 +39,7 @@ defined( 'ABSPATH' ) || exit;
 						<?php elseif ( empty( $rows ) ) : ?>
 							<tr>
 								<td colspan="3">
-									<?php echo esc_html__( 'No customers found for this period.', 'shop-front' ); ?>
+									<?php echo esc_html__( 'No customers found for this period.', 'storesuite' ); ?>
 								</td>
 							</tr>
 						<?php else : ?>
@@ -52,9 +52,9 @@ defined( 'ABSPATH' ) || exit;
 
 										if ( $customer_id > 0 ) {
 											$user = get_user_by( 'id', $customer_id );
-											if ( $user && function_exists( 'msfc_get_navigation_url' ) ) {
+											if ( $user && function_exists( 'storesuite_get_navigation_url' ) ) {
 												// Link to customer orders page if available.
-												$orders_url = add_query_arg( 'customer', $customer_id, msfc_get_navigation_url( 'orders' ) );
+												$orders_url = add_query_arg( 'customer', $customer_id, storesuite_get_navigation_url( 'orders' ) );
 												printf(
 													'<a href="%s">%s</a>',
 													esc_url( $orders_url ),

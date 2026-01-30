@@ -1,14 +1,14 @@
 <?php
 
-namespace PluginizeLab\ShopFront;
+namespace PluginizeLab\StoreSuite;
 
 class Common {
 	/**
 	 * The constructor.
 	 */
 	public function __construct() {
-		add_filter( 'page_template', array( $this, 'msf_register_page_template' ) );
-		add_filter( 'body_class', array( $this, 'msf_add_body_class' ) );
+		add_filter( 'page_template', array( $this, 'storesuite_register_page_template' ) );
+		add_filter( 'body_class', array( $this, 'storesuite_add_body_class' ) );
 	}
 
 	/**
@@ -17,9 +17,9 @@ class Common {
 	 * @param  string $template The template path.
 	 * @return string
 	 */
-	public function msf_register_page_template( $template ) {
-		if ( is_page() && is_msf_dashboard_page() ) {
-			$custom_template = SHOP_FRONT_TEMPLATE_DIR . '/page-template.php';
+	public function storesuite_register_page_template( $template ) {
+		if ( is_page() && is_storesuite_dashboard_page() ) {
+			$custom_template = STORESUITE_TEMPLATE_DIR . '/page-template.php';
 			if ( file_exists( $custom_template ) ) {
 				return $custom_template;
 			}
@@ -34,8 +34,8 @@ class Common {
 	 * @param  array $classes Array of body classes.
 	 * @return array
 	 */
-	public function msf_add_body_class( $classes ) {
-		if ( is_msf_dashboard_page() ) {
+	public function storesuite_add_body_class( $classes ) {
+		if ( is_storesuite_dashboard_page() ) {
 			$classes[] = 'msf-main-dashboard';
 		}
 

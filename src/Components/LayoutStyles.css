@@ -1,4 +1,4 @@
-.shop-front-setting-wrapper {
+.storesuite-setting-wrapper {
     display: flex;
 }
 
@@ -19,13 +19,13 @@
     -webkit-transition: all 150ms ease-out;
 }
 
-.shop-front-sidebar-nav {
+.storesuite-sidebar-nav {
     display: flex;
     flex-direction: column;
     flex: 0 0 225px;
 }
 
-.shop-front-setting-wrapper main {
+.storesuite-setting-wrapper main {
     position: relative;
     background: #fff;
     padding: 32px 24px;
@@ -38,7 +38,7 @@
     text-align: center;
 }
 
-.shop-front-sidebar-nav nav ul li a {
+.storesuite-sidebar-nav nav ul li a {
     position: relative;
     display: block;
     padding: 16px 44px 18px 20px;
@@ -51,12 +51,12 @@
     -webkit-transition: all 100ms ease-out;
 }
 
-.shop-front-sidebar-nav nav ul li a:focus, .shop-front-sidebar-nav nav ul li a:visited, .shop-front-sidebar-nav nav ul li a:active{
+.storesuite-sidebar-nav nav ul li a:focus, .storesuite-sidebar-nav nav ul li a:visited, .storesuite-sidebar-nav nav ul li a:active{
     outline: none;
     box-shadow: none;
 }
 
-.shop-front-sidebar-nav nav ul li a .menu-icon {
+.storesuite-sidebar-nav nav ul li a .menu-icon {
     position: absolute;
     top: calc(50% - 12px);
     right: 18px;
@@ -116,12 +116,12 @@
     width: 22px;
     height: 22px;
 }
-.shop-front-sidebar-nav nav ul li.active a {
+.storesuite-sidebar-nav nav ul li.active a {
     color: #121116;
     background: #fff;
     border-left: 2px solid #f56640;
 }
 
-.shop-front-sidebar-nav nav ul li {
+.storesuite-sidebar-nav nav ul li {
     margin: 0;
 }

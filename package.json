@@ -1,5 +1,5 @@
 {
-  "name": "shop-front",
+  "name": "storesuite",
   "version": "1.0.0",
   "description": "Run the following command for development environment.",
   "main": "index.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aminurislamarnob/shop-front.git"
+    "url": "git+https://github.com/aminurislamarnob/storesuite.git"
   },
   "keywords": [
     "woocommerce"

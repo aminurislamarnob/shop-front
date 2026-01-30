@@ -2,10 +2,10 @@
 /**
  * Products handler
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
-namespace PluginizeLab\ShopFront\Product;
+namespace PluginizeLab\StoreSuite\Product;
 
 /**
  * Products class
@@ -22,8 +22,8 @@ class Products {
 	 */
 	public function get_paginated_products( $page = 1, $search_term = '', $filters = array() ) {
 		// Get configuration from filters
-		$statuses = apply_filters( 'msf_product_listing_post_statuses', array( 'publish', 'draft', 'pending', 'future' ) );
-		$per_page = apply_filters( 'msf_products_per_page', 10 );
+		$statuses = apply_filters( 'storesuite_product_listing_post_statuses', array( 'publish', 'draft', 'pending', 'future' ) );
+		$per_page = apply_filters( 'storesuite_products_per_page', 10 );
 
 		$query = array(
 			'posts_per_page' => $per_page,

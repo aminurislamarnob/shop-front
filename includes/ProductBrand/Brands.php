@@ -2,12 +2,12 @@
 /**
  * Product brands handler
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
-namespace PluginizeLab\ShopFront\ProductBrand;
+namespace PluginizeLab\StoreSuite\ProductBrand;
 
-use PluginizeLab\ShopFront\Cache;
+use PluginizeLab\StoreSuite\Cache;
 
 /**
  * Plugin product brands class
@@ -18,9 +18,9 @@ class Brands {
 	 * The constructor.
 	 */
 	public function __construct() {
-		add_action( 'msf_product_brand_created', array( $this, 'clear_cache' ) );
-		add_action( 'msf_product_brand_updated', array( $this, 'clear_cache' ) );
-		add_action( 'msf_product_brand_deleted', array( $this, 'clear_cache' ) );
+		add_action( 'storesuite_product_brand_created', array( $this, 'clear_cache' ) );
+		add_action( 'storesuite_product_brand_updated', array( $this, 'clear_cache' ) );
+		add_action( 'storesuite_product_brand_deleted', array( $this, 'clear_cache' ) );
 	}
 
 	/**

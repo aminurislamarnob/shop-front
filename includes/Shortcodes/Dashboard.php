@@ -1,17 +1,17 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Shortcodes;
+namespace PluginizeLab\StoreSuite\Shortcodes;
 
-use PluginizeLab\ShopFront\Abstracts\MyShopFrontShortcode;
+use PluginizeLab\StoreSuite\Abstracts\MyStoreSuiteShortcode;
 
-class Dashboard extends MyShopFrontShortcode {
+class Dashboard extends MyStoreSuiteShortcode {
 
-	protected $shortcode = 'my_shop_front_dashboard';
+	protected $shortcode = 'storesuite_dashboard';
 
 	/**
 	 * Load template files
 	 *
-	 * Based on the query vars, load the appropriate template files in the my shop front dashboard.
+	 * Based on the query vars, load the appropriate template files in the store suite dashboard.
 	 *
 	 * @param array $atts
 	 *
@@ -22,11 +22,11 @@ class Dashboard extends MyShopFrontShortcode {
 
 		if ( ! function_exists( 'WC' ) ) {
 			// translators: 1) wooCommerce installation url
-			return sprintf( __( 'Please install <a href="%s"><strong>WooCommerce</strong></a> plugin first', 'shop-front' ), esc_url( 'http://wordpress.org/plugins/woocommerce/' ) );
+			return sprintf( __( 'Please install <a href="%s"><strong>WooCommerce</strong></a> plugin first', 'storesuite' ), esc_url( 'http://wordpress.org/plugins/woocommerce/' ) );
 		}
 
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			return __( 'You have no permission to view this page', 'shop-front' );
+			return __( 'You have no permission to view this page', 'storesuite' );
 		}
 
 		ob_start();
@@ -34,100 +34,100 @@ class Dashboard extends MyShopFrontShortcode {
 		// dd( $wp->query_vars );
 
 		if ( isset( $wp->query_vars['page'] ) ) {
-			msf_get_template_part( 'dashboard' );
+			storesuite_get_template_part( 'dashboard' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['products'] ) ) {
-			msf_get_template_part( 'products/products' );
+			storesuite_get_template_part( 'products/products' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['add-new-product'] ) ) {
 			if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                msf_get_template_part( 'global/no-permission' );
+                storesuite_get_template_part( 'global/no-permission' );
             } else {
-                do_action( 'msf_load_new_product_template', $wp->query_vars );
+                do_action( 'storesuite_load_new_product_template', $wp->query_vars );
             }
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['edit-product'] ) ) {
 			if ( ! current_user_can( 'manage_woocommerce' ) ) {
-                msf_get_template_part( 'global/no-permission' );
+                storesuite_get_template_part( 'global/no-permission' );
             } else {
-                do_action( 'msf_load_edit_product_template', $wp->query_vars );
+                do_action( 'storesuite_load_edit_product_template', $wp->query_vars );
             }
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['orders'] ) ) {
-			msf_get_template_part( 'orders/orders' );
+			storesuite_get_template_part( 'orders/orders' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['add-new-order'] ) ) {
-			msf_get_template_part( 'orders/add-new-order' );
+			storesuite_get_template_part( 'orders/add-new-order' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['edit-order'] ) ) {
-			msf_get_template_part( 'orders/edit-order' );
+			storesuite_get_template_part( 'orders/edit-order' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['order-details'] ) ) {
-			msf_get_template_part( 'orders/order-details' );
+			storesuite_get_template_part( 'orders/order-details' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['categories'] ) ) {
-			msf_get_template_part( 'categories/categories' );
+			storesuite_get_template_part( 'categories/categories' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['add-new-category'] ) ) {
-			msf_get_template_part( 'categories/add-new-category' );
+			storesuite_get_template_part( 'categories/add-new-category' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['edit-category'] ) ) {
-			msf_get_template_part( 'categories/edit-category' );
+			storesuite_get_template_part( 'categories/edit-category' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['tags'] ) ) {
-			msf_get_template_part( 'tags/tags' );
+			storesuite_get_template_part( 'tags/tags' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['add-new-tag'] ) ) {
-			msf_get_template_part( 'tags/add-new-tag' );
+			storesuite_get_template_part( 'tags/add-new-tag' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['edit-tag'] ) ) {
-			msf_get_template_part( 'tags/edit-tag' );
+			storesuite_get_template_part( 'tags/edit-tag' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['brands'] ) ) {
-			msf_get_template_part( 'brands/brands' );
+			storesuite_get_template_part( 'brands/brands' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['add-new-brand'] ) ) {
-			msf_get_template_part( 'brands/add-new-brand' );
+			storesuite_get_template_part( 'brands/add-new-brand' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['edit-brand'] ) ) {
-			msf_get_template_part( 'brands/edit-brand' );
+			storesuite_get_template_part( 'brands/edit-brand' );
 			return ob_get_clean();
 		}
 
 		if ( isset( $wp->query_vars['coupons'] ) ) {
-			do_action( 'msf_load_coupons_template', $wp->query_vars );
+			do_action( 'storesuite_load_coupons_template', $wp->query_vars );
 			return ob_get_clean();
 		}
 
@@ -135,7 +135,7 @@ class Dashboard extends MyShopFrontShortcode {
 			$template_args = array(
 				'query_vars' => $wp->query_vars,
 			);
-			msf_get_template_part( 'coupons/add-new-coupon', '', $template_args );
+			storesuite_get_template_part( 'coupons/add-new-coupon', '', $template_args );
 			return ob_get_clean();
 		}
 
@@ -143,11 +143,11 @@ class Dashboard extends MyShopFrontShortcode {
 			$template_args = array(
 				'query_vars' => $wp->query_vars,
 			);
-			msf_get_template_part( 'coupons/edit-coupon', '', $template_args );
+			storesuite_get_template_part( 'coupons/edit-coupon', '', $template_args );
 			return ob_get_clean();
 		}
 
-		do_action( 'msf_load_custom_template', $wp->query_vars );
+		do_action( 'storesuite_load_custom_template', $wp->query_vars );
 
 		return ob_get_clean();
 	}
@@ -162,7 +162,7 @@ class Dashboard extends MyShopFrontShortcode {
 	public function is_query_var_exists( $query_var, $query_var_value ) {
 		global $wp;
 
-		if ( isset( $wp->query_vars['pagename'] ) && ( $wp->query_vars['pagename'] === 'my-shop-dashboard' ) ) {
+		if ( isset( $wp->query_vars['pagename'] ) && ( $wp->query_vars['pagename'] === 'storesuite-dashboard' ) ) {
 			if ( isset( $wp->query_vars[ $query_var ] ) ) {
 				$query_var_parts = explode( '/', $wp->query_vars[ $query_var ] );
 

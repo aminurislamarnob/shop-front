@@ -2,7 +2,7 @@
 /**
  * MSFC pagination template
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,7 +32,7 @@ if ( $total_pages > 1 ) {
 
 	echo '<div class="msfc-result-text">';
 	/* translators: %1$s: Start Item, %2$s: End Item, %3$s: Total Items */
-	printf( esc_html__( 'Showing %1$s to %2$s of %3$s', 'shop-front' ), esc_html( $start_item ), esc_html( $end_item ), esc_html( $total_items ) );
+	printf( esc_html__( 'Showing %1$s to %2$s of %3$s', 'storesuite' ), esc_html( $start_item ), esc_html( $end_item ), esc_html( $total_items ) );
 	echo '</div>';
 
 	if ( ! empty( $page_links ) ) {

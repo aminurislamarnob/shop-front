@@ -2,7 +2,7 @@
 /**
  * Order List Filters - Off-Canvas
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +16,7 @@ $current_channel       = isset( $_GET['order_channel'] ) ? sanitize_text_field( 
 $current_month         = isset( $_GET['m'] ) ? sanitize_text_field( wp_unslash( $_GET['m'] ) ) : '0';
 
 // Build WooCommerce-style month options
-$order_manager  = isset( $orders_obj ) ? $orders_obj : new \PluginizeLab\ShopFront\Order\OrderManager();
+$order_manager  = isset( $orders_obj ) ? $orders_obj : new \PluginizeLab\StoreSuite\Order\OrderManager();
 $months_options = method_exists( $order_manager, 'get_months_filter_options' ) ? $order_manager->get_months_filter_options() : array();
 global $wp_locale;
 ?>
@@ -24,7 +24,7 @@ global $wp_locale;
 <div class="msf-filter-offcanvas-overlay" id="msf-order-filter-overlay"></div>
 <div class="msf-filter-offcanvas" id="msf-order-filter-offcanvas">
 	<div class="msf-filter-offcanvas-header">
-		<h3><?php esc_html_e( 'Filter Orders', 'shop-front' ); ?></h3>
+		<h3><?php esc_html_e( 'Filter Orders', 'storesuite' ); ?></h3>
 		<button type="button" class="msf-filter-close" id="msf-order-filter-close">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
 				<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
@@ -36,9 +36,9 @@ global $wp_locale;
 		<form method="get" class="msf-filters-form-offcanvas">
 			<!-- Filter by Order Status -->
 			<div class="msf-form-group">
-				<label><?php esc_html_e( 'Order Status', 'shop-front' ); ?></label>
+				<label><?php esc_html_e( 'Order Status', 'storesuite' ); ?></label>
 				<select name="order_status" class="msf-form-control">
-					<option value=""><?php esc_html_e( 'All Statuses', 'shop-front' ); ?></option>
+					<option value=""><?php esc_html_e( 'All Statuses', 'storesuite' ); ?></option>
 					<?php
 					$order_statuses = wc_get_order_statuses();
 					foreach ( $order_statuses as $status_key => $status_label ) {
@@ -57,7 +57,7 @@ global $wp_locale;
 
 			<!-- Filter by Registered Customer -->
 			<div class="msf-form-group">
-				<label><?php esc_html_e( 'Registered Customer', 'shop-front' ); ?></label>
+				<label><?php esc_html_e( 'Registered Customer', 'storesuite' ); ?></label>
 				<?php
 				$user_string = '';
 				$user_id     = '';
@@ -85,7 +85,7 @@ global $wp_locale;
 
 			<!-- Filter by Sales Channel -->
 			<div class="msf-form-group">
-				<label><?php esc_html_e( 'Sales Channel', 'shop-front' ); ?></label>
+				<label><?php esc_html_e( 'Sales Channel', 'storesuite' ); ?></label>
 				<select name="order_channel" class="msf-form-control">
 					<?php
 					$created_via_options = array(
@@ -108,15 +108,15 @@ global $wp_locale;
 
 			<!-- Filter by Date (WooCommerce month dropdown: m=YYYYMM) -->
 			<div class="msf-form-group">
-				<label><?php esc_html_e( 'Date', 'shop-front' ); ?></label>
+				<label><?php esc_html_e( 'Date', 'storesuite' ); ?></label>
 				<select name="m" id="filter-by-date" class="msf-form-control">
-					<option value="0" <?php selected( (int) $current_month, 0, true ); ?>><?php esc_html_e( 'All dates', 'shop-front' ); ?></option>
+					<option value="0" <?php selected( (int) $current_month, 0, true ); ?>><?php esc_html_e( 'All dates', 'storesuite' ); ?></option>
 					<?php
 					foreach ( $months_options as $option ) {
 						$month           = zeroise( $option->month, 2 );
 						$month_year_text = sprintf(
 							/* translators: 1: Month name, 2: 4-digit year. */
-							esc_html_x( '%1$s %2$d', 'order dates dropdown', 'shop-front' ),
+							esc_html_x( '%1$s %2$d', 'order dates dropdown', 'storesuite' ),
 							$wp_locale->get_month( $month ),
 							$option->year
 						);
@@ -133,8 +133,8 @@ global $wp_locale;
 			</div>
 
 			<div class="msf-filter-offcanvas-footer">
-				<button type="submit" class="my-shop-front-button"><?php esc_html_e( 'Apply Filters', 'shop-front' ); ?></button>
-				<a href="?" class="my-shop-front-button msf-filter-reset"><?php esc_html_e( 'Reset', 'shop-front' ); ?></a>
+				<button type="submit" class="my-storesuite-button"><?php esc_html_e( 'Apply Filters', 'storesuite' ); ?></button>
+				<a href="?" class="my-storesuite-button msf-filter-reset"><?php esc_html_e( 'Reset', 'storesuite' ); ?></a>
 			</div>
 		</form>
 	</div>

@@ -4,12 +4,12 @@
  *
  * This template displays the top coupons by number of orders leaderboard on the dashboard.
  *
- * @package ShopFront
+ * @package StoreSuite
  * @version 1.0.0
  *
  * @var string                           $label     Date range label.
  * @var array|\WP_Error                  $rows      Coupon rows data.
- * @var \PluginizeLab\ShopFront\Dashboard $dashboard Dashboard instance for helper methods.
+ * @var \PluginizeLab\StoreSuite\Dashboard $dashboard Dashboard instance for helper methods.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -17,16 +17,16 @@ defined( 'ABSPATH' ) || exit;
 <div class="col-md-6">
 	<div class="msf-card msf-card-with-header msf-dashboard-top-coupons">
 		<h2 class="msf-card-title">
-			<?php echo esc_html__( 'Top coupons - Number of orders', 'shop-front' ); ?>
+			<?php echo esc_html__( 'Top coupons - Number of orders', 'storesuite' ); ?>
 		</h2>
 		<div>
 			<div class="msf-table-responsive">
-				<table class="my-shop-front-tbl msf-dashboard-leaderboard-table">
+				<table class="my-storesuite-tbl msf-dashboard-leaderboard-table">
 					<thead>
 						<tr>
-							<th><?php echo esc_html__( 'Coupon code', 'shop-front' ); ?></th>
-							<th><?php echo esc_html__( 'Orders', 'shop-front' ); ?></th>
-							<th><?php echo esc_html__( 'Amount discounted', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Coupon code', 'storesuite' ); ?></th>
+							<th><?php echo esc_html__( 'Orders', 'storesuite' ); ?></th>
+							<th><?php echo esc_html__( 'Amount discounted', 'storesuite' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -39,7 +39,7 @@ defined( 'ABSPATH' ) || exit;
 						<?php elseif ( empty( $rows ) ) : ?>
 							<tr>
 								<td colspan="3">
-									<?php echo esc_html__( 'No coupons found for this period.', 'shop-front' ); ?>
+									<?php echo esc_html__( 'No coupons found for this period.', 'storesuite' ); ?>
 								</td>
 							</tr>
 						<?php else : ?>
@@ -50,8 +50,8 @@ defined( 'ABSPATH' ) || exit;
 										$coupon_code = isset( $row['coupon_code'] ) ? (string) $row['coupon_code'] : '';
 										$coupon_id   = isset( $row['coupon_id'] ) ? (int) $row['coupon_id'] : 0;
 
-										if ( $coupon_id > 0 && function_exists( 'msfc_get_navigation_url' ) ) {
-											$coupon_url = add_query_arg( 'coupon_id', $coupon_id, msfc_get_navigation_url( 'coupons' ) );
+										if ( $coupon_id > 0 && function_exists( 'storesuite_get_navigation_url' ) ) {
+											$coupon_url = add_query_arg( 'coupon_id', $coupon_id, storesuite_get_navigation_url( 'coupons' ) );
 											printf(
 												'<a href="%s">%s</a>',
 												esc_url( $coupon_url ),

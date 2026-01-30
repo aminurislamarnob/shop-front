@@ -2,7 +2,7 @@
 /**
  * Order Downloads.
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

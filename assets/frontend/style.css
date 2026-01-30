@@ -416,7 +416,7 @@ template {
 [hidden] {
   display: none;
 }
-.my-shop-front-page-content{
+.my-storesuite-page-content{
   font-size: var(--body-font-size);
 }
 .d-inline{
@@ -425,7 +425,7 @@ template {
 .text-right{
   text-align: right!important;
 }
-.my-shop-front-page-content ins {
+.my-storesuite-page-content ins {
   text-decoration: none;
 }
 
@@ -441,7 +441,7 @@ template {
   border-radius: 6px;
   padding: 24px;
 }
-.my-shop-front-container .msf-form-group label {
+.my-storesuite-container .msf-form-group label {
   font-size: 14px;
   font-weight: 500;
   display: block;
@@ -449,10 +449,10 @@ template {
   margin-bottom: 5px;
 }
 
-.my-shop-front-container .msf-form-control{
+.my-storesuite-container .msf-form-control{
   width: 100%;
 }
-.my-shop-front-container .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea{
+.my-storesuite-container .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea{
   border-radius: 0px;
   font-size: 14px;
   border: 1px solid var(--msf-input-border-color);
@@ -465,27 +465,27 @@ template {
 .msf-form-group .select2-container--default .select2-selection--multiple .select2-selection__rendered li {
   margin-top: 0;
 }
-.my-shop-front-inline-form button {
+.my-storesuite-inline-form button {
   height: 35px!important;
 }
-.my-shop-front-container .msf-form-control:focus, .my-shop-front-container .msf-form-control:focus-within, .my-shop-front-container .msf-form-control:focus-visible, .select2-search--dropdown .select2-search__field:focus {
+.my-storesuite-container .msf-form-control:focus, .my-storesuite-container .msf-form-control:focus-within, .my-storesuite-container .msf-form-control:focus-visible, .select2-search--dropdown .select2-search__field:focus {
   box-shadow: none;
   outline: none;
   border: 1px solid var(--primary-bg);
 }
 
 /* Field Validation Styles */
-.my-shop-front-container .msf-field-invalid {
+.my-storesuite-container .msf-field-invalid {
   border-color: #dc3545 !important;
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.1);
 }
 
-.my-shop-front-container .msf-field-invalid:focus {
+.my-storesuite-container .msf-field-invalid:focus {
   border-color: #dc3545 !important;
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
 
-.my-shop-front-container .msf-field-error {
+.my-storesuite-container .msf-field-error {
   display: block;
   color: #dc3545;
   font-size: 13px;
@@ -493,31 +493,31 @@ template {
   font-weight: 400;
 }
 
-.my-shop-front-page-content {
+.my-storesuite-page-content {
   width: 100%;
   margin-right: auto;
   margin-left: auto;
 }
 
 @media (min-width: 1536px) {
-  .my-shop-front-page-content {
+  .my-storesuite-page-content {
     max-width: 1536px;
   }
 }
 
 /*Left Navigation*/
-nav.my-shop-front-left-navigation ul {
+nav.my-storesuite-left-navigation ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-nav.my-shop-front-left-navigation ul li {
+nav.my-storesuite-left-navigation ul li {
   display: block;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-nav.my-shop-front-left-navigation ul li a {
+nav.my-storesuite-left-navigation ul li a {
   display: block;
   color: #222;
   padding: 10px 15px;
@@ -525,7 +525,7 @@ nav.my-shop-front-left-navigation ul li a {
   font-size: 15px;
 }
 
-nav.my-shop-front-left-navigation {
+nav.my-storesuite-left-navigation {
   background: #f7f7f7;
   border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -534,22 +534,22 @@ nav.my-shop-front-left-navigation {
   -o-border-radius: 5px;
 }
 
-nav.my-shop-front-left-navigation ul li a:hover, nav.my-shop-front-left-navigation ul li.is-active a {
+nav.my-storesuite-left-navigation ul li a:hover, nav.my-storesuite-left-navigation ul li.is-active a {
   background: #e04d3b;
   color: #fff;
 }
 
-nav.my-shop-front-left-navigation ul li:first-child a:hover, nav.my-shop-front-left-navigation ul li:first-child.is-active a {
+nav.my-storesuite-left-navigation ul li:first-child a:hover, nav.my-storesuite-left-navigation ul li:first-child.is-active a {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
 
-nav.my-shop-front-left-navigation ul li:last-child a:hover, nav.my-shop-front-left-navigation ul li:last-child.is-active a {
+nav.my-storesuite-left-navigation ul li:last-child a:hover, nav.my-storesuite-left-navigation ul li:last-child.is-active a {
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
 }
 
-.my-shop-front-container a, .my-shop-front-container a:hover{
+.my-storesuite-container a, .my-storesuite-container a:hover{
   text-decoration: none!important;
   transition: .3s;
 }
@@ -606,11 +606,11 @@ nav.my-shop-front-left-navigation ul li:last-child a:hover, nav.my-shop-front-le
   -ms-border-radius: 4px;
   -o-border-radius: 4px;
 }
-.my-shop-front-product-list-table tbody tr td:first-child {
+.my-storesuite-product-list-table tbody tr td:first-child {
   font-weight: 500;
 }
 
-table.my-shop-front-tbl{
+table.my-storesuite-tbl{
   border-collapse: collapse;
   width: 100%;
   border-radius: 4px;
@@ -619,45 +619,45 @@ table.my-shop-front-tbl{
   -ms-border-radius: 4px;
   -o-border-radius: 4px;
 }
-table.my-shop-front-tbl thead {
+table.my-storesuite-tbl thead {
   background-color: #fff;
 }
-table.my-shop-front-tbl thead th{
+table.my-storesuite-tbl thead th{
   color: var(--msf-text-black);
 }
-table.my-shop-front-product-list-table tbody tr td.tbl-product-name {
+table.my-storesuite-product-list-table tbody tr td.tbl-product-name {
   width: 280px;
 }
-table.my-shop-front-tbl>tbody {
+table.my-storesuite-tbl>tbody {
   background-color: #fff;
 }
-.my-shop-front-tbl td.action-buttons {
+.my-storesuite-tbl td.action-buttons {
   width: 245px;
 }
-.my-shop-front-tbl tr td:first-child a {
+.my-storesuite-tbl tr td:first-child a {
   color: var(--primary-bg);
 }
-.my-shop-front-tbl tr td:first-child a:hover{
+.my-storesuite-tbl tr td:first-child a:hover{
   text-decoration: underline;
 }
 
-.my-shop-front-tbl thead th {
+.my-storesuite-tbl thead th {
   padding: 10px!important;
   text-align: left;
   text-transform: uppercase;
   font-weight: 600;
 }
-table.my-shop-front-tbl caption+thead tr:first-child td, table.my-shop-front-tbl caption+thead tr:first-child th, table.my-shop-front-tbl colgroup+thead tr:first-child td, table.my-shop-front-tbl colgroup+thead tr:first-child th, table.my-shop-front-tbl thead:first-child tr:first-child td, table.my-shop-front-tbl thead:first-child tr:first-child th, table.my-shop-front-tbl td{
+table.my-storesuite-tbl caption+thead tr:first-child td, table.my-storesuite-tbl caption+thead tr:first-child th, table.my-storesuite-tbl colgroup+thead tr:first-child td, table.my-storesuite-tbl colgroup+thead tr:first-child th, table.my-storesuite-tbl thead:first-child tr:first-child td, table.my-storesuite-tbl thead:first-child tr:first-child th, table.my-storesuite-tbl td{
   border: 0px!important;
 }
-.my-shop-front-tbl del {
+.my-storesuite-tbl del {
   color: #777;
 }
 
 .woocommerce table.shop_table td ins {
   text-decoration: none;
 }
-table.my-shop-front-tbl tbody tr:nth-last-child(-n+2) .msfc-dropdown .msfc-dropdown-menu {
+table.my-storesuite-tbl tbody tr:nth-last-child(-n+2) .msfc-dropdown .msfc-dropdown-menu {
   top: auto;
   bottom: 20px;
 }
@@ -765,14 +765,14 @@ form.msf-filters-form .row {
 }
 
 /*Checkbox Style*/
-.my-shop-front-checkbox {
+.my-storesuite-checkbox {
   position: relative;
   width: 16px;
   height: 16px;
   display: inline-block;
 }
 
-.my-shop-front-checkbox-input {
+.my-storesuite-checkbox-input {
   position: absolute;
   z-index: 100;
   width: 100%;
@@ -783,7 +783,7 @@ form.msf-filters-form .row {
   top: 0;
 }
 
-.my-shop-front-checkbox-back {
+.my-storesuite-checkbox-back {
   position: absolute;
   left: 0;
   top: 0;
@@ -798,7 +798,7 @@ form.msf-filters-form .row {
   -ms-border-radius: 5px;
   -o-border-radius: 5px;
 }
-.my-shop-front-tick {
+.my-storesuite-tick {
   position: absolute;
   top: 0;
   color: #fff;
@@ -807,22 +807,22 @@ form.msf-filters-form .row {
   visibility: hidden;
 }
 
-.my-shop-front-checkbox-input:checked ~ .my-shop-front-checkbox-back {
+.my-storesuite-checkbox-input:checked ~ .my-storesuite-checkbox-back {
   background: var(--primary-bg);
   border-color: var(--primary-bg);
 }
 
-.my-shop-front-checkbox-input:checked ~ .my-shop-front-tick {
+.my-storesuite-checkbox-input:checked ~ .my-storesuite-tick {
   opacity: 1;
   visibility: visible;
 }
 
 
 /*Proudct List Page*/
-.my-shop-front-tbl td, .my-shop-front-tbl th{
+.my-storesuite-tbl td, .my-storesuite-tbl th{
   padding: 12px;
 }
-.my-shop-front-tbl a{
+.my-storesuite-tbl a{
   color: #222222;
   display: inline-block;
   -webkit-transition: 0.5s;
@@ -831,11 +831,11 @@ form.msf-filters-form .row {
   text-decoration: none;
   outline: 0 !important;
 }
-.my-shop-front-tbl a:hover{
+.my-storesuite-tbl a:hover{
   color: #0063d1;
   text-decoration: none;
 }
-table.my-shop-front-tbl .action-buttons a, table.my-shop-front-tbl .action-buttons button{
+table.my-storesuite-tbl .action-buttons a, table.my-storesuite-tbl .action-buttons button{
   margin: 2px 3px!important;
   font-weight: 400!important;
   font-size: 13px!important;
@@ -852,7 +852,7 @@ table.my-shop-front-tbl .action-buttons a, table.my-shop-front-tbl .action-butto
   -o-border-radius: 5px;
 }
 
-table .action-buttons a.edit, .my-shop-front-container button.edit {
+table .action-buttons a.edit, .my-storesuite-container button.edit {
   background: #34495e;
 }
 
@@ -866,19 +866,19 @@ table .action-buttons a.view {
 .product-list-action form{
   display: inline-block;
 }
-.my-shop-front-alert.alert-dismissible .close {
+.my-storesuite-alert.alert-dismissible .close {
   font-weight: 400;
   font-size: 20px;
 }
-.my-shop-front-alert.alert-dismissible .close:hover, .my-shop-front-alert.alert-dismissible .close:focus{
+.my-storesuite-alert.alert-dismissible .close:hover, .my-storesuite-alert.alert-dismissible .close:focus{
   background: none;
 }
 
-.my-shop-front-alert.alert {
+.my-storesuite-alert.alert {
   padding: 10px 15px;
   border-radius: 0px!important;
 }
-.my-shop-front-thumb {
+.my-storesuite-thumb {
   width: 40px;
   border-radius: 5px;
   height: 40px;
@@ -889,7 +889,7 @@ table .action-buttons a.view {
   -o-border-radius: 5px;
 }
 
-table.my-shop-front-tbl tbody tr td{
+table.my-storesuite-tbl tbody tr td{
   border-top: 1px solid var(--table-border-color)!important;
 }
 .inline-button {
@@ -959,7 +959,7 @@ span.order-failed {
 }
 
 /*Button Style*/
-.my-shop-front-button, .wc-order-data-row.wc-order-bulk-actions button.button, .wc-order-data-row.wc-order-add-item .button, button.add_order_item_meta.button {
+.my-storesuite-button, .wc-order-data-row.wc-order-bulk-actions button.button, .wc-order-data-row.wc-order-add-item .button, button.add_order_item_meta.button {
   background: var(--primary-bg);
   display: inline-flex;
   align-items: center;
@@ -972,7 +972,7 @@ span.order-failed {
   border: 1px solid var(--primary-bg);
   justify-content: center;
 }
-.my-shop-front-button svg{
+.my-storesuite-button svg{
   fill: #fff;
   width: 11px;
   height: 11px;
@@ -983,27 +983,27 @@ span.order-failed {
   display: flex;
   justify-content: space-between;
 }
-.my-shop-front-button.my-shop-front-button-light, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items, .wc-order-data-row.wc-order-add-item .button.cancel-action {
+.my-storesuite-button.my-storesuite-button-light, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items, .wc-order-data-row.wc-order-add-item .button.cancel-action {
   color: var(--primary-bg);
   background: #fff;
   border-color: var(--msf-input-border-color);
   color: var(--msf-gray);
 }
-.my-shop-front-button.my-shop-front-button-light svg{
+.my-storesuite-button.my-storesuite-button-light svg{
   fill: var(--msf-gray);
 }
 
-.my-shop-front-button:hover, .my-shop-front-button.my-shop-front-button-light:hover, .wc-order-data-row.wc-order-bulk-actions button.button:hover, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items:hover, .wc-order-data-row.wc-order-add-item .button.cancel-action:hover, .wc-order-data-row.wc-order-add-item .button.button-primary.save-action, button.add_order_item_meta.button, button.add_order_item_meta.button:hover {
+.my-storesuite-button:hover, .my-storesuite-button.my-storesuite-button-light:hover, .wc-order-data-row.wc-order-bulk-actions button.button:hover, .wc-order-data-row.wc-order-bulk-actions button.button.refund-items:hover, .wc-order-data-row.wc-order-add-item .button.cancel-action:hover, .wc-order-data-row.wc-order-add-item .button.button-primary.save-action, button.add_order_item_meta.button, button.add_order_item_meta.button:hover {
   color: #fff;
   background: var(--primary-bg-hover);
   border: 1px solid var(--primary-bg-hover);
 }
 
 /*Add Product Form*/
-.my-shop-front-container textarea.msf-form-control {
+.my-storesuite-container textarea.msf-form-control {
   height: auto;
 }
-.my-shop-front-container button.msfc-submit-btn {
+.my-storesuite-container button.msfc-submit-btn {
   border: 0px;
   padding: 8px 25px!important;
   height: auto!important;
@@ -1304,32 +1304,32 @@ a.sale_schedule, a.cancel_sale_schedule {
 }
 
 /*Product Details Page*/
-.my-shop-front-product-thumbnail .thumb-gl-item {
+.my-storesuite-product-thumbnail .thumb-gl-item {
   width: 80px;
   margin-bottom: 10px;
 }
-.my-shop-front-product-thumbnail .thumb-gl-item img{
+.my-storesuite-product-thumbnail .thumb-gl-item img{
   border: 1.5px solid #fff;
   cursor: pointer;
 }
-.my-shop-front-product-thumbnail .thumb-gl-item .active {
+.my-storesuite-product-thumbnail .thumb-gl-item .active {
   border-color: var(--primary-bg);
 }
-.msfc_wfm_product_price {
+.storesuite_wfm_product_price {
   font-size: 20px;
   font-weight: 500;
 }
 
-.msfc_wfm_product_price del {
+.storesuite_wfm_product_price del {
   font-size: 16px;
 }
-ul.my-shop-front-metas {
+ul.my-storesuite-metas {
   line-height: 1.8;
 }
-.my-shop-front-product-simple h1 {
+.my-storesuite-product-simple h1 {
   font-size: 32px;
 }
-.my-shop-front-container .my-shop-front-inline-form button[type=submit] {
+.my-storesuite-container .my-storesuite-inline-form button[type=submit] {
   height: auto!important;
 }
 .order-status-update-form {
@@ -1340,7 +1340,7 @@ ul.my-shop-front-metas {
 .order-status-update-form .msf-form-group {
   margin-bottom: 15px;
 }
-.my-shop-front-tbl.my-shop-front-order-list-table td.action-buttons {
+.my-storesuite-tbl.my-storesuite-order-list-table td.action-buttons {
   width: 340px;
 }
 .msf-card-content .wp-editor-wrap {
@@ -1381,7 +1381,7 @@ ul.my-shop-front-metas {
 }
 
 /*Dash Navigation*/
-.my-shop-front-sidebar {
+.my-storesuite-sidebar {
   position: fixed;
   width: 290px;
   top: 0;
@@ -1454,11 +1454,11 @@ ul.msfc-dashboard-menu a.active svg, ul.msfc-dashboard-menu a:hover svg {
 }
 
 /*Dash content*/
-.my-shop-front-wrapper {
+.my-storesuite-wrapper {
   width: calc(100% - 290px);
   margin-left: 290px;
 }
-.my-shop-front-page-content {
+.my-storesuite-page-content {
   padding: 24px;
 }
 
@@ -1481,7 +1481,7 @@ ul.msfc-dashboard-menu a.active svg, ul.msfc-dashboard-menu a:hover svg {
   align-items: center;
 }
 
-.msf-header-right a.my-shop-front-button {
+.msf-header-right a.my-storesuite-button {
   margin: 0;
   background: transparent;
   color: var(--msf-text-color-light);
@@ -1489,7 +1489,7 @@ ul.msfc-dashboard-menu a.active svg, ul.msfc-dashboard-menu a:hover svg {
   border-radius: 40px;
   font-size: 12px;
 }
-.msf-header-right a.my-shop-front-button svg {
+.msf-header-right a.my-storesuite-button svg {
   width: 14px;
   height: 14px;
   display: inline-block;
@@ -1498,12 +1498,12 @@ ul.msfc-dashboard-menu a.active svg, ul.msfc-dashboard-menu a:hover svg {
   top: 1px;
   fill: rgb(130 130 130);
 }
-.msf-header-right a.my-shop-front-button:hover{
+.msf-header-right a.my-storesuite-button:hover{
   background: var(--primary-bg-hover);
   color: #fff;
   border-color: var(--primary-bg-hover);
 }
-.msf-header-right a.my-shop-front-button:hover svg {
+.msf-header-right a.my-storesuite-button:hover svg {
   fill: #fff;
 }
 .msfc-dropdown.msf-header-dropdown span.msfc-dropdown-icon {
@@ -1777,7 +1777,7 @@ span.select2-selection__clear {
   border-color: var(--primary-bg);
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
-.msfc-dashboard-order-details select#customer_user, select#msf_product_search {
+.msfc-dashboard-order-details select#customer_user, select#storesuite_product_search {
   display: none;
 }
 .msfc-dashboard-order-details .msf-card, .msfc-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column, .msf-card.msf-card-with-header {
@@ -1921,12 +1921,12 @@ span.select2-selection__clear {
 }
 
 
-.my-shop-front-wrapper .msf-form-group {
+.my-storesuite-wrapper .msf-form-group {
   margin-bottom: 16px;
   position: relative;
 }
 
-.my-shop-front-wrapper .msf-form-group label {
+.my-storesuite-wrapper .msf-form-group label {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
@@ -1934,13 +1934,13 @@ span.select2-selection__clear {
   font-size: 14px;
 }
 
-.my-shop-front-wrapper .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
+.my-storesuite-wrapper .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   background-color: #fff;
 }
 
-.my-shop-front-wrapper .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus, .woocommerce_order_items_wrapper textarea:focus {
+.my-storesuite-wrapper .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus, .woocommerce_order_items_wrapper textarea:focus {
   outline: none;
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
@@ -2844,7 +2844,7 @@ table.msf-table.order-items .wc-order-item-thumbnail img {
   height: 38px;
   border-radius: 4px;
 }
-.my-shop-front-wrapper .msf-form-group.msf-bulk-order-actions {
+.my-storesuite-wrapper .msf-form-group.msf-bulk-order-actions {
     gap: 10px;
 }
 .msf-bulk-order-actions select.msf-form-control{
@@ -3168,7 +3168,7 @@ table.msf-table.order-items .wc-order-item-thumbnail img {
   border-color: var(--primary-bg);
   box-shadow: 0 0 0 3px rgba(45, 91, 219, 0.1);
 }
-form.msf-search-form.msf-order-search-form .my-shop-front-button {
+form.msf-search-form.msf-order-search-form .my-storesuite-button {
     max-width: 100px;
 }
 
@@ -3245,29 +3245,29 @@ form.msf-search-form.msf-order-search-form .my-shop-front-button {
 .msfc-dashboard-order-details {
   position: relative;
 }
-table.my-shop-front-tbl.msf-dashboard-leaderboard-table thead tr th:first-child, table.my-shop-front-tbl.msf-dashboard-leaderboard-table tbody tr td:first-child {
+table.my-storesuite-tbl.msf-dashboard-leaderboard-table thead tr th:first-child, table.my-storesuite-tbl.msf-dashboard-leaderboard-table tbody tr td:first-child {
   padding-left: 24px!important;
 }
 
-table.my-shop-front-tbl.msf-dashboard-leaderboard-table tr td:first-child a {
+table.my-storesuite-tbl.msf-dashboard-leaderboard-table tr td:first-child a {
   color: #222222;
 }
 
-table.my-shop-front-tbl.msf-dashboard-leaderboard-table thead tr th {
+table.my-storesuite-tbl.msf-dashboard-leaderboard-table thead tr th {
   background: #f8f9fa;
 }
 form.msf-dashboard-date-range-form {
   display: flex;
 }
 
-form.msf-dashboard-date-range-form input#msf_dashboard_range {
+form.msf-dashboard-date-range-form input#storesuite_dashboard_range {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0px;
   min-width: 250px;
   border-right: 0;
 }
 
-form.msf-dashboard-date-range-form button.my-shop-front-button.msf-dashboard-date-apply {
+form.msf-dashboard-date-range-form button.my-storesuite-button.msf-dashboard-date-apply {
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
 }

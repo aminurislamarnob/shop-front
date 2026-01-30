@@ -3,10 +3,10 @@
 /**
  * Dashboard service.
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
-namespace PluginizeLab\ShopFront;
+namespace PluginizeLab\StoreSuite;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,11 +23,11 @@ class Dashboard {
 	 */
 	public function __construct() {
 		// Render dashboard widgets inside the dashboard template.
-		add_action( 'msf_dashboard_home_widgets', array( $this, 'render_store_performance' ), 10 );
-		add_action( 'msf_dashboard_item_solds_widgets', array( $this, 'render_top_products_items_sold' ), 20 );
-		add_action( 'msf_dashboard_item_solds_widgets', array( $this, 'render_top_categories_items_sold' ), 30 );
-		add_action( 'msf_dashboard_item_solds_widgets', array( $this, 'render_top_customers_total_spend' ), 40 );
-		add_action( 'msf_dashboard_item_solds_widgets', array( $this, 'render_top_coupons_orders_count' ), 50 );
+		add_action( 'storesuite_dashboard_home_widgets', array( $this, 'render_store_performance' ), 10 );
+		add_action( 'storesuite_dashboard_item_solds_widgets', array( $this, 'render_top_products_items_sold' ), 20 );
+		add_action( 'storesuite_dashboard_item_solds_widgets', array( $this, 'render_top_categories_items_sold' ), 30 );
+		add_action( 'storesuite_dashboard_item_solds_widgets', array( $this, 'render_top_customers_total_spend' ), 40 );
+		add_action( 'storesuite_dashboard_item_solds_widgets', array( $this, 'render_top_coupons_orders_count' ), 50 );
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Dashboard {
 			'dashboard'      => $this,
 		);
 
-		msf_get_template_part( 'dashboard/store-performance', '', $template_args );
+		storesuite_get_template_part( 'dashboard/store-performance', '', $template_args );
 	}
 
 	/**
@@ -65,17 +65,17 @@ class Dashboard {
 	 * @return void
 	 */
 	public function render_top_products_items_sold() {
-		$enabled = apply_filters( 'msf_dashboard_enable_top_products_items_sold', true );
+		$enabled = apply_filters( 'storesuite_dashboard_enable_top_products_items_sold', true );
 		if ( true !== $enabled ) {
 			return;
 		}
 
-		$date_range = apply_filters( 'msf_dashboard_top_products_items_sold_date_range', $this->get_store_performance_date_range() );
+		$date_range = apply_filters( 'storesuite_dashboard_top_products_items_sold_date_range', $this->get_store_performance_date_range() );
 		$start      = isset( $date_range['start'] ) ? (string) $date_range['start'] : '';
 		$end        = isset( $date_range['end'] ) ? (string) $date_range['end'] : '';
 		$label      = isset( $date_range['label'] ) ? (string) $date_range['label'] : '';
 
-		$per_page = (int) apply_filters( 'msf_dashboard_top_products_items_sold_per_page', 5 );
+		$per_page = (int) apply_filters( 'storesuite_dashboard_top_products_items_sold_per_page', 5 );
 		$per_page = max( 1, $per_page );
 
 		$rows = $this->get_top_products_items_sold_rows( $start, $end, $per_page );
@@ -86,7 +86,7 @@ class Dashboard {
 			'dashboard' => $this,
 		);
 
-		msf_get_template_part( 'dashboard/top-products-items-sold', '', $template_args );
+		storesuite_get_template_part( 'dashboard/top-products-items-sold', '', $template_args );
 	}
 
 	/**
@@ -95,17 +95,17 @@ class Dashboard {
 	 * @return void
 	 */
 	public function render_top_categories_items_sold() {
-		$enabled = apply_filters( 'msf_dashboard_enable_top_categories_items_sold', true );
+		$enabled = apply_filters( 'storesuite_dashboard_enable_top_categories_items_sold', true );
 		if ( true !== $enabled ) {
 			return;
 		}
 
-		$date_range = apply_filters( 'msf_dashboard_top_categories_items_sold_date_range', $this->get_store_performance_date_range() );
+		$date_range = apply_filters( 'storesuite_dashboard_top_categories_items_sold_date_range', $this->get_store_performance_date_range() );
 		$start      = isset( $date_range['start'] ) ? (string) $date_range['start'] : '';
 		$end        = isset( $date_range['end'] ) ? (string) $date_range['end'] : '';
 		$label      = isset( $date_range['label'] ) ? (string) $date_range['label'] : '';
 
-		$per_page = (int) apply_filters( 'msf_dashboard_top_categories_items_sold_per_page', 5 );
+		$per_page = (int) apply_filters( 'storesuite_dashboard_top_categories_items_sold_per_page', 5 );
 		$per_page = max( 1, $per_page );
 
 		$rows = $this->get_top_categories_items_sold_rows( $start, $end, $per_page );
@@ -116,7 +116,7 @@ class Dashboard {
 			'dashboard' => $this,
 		);
 
-		msf_get_template_part( 'dashboard/top-categories-items-sold', '', $template_args );
+		storesuite_get_template_part( 'dashboard/top-categories-items-sold', '', $template_args );
 	}
 
 	/**
@@ -125,17 +125,17 @@ class Dashboard {
 	 * @return void
 	 */
 	public function render_top_customers_total_spend() {
-		$enabled = apply_filters( 'msf_dashboard_enable_top_customers_total_spend', true );
+		$enabled = apply_filters( 'storesuite_dashboard_enable_top_customers_total_spend', true );
 		if ( true !== $enabled ) {
 			return;
 		}
 
-		$date_range = apply_filters( 'msf_dashboard_top_customers_total_spend_date_range', $this->get_store_performance_date_range() );
+		$date_range = apply_filters( 'storesuite_dashboard_top_customers_total_spend_date_range', $this->get_store_performance_date_range() );
 		$start      = isset( $date_range['start'] ) ? (string) $date_range['start'] : '';
 		$end        = isset( $date_range['end'] ) ? (string) $date_range['end'] : '';
 		$label      = isset( $date_range['label'] ) ? (string) $date_range['label'] : '';
 
-		$per_page = (int) apply_filters( 'msf_dashboard_top_customers_total_spend_per_page', 5 );
+		$per_page = (int) apply_filters( 'storesuite_dashboard_top_customers_total_spend_per_page', 5 );
 		$per_page = max( 1, $per_page );
 
 		$rows = $this->get_top_customers_total_spend_rows( $start, $end, $per_page );
@@ -146,7 +146,7 @@ class Dashboard {
 			'dashboard' => $this,
 		);
 
-		msf_get_template_part( 'dashboard/top-customers-total-spend', '', $template_args );
+		storesuite_get_template_part( 'dashboard/top-customers-total-spend', '', $template_args );
 	}
 
 	/**
@@ -155,17 +155,17 @@ class Dashboard {
 	 * @return void
 	 */
 	public function render_top_coupons_orders_count() {
-		$enabled = apply_filters( 'msf_dashboard_enable_top_coupons_orders_count', true );
+		$enabled = apply_filters( 'storesuite_dashboard_enable_top_coupons_orders_count', true );
 		if ( true !== $enabled ) {
 			return;
 		}
 
-		$date_range = apply_filters( 'msf_dashboard_top_coupons_orders_count_date_range', $this->get_store_performance_date_range() );
+		$date_range = apply_filters( 'storesuite_dashboard_top_coupons_orders_count_date_range', $this->get_store_performance_date_range() );
 		$start      = isset( $date_range['start'] ) ? (string) $date_range['start'] : '';
 		$end        = isset( $date_range['end'] ) ? (string) $date_range['end'] : '';
 		$label      = isset( $date_range['label'] ) ? (string) $date_range['label'] : '';
 
-		$per_page = (int) apply_filters( 'msf_dashboard_top_coupons_orders_count_per_page', 5 );
+		$per_page = (int) apply_filters( 'storesuite_dashboard_top_coupons_orders_count_per_page', 5 );
 		$per_page = max( 1, $per_page );
 
 		$rows = $this->get_top_coupons_orders_count_rows( $start, $end, $per_page );
@@ -176,7 +176,7 @@ class Dashboard {
 			'dashboard' => $this,
 		);
 
-		msf_get_template_part( 'dashboard/top-coupons-orders-count', '', $template_args );
+		storesuite_get_template_part( 'dashboard/top-coupons-orders-count', '', $template_args );
 	}
 
 	/**
@@ -188,77 +188,77 @@ class Dashboard {
 		$stats = array(
 			array(
 				'stat'   => 'revenue/total_sales',
-				'label'  => __( 'Total sales', 'shop-front' ),
+				'label'  => __( 'Total sales', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'revenue/gross_sales',
-				'label'  => __( 'Gross sales', 'shop-front' ),
+				'label'  => __( 'Gross sales', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'revenue/net_revenue',
-				'label'  => __( 'Net sales', 'shop-front' ),
+				'label'  => __( 'Net sales', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'orders/orders_count',
-				'label'  => __( 'Orders', 'shop-front' ),
+				'label'  => __( 'Orders', 'storesuite' ),
 				'format' => 'number',
 			),
 			array(
 				'stat'   => 'orders/avg_order_value',
-				'label'  => __( 'Average order value', 'shop-front' ),
+				'label'  => __( 'Average order value', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'products/items_sold',
-				'label'  => __( 'Products sold', 'shop-front' ),
+				'label'  => __( 'Products sold', 'storesuite' ),
 				'format' => 'number',
 			),
 			array(
 				'stat'   => 'variations/items_sold',
-				'label'  => __( 'Variations sold', 'shop-front' ),
+				'label'  => __( 'Variations sold', 'storesuite' ),
 				'format' => 'number',
 			),
 			array(
 				'stat'   => 'revenue/refunds',
-				'label'  => __( 'Returns', 'shop-front' ),
+				'label'  => __( 'Returns', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'coupons/orders_count',
-				'label'  => __( 'Discounted orders', 'shop-front' ),
+				'label'  => __( 'Discounted orders', 'storesuite' ),
 				'format' => 'number',
 			),
 			array(
 				'stat'   => 'coupons/amount',
-				'label'  => __( 'Net discount amount', 'shop-front' ),
+				'label'  => __( 'Net discount amount', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'taxes/total_tax',
-				'label'  => __( 'Total tax', 'shop-front' ),
+				'label'  => __( 'Total tax', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'taxes/order_tax',
-				'label'  => __( 'Order tax', 'shop-front' ),
+				'label'  => __( 'Order tax', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'taxes/shipping_tax',
-				'label'  => __( 'Shipping tax', 'shop-front' ),
+				'label'  => __( 'Shipping tax', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'revenue/shipping',
-				'label'  => __( 'Shipping', 'shop-front' ),
+				'label'  => __( 'Shipping', 'storesuite' ),
 				'format' => 'currency',
 			),
 			array(
 				'stat'   => 'downloads/download_count',
-				'label'  => __( 'Downloads', 'shop-front' ),
+				'label'  => __( 'Downloads', 'storesuite' ),
 				'format' => 'number',
 			),
 		);
@@ -268,7 +268,7 @@ class Dashboard {
 		 *
 		 * @param array[] $stats Stats config.
 		 */
-		return apply_filters( 'msf_dashboard_store_performance_stats', $stats );
+		return apply_filters( 'storesuite_dashboard_store_performance_stats', $stats );
 	}
 
 	/**
@@ -286,11 +286,11 @@ class Dashboard {
 		// Default: current month.
 		$start_dt = $now->modify( 'first day of this month' )->setTime( 0, 0, 0 );
 		$end_dt   = $now->modify( 'last day of this month' )->setTime( 23, 59, 59 );
-		$label    = __( 'This month', 'shop-front' );
+		$label    = __( 'This month', 'storesuite' );
 
 		// Override from dashboard date range picker when both dates are present and valid.
-		$start_param = isset( $_GET['msf_dashboard_start'] ) ? \sanitize_text_field( \wp_unslash( $_GET['msf_dashboard_start'] ) ) : '';
-		$end_param   = isset( $_GET['msf_dashboard_end'] ) ? \sanitize_text_field( \wp_unslash( $_GET['msf_dashboard_end'] ) ) : '';
+		$start_param = isset( $_GET['storesuite_dashboard_start'] ) ? \sanitize_text_field( \wp_unslash( $_GET['storesuite_dashboard_start'] ) ) : '';
+		$end_param   = isset( $_GET['storesuite_dashboard_end'] ) ? \sanitize_text_field( \wp_unslash( $_GET['storesuite_dashboard_end'] ) ) : '';
 
 		if ( '' !== $start_param && '' !== $end_param ) {
 			try {
@@ -326,7 +326,7 @@ class Dashboard {
 		$end   = $end_dt->format( 'Y-m-d H:i:s' );
 
 		$args = apply_filters(
-			'msf_dashboard_store_performance_date_range',
+			'storesuite_dashboard_store_performance_date_range',
 			array(
 				'start' => $start,
 				'end'   => $end,
@@ -395,7 +395,7 @@ class Dashboard {
 		}
 
 		if ( empty( $stat_keys ) ) {
-			return new \WP_Error( 'msf_empty_stats', __( 'No performance stats configured.', 'shop-front' ) );
+			return new \WP_Error( 'storesuite_empty_stats', __( 'No performance stats configured.', 'storesuite' ) );
 		}
 
 		$request = new \WP_REST_Request( 'GET', '/wc-analytics/reports/performance-indicators' );
@@ -414,12 +414,12 @@ class Dashboard {
 		}
 
 		if ( ! is_callable( array( $response, 'get_status' ) ) || 200 !== $response->get_status() ) {
-			return new \WP_Error( 'msf_store_performance_failed', __( 'Sorry, fetching store performance failed.', 'shop-front' ) );
+			return new \WP_Error( 'storesuite_store_performance_failed', __( 'Sorry, fetching store performance failed.', 'storesuite' ) );
 		}
 
 		$data = $response->get_data();
 		if ( ! is_array( $data ) ) {
-			return new \WP_Error( 'msf_store_performance_invalid', __( 'Invalid store performance response.', 'shop-front' ) );
+			return new \WP_Error( 'storesuite_store_performance_invalid', __( 'Invalid store performance response.', 'storesuite' ) );
 		}
 
 		$values = array();
@@ -442,7 +442,7 @@ class Dashboard {
 	 */
 	public function format_value( $value, string $format ): string {
 		if ( null === $value ) {
-			return esc_html__( '—', 'shop-front' );
+			return esc_html__( '—', 'storesuite' );
 		}
 
 		if ( 'currency' === $format && function_exists( 'wc_price' ) ) {
@@ -495,7 +495,7 @@ class Dashboard {
 			try {
 				$data_store = new $data_store_class();
 				$args       = apply_filters(
-					'msf_dashboard_top_products_items_sold_query_args',
+					'storesuite_dashboard_top_products_items_sold_query_args',
 					array(
 						'orderby'       => 'items_sold',
 						'order'         => 'desc',
@@ -562,7 +562,7 @@ class Dashboard {
 			try {
 				$data_store = new $data_store_class();
 				$args       = apply_filters(
-					'msf_dashboard_top_categories_items_sold_query_args',
+					'storesuite_dashboard_top_categories_items_sold_query_args',
 					array(
 						'orderby'       => 'items_sold',
 						'order'         => 'desc',
@@ -629,7 +629,7 @@ class Dashboard {
 			try {
 				$data_store = new $data_store_class();
 				$args       = apply_filters(
-					'msf_dashboard_top_customers_total_spend_query_args',
+					'storesuite_dashboard_top_customers_total_spend_query_args',
 					array(
 						'orderby'      => 'total_spend',
 						'order'        => 'desc',
@@ -695,7 +695,7 @@ class Dashboard {
 			try {
 				$data_store = new $data_store_class();
 				$args       = apply_filters(
-					'msf_dashboard_top_coupons_orders_count_query_args',
+					'storesuite_dashboard_top_coupons_orders_count_query_args',
 					array(
 						'orderby'       => 'orders_count',
 						'order'         => 'desc',

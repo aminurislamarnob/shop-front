@@ -2,7 +2,7 @@
 /**
  * Product List Filters - Off-Canvas
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 <div class="msf-filter-offcanvas-overlay" id="msf-filter-overlay"></div>
 <div class="msf-filter-offcanvas" id="msf-filter-offcanvas">
 	<div class="msf-filter-offcanvas-header">
-		<h3><?php esc_html_e( 'Filters', 'shop-front' ); ?></h3>
+		<h3><?php esc_html_e( 'Filters', 'storesuite' ); ?></h3>
 		<button type="button" class="msf-filter-close" id="msf-filter-close">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
 				<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
@@ -36,9 +36,9 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 
 			<!-- Filter by Category -->
 			<div class="msf-form-group">
-				<label><?php esc_html_e( 'Filter by category', 'shop-front' ); ?></label>
+				<label><?php esc_html_e( 'Filter by category', 'storesuite' ); ?></label>
 				<select name="product_cat" class="msf-form-control">
-					<option value=""><?php esc_html_e( 'All Categories', 'shop-front' ); ?></option>
+					<option value=""><?php esc_html_e( 'All Categories', 'storesuite' ); ?></option>
 					<?php
 					$categories = get_terms(
 						array(
@@ -65,9 +65,9 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 
 			<!-- Filter by Product Type -->
 			<div class="msf-form-group">
-				<label><?php esc_html_e( 'Filter by product type', 'shop-front' ); ?></label>
+				<label><?php esc_html_e( 'Filter by product type', 'storesuite' ); ?></label>
 				<select name="product_type" class="msf-form-control">
-					<option value=""><?php esc_html_e( 'All Types', 'shop-front' ); ?></option>
+					<option value=""><?php esc_html_e( 'All Types', 'storesuite' ); ?></option>
 					<?php
 					$product_types = wc_get_product_types();
 					foreach ( $product_types as $type_key => $type_label ) {
@@ -84,9 +84,9 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 
 			<!-- Filter by Stock Status -->
 			<div class="msf-form-group">
-				<label><?php esc_html_e( 'Filter by stock status', 'shop-front' ); ?></label>
+				<label><?php esc_html_e( 'Filter by stock status', 'storesuite' ); ?></label>
 				<select name="stock_status" class="msf-form-control">
-					<option value=""><?php esc_html_e( 'All Stock Status', 'shop-front' ); ?></option>
+					<option value=""><?php esc_html_e( 'All Stock Status', 'storesuite' ); ?></option>
 					<?php
 					$stock_statuses = wc_get_product_stock_status_options();
 					foreach ( $stock_statuses as $status_key => $status_label ) {
@@ -103,9 +103,9 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 
 			<!-- Filter by Brand -->
 			<div class="msf-form-group">
-				<label><?php esc_html_e( 'Filter by brand', 'shop-front' ); ?></label>
+				<label><?php esc_html_e( 'Filter by brand', 'storesuite' ); ?></label>
 				<select name="product_brand" class="msf-form-control">
-					<option value=""><?php esc_html_e( 'All Brands', 'shop-front' ); ?></option>
+					<option value=""><?php esc_html_e( 'All Brands', 'storesuite' ); ?></option>
 					<?php
 					$brands = get_terms(
 						array(
@@ -131,8 +131,8 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 			</div>
 
 			<div class="msf-filter-offcanvas-footer">
-				<button type="submit" class="my-shop-front-button"><?php esc_html_e( 'Filter Products', 'shop-front' ); ?></button>
-				<a href="?" class="my-shop-front-button msf-filter-reset"><?php esc_html_e( 'Reset', 'shop-front' ); ?></a>
+				<button type="submit" class="my-storesuite-button"><?php esc_html_e( 'Filter Products', 'storesuite' ); ?></button>
+				<a href="?" class="my-storesuite-button msf-filter-reset"><?php esc_html_e( 'Reset', 'storesuite' ); ?></a>
 			</div>
 		</form>
 	</div>

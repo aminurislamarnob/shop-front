@@ -2,12 +2,12 @@
 /**
  * Product categories handler
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
-namespace PluginizeLab\ShopFront\ProductCategory;
+namespace PluginizeLab\StoreSuite\ProductCategory;
 
-use PluginizeLab\ShopFront\Cache;
+use PluginizeLab\StoreSuite\Cache;
 
 /**
  * Categories class
@@ -18,9 +18,9 @@ class Categories {
 	 * The constructor.
 	 */
 	public function __construct() {
-		add_action( 'msf_product_category_created', array( $this, 'clear_cache' ) );
-		add_action( 'msf_product_category_updated', array( $this, 'clear_cache' ) );
-		add_action( 'msf_product_category_deleted', array( $this, 'clear_cache' ) );
+		add_action( 'storesuite_product_category_created', array( $this, 'clear_cache' ) );
+		add_action( 'storesuite_product_category_updated', array( $this, 'clear_cache' ) );
+		add_action( 'storesuite_product_category_deleted', array( $this, 'clear_cache' ) );
 	}
 
 	/**

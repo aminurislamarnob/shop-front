@@ -2,22 +2,22 @@
 /**
  * MSFC coupon List Page
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-do_action( 'msf_dashboard_wrapper_start' );
+do_action( 'storesuite_dashboard_wrapper_start' );
 ?>
-<div class="my-shop-front-container">
-	<aside class="my-shop-front-sidebar">
-		<?php do_action( 'msf_dashboard_navigation' ); ?>
+<div class="my-storesuite-container">
+	<aside class="my-storesuite-sidebar">
+		<?php do_action( 'storesuite_dashboard_navigation' ); ?>
 	</aside>
-	<div class="my-shop-front-wrapper">
-		<?php do_action( 'msf_dashboard_content_before' ); ?>
-		<main class="my-shop-front-page-content">
-			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
+	<div class="my-storesuite-wrapper">
+		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
+		<main class="my-storesuite-page-content">
+			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="msf-table-header-part">
 				<div class="row">
 					<div class="col-md-6">
@@ -28,25 +28,25 @@ do_action( 'msf_dashboard_wrapper_start' );
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
-								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Coupon', 'shop-front' ); ?>" />
+								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Coupon', 'storesuite' ); ?>" />
 							</div>
 						</form>
 					</div>
 					<div class="col-md-6 text-right">
-						<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-coupon' ) ); ?>" class="my-shop-front-button">
+						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-coupon' ) ); ?>" class="my-storesuite-button">
 							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
 							</svg>
-							<?php esc_html_e( 'Add Coupon', 'shop-front' ); ?>
+							<?php esc_html_e( 'Add Coupon', 'storesuite' ); ?>
 						</a>
 					</div>
 				</div>
 			</div>
 			<div class="msf-table-responsive">
 				<?php
-				$coupon_statuses = apply_filters( 'msf_coupon_listing_post_statuses', array( 'publish', 'draft', 'pending', 'private' ) );
+				$coupon_statuses = apply_filters( 'storesuite_coupon_listing_post_statuses', array( 'publish', 'draft', 'pending', 'private' ) );
 
-				$posts_per_page = apply_filters( 'msf_coupons_per_page', 10 );
+				$posts_per_page = apply_filters( 'storesuite_coupons_per_page', 10 );
 				$current_page   = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 
 				$query = array(
@@ -61,28 +61,28 @@ do_action( 'msf_dashboard_wrapper_start' );
 				$coupon_query = new WP_Query( $query );
 				if ( $coupon_query->found_posts > 0 ) {
 					?>
-				<table class="my-shop-front-tbl my-shop-front-coupon-list-table">
+				<table class="my-storesuite-tbl my-storesuite-coupon-list-table">
 					<thead>
 						<tr>
 							<th>
-								<label class="my-shop-front-checkbox">
-									<input type="checkbox" name="" id="" class="my-shop-front-checkbox-input">
-									<span class="my-shop-front-checkbox-back"></span>
-									<span class="my-shop-front-tick">
+								<label class="my-storesuite-checkbox">
+									<input type="checkbox" name="" id="" class="my-storesuite-checkbox-input">
+									<span class="my-storesuite-checkbox-back"></span>
+									<span class="my-storesuite-tick">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
 											<path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
 										</svg>
 									</span>
 								</label>
 							</th>
-							<th><?php esc_html_e( 'Code', 'shop-front' ); ?></th>
-							<th><?php esc_html_e( 'Type', 'shop-front' ); ?></th>
-							<th><?php esc_html_e( 'Amount', 'shop-front' ); ?></th>
-							<th><?php esc_html_e( 'Description', 'shop-front' ); ?></th>
-							<th><?php esc_html_e( 'Usage / Limit', 'shop-front' ); ?></th>
-							<th><?php esc_html_e( 'Expiry Date', 'shop-front' ); ?></th>
-							<th><?php esc_html_e( 'Status', 'shop-front' ); ?></th>
-							<th class="text-right"><?php esc_html_e( 'Actions', 'shop-front' ); ?></th>
+							<th><?php esc_html_e( 'Code', 'storesuite' ); ?></th>
+							<th><?php esc_html_e( 'Type', 'storesuite' ); ?></th>
+							<th><?php esc_html_e( 'Amount', 'storesuite' ); ?></th>
+							<th><?php esc_html_e( 'Description', 'storesuite' ); ?></th>
+							<th><?php esc_html_e( 'Usage / Limit', 'storesuite' ); ?></th>
+							<th><?php esc_html_e( 'Expiry Date', 'storesuite' ); ?></th>
+							<th><?php esc_html_e( 'Status', 'storesuite' ); ?></th>
+							<th class="text-right"><?php esc_html_e( 'Actions', 'storesuite' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -94,23 +94,23 @@ do_action( 'msf_dashboard_wrapper_start' );
 							?>
 							<tr class="single-coupon-item">
 								<td>
-									<label class="my-shop-front-checkbox">
-										<input type="checkbox" name="" id="" class="my-shop-front-checkbox-input">
-										<span class="my-shop-front-checkbox-back"></span>
-										<span class="my-shop-front-tick">
+									<label class="my-storesuite-checkbox">
+										<input type="checkbox" name="" id="" class="my-storesuite-checkbox-input">
+										<span class="my-storesuite-checkbox-back"></span>
+										<span class="my-storesuite-tick">
 											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
 												<path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
 											</svg>
 										</span>
 									</label>
 								</td>
-								<td class="tbl-coupon-code" data-title="<?php esc_attr_e( 'Code', 'shop-front' ); ?>">
+								<td class="tbl-coupon-code" data-title="<?php esc_attr_e( 'Code', 'storesuite' ); ?>">
 									<strong><?php echo esc_html( $coupon->get_code() ); ?></strong>
 								</td>
-								<td data-title="<?php esc_attr_e( 'Type', 'shop-front' ); ?>">
+								<td data-title="<?php esc_attr_e( 'Type', 'storesuite' ); ?>">
 									<?php echo esc_html( wc_get_coupon_type( $coupon->get_discount_type() ) ); ?>
 								</td>
-								<td data-title="<?php esc_attr_e( 'Amount', 'shop-front' ); ?>">
+								<td data-title="<?php esc_attr_e( 'Amount', 'storesuite' ); ?>">
 									<?php
 									if ( 'percent' === $coupon->get_discount_type() ) {
 										echo esc_html( $coupon->get_amount() ) . '%';
@@ -119,7 +119,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 									}
 									?>
 								</td>
-								<td data-title="<?php esc_attr_e( 'Description', 'shop-front' ); ?>">
+								<td data-title="<?php esc_attr_e( 'Description', 'storesuite' ); ?>">
 									<?php
 									$description = $coupon->get_description();
 									if ( $description ) {
@@ -129,20 +129,20 @@ do_action( 'msf_dashboard_wrapper_start' );
 									}
 									?>
 								</td>
-								<td data-title="<?php esc_attr_e( 'Usage / Limit', 'shop-front' ); ?>">
+								<td data-title="<?php esc_attr_e( 'Usage / Limit', 'storesuite' ); ?>">
 									<?php
 									$usage_count = $coupon->get_usage_count();
 									$usage_limit = $coupon->get_usage_limit();
 
 									printf(
 										/* translators: 1: usage count 2: usage limit */
-										esc_html__( '%1$s / %2$s', 'shop-front' ),
+										esc_html__( '%1$s / %2$s', 'storesuite' ),
 										esc_html( absint( $usage_count ) ),
 										$usage_limit ? esc_html( absint( $usage_limit ) ) : '&infin;'
 									);
 									?>
 								</td>
-								<td data-title="<?php esc_attr_e( 'Expiry Date', 'shop-front' ); ?>">
+								<td data-title="<?php esc_attr_e( 'Expiry Date', 'storesuite' ); ?>">
 									<?php
 									$expiry_date = $coupon->get_date_expires();
 									if ( $expiry_date ) {
@@ -152,12 +152,12 @@ do_action( 'msf_dashboard_wrapper_start' );
 									}
 									?>
 								</td>
-								<td data-title="<?php esc_attr_e( 'Status', 'shop-front' ); ?>">
-									<span class="msfc-badge msfc-badge-<?php echo esc_attr( msf_get_post_status_class( get_post_status( $coupon_id ) ) ); ?>">
-										<?php echo esc_html( msf_get_post_status( get_post_status( $coupon_id ) ) ); ?>
+								<td data-title="<?php esc_attr_e( 'Status', 'storesuite' ); ?>">
+									<span class="msfc-badge msfc-badge-<?php echo esc_attr( storesuite_get_post_status_class( get_post_status( $coupon_id ) ) ); ?>">
+										<?php echo esc_html( storesuite_get_post_status( get_post_status( $coupon_id ) ) ); ?>
 									</span>
 								</td>
-								<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'shop-front' ); ?>">
+								<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
 									<div class="msfc-dropdown">
 										<span class="msfc-dropdown-icon">
 											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
@@ -166,14 +166,14 @@ do_action( 'msf_dashboard_wrapper_start' );
 										</span>
 										<ul class="msfc-dropdown-menu">
 											<li>
-												<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-coupon' ) . '%s', $coupon_id ) ); ?>" class="dropdown-link"><?php esc_html_e( 'Edit', 'shop-front' ); ?></a>
+												<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-coupon' ) . '%s', $coupon_id ) ); ?>" class="dropdown-link"><?php esc_html_e( 'Edit', 'storesuite' ); ?></a>
 											</li>
 											<li>
 												<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="POST" class="delete-coupon-form">
-													<?php wp_nonce_field( '_msf_delete_coupon_', 'msf_delete_coupon_nonce' ); ?>
+													<?php wp_nonce_field( '_storesuite_delete_coupon_', 'storesuite_delete_coupon_nonce' ); ?>
 													<input type="hidden" name="coupon_id" value="<?php echo esc_attr( $coupon_id ); ?>">
-													<input type="hidden" name="action" value="msf_delete_coupon">
-													<button type="submit" class="inline-button dropdown-link"><?php esc_html_e( 'Delete', 'shop-front' ); ?></button>
+													<input type="hidden" name="action" value="storesuite_delete_coupon">
+													<button type="submit" class="inline-button dropdown-link"><?php esc_html_e( 'Delete', 'storesuite' ); ?></button>
 												</form>
 											</li>
 										</ul>
@@ -192,7 +192,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 					if ( $total_pages > 1 ) {
 						$current_page_num = max( 1, $current_page );
 						$total_coupons    = $coupon_query->found_posts;
-						msf_get_template_part(
+						storesuite_get_template_part(
 							'pagination',
 							'',
 							array(
@@ -204,19 +204,19 @@ do_action( 'msf_dashboard_wrapper_start' );
 						);
 					}
 				} else {
-					msf_get_template_part(
+					storesuite_get_template_part(
 						'not-found',
 						'',
 						array(
-							'title' => esc_html__( 'No coupon found!', 'shop-front' ),
-							'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a coupon.', 'shop-front' ),
+							'title' => esc_html__( 'No coupon found!', 'storesuite' ),
+							'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a coupon.', 'storesuite' ),
 						)
 					);
 				}
 				?>
 			</div>
 		</main>
-		<?php do_action( 'msf_dashboard_content_after' ); ?>
+		<?php do_action( 'storesuite_dashboard_content_after' ); ?>
 	</div>
 </div>
-<?php do_action( 'msf_dashboard_wrapper_end' ); ?>
+<?php do_action( 'storesuite_dashboard_wrapper_end' ); ?>

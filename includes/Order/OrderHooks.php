@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Order;
+namespace PluginizeLab\StoreSuite\Order;
 
 use WC_Order;
 use Automattic\WooCommerce\Admin\API\Reports\Customers\Query as CustomersQuery;
@@ -18,8 +18,8 @@ class OrderHooks {
 	 */
 	public function __construct() {
 		$this->set_fields_and_prefix(); // Set the fields and the field prefix for order attribution meta.
-		add_action( 'msfc_after_order_details_action', array( $this, 'add_order_notes' ) );
-		add_action( 'msfc_after_order_details_action', array( $this, 'add_customer_history' ) );
+		add_action( 'storesuite_after_order_details_action', array( $this, 'add_order_notes' ) );
+		add_action( 'storesuite_after_order_details_action', array( $this, 'add_customer_history' ) );
 	}
 
 	/**
@@ -31,7 +31,7 @@ class OrderHooks {
 		$template_args = array(
 			'order_id' => $order->get_id(),
 		);
-		msf_get_template_part( 'orders/order-notes', '', $template_args );
+		storesuite_get_template_part( 'orders/order-notes', '', $template_args );
 	}
 
 	/**
@@ -64,7 +64,7 @@ class OrderHooks {
 				'avg_order_value' => $customer_history['avg_order_value'],
 			);
 		}
-		msf_get_template_part( 'orders/customer-history', '', $template_args );
+		storesuite_get_template_part( 'orders/customer-history', '', $template_args );
 	}
 
 	/**

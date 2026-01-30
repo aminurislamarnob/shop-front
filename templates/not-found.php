@@ -2,7 +2,7 @@
 /**
  * MSFC not found template
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -1,8 +1,8 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Abstracts;
+namespace PluginizeLab\StoreSuite\Abstracts;
 
-abstract class MyShopFrontShortcode {
+abstract class MyStoreSuiteShortcode {
 
     protected $shortcode = '';
 

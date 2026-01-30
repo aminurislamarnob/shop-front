@@ -1,11 +1,11 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Admin;
+namespace PluginizeLab\StoreSuite\Admin;
 
 use WP_Admin_Bar;
 
 /**
- * WordPress settings API For Shop Front Admin Settings class
+ * WordPress settings API For StoreSuite Admin Settings class
  *
  * @author Aminur Islam Arnob
  */
@@ -20,10 +20,10 @@ class AdminBar {
 	 * @return void
 	 */
 	public function __construct() {
-		add_action( 'wp_before_admin_bar_render', array( $this, 'msf_admin_toolbar' ) );
+		add_action( 'wp_before_admin_bar_render', array( $this, 'storesuite_admin_toolbar' ) );
 
-		if ( apply_filters( 'msf_admin_bar_visit_dashboard', true ) ) {
-			add_action( 'admin_bar_menu', array( $this, 'msf_dashboard_visit_menu' ), 35 );
+		if ( apply_filters( 'storesuite_admin_bar_visit_dashboard', true ) ) {
+			add_action( 'admin_bar_menu', array( $this, 'storesuite_dashboard_visit_menu' ), 35 );
 		}
 	}
 
@@ -32,7 +32,7 @@ class AdminBar {
 	 *
 	 * @return void
 	 */
-	public function msf_admin_toolbar() {
+	public function storesuite_admin_toolbar() {
 		global $wp_admin_bar;
 
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
@@ -40,46 +40,46 @@ class AdminBar {
 		}
 
 		$args = array(
-			'id'    => 'shop-front',
-			'title' => __( 'Shop Front', 'shop-front' ),
-			'href'  => admin_url( 'admin.php?page=shop-front' ),
+			'id'    => 'storesuite',
+			'title' => __( 'StoreSuite', 'storesuite' ),
+			'href'  => admin_url( 'admin.php?page=storesuite' ),
 		);
 
 		$wp_admin_bar->add_menu( $args );
 
 		$wp_admin_bar->add_menu(
 			array(
-				'id'     => 'shop-front-general',
-				'parent' => 'shop-front',
-				'title'  => __( 'General', 'shop-front' ),
-				'href'   => admin_url( 'admin.php?page=shop-front' ),
+				'id'     => 'storesuite-general',
+				'parent' => 'storesuite',
+				'title'  => __( 'General', 'storesuite' ),
+				'href'   => admin_url( 'admin.php?page=storesuite' ),
 			)
 		);
 
 		$wp_admin_bar->add_menu(
 			array(
-				'id'     => 'shop-front-appearance',
-				'parent' => 'shop-front',
-				'title'  => __( 'Appearance', 'shop-front' ),
-				'href'   => admin_url( 'admin.php?page=shop-front#/appearance-settings' ),
+				'id'     => 'storesuite-appearance',
+				'parent' => 'storesuite',
+				'title'  => __( 'Appearance', 'storesuite' ),
+				'href'   => admin_url( 'admin.php?page=storesuite#/appearance-settings' ),
 			)
 		);
 
 		$wp_admin_bar->add_menu(
 			array(
-				'id'     => 'shop-front-product',
-				'parent' => 'shop-front',
-				'title'  => __( 'Product', 'shop-front' ),
-				'href'   => admin_url( 'admin.php?page=shop-front#/product-settings' ),
+				'id'     => 'storesuite-product',
+				'parent' => 'storesuite',
+				'title'  => __( 'Product', 'storesuite' ),
+				'href'   => admin_url( 'admin.php?page=storesuite#/product-settings' ),
 			)
 		);
 
 		$wp_admin_bar->add_menu(
 			array(
-				'id'     => 'shop-front-order',
-				'parent' => 'shop-front',
-				'title'  => __( 'Order', 'shop-front' ),
-				'href'   => admin_url( 'admin.php?page=shop-front#/product-settings' ),
+				'id'     => 'storesuite-order',
+				'parent' => 'storesuite',
+				'title'  => __( 'Order', 'storesuite' ),
+				'href'   => admin_url( 'admin.php?page=storesuite#/product-settings' ),
 			)
 		);
 
@@ -87,17 +87,17 @@ class AdminBar {
 		 * Add new or remove toolbar
 		 *
 		 */
-		do_action( 'msf_admin_bar_render', $wp_admin_bar );
+		do_action( 'storesuite_admin_bar_render', $wp_admin_bar );
 	}
 
 	/**
-	 * Show visit shop front dashboard
+	 * Show visit store suite dashboard
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar
 	 *
 	 * @return void
 	 */
-	public function msf_dashboard_visit_menu( $wp_admin_bar ) {
+	public function storesuite_dashboard_visit_menu( $wp_admin_bar ) {
 		if ( ! is_admin() || ! is_admin_bar_showing() ) {
 			return;
 		}
@@ -106,7 +106,7 @@ class AdminBar {
 			return;
 		}
 
-		$menus = $this->get_msf_admin_bar_menus();
+		$menus = $this->get_storesuite_admin_bar_menus();
 
 		// Added admin menus for dokan in wp admin bar.
 		foreach ( $menus as $menu ) {
@@ -115,22 +115,22 @@ class AdminBar {
 	}
 
 	/**
-	 * Get admin menus data for myshop front.
+	 * Get admin menus data for mystore suite.
 	 *
 	 * @return array
 	 */
-	public function get_msf_admin_bar_menus() {
+	public function get_storesuite_admin_bar_menus() {
 		$menus = array();
 
-		if ( msfc_get_navigation_url() ) {
+		if ( storesuite_get_navigation_url() ) {
 			$menus[] = array(
 				'parent' => 'site-name',
-				'id'     => 'view-shop-front-dashboard',
-				'title'  => __( 'Visit Shop Front Dashboard', 'shop-front' ),
-				'href'   => msfc_get_navigation_url(),
+				'id'     => 'view-storesuite-dashboard',
+				'title'  => __( 'Visit StoreSuite Dashboard', 'storesuite' ),
+				'href'   => storesuite_get_navigation_url(),
 			);
 		}
 
-		return apply_filters( 'msf_admin_bar_site_menu', $menus );
+		return apply_filters( 'storesuite_admin_bar_site_menu', $menus );
 	}
 }

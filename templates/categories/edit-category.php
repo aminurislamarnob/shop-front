@@ -2,7 +2,7 @@
 /**
  * MSFC category edit page
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,16 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 $category_id = get_query_var( 'edit-category' );
 $category_id = absint( $category_id );
 
-do_action( 'msf_dashboard_wrapper_start' );
+do_action( 'storesuite_dashboard_wrapper_start' );
 ?>
-<div class="my-shop-front-container">
-	<aside class="my-shop-front-sidebar">
-		<?php do_action( 'msf_dashboard_navigation' ); ?>
+<div class="my-storesuite-container">
+	<aside class="my-storesuite-sidebar">
+		<?php do_action( 'storesuite_dashboard_navigation' ); ?>
 	</aside>
-	<div class="my-shop-front-wrapper">
-		<?php do_action( 'msf_dashboard_content_before' ); ?>
-		<main class="my-shop-front-page-content">
-			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
+	<div class="my-storesuite-wrapper">
+		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
+		<main class="my-storesuite-page-content">
+			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="row">
 				<div class="col-md-6">
 					<div class="msf-card">
@@ -30,7 +30,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 							$category = get_term( $category_id, 'product_cat' );
 
 							if ( ! $category || is_wp_error( $category ) ) {
-								echo '<div class="alert alert-danger">' . esc_html__( 'Category not found.', 'shop-front' ) . '</div>';
+								echo '<div class="alert alert-danger">' . esc_html__( 'Category not found.', 'storesuite' ) . '</div>';
 								return;
 							}
 
@@ -46,18 +46,18 @@ do_action( 'msf_dashboard_wrapper_start' );
 							?>
 						<form id="msfc-edit-category">
 							<div class="msf-form-group">
-								<label for="product_category_name"><?php esc_html_e( 'Category Name', 'shop-front' ); ?> <span class="req"><?php esc_html_e( '*', 'shop-front' ); ?></span></label>
-								<input type="text" class="msf-form-control" id="product_category_name" name="product_category_name" placeholder="<?php echo esc_attr__( 'Product category name', 'shop-front' ); ?>" value="<?php echo esc_attr( $category->name ); ?>">
+								<label for="product_category_name"><?php esc_html_e( 'Category Name', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></label>
+								<input type="text" class="msf-form-control" id="product_category_name" name="product_category_name" placeholder="<?php echo esc_attr__( 'Product category name', 'storesuite' ); ?>" value="<?php echo esc_attr( $category->name ); ?>">
 							</div>
 							<div class="msf-form-group">
-								<label for="product_category_slug"><?php esc_html_e( 'Slug', 'shop-front' ); ?></label>
-								<input type="text" class="msf-form-control" id="product_category_slug" name="product_category_slug" placeholder="<?php echo esc_attr__( 'Category slug', 'shop-front' ); ?>" value="<?php echo esc_attr( $category->slug ); ?>">
-								<small class="msf-form-text"><?php esc_html_e( 'The "slug" is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.', 'shop-front' ); ?></small>
+								<label for="product_category_slug"><?php esc_html_e( 'Slug', 'storesuite' ); ?></label>
+								<input type="text" class="msf-form-control" id="product_category_slug" name="product_category_slug" placeholder="<?php echo esc_attr__( 'Category slug', 'storesuite' ); ?>" value="<?php echo esc_attr( $category->slug ); ?>">
+								<small class="msf-form-text"><?php esc_html_e( 'The "slug" is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.', 'storesuite' ); ?></small>
 							</div>
 							<div class="msf-form-group">
-								<label for="product_parent_category"><?php esc_html_e( 'Select Parent Category', 'shop-front' ); ?></label>
+								<label for="product_parent_category"><?php esc_html_e( 'Select Parent Category', 'storesuite' ); ?></label>
 								<select class="msf-form-control" id="product_parent_category" name="product_parent_category">
-									<option value=""><?php esc_html_e( '-- Select parent category --', 'shop-front' ); ?></option>
+									<option value=""><?php esc_html_e( '-- Select parent category --', 'storesuite' ); ?></option>
 									<?php
 									$product_categories = get_categories(
 										array(
@@ -80,11 +80,11 @@ do_action( 'msf_dashboard_wrapper_start' );
 								</select>
 							</div>
 							<div class="msf-form-group">
-								<label for="product_category_description"><?php esc_html_e( 'Category Description', 'shop-front' ); ?></label>
-								<textarea class="msf-form-control" id="product_category_description" name="product_category_description" placeholder="<?php echo esc_attr__( 'Product category description', 'shop-front' ); ?>" rows="3"><?php echo esc_textarea( $category->description ); ?></textarea>
+								<label for="product_category_description"><?php esc_html_e( 'Category Description', 'storesuite' ); ?></label>
+								<textarea class="msf-form-control" id="product_category_description" name="product_category_description" placeholder="<?php echo esc_attr__( 'Product category description', 'storesuite' ); ?>" rows="3"><?php echo esc_textarea( $category->description ); ?></textarea>
 							</div>
 							<div class="msf-form-group">
-								<label for="display_type"><?php esc_html_e( 'Display Type', 'shop-front' ); ?></label>
+								<label for="display_type"><?php esc_html_e( 'Display Type', 'storesuite' ); ?></label>
 								<select class="msf-form-control" id="display_type" name="display_type">
 									<option value="" <?php selected( $display_type, '' ); ?>><?php esc_html_e( 'Default', 'woocommerce' ); ?></option>
 									<option value="products" <?php selected( $display_type, 'products' ); ?>><?php esc_html_e( 'Products', 'woocommerce' ); ?></option>
@@ -93,32 +93,32 @@ do_action( 'msf_dashboard_wrapper_start' );
 								</select>
 							</div>
 							<div class="msf-form-group">
-								<label for="product_category_thumbnail_id"><?php esc_html_e( 'Category Image', 'shop-front' ); ?></label>
+								<label for="product_category_thumbnail_id"><?php esc_html_e( 'Category Image', 'storesuite' ); ?></label>
 								<input type="hidden" id="product_category_thumbnail_id" name="product_category_thumbnail_id" value="<?php echo esc_attr( $thumbnail_id ); ?>">
 								<input type="hidden" id="product_category_thumbnail_url" name="product_category_thumbnail_url" value="<?php echo esc_url( $thumbnail_url ); ?>">
 								<div id="category-single-image" class="image-drop-container<?php echo esc_attr( $thumbnail_id ? ' image-drop-bg' : '' ); ?>">
 									<div id="category_thumb_img" class="preview-image">
 										<?php if ( $thumbnail_url ) : ?>
-											<img src="<?php echo esc_url( $thumbnail_url ); ?>" alt="<?php esc_attr_e( 'Category thumbnail', 'shop-front' ); ?>">
+											<img src="<?php echo esc_url( $thumbnail_url ); ?>" alt="<?php esc_attr_e( 'Category thumbnail', 'storesuite' ); ?>">
 										<?php endif; ?>
 									</div>
 									<div class="image-drop-text">
 										<i class="las la-image"></i>
 										<?php if ( $thumbnail_id ) : ?>
-											<span><?php esc_html_e( 'Remove Image', 'shop-front' ); ?></span>
+											<span><?php esc_html_e( 'Remove Image', 'storesuite' ); ?></span>
 										<?php else : ?>
-											<span><?php esc_html_e( 'Upload Image', 'shop-front' ); ?></span>
+											<span><?php esc_html_e( 'Upload Image', 'storesuite' ); ?></span>
 										<?php endif; ?>
 									</div>
 								</div>
 							</div>
 							<div class="msf-form-submission-group">
-								<?php wp_nonce_field( '_msfc_edit_product_category_', 'msfc_edit_product_category_nonce' ); ?>
-								<input type="hidden" name="action" value="msfc_edit_product_category">
+								<?php wp_nonce_field( '_storesuite_edit_product_category_', 'storesuite_edit_product_category_nonce' ); ?>
+								<input type="hidden" name="action" value="storesuite_edit_product_category">
 								<input type="hidden" name="category_id" value="<?php echo esc_attr( $category->term_id ); ?>">
 								<div class="msf-button-group">
-									<button class="my-shop-front-button" name="save_product_category" type="submit"><?php esc_html_e( 'Save Changes', 'shop-front' ); ?></button>
-									<a href="<?php echo esc_url( msfc_get_navigation_url( 'categories' ) ); ?>" class="my-shop-front-button my-shop-front-button-light"><?php esc_html_e( 'Back', 'shop-front' ); ?></a>
+									<button class="my-storesuite-button" name="save_product_category" type="submit"><?php esc_html_e( 'Save Changes', 'storesuite' ); ?></button>
+									<a href="<?php echo esc_url( storesuite_get_navigation_url( 'categories' ) ); ?>" class="my-storesuite-button my-storesuite-button-light"><?php esc_html_e( 'Back', 'storesuite' ); ?></a>
 								</div>
 							</div>
 						</form>
@@ -129,4 +129,4 @@ do_action( 'msf_dashboard_wrapper_start' );
 		</main>
 	</div>
 </div>
-<?php do_action( 'msf_dashboard_wrapper_end' ); ?>
+<?php do_action( 'storesuite_dashboard_wrapper_end' ); ?>

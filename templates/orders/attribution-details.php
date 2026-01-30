@@ -2,7 +2,7 @@
 /**
  * MSFC order details customer attribution template.
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

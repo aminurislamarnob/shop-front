@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f726765099127d3bf5610f53c189bca",
+    "content-hash": "ab399710124ee251e48927520cf3ddaf",
     "packages": [],
     "packages-dev": [
         {
@@ -567,12 +567,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHPCSExtra.git",
-                "reference": "1560d6a9dd91f90c572dc0def7c69571122f2913"
+                "reference": "71f58f2306fb6e0f20814c703debd0a9efd0b569"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHPCSExtra/zipball/1560d6a9dd91f90c572dc0def7c69571122f2913",
-                "reference": "1560d6a9dd91f90c572dc0def7c69571122f2913",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHPCSExtra/zipball/71f58f2306fb6e0f20814c703debd0a9efd0b569",
+                "reference": "71f58f2306fb6e0f20814c703debd0a9efd0b569",
                 "shasum": ""
             },
             "require": {
@@ -642,7 +642,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2026-01-06T14:40:51+00:00"
+            "time": "2026-01-22T04:37:47+00:00"
         },
         {
             "name": "phpcsstandards/phpcsutils",
@@ -1042,12 +1042,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f513dd97b49a0530a8388660c93e71c3b1951683"
+                "reference": "1015741814413c156abb0f53d7db7bbd03c6e858"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f513dd97b49a0530a8388660c93e71c3b1951683",
-                "reference": "f513dd97b49a0530a8388660c93e71c3b1951683",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1015741814413c156abb0f53d7db7bbd03c6e858",
+                "reference": "1015741814413c156abb0f53d7db7bbd03c6e858",
                 "shasum": ""
             },
             "require": {
@@ -1066,7 +1066,7 @@
                 "phpunit/php-file-iterator": "^2.0.6",
                 "phpunit/php-text-template": "^1.2.1",
                 "phpunit/php-timer": "^2.1.4",
-                "sebastian/comparator": "^3.0.6",
+                "sebastian/comparator": "^3.0.7",
                 "sebastian/diff": "^3.0.6",
                 "sebastian/environment": "^4.2.5",
                 "sebastian/exporter": "^3.1.8",
@@ -1116,7 +1116,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5.52"
             },
             "funding": [
                 {
@@ -1140,7 +1140,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-13T15:05:14+00:00"
+            "time": "2026-01-27T05:20:18+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1203,12 +1203,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "4b3c947888c81708b20fb081bb653a2ba68f989a"
+                "reference": "bc7d8ac2fe1cce229bff9b5fd4efe65918a1ff52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/4b3c947888c81708b20fb081bb653a2ba68f989a",
-                "reference": "4b3c947888c81708b20fb081bb653a2ba68f989a",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/bc7d8ac2fe1cce229bff9b5fd4efe65918a1ff52",
+                "reference": "bc7d8ac2fe1cce229bff9b5fd4efe65918a1ff52",
                 "shasum": ""
             },
             "require": {
@@ -1261,7 +1261,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/comparator/issues",
-                "source": "https://github.com/sebastianbergmann/comparator/tree/3.0.6"
+                "source": "https://github.com/sebastianbergmann/comparator/tree/3.0.7"
             },
             "funding": [
                 {
@@ -1281,7 +1281,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-10T05:29:24+00:00"
+            "time": "2026-01-24T09:20:25+00:00"
         },
         {
             "name": "sebastian/diff",
@@ -1924,12 +1924,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "bc37991ce495831a35c3f9e07f2e12801b2a19b4"
+                "reference": "5153a1301feefd5461f82fd7973e5967bf0ed73b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/bc37991ce495831a35c3f9e07f2e12801b2a19b4",
-                "reference": "bc37991ce495831a35c3f9e07f2e12801b2a19b4",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/5153a1301feefd5461f82fd7973e5967bf0ed73b",
+                "reference": "5153a1301feefd5461f82fd7973e5967bf0ed73b",
                 "shasum": ""
             },
             "require": {
@@ -1995,7 +1995,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2026-01-01T02:41:53+00:00"
+            "time": "2026-01-21T02:27:18+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -2337,12 +2337,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/WordPress/WordPress-Coding-Standards.git",
-                "reference": "7ee7992c65e0a5e114d6b6f3062a75b92dfc0c30"
+                "reference": "fa02bc4cdd5c76433844721d37dc2cf22db7c91f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/7ee7992c65e0a5e114d6b6f3062a75b92dfc0c30",
-                "reference": "7ee7992c65e0a5e114d6b6f3062a75b92dfc0c30",
+                "url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/fa02bc4cdd5c76433844721d37dc2cf22db7c91f",
+                "reference": "fa02bc4cdd5c76433844721d37dc2cf22db7c91f",
                 "shasum": ""
             },
             "require": {
@@ -2396,7 +2396,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2026-01-06T14:42:29+00:00"
+            "time": "2026-01-30T09:10:21+00:00"
         },
         {
             "name": "wp-phpunit/wp-phpunit",
@@ -2452,12 +2452,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Yoast/PHPUnit-Polyfills.git",
-                "reference": "1ab25f816f634dfbab4f5cdad5e4a95e29e2ff78"
+                "reference": "b4a9670057fee243a838132417f4cbfc289c96d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/1ab25f816f634dfbab4f5cdad5e4a95e29e2ff78",
-                "reference": "1ab25f816f634dfbab4f5cdad5e4a95e29e2ff78",
+                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/b4a9670057fee243a838132417f4cbfc289c96d4",
+                "reference": "b4a9670057fee243a838132417f4cbfc289c96d4",
                 "shasum": ""
             },
             "require": {
@@ -2507,7 +2507,7 @@
                 "security": "https://github.com/Yoast/PHPUnit-Polyfills/security/policy",
                 "source": "https://github.com/Yoast/PHPUnit-Polyfills"
             },
-            "time": "2025-12-29T03:43:39+00:00"
+            "time": "2026-01-21T02:31:59+00:00"
         }
     ],
     "aliases": [],

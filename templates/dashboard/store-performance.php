@@ -4,21 +4,21 @@
  *
  * This template displays the store performance KPI section on the dashboard.
  *
- * @package ShopFront
+ * @package StoreSuite
  * @version 1.0.0
  *
  * @var array                            $stats_config   Stats configuration array.
  * @var string                           $label          Date range label.
  * @var array|\WP_Error                  $current_values Current period KPI values.
  * @var array                            $prev_values    Previous period KPI values.
- * @var \PluginizeLab\ShopFront\Dashboard $dashboard      Dashboard instance for helper methods.
+ * @var \PluginizeLab\StoreSuite\Dashboard $dashboard      Dashboard instance for helper methods.
  */
 
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="msf-card msf-card-with-header msf-store-performance">
 	<h2 class="msf-card-title">
-		<?php echo esc_html__( 'Store performance', 'shop-front' ); ?>
+		<?php echo esc_html__( 'Store performance', 'storesuite' ); ?>
 	</h2>
 	<div class="msf-card-content">
 		<?php if ( is_wp_error( $current_values ) ) : ?>
@@ -36,7 +36,7 @@ defined( 'ABSPATH' ) || exit;
 						$value       = $current_values[ $stat_key ] ?? null;
 						$prev_value  = is_array( $prev_values ) ? ( $prev_values[ $stat_key ] ?? null ) : null;
 						$change      = $dashboard->calculate_percent_change( $value, $prev_value );
-						$change_text = null === $change ? esc_html__( '—', 'shop-front' ) : sprintf( '%s%%', number_format_i18n( $change, 0 ) );
+						$change_text = null === $change ? esc_html__( '—', 'storesuite' ) : sprintf( '%s%%', number_format_i18n( $change, 0 ) );
 						$change_dir  = 'na';
 						if ( null !== $change ) {
 							$change_dir = 'flat';
