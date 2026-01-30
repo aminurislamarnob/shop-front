@@ -25,7 +25,7 @@ class TagController {
 	public function handle_add_tag() {
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_add_product_tag_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_add_product_tag_nonce'] ), '_storesuite_add_product_tag_' ) ) {
+		if ( ! isset( $_POST['storesuite_add_product_tag_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_add_product_tag_nonce'] ) ), '_storesuite_add_product_tag_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
@@ -77,7 +77,7 @@ class TagController {
 	public function handle_edit_tag() {
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_edit_product_tag_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_edit_product_tag_nonce'] ), '_storesuite_edit_product_tag_' ) ) {
+		if ( ! isset( $_POST['storesuite_edit_product_tag_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_edit_product_tag_nonce'] ) ), '_storesuite_edit_product_tag_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
@@ -142,7 +142,7 @@ class TagController {
 	 */
 	public function handle_delete_tag() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_delete_product_tag_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_delete_product_tag_nonce'] ), '_storesuite_delete_nonce_' ) ) {
+		if ( ! isset( $_POST['storesuite_delete_product_tag_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_delete_product_tag_nonce'] ) ), '_storesuite_delete_nonce_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 

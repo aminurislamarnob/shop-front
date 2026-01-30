@@ -71,7 +71,7 @@ class CouponController {
 	 */
 	public function handle_add_coupon() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_add_coupon_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_add_coupon_nonce'] ), '_storesuite_add_coupon_' ) ) {
+		if ( ! isset( $_POST['storesuite_add_coupon_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_add_coupon_nonce'] ) ), '_storesuite_add_coupon_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
@@ -122,7 +122,7 @@ class CouponController {
 	 */
 	public function handle_edit_coupon() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_edit_coupon_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_edit_coupon_nonce'] ), '_storesuite_edit_coupon_' ) ) {
+		if ( ! isset( $_POST['storesuite_edit_coupon_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_edit_coupon_nonce'] ) ), '_storesuite_edit_coupon_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
@@ -176,7 +176,7 @@ class CouponController {
 	 */
 	public function handle_delete_coupon() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_delete_coupon_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_delete_coupon_nonce'] ), '_storesuite_delete_coupon_' ) ) {
+		if ( ! isset( $_POST['storesuite_delete_coupon_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_delete_coupon_nonce'] ) ), '_storesuite_delete_coupon_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 

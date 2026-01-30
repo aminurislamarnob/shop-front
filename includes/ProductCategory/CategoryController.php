@@ -25,7 +25,7 @@ class CategoryController {
 	public function handle_add_category() {
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_add_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_add_product_category_nonce'] ), '_storesuite_add_product_category_' ) ) {
+		if ( ! isset( $_POST['storesuite_add_product_category_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_add_product_category_nonce'] ) ), '_storesuite_add_product_category_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
@@ -97,7 +97,7 @@ class CategoryController {
 	public function handle_edit_category() {
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_edit_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_edit_product_category_nonce'] ), '_storesuite_edit_product_category_' ) ) {
+		if ( ! isset( $_POST['storesuite_edit_product_category_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_edit_product_category_nonce'] ) ), '_storesuite_edit_product_category_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
@@ -186,7 +186,7 @@ class CategoryController {
 	 */
 	public function handle_delete_category() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_delete_product_category_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_delete_product_category_nonce'] ), '_storesuite_delete_nonce_' ) ) {
+		if ( ! isset( $_POST['storesuite_delete_product_category_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_delete_product_category_nonce'] ) ), '_storesuite_delete_nonce_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 

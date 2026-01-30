@@ -67,7 +67,7 @@ class OrderController {
 	public function handle_add_order_note() {
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_add_order_note_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_add_order_note_nonce'] ), '_storesuite_add_order_note_' ) ) {
+		if ( ! isset( $_POST['storesuite_add_order_note_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_add_order_note_nonce'] ) ), '_storesuite_add_order_note_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
@@ -79,7 +79,7 @@ class OrderController {
 		// Validate inputs.
 		$order_id         = absint( $_POST['order_id'] );
 		$order_note       = wp_kses_post( trim( wp_unslash( $_POST['order_note'] ) ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$note_type        = wc_clean( wp_unslash( $_POST['order_note_type'] ) );
+		$note_type        = sanitize_text_field( wp_unslash( $_POST['order_note_type'] ) );
 		$is_customer_note = ( 'customer' === $note_type ) ? 1 : 0;
 
 		if ( empty( $order_note ) ) {
@@ -141,7 +141,7 @@ class OrderController {
 	 */
 	public static function handle_delete_order_note() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['storesuite_delete_order_note_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_delete_order_note_nonce'] ), '_storesuite_delete_nonce_' ) ) {
+		if ( ! isset( $_POST['storesuite_delete_order_note_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_delete_order_note_nonce'] ) ), '_storesuite_delete_nonce_' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
@@ -355,7 +355,7 @@ class OrderController {
 				$key = '_billing_' . $field;
 				if ( isset( $_POST[ $key ] ) ) {
 					$setter = "set_billing_{$field}";
-					$value  = is_array( $_POST[ $key ] ) ? '' : wc_clean( wp_unslash( $_POST[ $key ] ) );
+					$value  = is_array( $_POST[ $key ] ) ? '' : sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
 					if ( method_exists( $order, $setter ) ) {
 						$order->$setter( $value );
 					}
@@ -380,7 +380,7 @@ class OrderController {
 				$key = '_shipping_' . $field;
 				if ( isset( $_POST[ $key ] ) ) {
 					$setter = "set_shipping_{$field}";
-					$value  = is_array( $_POST[ $key ] ) ? '' : wc_clean( wp_unslash( $_POST[ $key ] ) );
+					$value  = is_array( $_POST[ $key ] ) ? '' : sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
 					if ( method_exists( $order, $setter ) ) {
 						$order->$setter( $value );
 					}
