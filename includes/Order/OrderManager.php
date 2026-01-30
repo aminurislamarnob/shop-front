@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Order;
+namespace PluginizeLab\StoreSuite\Order;
 
 use WC_Order;
 use Automattic\WooCommerce\Enums\OrderStatus;
@@ -247,7 +247,7 @@ class OrderManager {
 	 * @return void
 	 */
 	public function get_order_number_column_value( WC_Order $order ): void {
-		echo '<a href="' . esc_url( sprintf( msfc_get_navigation_url( 'order-details' ) . '%s', $order->get_id() ) ) . '" class="order-view"><strong>#' . esc_attr( $order->get_order_number() ) . '</strong></a>';
+		echo '<a href="' . esc_url( sprintf( storesuite_get_navigation_url( 'order-details' ) . '%s', $order->get_id() ) ) . '" class="order-view"><strong>#' . esc_attr( $order->get_order_number() ) . '</strong></a>';
 	}
 
 	/**
@@ -262,7 +262,7 @@ class OrderManager {
 
 		if ( $order->get_billing_first_name() || $order->get_billing_last_name() ) {
 			/* translators: 1: first name 2: last name */
-			$buyer = trim( sprintf( _x( '%1$s %2$s', 'full name', 'shop-front' ), $order->get_billing_first_name(), $order->get_billing_last_name() ) );
+			$buyer = trim( sprintf( _x( '%1$s %2$s', 'full name', 'storesuite' ), $order->get_billing_first_name(), $order->get_billing_last_name() ) );
 		} elseif ( $order->get_billing_company() ) {
 			$buyer = trim( $order->get_billing_company() );
 		} elseif ( $order->get_customer_id() ) {
@@ -287,7 +287,7 @@ class OrderManager {
 
 			if ( $order->get_payment_method() ) {
 				/* translators: %s: payment method */
-				echo '<span class="description">' . sprintf( esc_html__( 'via %s', 'shop-front' ), esc_html( $order->get_payment_method_title() ) ) . '</span>';
+				echo '<span class="description">' . sprintf( esc_html__( 'via %s', 'storesuite' ), esc_html( $order->get_payment_method_title() ) ) . '</span>';
 			}
 		} else {
 			echo '&ndash;';
@@ -308,7 +308,7 @@ class OrderManager {
 			echo '<a target="_blank" href="' . esc_url( $order->get_shipping_address_map_url() ) . '">' . esc_html( preg_replace( '#<br\s*/?>#i', ', ', $address ) ) . '</a>';
 			if ( $order->get_shipping_method() ) {
 				/* translators: %s: shipping method */
-				echo '<span class="description">' . sprintf( esc_html__( 'via %s', 'shop-front' ), esc_html( $order->get_shipping_method() ) ) . '</span>';
+				echo '<span class="description">' . sprintf( esc_html__( 'via %s', 'storesuite' ), esc_html( $order->get_shipping_method() ) ) . '</span>';
 			}
 		} else {
 			echo '&ndash;';

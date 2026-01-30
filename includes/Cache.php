@@ -2,10 +2,10 @@
 /**
  * Cache handler
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
-namespace PluginizeLab\ShopFront;
+namespace PluginizeLab\StoreSuite;
 
 /**
  * Cache class
@@ -16,14 +16,14 @@ class Cache {
 	 *
 	 * @var string
 	 */
-	private static $prefix = 'msf_';
+	private static $prefix = 'storesuite_';
 
 	/**
 	 * Cache group for object cache.
 	 *
 	 * @var string
 	 */
-	private static $group = 'shop_front';
+	private static $group = 'storesuite';
 
 	/**
 	 * Get cached data.

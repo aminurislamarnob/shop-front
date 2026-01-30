@@ -1,9 +1,9 @@
 <?php
-namespace PluginizeLab\ShopFront;
+namespace PluginizeLab\StoreSuite;
 
 class Helper {
-	public static function msfc_get_page_id( $page ) {
-		$page = apply_filters( 'my_shop_front_get_' . $page . '_page_id', get_option( 'my_shop_front_' . $page . '_page_id' ) );
+	public static function storesuite_get_page_id( $page ) {
+		$page = apply_filters( 'storesuite_get_' . $page . '_page_id', get_option( 'storesuite_' . $page . '_page_id' ) );
 		return $page ? absint( $page ) : -1;
 	}
 }

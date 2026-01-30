@@ -2,7 +2,7 @@
 /**
  * Dashboard Title Template
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="msf-dashboard-braedcrumb">
 			<ul>
 				<li>
-					<a href="<?php echo esc_url( msfc_get_navigation_url() ); ?>"><?php echo esc_html__( 'Dashboard', 'shop-front' ); ?></a>
+					<a href="<?php echo esc_url( storesuite_get_navigation_url() ); ?>"><?php echo esc_html__( 'Dashboard', 'storesuite' ); ?></a>
 				</li>
 				<li>
 					<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">

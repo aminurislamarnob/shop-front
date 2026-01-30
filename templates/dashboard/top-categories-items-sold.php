@@ -4,12 +4,12 @@
  *
  * This template displays the top categories by items sold leaderboard on the dashboard.
  *
- * @package ShopFront
+ * @package StoreSuite
  * @version 1.0.0
  *
  * @var string                           $label     Date range label.
  * @var array|\WP_Error                  $rows      Category rows data.
- * @var \PluginizeLab\ShopFront\Dashboard $dashboard Dashboard instance for helper methods.
+ * @var \PluginizeLab\StoreSuite\Dashboard $dashboard Dashboard instance for helper methods.
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -17,16 +17,16 @@ defined( 'ABSPATH' ) || exit;
 <div class="col-md-6">
 	<div class="msf-card msf-card-with-header msf-dashboard-top-categories">
 		<h2 class="msf-card-title">
-			<?php echo esc_html__( 'Top categories - Items sold', 'shop-front' ); ?>
+			<?php echo esc_html__( 'Top categories - Items sold', 'storesuite' ); ?>
 		</h2>
 		<div>
 			<div class="msf-table-responsive">
-				<table class="my-shop-front-tbl msf-dashboard-leaderboard-table">
+				<table class="my-storesuite-tbl msf-dashboard-leaderboard-table">
 					<thead>
 						<tr>
-							<th><?php echo esc_html__( 'Category', 'shop-front' ); ?></th>
-							<th><?php echo esc_html__( 'Items sold', 'shop-front' ); ?></th>
-							<th><?php echo esc_html__( 'Net sales', 'shop-front' ); ?></th>
+							<th><?php echo esc_html__( 'Category', 'storesuite' ); ?></th>
+							<th><?php echo esc_html__( 'Items sold', 'storesuite' ); ?></th>
+							<th><?php echo esc_html__( 'Net sales', 'storesuite' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -39,7 +39,7 @@ defined( 'ABSPATH' ) || exit;
 						<?php elseif ( empty( $rows ) ) : ?>
 							<tr>
 								<td colspan="3">
-									<?php echo esc_html__( 'No categories found for this period.', 'shop-front' ); ?>
+									<?php echo esc_html__( 'No categories found for this period.', 'storesuite' ); ?>
 								</td>
 							</tr>
 						<?php else : ?>

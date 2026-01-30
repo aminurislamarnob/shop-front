@@ -2,10 +2,10 @@
 /**
  * Product tags handler
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
-namespace PluginizeLab\ShopFront\ProductTag;
+namespace PluginizeLab\StoreSuite\ProductTag;
 
 /**
  * Tags class

@@ -1,23 +1,23 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Shortcodes;
+namespace PluginizeLab\StoreSuite\Shortcodes;
 
-use PluginizeLab\ShopFront\Shortcodes\Dashboard;
+use PluginizeLab\StoreSuite\Shortcodes\Dashboard;
 
 class Shortcodes {
 
 	private $shortcodes = array();
 
 	/**
-	 *  Register My Shop Front shortcodes
+	 *  Register My StoreSuite shortcodes
 	 *
 	 * @return void
 	 */
 	public function __construct() {
 		$this->shortcodes = apply_filters(
-			'my_shop_front_shortcodes',
+			'storesuite_shortcodes',
 			array(
-				'my_shop_front_dashboard' => new Dashboard(),
+				'storesuite_dashboard' => new Dashboard(),
 			)
 		);
 	}

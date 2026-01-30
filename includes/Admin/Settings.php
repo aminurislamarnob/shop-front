@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Admin;
+namespace PluginizeLab\StoreSuite\Admin;
 
 /**
  * Plugin admin page settings class
@@ -21,10 +21,10 @@ class Settings {
 	public function add_admin_settings_menu() {
 		add_submenu_page(
 			'woocommerce',
-			'ShopFront Settings',
-			'ShopFront',
+			'StoreSuite Settings',
+			'StoreSuite',
 			'manage_options',
-			'shop-front',
+			'storesuite',
 			array( $this, 'settings_page_content' ),
 		);
 	}
@@ -37,7 +37,7 @@ class Settings {
 	public function settings_page_content() {
 		?>
 		<div class="wrap">
-			<div id="shop-front-settings"></div>
+			<div id="storesuite-settings"></div>
 		</div>
 		<?php
 	}

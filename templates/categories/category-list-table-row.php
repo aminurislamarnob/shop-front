@@ -2,7 +2,7 @@
 /**
  * MSFC category list table row
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,23 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <tr id="category-row-<?php echo esc_attr( $category->term_id ); ?>">
-	<td data-title="<?php esc_attr_e( 'Image', 'shop-front' ); ?>">
+	<td data-title="<?php esc_attr_e( 'Image', 'storesuite' ); ?>">
 		<?php
 		$thumbnail_id = absint( get_term_meta( $category->term_id, 'thumbnail_id', true ) );
 		if ( $thumbnail_id ) {
 			$image_url = wp_get_attachment_image_url( $thumbnail_id, 'thumbnail' );
 			if ( $image_url ) {
 				?>
-				<img src="<?php echo esc_url( $image_url ); ?>" class="my-shop-front-thumb" alt="<?php echo esc_attr( $category->name ); ?>">
+				<img src="<?php echo esc_url( $image_url ); ?>" class="my-storesuite-thumb" alt="<?php echo esc_attr( $category->name ); ?>">
 				<?php
 			} else {
 				?>
-				<img src="<?php echo esc_url( wc_placeholder_img_src( 'thumbnail' ) ); ?>" class="my-shop-front-thumb" alt="<?php esc_attr_e( 'Placeholder', 'shop-front' ); ?>">
+				<img src="<?php echo esc_url( wc_placeholder_img_src( 'thumbnail' ) ); ?>" class="my-storesuite-thumb" alt="<?php esc_attr_e( 'Placeholder', 'storesuite' ); ?>">
 				<?php
 			}
 		} else {
 			?>
-			<img src="<?php echo esc_url( wc_placeholder_img_src( 'thumbnail' ) ); ?>" class="my-shop-front-thumb" alt="<?php esc_attr_e( 'Placeholder', 'shop-front' ); ?>">
+			<img src="<?php echo esc_url( wc_placeholder_img_src( 'thumbnail' ) ); ?>" class="my-storesuite-thumb" alt="<?php esc_attr_e( 'Placeholder', 'storesuite' ); ?>">
 			<?php
 		}
 		?>
@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<td><?php echo esc_html( $parent ? $parent->name : '-' ); ?></td>
 	<td><?php echo esc_html( $category->slug ); ?></td>
 	<td><?php echo esc_html( $category->count ); ?></td>
-	<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'shop-front' ); ?>">
+	<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
 		<div class="msfc-dropdown">
 			<span class="msfc-dropdown-icon">
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
@@ -46,15 +46,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<ul class="msfc-dropdown-menu">
 				<li>
 					<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>" class="dropdown-link">
-						<?php echo esc_html__( 'View', 'shop-front' ); ?>
+						<?php echo esc_html__( 'View', 'storesuite' ); ?>
 					</a>
 				</li>
 				<li>
-					<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-category' ) . '%s', $category->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
+					<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-category' ) . '%s', $category->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'storesuite' ); ?></a>
 				</li>
 				<li>
 					<button type="button" class="inline-button dropdown-link msfc-delete-category" data-category-id="<?php echo esc_attr( $category->term_id ); ?>">
-						<?php echo esc_html__( 'Delete', 'shop-front' ); ?>
+						<?php echo esc_html__( 'Delete', 'storesuite' ); ?>
 					</button>
 				</li>
 			</ul>

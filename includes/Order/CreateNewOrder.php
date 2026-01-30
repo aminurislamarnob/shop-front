@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Order;
+namespace PluginizeLab\StoreSuite\Order;
 
 /**
  * Plugin order controller class
@@ -39,7 +39,7 @@ class CreateNewOrder {
      */
     public function maybe_create_empty_order() {
         // Check if we're on your specific page
-        if ( ! msfc_is_page( 'add-new-order' ) ) {
+        if ( ! storesuite_is_page( 'add-new-order' ) ) {
             return;
         }
         
@@ -162,7 +162,7 @@ class CreateNewOrder {
 	 */
 	public function get_edit_url( int $order_id ) : string {
 		if ( ! wc_get_container()->get( \Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled() ) {
-			return msfc_get_navigation_url( 'edit-order' ) . $order_id;
+			return storesuite_get_navigation_url( 'edit-order' ) . $order_id;
 		}
 
 		$order = wc_get_order( $order_id );
@@ -183,7 +183,7 @@ class CreateNewOrder {
 		}
 
 		try {
-			$redirect_url = msfc_get_navigation_url( 'edit-order' ) . $order_id;
+			$redirect_url = storesuite_get_navigation_url( 'edit-order' ) . $order_id;
 		} catch ( \Exception $e ) {
 			return '';
 		}

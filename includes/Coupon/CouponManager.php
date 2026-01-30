@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Coupon;
+namespace PluginizeLab\StoreSuite\Coupon;
 
 use WP_Error;
 use WC_Coupon;
@@ -99,7 +99,7 @@ class CouponManager {
 				return $post_state;
 			}
 
-			do_action( 'msf_new_coupon_created', $coupon_id, $data );
+			do_action( 'storesuite_new_coupon_created', $coupon_id, $data );
 
 			return $coupon_id;
 
@@ -121,7 +121,7 @@ class CouponManager {
 			$coupon = new WC_Coupon( $coupon_id );
 
 			if ( ! $coupon->get_id() ) {
-				return new WP_Error( 'invalid_coupon', __( 'Coupon not found', 'shop-front' ) );
+				return new WP_Error( 'invalid_coupon', __( 'Coupon not found', 'storesuite' ) );
 			}
 
 			// Set coupon properties.
@@ -159,7 +159,7 @@ class CouponManager {
 				return $post_state;
 			}
 
-			do_action( 'msf_coupon_updated', $coupon_id, $data );
+			do_action( 'storesuite_coupon_updated', $coupon_id, $data );
 
 			return true;
 
@@ -181,12 +181,12 @@ class CouponManager {
 			$coupon = new WC_Coupon( $coupon_id );
 
 			if ( ! $coupon->get_id() ) {
-				return new WP_Error( 'invalid_coupon', __( 'Coupon not found', 'shop-front' ) );
+				return new WP_Error( 'invalid_coupon', __( 'Coupon not found', 'storesuite' ) );
 			}
 
 			$coupon->delete( $force_delete );
 
-			do_action( 'msf_coupon_deleted', $coupon_id, $force_delete );
+			do_action( 'storesuite_coupon_deleted', $coupon_id, $force_delete );
 
 			return true;
 

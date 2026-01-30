@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Coupon;
+namespace PluginizeLab\StoreSuite\Coupon;
 
 /**
  * Plugin coupon controller class
@@ -10,12 +10,12 @@ class CouponController {
 	 * The constructor.
 	 */
 	public function __construct() {
-		add_action( 'msf_load_coupons_template', array( $this, 'load_coupons_template' ) );
-		add_action( 'msf_dashboard_coupon_add_form', array( $this, 'load_coupon_add_form' ) );
-		add_action( 'msf_dashboard_coupon_edit_form', array( $this, 'load_coupon_edit_form' ) );
-		add_action( 'wp_ajax_msf_add_coupon', array( $this, 'handle_add_coupon' ) );
-		add_action( 'wp_ajax_msf_edit_coupon', array( $this, 'handle_edit_coupon' ) );
-		add_action( 'wp_ajax_msf_delete_coupon', array( $this, 'handle_delete_coupon' ) );
+		add_action( 'storesuite_load_coupons_template', array( $this, 'load_coupons_template' ) );
+		add_action( 'storesuite_dashboard_coupon_add_form', array( $this, 'load_coupon_add_form' ) );
+		add_action( 'storesuite_dashboard_coupon_edit_form', array( $this, 'load_coupon_edit_form' ) );
+		add_action( 'wp_ajax_storesuite_add_coupon', array( $this, 'handle_add_coupon' ) );
+		add_action( 'wp_ajax_storesuite_edit_coupon', array( $this, 'handle_edit_coupon' ) );
+		add_action( 'wp_ajax_storesuite_delete_coupon', array( $this, 'handle_delete_coupon' ) );
 	}
 
 	/**
@@ -29,7 +29,7 @@ class CouponController {
 		$template_args = array(
 			'query_vars' => $query_vars,
 		);
-		msf_get_template_part( 'coupons/coupons', '', $template_args );
+		storesuite_get_template_part( 'coupons/coupons', '', $template_args );
 	}
 
 	/**
@@ -44,7 +44,7 @@ class CouponController {
 			'query_vars'    => $query_vars,
 			'template_type' => 'add-new-coupon',
 		);
-		msf_get_template_part( 'coupons/coupon-form', '', $template_args );
+		storesuite_get_template_part( 'coupons/coupon-form', '', $template_args );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class CouponController {
 			'query_vars'    => $query_vars,
 			'template_type' => 'edit-coupon',
 		);
-		msf_get_template_part( 'coupons/coupon-form', '', $template_args );
+		storesuite_get_template_part( 'coupons/coupon-form', '', $template_args );
 	}
 
 	/**
@@ -67,18 +67,18 @@ class CouponController {
 	 */
 	public function handle_add_coupon() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['msf_add_coupon_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msf_add_coupon_nonce'] ), '_msf_add_coupon_' ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		if ( ! isset( $_POST['storesuite_add_coupon_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_add_coupon_nonce'] ), '_storesuite_add_coupon_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
 		// Check user permissions.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
 		}
 
 		// Validate coupon code.
 		if ( empty( $_POST['coupon_code'] ) ) {
-			wp_send_json_error( array( 'error' => __( 'Coupon code is required.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Coupon code is required.', 'storesuite' ) ) );
 		}
 
 		// Check for duplicate coupon code.
@@ -86,7 +86,7 @@ class CouponController {
 		$existing_id = wc_get_coupon_id_by_code( $coupon_code );
 
 		if ( $existing_id ) {
-			wp_send_json_error( array( 'error' => __( 'Coupon code already exists. Please choose a different code.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Coupon code already exists. Please choose a different code.', 'storesuite' ) ) );
 		}
 
 		$response = ( new CouponManager() )->create_coupon( $_POST );
@@ -98,7 +98,7 @@ class CouponController {
 		if ( is_int( $response ) && $response > 0 ) {
 			wp_send_json_success(
 				array(
-					'message'   => __( 'Coupon successfully created', 'shop-front' ),
+					'message'   => __( 'Coupon successfully created', 'storesuite' ),
 					'context'   => 'add',
 					'coupon_id' => $response,
 				)
@@ -106,7 +106,7 @@ class CouponController {
 		} else {
 			wp_send_json_error(
 				array(
-					'error'   => __( 'Something wrong, please try again later', 'shop-front' ),
+					'error'   => __( 'Something wrong, please try again later', 'storesuite' ),
 					'context' => 'add',
 				)
 			);
@@ -118,19 +118,19 @@ class CouponController {
 	 */
 	public function handle_edit_coupon() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['msf_edit_coupon_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msf_edit_coupon_nonce'] ), '_msf_edit_coupon_' ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		if ( ! isset( $_POST['storesuite_edit_coupon_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_edit_coupon_nonce'] ), '_storesuite_edit_coupon_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
 		// Check user permissions.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
 		}
 
 		$coupon_id = isset( $_POST['coupon_id'] ) ? absint( $_POST['coupon_id'] ) : 0;
 
 		if ( ! $coupon_id ) {
-			wp_send_json_error( array( 'error' => __( 'Invalid coupon ID.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Invalid coupon ID.', 'storesuite' ) ) );
 		}
 
 		// Validate coupon code if provided.
@@ -140,7 +140,7 @@ class CouponController {
 
 			// Check if the code exists and belongs to a different coupon.
 			if ( $existing_id && $existing_id !== $coupon_id ) {
-				wp_send_json_error( array( 'error' => __( 'Coupon code already exists. Please choose a different code.', 'shop-front' ) ) );
+				wp_send_json_error( array( 'error' => __( 'Coupon code already exists. Please choose a different code.', 'storesuite' ) ) );
 			}
 		}
 
@@ -153,14 +153,14 @@ class CouponController {
 		if ( $response ) {
 			wp_send_json_success(
 				array(
-					'message' => __( 'Coupon successfully updated', 'shop-front' ),
+					'message' => __( 'Coupon successfully updated', 'storesuite' ),
 					'context' => 'edit',
 				)
 			);
 		} else {
 			wp_send_json_error(
 				array(
-					'error'   => __( 'Something wrong, please try again later', 'shop-front' ),
+					'error'   => __( 'Something wrong, please try again later', 'storesuite' ),
 					'context' => 'edit',
 				)
 			);
@@ -172,28 +172,28 @@ class CouponController {
 	 */
 	public function handle_delete_coupon() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['msf_delete_coupon_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msf_delete_coupon_nonce'] ), '_msf_delete_coupon_' ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		if ( ! isset( $_POST['storesuite_delete_coupon_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_delete_coupon_nonce'] ), '_storesuite_delete_coupon_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
 		// Check user permissions.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
 		}
 
 		$coupon_id = isset( $_POST['coupon_id'] ) ? absint( $_POST['coupon_id'] ) : 0;
 
 		if ( ! $coupon_id ) {
-			wp_send_json_error( array( 'error' => __( 'Invalid coupon ID.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Invalid coupon ID.', 'storesuite' ) ) );
 		}
 
-		// Use CouponManager so hooks like msf_coupon_deleted fire consistently.
+		// Use CouponManager so hooks like storesuite_coupon_deleted fire consistently.
 		$response = ( new CouponManager() )->delete_coupon( $coupon_id, false ); // Soft delete (move to trash).
 
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_error( array( 'error' => $response->get_error_message() ) );
 		}
 
-		wp_send_json_success( array( 'message' => __( 'Coupon successfully deleted', 'shop-front' ) ) );
+		wp_send_json_success( array( 'message' => __( 'Coupon successfully deleted', 'storesuite' ) ) );
 	}
 }

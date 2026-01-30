@@ -1,12 +1,12 @@
 <?php
 /**
- * Get template part for my shop front
+ * Get template part for store suite
  *
  * Looks at the theme directory first
  */
 use Automattic\WooCommerce\Enums\OrderStatus;
 
-function msf_get_template_part( $slug, $name = '', $args = array() ) {
+function storesuite_get_template_part( $slug, $name = '', $args = array() ) {
 	$defaults = array(
 		'pro' => false,
 	);
@@ -19,14 +19,14 @@ function msf_get_template_part( $slug, $name = '', $args = array() ) {
 
 	$template = '';
 
-	// Look in yourtheme/my-shop-front/slug-name.php and yourtheme/my-shop-front/slug.php
+	// Look in yourtheme/my-storesuite/slug-name.php and yourtheme/my-storesuite/slug.php
 	$template_path = ! empty( $name ) ? "{$slug}-{$name}.php" : "{$slug}.php";
-	$template      = locate_template( array( pluginizelab_shop_front()->template_path() . $template_path ) );
+	$template      = locate_template( array( pluginizelab_storesuite()->template_path() . $template_path ) );
 
 	/**
 	 * Change template directory path filter
 	 */
-	$template_path = apply_filters( 'msf_set_template_path', SHOP_FRONT_TEMPLATE_DIR, $template, $args );
+	$template_path = apply_filters( 'storesuite_set_template_path', STORESUITE_TEMPLATE_DIR, $template, $args );
 
 	// Get default slug-name.php
 	if ( ! $template && $name && file_exists( $template_path . "/{$slug}-{$name}.php" ) ) {
@@ -38,7 +38,7 @@ function msf_get_template_part( $slug, $name = '', $args = array() ) {
 	}
 
 	// Allow 3rd party plugin filter template file from their plugin
-	$template = apply_filters( 'msf_get_template_part', $template, $slug, $name );
+	$template = apply_filters( 'storesuite_get_template_part', $template, $slug, $name );
 
 	if ( $template ) {
 		include $template;
@@ -46,27 +46,27 @@ function msf_get_template_part( $slug, $name = '', $args = array() ) {
 }
 
 /**
- * Is_msf_endpoint_url - Check if an endpoint is showing.
+ * Is_storesuite_endpoint_url - Check if an endpoint is showing.
  *
  * @param string|false $endpoint Whether endpoint.
  * @return bool
  */
-if ( ! function_exists( 'is_msf_endpoint_url' ) ) {
-	function is_msf_endpoint_url( $endpoint = false ) {
+if ( ! function_exists( 'is_storesuite_endpoint_url' ) ) {
+	function is_storesuite_endpoint_url( $endpoint = false ) {
 		global $wp;
 
-		$msf_endpoints = pluginizelab_shop_front()->get_msf_query()->query_vars;
+		$storesuite_endpoints = pluginizelab_storesuite()->get_storesuite_query()->query_vars;
 
 		if ( false !== $endpoint ) {
-			if ( ! isset( $msf_endpoints[ $endpoint ] ) ) {
+			if ( ! isset( $storesuite_endpoints[ $endpoint ] ) ) {
 				return false;
 			} else {
-				$endpoint_var = $msf_endpoints[ $endpoint ];
+				$endpoint_var = $storesuite_endpoints[ $endpoint ];
 			}
 
 			return isset( $wp->query_vars[ $endpoint_var ] );
 		} else {
-			foreach ( $msf_endpoints as $key => $value ) {
+			foreach ( $storesuite_endpoints as $key => $value ) {
 				if ( isset( $wp->query_vars[ $key ] ) ) {
 					return true;
 				}
@@ -84,15 +84,15 @@ if ( ! function_exists( 'is_msf_endpoint_url' ) ) {
  *
  * @return string|array
  */
-function msf_get_post_status( $status = '' ) {
+function storesuite_get_post_status( $status = '' ) {
 	$statuses = apply_filters(
-		'msf_get_post_status',
+		'storesuite_get_post_status',
 		array(
-			'publish' => __( 'Online', 'shop-front' ),
-			'draft'   => __( 'Draft', 'shop-front' ),
-			'pending' => __( 'Pending Review', 'shop-front' ),
-			'private' => __( 'Private', 'shop-front' ),
-			'future'  => __( 'Scheduled', 'shop-front' ),
+			'publish' => __( 'Online', 'storesuite' ),
+			'draft'   => __( 'Draft', 'storesuite' ),
+			'pending' => __( 'Pending Review', 'storesuite' ),
+			'private' => __( 'Private', 'storesuite' ),
+			'future'  => __( 'Scheduled', 'storesuite' ),
 		)
 	);
 
@@ -110,9 +110,9 @@ function msf_get_post_status( $status = '' ) {
  *
  * @return string|array
  */
-function msf_get_post_status_class( $status = '' ) {
+function storesuite_get_post_status_class( $status = '' ) {
 	$statuses = apply_filters(
-		'msf_get_post_status_class',
+		'storesuite_get_post_status_class',
 		array(
 			'publish' => 'success',
 			'draft'   => 'default',
@@ -136,9 +136,9 @@ function msf_get_post_status_class( $status = '' ) {
  *
  * @return string|array
  */
-function msf_get_order_status_class( $status = '' ) {
+function storesuite_get_order_status_class( $status = '' ) {
 	$statuses = apply_filters(
-		'msf_get_order_status_class',
+		'storesuite_get_order_status_class',
 		array(
 			OrderStatus::PENDING    => 'warning',
 			OrderStatus::DRAFT      => 'default',
@@ -168,9 +168,9 @@ function msf_get_order_status_class( $status = '' ) {
  *
  * @return string|array
  */
-function msf_get_post_status_label_class( $status = '' ) {
+function storesuite_get_post_status_label_class( $status = '' ) {
 	$labels = apply_filters(
-		'msf_get_post_status_label_class',
+		'storesuite_get_post_status_label_class',
 		array(
 			'publish' => 'msf-label-success',
 			'draft'   => 'msf-label-default',
@@ -194,44 +194,44 @@ function msf_get_post_status_label_class( $status = '' ) {
  *
  * @return string
  */
-function msf_get_product_type( $product ) {
+function storesuite_get_product_type( $product ) {
 	$product_type = $product->get_type();
 	if ( $product_type === 'grouped' ) {
-		echo '<span class="product-type grouped">' . esc_html__( 'Grouped', 'shop-front' ) . '</span>';
+		echo '<span class="product-type grouped">' . esc_html__( 'Grouped', 'storesuite' ) . '</span>';
 	} elseif ( $product_type === 'external' ) {
-		echo '<span class="product-type external">' . esc_html__( 'External', 'shop-front' ) . '</span>';
+		echo '<span class="product-type external">' . esc_html__( 'External', 'storesuite' ) . '</span>';
 	} elseif ( $product_type === 'simple' ) {
 		if ( $product->is_virtual() ) {
-			echo '<span class="product-type virtual">' . esc_html__( 'Virtual', 'shop-front' ) . '</span>';
+			echo '<span class="product-type virtual">' . esc_html__( 'Virtual', 'storesuite' ) . '</span>';
 		} elseif ( $product->is_downloadable() ) {
-			echo '<span class="product-type downloadable">' . esc_html__( 'Downloadable', 'shop-front' ) . '</span>';
+			echo '<span class="product-type downloadable">' . esc_html__( 'Downloadable', 'storesuite' ) . '</span>';
 		} else {
-			echo '<span class="product-type simple">' . esc_html__( 'Simple', 'shop-front' ) . '</span>';
+			echo '<span class="product-type simple">' . esc_html__( 'Simple', 'storesuite' ) . '</span>';
 		}
 	} elseif ( $product_type === 'variable' ) {
-		echo '<span class="product-type variable">' . esc_html__( 'Variable', 'shop-front' ) . '</span>';
+		echo '<span class="product-type variable">' . esc_html__( 'Variable', 'storesuite' ) . '</span>';
 	}
 }
 
-function msfc_get_option_by_key( $key ) {
-	$msf_settings = get_option( 'msf_settings', array() );
-	if ( ! empty( $msf_settings ) && array_key_exists( $key, $msf_settings ) ) {
-		return $msf_settings[ $key ];
+function storesuite_get_option_by_key( $key ) {
+	$storesuite_settings = get_option( 'storesuite_settings', array() );
+	if ( ! empty( $storesuite_settings ) && array_key_exists( $key, $storesuite_settings ) ) {
+		return $storesuite_settings[ $key ];
 	}
 	return '';
 }
 
 
 /**
- * Get navigation URL for the shop front dashboard.
+ * Get navigation URL for the store suite dashboard.
  *
  * @param string $name Endpoint name.
  *
  * @return string URL
  */
-function msfc_get_navigation_url( $name = '' ) {
+function storesuite_get_navigation_url( $name = '' ) {
 	// Get the page ID from options.
-	$page_id = (int) msfc_get_option_by_key( 'msf_dashboard_page_id' );
+	$page_id = (int) storesuite_get_option_by_key( 'storesuite_dashboard_page_id' );
 
 	// If page ID is not found, return an empty string.
 	if ( ! $page_id ) {
@@ -254,19 +254,19 @@ function msfc_get_navigation_url( $name = '' ) {
 	}
 
 	// Apply a filter to the URL before returning it.
-	return apply_filters( 'msfc_get_navigation_url', esc_url( $url ), $name );
+	return apply_filters( 'storesuite_get_navigation_url', esc_url( $url ), $name );
 }
 
 
 /**
- * Check if it's a shop front dashboard page
+ * Check if it's a store suite dashboard page
  *
  * @return bool
  */
-function is_msf_dashboard_page() {
-	$page_id = (int) msfc_get_option_by_key( 'msf_dashboard_page_id' );
+function is_storesuite_dashboard_page() {
+	$page_id = (int) storesuite_get_option_by_key( 'storesuite_dashboard_page_id' );
 
-	return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'my_shop_front_dashboard' );
+	return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'storesuite_dashboard' );
 }
 
 
@@ -275,7 +275,7 @@ function is_msf_dashboard_page() {
  *
  * @return bool
  */
-function msf_get_id_from_query_vars( $query_var ) {
+function storesuite_get_id_from_query_vars( $query_var ) {
 	global $wp;
 	$query_var_parts = explode( '/', $wp->query_vars[ $query_var ] );
 
@@ -287,18 +287,18 @@ function msf_get_id_from_query_vars( $query_var ) {
 }
 
 /**
- * Check if the current page is a shop front page by endpoint
+ * Check if the current page is a store suite page by endpoint
  *
  * @param string $endpoint
  *
  * @return bool
  */
-function msfc_is_page( $endpoint ) {
+function storesuite_is_page( $endpoint ) {
 	if ( empty( $endpoint ) ) {
 		return false;
 	}
 
-	if ( ! is_msf_dashboard_page() ) {
+	if ( ! is_storesuite_dashboard_page() ) {
 		return false;
 	}
 

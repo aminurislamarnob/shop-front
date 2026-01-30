@@ -2,7 +2,7 @@
 /**
  * MSFC order details note
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( 0 !== $order_id ) {
 ?>
 <!-- Order Notes Section -->
 <div id="new_order_notes" class="msf-card">
-	<h3 class="msf-card-title"><?php esc_html_e( 'Order notes', 'shop-front' ); ?></h3>
+	<h3 class="msf-card-title"><?php esc_html_e( 'Order notes', 'storesuite' ); ?></h3>
 	<div class="msf-card-content">
 		<!-- Existing Notes -->
 		<ul class="existing-notes order_notes">
@@ -37,16 +37,16 @@ if ( 0 !== $order_id ) {
 							<abbr class="exact-date" title="<?php echo esc_attr( $note->date_created->date( 'Y-m-d H:i:s' ) ); ?>">
 							<?php
 							/* translators: %1$s: note date %2$s: note time */
-							echo esc_html( sprintf( __( '%1$s at %2$s', 'shop-front' ), $note->date_created->date_i18n( wc_date_format() ), $note->date_created->date_i18n( wc_time_format() ) ) );
+							echo esc_html( sprintf( __( '%1$s at %2$s', 'storesuite' ), $note->date_created->date_i18n( wc_date_format() ), $note->date_created->date_i18n( wc_time_format() ) ) );
 							?>
 							</abbr>
 							<?php
 							if ( 'system' !== $note->added_by ) :
 								/* translators: %s: note author */
-								echo esc_html( sprintf( ' ' . __( 'by %s', 'shop-front' ), $note->added_by ) );
+								echo esc_html( sprintf( ' ' . __( 'by %s', 'storesuite' ), $note->added_by ) );
 							endif;
 							?>
-							<a href="#" class="delete_note" role="button"><?php esc_html_e( 'Delete note', 'shop-front' ); ?></a>
+							<a href="#" class="delete_note" role="button"><?php esc_html_e( 'Delete note', 'storesuite' ); ?></a>
 						</p>
 					</li>
 					<?php
@@ -55,7 +55,7 @@ if ( 0 !== $order_id ) {
 			?>
 				<li class="note no-items">
 					<div class="note_content">
-						<p><?php esc_html_e( 'There are no notes yet.', 'shop-front' ); ?></p>
+						<p><?php esc_html_e( 'There are no notes yet.', 'storesuite' ); ?></p>
 					</div>
 				</li>
 				<?php
@@ -66,20 +66,20 @@ if ( 0 !== $order_id ) {
 		<!-- Add Note Section -->
 		<div class="add-note-section">
 			<div class="add-note-header">
-				<h4 class="add-note-title"><?php esc_html_e( 'Add Note', 'shop-front' ); ?></h4>
+				<h4 class="add-note-title"><?php esc_html_e( 'Add Note', 'storesuite' ); ?></h4>
 			</div>
 			<div class="msf-form-group">
-				<textarea id="add_order_note" class="msf-form-control note-textarea" placeholder="<?php echo esc_attr__( 'Enter your note here...', 'shop-front' ); ?>" rows="4"></textarea>
-				<small><?php esc_html_e( 'Add a note for your reference, or add a customer note (the user will be notified).', 'shop-front' ); ?></small>
+				<textarea id="add_order_note" class="msf-form-control note-textarea" placeholder="<?php echo esc_attr__( 'Enter your note here...', 'storesuite' ); ?>" rows="4"></textarea>
+				<small><?php esc_html_e( 'Add a note for your reference, or add a customer note (the user will be notified).', 'storesuite' ); ?></small>
 			</div>
 			<div class="note-options">
 				<div class="msf-form-group">
 					<select class="msf-form-control" id="order_note_type">
-						<option><?php esc_html_e( 'Internal note', 'shop-front' ); ?></option>
-						<option value="customer"><?php esc_html_e( 'Note to customer', 'shop-front' ); ?></option>
+						<option><?php esc_html_e( 'Internal note', 'storesuite' ); ?></option>
+						<option value="customer"><?php esc_html_e( 'Note to customer', 'storesuite' ); ?></option>
 					</select>
 				</div>
-				<button type="button" class="add-note add-note-btn"><?php esc_html_e( 'Add', 'shop-front' ); ?></button>
+				<button type="button" class="add-note add-note-btn"><?php esc_html_e( 'Add', 'storesuite' ); ?></button>
 			</div>
 		</div>
 	</div>

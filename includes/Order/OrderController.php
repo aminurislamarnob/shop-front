@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Order;
+namespace PluginizeLab\StoreSuite\Order;
 
 /**
  * Plugin order controller class
@@ -11,13 +11,13 @@ class OrderController {
 	 * The constructor.
 	 */
 	public function __construct() {
-		add_action( 'msf_dashboard_order_form', array( $this, 'load_order_add_form' ) );
-		add_action( 'msf_dashboard_order_edit_form', array( $this, 'load_order_edit_form' ) );
-		add_action( 'wp_ajax_msfc_add_order_note', array( $this, 'handle_add_order_note' ) );
-		add_action( 'wp_ajax_msfc_delete_order_note', array( $this, 'handle_delete_order_note' ) );
-		add_action( 'wp_ajax_msfc_add_shipping_to_order', array( $this, 'msfc_add_shipping_to_order' ) );
-		add_action( 'wp_ajax_msfc_set_customer_to_order', array( $this, 'msfc_set_customer_to_order' ) );
-		add_action( 'wp_ajax_msfc_create_order', array( $this, 'msfc_create_order' ) );
+		add_action( 'storesuite_dashboard_order_form', array( $this, 'load_order_add_form' ) );
+		add_action( 'storesuite_dashboard_order_edit_form', array( $this, 'load_order_edit_form' ) );
+		add_action( 'wp_ajax_storesuite_add_order_note', array( $this, 'handle_add_order_note' ) );
+		add_action( 'wp_ajax_storesuite_delete_order_note', array( $this, 'handle_delete_order_note' ) );
+		add_action( 'wp_ajax_storesuite_add_shipping_to_order', array( $this, 'storesuite_add_shipping_to_order' ) );
+		add_action( 'wp_ajax_storesuite_set_customer_to_order', array( $this, 'storesuite_set_customer_to_order' ) );
+		add_action( 'wp_ajax_storesuite_create_order', array( $this, 'storesuite_create_order' ) );
 		add_action( 'template_redirect', array( $this, 'handle_order_bulk_actions' ) );
 	}
 
@@ -29,7 +29,7 @@ class OrderController {
 			'context' => 'add',
 		);
 
-		msf_get_template_part( 'orders/order-form', '', $template_args );
+		storesuite_get_template_part( 'orders/order-form', '', $template_args );
 	}
 
 	public function load_order_edit_form( $query_vars ) {
@@ -54,7 +54,7 @@ class OrderController {
 			'context' => 'edit',
 		);
 
-		msf_get_template_part( 'orders/order-form', '', $template_args );
+		storesuite_get_template_part( 'orders/order-form', '', $template_args );
 	}
 
 	/**
@@ -63,13 +63,13 @@ class OrderController {
 	public function handle_add_order_note() {
 
 		// Verify the nonce.
-		if ( ! isset( $_POST['msfc_add_order_note_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_add_order_note_nonce'] ), '_msfc_add_order_note_' ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		if ( ! isset( $_POST['storesuite_add_order_note_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_add_order_note_nonce'] ), '_storesuite_add_order_note_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
 		// Check user permissions.
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
 		}
 
 		// Validate inputs.
@@ -79,7 +79,7 @@ class OrderController {
 		$is_customer_note = ( 'customer' === $note_type ) ? 1 : 0;
 
 		if ( empty( $order_note ) ) {
-			wp_send_json_error( array( 'error' => __( 'Order note is required', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Order note is required', 'storesuite' ) ) );
 		}
 
 		if ( $order_id > 0 ) {
@@ -124,7 +124,7 @@ class OrderController {
 			// Send JSON success with the HTML.
 			wp_send_json_success(
 				array(
-					'message'   => __( 'Order note successfully created', 'shop-front' ),
+					'message'   => __( 'Order note successfully created', 'storesuite' ),
 					'note_id'   => absint( $note->id ),
 					'note_html' => $note_html,
 				)
@@ -137,12 +137,12 @@ class OrderController {
 	 */
 	public static function handle_delete_order_note() {
 		// Verify the nonce.
-		if ( ! isset( $_POST['msfc_delete_order_note_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['msfc_delete_order_note_nonce'] ), '_msfc_delete_nonce_' ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'shop-front' ) ) );
+		if ( ! isset( $_POST['storesuite_delete_order_note_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['storesuite_delete_order_note_nonce'] ), '_storesuite_delete_nonce_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed', 'storesuite' ) ) );
 		}
 
 		if ( ! current_user_can( 'manage_woocommerce' ) || ! isset( $_POST['note_id'] ) ) {
-			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
 		}
 
 		$note_id = (int) $_POST['note_id'];
@@ -153,16 +153,16 @@ class OrderController {
 		}
 
 		if ( ! $is_deleted ) {
-			wp_send_json_error( array( 'error' => __( 'Failed to delete brand', 'shop-front' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Failed to delete brand', 'storesuite' ) ) );
 		} else {
-			wp_send_json_success( array( 'message' => __( 'Note successfully deleted', 'shop-front' ) ) );
+			wp_send_json_success( array( 'message' => __( 'Note successfully deleted', 'storesuite' ) ) );
 		}
 	}
 
 	/**
 	 * Add shipping to order
 	 */
-	public function msfc_add_shipping_to_order() {
+	public function storesuite_add_shipping_to_order() {
 		// Verify nonce
 		check_ajax_referer( 'order-item', 'security' );
 
@@ -180,7 +180,7 @@ class OrderController {
 				throw new \Exception( __( 'Invalid order', 'woocommerce' ) );
 			}
 
-			$shipping_method_title = isset( $_POST['shipping_method_title'] ) ? sanitize_text_field( $_POST['shipping_method_title'] ) : __( 'Shipping', 'shop-front' );
+			$shipping_method_title = isset( $_POST['shipping_method_title'] ) ? sanitize_text_field( $_POST['shipping_method_title'] ) : __( 'Shipping', 'storesuite' );
 			$shipping_method_id    = isset( $_POST['shipping_method'] ) ? sanitize_text_field( $_POST['shipping_method'] ) : '';
 			$shipping_cost         = isset( $_POST['shipping_cost'] ) ? floatval( $_POST['shipping_cost'] ) : 0;
 
@@ -209,7 +209,7 @@ class OrderController {
 	/**
 	 * Handle the AJAX request for setting a customer to an order.
 	 */
-	public function msfc_set_customer_to_order() {
+	public function storesuite_set_customer_to_order() {
 		// Verify nonce
 		check_ajax_referer( 'order-item', 'security' );
 
@@ -249,7 +249,7 @@ class OrderController {
 	/**
 	 * Handle the AJAX request for creating a new order.
 	 */
-	public function msfc_create_order() {
+	public function storesuite_create_order() {
 		// Verify nonce
 		check_ajax_referer( 'order-item', 'security' );
 
@@ -430,25 +430,25 @@ class OrderController {
 	 */
 	public function handle_order_bulk_actions() {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		if ( ! isset( $_POST['msf_bulk_action_nonce'] ) ) {
+		if ( ! isset( $_POST['storesuite_bulk_action_nonce'] ) ) {
 			return;
 		}
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		if ( ! wp_verify_nonce( wp_unslash( $_POST['msf_bulk_action_nonce'] ), 'msf_order_bulk_action' ) ) {
-			wp_safe_redirect( msfc_get_navigation_url( 'orders' ) );
+		if ( ! wp_verify_nonce( wp_unslash( $_POST['storesuite_bulk_action_nonce'] ), 'storesuite_order_bulk_action' ) ) {
+			wp_safe_redirect( storesuite_get_navigation_url( 'orders' ) );
 			exit;
 		}
 
 		if ( ! isset( $_POST['bulk_order_ids'] ) || empty( $_POST['bulk_order_ids'] ) ) {
-			wp_safe_redirect( msfc_get_navigation_url( 'orders' ) );
+			wp_safe_redirect( storesuite_get_navigation_url( 'orders' ) );
 			exit;
 		}
 
 		$action = isset( $_POST['action'] ) ? sanitize_text_field( wp_unslash( $_POST['action'] ) ) : '';
 
 		if ( '-1' === $action || empty( $action ) ) {
-			wp_safe_redirect( msfc_get_navigation_url( 'orders' ) );
+			wp_safe_redirect( storesuite_get_navigation_url( 'orders' ) );
 			exit;
 		}
 
@@ -480,7 +480,7 @@ class OrderController {
 		}
 
 		// Redirect back.
-		wp_safe_redirect( msfc_get_navigation_url( 'orders' ) );
+		wp_safe_redirect( storesuite_get_navigation_url( 'orders' ) );
 		exit;
 	}
 }

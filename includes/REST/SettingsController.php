@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\REST;
+namespace PluginizeLab\StoreSuite\REST;
 
 use WP_REST_Controller;
 use WP_REST_Server;
@@ -30,7 +30,7 @@ class SettingsController extends WP_REST_Controller {
 	 * Sets the namespace and rest base for the controller.
 	 */
 	public function __construct() {
-		$this->namespace = 'msf-shop-front/v1';
+		$this->namespace = 'storesuite/v1';
 		$this->rest_base = 'settings';
 	}
 
@@ -67,7 +67,7 @@ class SettingsController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error The response or error object.
 	 */
 	public function get_settings( $request ) {
-		$settings = get_option( 'msf_settings', array() );
+		$settings = get_option( 'storesuite_settings', array() );
 
 		return rest_ensure_response( $settings );
 	}
@@ -79,17 +79,17 @@ class SettingsController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error The response or error object.
 	 */
 	public function update_settings( $request ) {
-		$msf_settings = get_option( 'msf_settings', array() );
+		$storesuite_settings = get_option( 'storesuite_settings', array() );
 
-		if ( $request->has_param( 'msf_dashboard_page_id' ) ) {
-			$msf_settings['msf_dashboard_page_id'] = sanitize_text_field( $request->get_param( 'msf_dashboard_page_id' ) );
+		if ( $request->has_param( 'storesuite_dashboard_page_id' ) ) {
+			$storesuite_settings['storesuite_dashboard_page_id'] = sanitize_text_field( $request->get_param( 'storesuite_dashboard_page_id' ) );
 		}
 
-		if ( $request->has_param( 'msf_product_per_page' ) ) {
-			$msf_settings['msf_product_per_page'] = sanitize_text_field( $request->get_param( 'msf_product_per_page' ) );
+		if ( $request->has_param( 'storesuite_product_per_page' ) ) {
+			$storesuite_settings['storesuite_product_per_page'] = sanitize_text_field( $request->get_param( 'storesuite_product_per_page' ) );
 		}
 
-		update_option( 'msf_settings', $msf_settings );
+		update_option( 'storesuite_settings', $storesuite_settings );
 
 		return $this->get_settings( $request );
 	}
@@ -125,13 +125,13 @@ class SettingsController extends WP_REST_Controller {
 			'title'      => 'settings',
 			'type'       => 'object',
 			'properties' => array(
-				'msf_dashboard_page_id' => array(
-					'description' => __( 'Dashboard Page.', 'shop-front' ),
+				'storesuite_dashboard_page_id' => array(
+					'description' => __( 'Dashboard Page.', 'storesuite' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'msf_product_per_page'  => array(
-					'description' => __( 'Products Per Page.', 'shop-front' ),
+				'storesuite_product_per_page'  => array(
+					'description' => __( 'Products Per Page.', 'storesuite' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),

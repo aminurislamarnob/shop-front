@@ -2,7 +2,7 @@
 /**
  * MSFC product add/edit form
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -119,9 +119,9 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 		$global_unique_id = $product->get_global_unique_id( 'edit' );
 	}
 }
-$product_types    = apply_filters( 'msf_product_types', array( 'simple' => __( 'Simple', 'shop-front' ) ) );
-$product_statuses = apply_filters( 'msf_product_statuses', array( 'publish' => __( 'Simple', 'shop-front' ) ) );
-$product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_brands();
+$product_types    = apply_filters( 'storesuite_product_types', array( 'simple' => __( 'Simple', 'storesuite' ) ) );
+$product_statuses = apply_filters( 'storesuite_product_statuses', array( 'publish' => __( 'Simple', 'storesuite' ) ) );
+$product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_product_brands();
 ?>
 <form id="msfc-add-product" method="POST">
 		<div class="row">
@@ -134,16 +134,16 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 					</div>
 					<div class="msf-form-group">
 						<label for="product_slug">
-							<?php esc_html_e( 'Product Slug', 'shop-front' ); ?>
+							<?php esc_html_e( 'Product Slug', 'storesuite' ); ?>
 							<?php if ( $is_edit_mode && $product ) : ?>
 								<?php
 								$product_permalink = get_permalink( $product_id );
 								?>
-								<small>(<?php esc_html_e( 'Permalink: ', 'shop-front' ); ?><a href="<?php echo esc_url( $product_permalink ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $product_permalink ); ?></a>)</small>
+								<small>(<?php esc_html_e( 'Permalink: ', 'storesuite' ); ?><a href="<?php echo esc_url( $product_permalink ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $product_permalink ); ?></a>)</small>
 							<?php endif; ?>
 						</label>
-						<input type="text" class="msf-form-control" id="product_slug" name="product_slug" placeholder="<?php echo esc_attr__( 'Product slug', 'shop-front' ); ?>" value="<?php echo esc_attr( $product_slug ); ?>">
-						<small class="msf-form-text"><?php esc_html_e( 'It is usually all lowercase and contains only letters, numbers, and hyphens.', 'shop-front' ); ?></small>
+						<input type="text" class="msf-form-control" id="product_slug" name="product_slug" placeholder="<?php echo esc_attr__( 'Product slug', 'storesuite' ); ?>" value="<?php echo esc_attr( $product_slug ); ?>">
+						<small class="msf-form-text"><?php esc_html_e( 'It is usually all lowercase and contains only letters, numbers, and hyphens.', 'storesuite' ); ?></small>
 					</div>
 					<div class="msf-form-group">
 						<label for="product_description"><?php esc_html_e( 'Product Description', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></strong></label>
@@ -184,7 +184,7 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 									<div id="product-single-image" class="image-drop-container<?php echo esc_attr( $thumbnail_id ? ' image-drop-bg' : '' ); ?>">
 										<div id="product_thumb_img" class="preview-image">
 											<?php if ( $thumbnail_url ) : ?>
-												<img src="<?php echo esc_url( $thumbnail_url ); ?>" alt="<?php esc_attr_e( 'Product thumbnail', 'shop-front' ); ?>">
+												<img src="<?php echo esc_url( $thumbnail_url ); ?>" alt="<?php esc_attr_e( 'Product thumbnail', 'storesuite' ); ?>">
 											<?php endif; ?>
 										</div> 
 										<div class="image-drop-text">
@@ -223,8 +223,8 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 													<?php $gallery_url = wp_get_attachment_image_url( $gallery_id, 'thumbnail' ); ?>
 													<?php if ( $gallery_url ) : ?>
 														<div class="preview-image-box">
-															<a href="#" class="remove-gallery-image" data-id="<?php echo esc_attr( $gallery_id ); ?>"><?php esc_html_e( '×', 'shop-front' ); ?></a>
-															<img src="<?php echo esc_url( $gallery_url ); ?>" alt="<?php esc_attr_e( 'Gallery image', 'shop-front' ); ?>">
+															<a href="#" class="remove-gallery-image" data-id="<?php echo esc_attr( $gallery_id ); ?>"><?php esc_html_e( '×', 'storesuite' ); ?></a>
+															<img src="<?php echo esc_url( $gallery_url ); ?>" alt="<?php esc_attr_e( 'Gallery image', 'storesuite' ); ?>">
 														</div>
 													<?php endif; ?>
 												<?php endforeach; ?>
@@ -275,7 +275,7 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 					</div>
 				</div>
 				<div class="msf-card msf-card-with-header msf-mb-24">
-					<h3 class="msf-card-title"><?php esc_html_e( 'Pricing', 'shop-front' ); ?></h3>
+					<h3 class="msf-card-title"><?php esc_html_e( 'Pricing', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="row">
 							<div class="col-md-6">
@@ -318,7 +318,7 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 					</div>
 				</div>
 				<div class="msf-card msf-card-with-header msf-mb-24">
-					<h3 class="msf-card-title"><?php esc_html_e( 'Inventory', 'shop-front' ); ?></h3>
+					<h3 class="msf-card-title"><?php esc_html_e( 'Inventory', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="row">
 							<div class="col-md-6">
@@ -385,7 +385,7 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 					</div>
 				</div>
 				<div class="msf-card msf-card-with-header msf-mb-24">
-					<h3 class="msf-card-title"><?php esc_html_e( 'Shipping', 'shop-front' ); ?></h3>
+					<h3 class="msf-card-title"><?php esc_html_e( 'Shipping', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="row">
 							<div class="col-md-4">
@@ -432,7 +432,7 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 					</div>
 				</div>
 				<div class="msf-card msf-card-with-header msf-mb-24">
-					<h3 class="msf-card-title"><?php esc_html_e( 'Linked Products', 'shop-front' ); ?></h3>
+					<h3 class="msf-card-title"><?php esc_html_e( 'Linked Products', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="row">
 							<div class="col-md-6">
@@ -477,7 +477,7 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 					</div>
 				</div>
 				<div class="msf-card msf-card-with-header msf-mb-24">
-					<h3 class="msf-card-title"><?php esc_html_e( 'Others', 'shop-front' ); ?></h3>
+					<h3 class="msf-card-title"><?php esc_html_e( 'Others', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="row">
 							<div class="col-md-6">
@@ -515,7 +515,7 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 			</div>
 			<div class="col-md-4">
 				<div class="msf-card msf-card-with-header">
-					<h3 class="msf-card-title"><?php esc_html_e( 'General Informations', 'shop-front' ); ?></h3>
+					<h3 class="msf-card-title"><?php esc_html_e( 'General Informations', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="msf-form-group">
 							<label for="post_type"><?php esc_html_e( 'Type', 'msfc-wfm' ); ?> <span class="req"><?php esc_html_e( '*', 'msfc-wfm' ); ?></span></label>
@@ -576,18 +576,18 @@ $product_brands   = pluginizelab_shop_front()->msf_product_brands->get_product_b
 				</div>
 				<div class="form-group">
 					<?php if ( $is_edit_mode ) : ?>
-						<?php wp_nonce_field( '_msfc_edit_product_', 'msfc_edit_product_nonce' ); ?>
+						<?php wp_nonce_field( '_storesuite_edit_product_', 'storesuite_edit_product_nonce' ); ?>
 						<input type="hidden" name="product_id" value="<?php echo esc_attr( $product_id ); ?>">
-						<input type="hidden" name="action" value="msfc_edit_product_action">
+						<input type="hidden" name="action" value="storesuite_edit_product_action">
 					<?php else : ?>
-						<?php wp_nonce_field( '_msfc_add_product_', 'msfc_add_product_nonce' ); ?>
-						<input type="hidden" name="action" value="msfc_add_product_action">
+						<?php wp_nonce_field( '_storesuite_add_product_', 'storesuite_add_product_nonce' ); ?>
+						<input type="hidden" name="action" value="storesuite_add_product_action">
 					<?php endif; ?>
 					<div class="msf-button-group">
-						<button class="my-shop-front-button" name="save_product" type="submit">
-							<?php echo $is_edit_mode ? esc_html__( 'Update Product', 'shop-front' ) : esc_html__( 'Add Product', 'shop-front' ); ?>
+						<button class="my-storesuite-button" name="save_product" type="submit">
+							<?php echo $is_edit_mode ? esc_html__( 'Update Product', 'storesuite' ) : esc_html__( 'Add Product', 'storesuite' ); ?>
 						</button>
-						<a href="<?php echo esc_url( msfc_get_navigation_url( 'products' ) ); ?>" class="my-shop-front-button my-shop-front-button-light"><?php esc_html_e( 'Back', 'shop-front' ); ?></a>
+						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'products' ) ); ?>" class="my-storesuite-button my-storesuite-button-light"><?php esc_html_e( 'Back', 'storesuite' ); ?></a>
 					</div>
 				</div>
 			</div>

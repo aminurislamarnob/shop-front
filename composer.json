@@ -1,17 +1,17 @@
 {
-    "name": "pluginizelab/shop-front",
+    "name": "pluginizelab/storesuite",
     "description": "This plugin enable frontend store management system for WooCommerce simple type product.",
     "license": "GPL2",
     "autoload": {
         "psr-4": {
-            "PluginizeLab\\ShopFront\\": "includes/"
+            "PluginizeLab\\StoreSuite\\": "includes/"
         }
     },
     "authors": [
         {
             "name": "Aminur Islam Arnob",
             "email": "contact@pluginizelab.dev",
-            "homepage": "https://wordpress.org/plugins/shop-front/"
+            "homepage": "https://wordpress.org/plugins/storesuite/"
         }
     ],
     "minimum-stability": "dev",

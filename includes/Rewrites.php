@@ -1,5 +1,5 @@
 <?php
-namespace PluginizeLab\ShopFront;
+namespace PluginizeLab\StoreSuite;
 
 class Rewrites {
 	/**
@@ -20,7 +20,7 @@ class Rewrites {
 	 * Hook into the functions
 	 */
 	public function __construct() {
-		$this->store_front_base = 'my-shop-dashboard'; // need to set dynamically from options table.
+		$this->store_front_base = 'storesuite-dashboard'; // need to set dynamically from options table.
 		add_action( 'init', array( $this, 'add_endpoints' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ), 0 );
 		add_filter( 'woocommerce_get_query_vars', array( $this, 'resolve_wocommerce_my_acc_query_conflict' ) );
@@ -34,27 +34,27 @@ class Rewrites {
 	public function init_query_vars() {
 		// Query vars to add to WP.
 		$this->query_vars = apply_filters(
-			'my_shop_front_query_var_filter',
+			'storesuite_query_var_filter',
 			array(
-				'products'         => get_option( 'msf_myshop_products_endpoint', 'products' ),
-				'add-new-product'  => get_option( 'msf_myshop_new_product_endpoint', 'add-new-product' ),
-				'edit-product'     => get_option( 'msf_myshop_edit_product_endpoint', 'edit-product' ),
-				'orders'           => get_option( 'msf_myshop_orders_endpoint', 'orders' ),
-				'add-new-order'    => get_option( 'msf_myshop_new_order_endpoint', 'add-new-order' ),
-				'edit-order'       => get_option( 'msf_myshop_edit_order_endpoint', 'edit-order' ),
-				'order-details'    => get_option( 'msf_myshop_order_details_endpoint', 'order-details' ),
-				'categories'       => get_option( 'msf_myshop_categories_endpoint', 'categories' ),
-				'add-new-category' => get_option( 'msf_myshop_new_category_endpoint', 'add-new-category' ),
-				'edit-category'    => get_option( 'msf_myshop_edit_category_endpoint', 'edit-category' ),
-				'tags'             => get_option( 'msf_myshop_tags_endpoint', 'tags' ),
-				'add-new-tag'      => get_option( 'msf_myshop_new_tag_endpoint', 'add-new-tag' ),
-				'edit-tag'         => get_option( 'msf_myshop_edit_tag_endpoint', 'edit-tag' ),
-				'brands'           => get_option( 'msf_myshop_brands_endpoint', 'brands' ),
-				'add-new-brand'    => get_option( 'msf_myshop_new_brand_endpoint', 'add-new-brand' ),
-				'edit-brand'       => get_option( 'msf_myshop_edit_brand_endpoint', 'edit-brand' ),
-				'coupons'          => get_option( 'msf_myshop_coupons_endpoint', 'coupons' ),
-				'add-new-coupon'   => get_option( 'msf_myshop_new_coupon_endpoint', 'add-new-coupon' ),
-				'edit-coupon'      => get_option( 'msf_myshop_edit_coupon_endpoint', 'edit-coupon' ),
+				'products'         => get_option( 'storesuite_myshop_products_endpoint', 'products' ),
+				'add-new-product'  => get_option( 'storesuite_myshop_new_product_endpoint', 'add-new-product' ),
+				'edit-product'     => get_option( 'storesuite_myshop_edit_product_endpoint', 'edit-product' ),
+				'orders'           => get_option( 'storesuite_myshop_orders_endpoint', 'orders' ),
+				'add-new-order'    => get_option( 'storesuite_myshop_new_order_endpoint', 'add-new-order' ),
+				'edit-order'       => get_option( 'storesuite_myshop_edit_order_endpoint', 'edit-order' ),
+				'order-details'    => get_option( 'storesuite_myshop_order_details_endpoint', 'order-details' ),
+				'categories'       => get_option( 'storesuite_myshop_categories_endpoint', 'categories' ),
+				'add-new-category' => get_option( 'storesuite_myshop_new_category_endpoint', 'add-new-category' ),
+				'edit-category'    => get_option( 'storesuite_myshop_edit_category_endpoint', 'edit-category' ),
+				'tags'             => get_option( 'storesuite_myshop_tags_endpoint', 'tags' ),
+				'add-new-tag'      => get_option( 'storesuite_myshop_new_tag_endpoint', 'add-new-tag' ),
+				'edit-tag'         => get_option( 'storesuite_myshop_edit_tag_endpoint', 'edit-tag' ),
+				'brands'           => get_option( 'storesuite_myshop_brands_endpoint', 'brands' ),
+				'add-new-brand'    => get_option( 'storesuite_myshop_new_brand_endpoint', 'add-new-brand' ),
+				'edit-brand'       => get_option( 'storesuite_myshop_edit_brand_endpoint', 'edit-brand' ),
+				'coupons'          => get_option( 'storesuite_myshop_coupons_endpoint', 'coupons' ),
+				'add-new-coupon'   => get_option( 'storesuite_myshop_new_coupon_endpoint', 'add-new-coupon' ),
+				'edit-coupon'      => get_option( 'storesuite_myshop_edit_coupon_endpoint', 'edit-coupon' ),
 			)
 		);
 	}
@@ -69,9 +69,9 @@ class Rewrites {
 	public function resolve_wocommerce_my_acc_query_conflict( $query_vars ) {
 		global $post;
 
-		$dashboard_id = apply_filters( 'msf_get_dashboard_page_id', Helper::msfc_get_page_id( 'myshopdashboard' ) );
+		$dashboard_id = apply_filters( 'storesuite_get_dashboard_page_id', Helper::storesuite_get_page_id( 'myshopdashboard' ) );
 
-		if ( ! empty( $post->ID ) && apply_filters( 'msf_get_current_page_id', $post->ID ) === absint( $dashboard_id ) ) {
+		if ( ! empty( $post->ID ) && apply_filters( 'storesuite_get_current_page_id', $post->ID ) === absint( $dashboard_id ) ) {
 			unset( $query_vars['orders'] );
 		}
 
@@ -158,63 +158,63 @@ class Rewrites {
 
 		switch ( $endpoint ) {
 			case 'products':
-				$title = __( 'All Products', 'shop-front' );
+				$title = __( 'All Products', 'storesuite' );
 				break;
 			case 'add-new-product':
-				$title = __( 'Add New Product', 'shop-front' );
+				$title = __( 'Add New Product', 'storesuite' );
 				break;
 			case 'edit-product':
-				$title = __( 'Edit Product', 'shop-front' );
+				$title = __( 'Edit Product', 'storesuite' );
 				break;
 			case 'orders':
-				$title = __( 'Orders', 'shop-front' );
+				$title = __( 'Orders', 'storesuite' );
 				break;
 			case 'add-new-order':
-				$title = __( 'Add New Order', 'shop-front' );
+				$title = __( 'Add New Order', 'storesuite' );
 				break;
 			case 'edit-order':
-				$title = __( 'Edit Order', 'shop-front' );
+				$title = __( 'Edit Order', 'storesuite' );
 				break;
 			case 'order-details':
 				$order = wc_get_order( $wp->query_vars['order-details'] );
 				/* translators: %s: order number */
-				$title = ( $order ) ? sprintf( __( 'Order #%s', 'shop-front' ), $order->get_order_number() ) : '';
+				$title = ( $order ) ? sprintf( __( 'Order #%s', 'storesuite' ), $order->get_order_number() ) : '';
 				break;
 			case 'categories':
-				$title = __( 'Product Categories', 'shop-front' );
+				$title = __( 'Product Categories', 'storesuite' );
 				break;
 			case 'add-new-category':
-				$title = __( 'Add New Category', 'shop-front' );
+				$title = __( 'Add New Category', 'storesuite' );
 				break;
 			case 'edit-category':
-				$title = __( 'Edit Product Category', 'shop-front' );
+				$title = __( 'Edit Product Category', 'storesuite' );
 				break;
 			case 'tags':
-				$title = __( 'Product Tags', 'shop-front' );
+				$title = __( 'Product Tags', 'storesuite' );
 				break;
 			case 'add-new-tag':
-				$title = __( 'Add New Tag', 'shop-front' );
+				$title = __( 'Add New Tag', 'storesuite' );
 				break;
 			case 'edit-tag':
-				$title = __( 'Edit Product Tag', 'shop-front' );
+				$title = __( 'Edit Product Tag', 'storesuite' );
 				break;
 			case 'brands':
-				$title = __( 'Product Brands', 'shop-front' );
+				$title = __( 'Product Brands', 'storesuite' );
 				break;
 			case 'add-new-brand':
-				$title = __( 'Add New Brand', 'shop-front' );
+				$title = __( 'Add New Brand', 'storesuite' );
 				break;
 			case 'edit-brand':
-				$title = __( 'Edit Product Brand', 'shop-front' );
+				$title = __( 'Edit Product Brand', 'storesuite' );
 				break;
 			case 'coupons':
-				$title = __( 'Coupons', 'shop-front' );
+				$title = __( 'Coupons', 'storesuite' );
 				break;
 			case 'add-new-coupon':
-				$title = __( 'Add New Coupon', 'shop-front' );
+				$title = __( 'Add New Coupon', 'storesuite' );
 				break;
 			case 'edit-coupon':
-				$title = __( 'Edit Coupon', 'shop-front' );
+				$title = __( 'Edit Coupon', 'storesuite' );
 				break;
 			default:
 				$title = '';
@@ -228,7 +228,7 @@ class Rewrites {
 		 * @param string $endpoint Endpoint key.
 		 * @param string $action Optional action or variation within the endpoint.
 		 */
-		return apply_filters( 'msf_endpoint_' . $endpoint . '_title', $title, $endpoint, $action );
+		return apply_filters( 'storesuite_endpoint_' . $endpoint . '_title', $title, $endpoint, $action );
 	}
 
 	/**

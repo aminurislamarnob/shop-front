@@ -1,5 +1,5 @@
 <?php
-namespace PluginizeLab\ShopFront;
+namespace PluginizeLab\StoreSuite;
 
 class Installer {
 
@@ -15,8 +15,8 @@ class Installer {
 	 * @return array
 	 */
 	public function add_display_post_states( $post_states, $post ) {
-		if ( Helper::msfc_get_page_id( 'myshopdashboard' ) === $post->ID ) {
-			$post_states['msf_page_for_dashboard'] = __( 'My Shop Dashboard Page', 'shop-front' );
+		if ( Helper::storesuite_get_page_id( 'myshopdashboard' ) === $post->ID ) {
+			$post_states['storesuite_page_for_dashboard'] = __( 'StoreSuite Dashboard Page', 'storesuite' );
 		}
 		return $post_states;
 	}
@@ -27,26 +27,26 @@ class Installer {
 	 * @return void
 	 */
 	public static function create_plugin_page() {
-		$my_shop_front_dashboard_shortcode = apply_filters( 'my_shop_front_dashboard_shortcode_tag', 'my_shop_front_dashboard' );
+		$storesuite_dashboard_shortcode = apply_filters( 'storesuite_dashboard_shortcode_tag', 'storesuite_dashboard' );
 
 		/**
 		 * Determines which pages are created during install.
 		 */
 		$pages = apply_filters(
-			'my_shop_front_create_pages',
+			'storesuite_create_pages',
 			array(
 				'myshopdashboard' => array(
-					'name'    => _x( 'my-shop-dashboard', 'Page slug', 'shop-front' ),
-					'title'   => _x( 'My Shop Dashboard', 'Page title', 'shop-front' ),
-					'content' => '<!-- wp:shortcode -->[' . $my_shop_front_dashboard_shortcode . ']<!-- /wp:shortcode -->',
+					'name'    => _x( 'storesuite-dashboard', 'Page slug', 'storesuite' ),
+					'title'   => _x( 'StoreSuite Dashboard', 'Page title', 'storesuite' ),
+					'content' => '<!-- wp:shortcode -->[' . $storesuite_dashboard_shortcode . ']<!-- /wp:shortcode -->',
 				),
 			)
 		);
 
 		foreach ( $pages as $key => $page ) {
-			self::msf_create_page(
+			self::storesuite_create_page(
 				esc_sql( $page['name'] ),
-				'my_shop_front_' . $key . '_page_id',
+				'storesuite_' . $key . '_page_id',
 				$page['title'],
 				$page['content'],
 				! empty( $page['parent'] ) ? wc_get_page_id( $page['parent'] ) : '',
@@ -66,7 +66,7 @@ class Installer {
 	 * @param string $post_status (default: publish) The post status of the new page.
 	 * @return int page ID.
 	 */
-	public static function msf_create_page( $slug, $option = '', $page_title = '', $page_content = '', $post_parent = 0, $post_status = 'publish' ) {
+	public static function storesuite_create_page( $slug, $option = '', $page_title = '', $page_content = '', $post_parent = 0, $post_status = 'publish' ) {
 		global $wpdb;
 
 		$option_value = get_option( $option );
@@ -90,7 +90,7 @@ class Installer {
 		}
 
 		/* phpcs:disable */
-		$valid_page_found = apply_filters( 'my_shop_front_create_page_id', $valid_page_found, $slug, $page_content );
+		$valid_page_found = apply_filters( 'storesuite_create_page_id', $valid_page_found, $slug, $page_content );
 		/* phpcs: enable */
 
 		if ( $valid_page_found ) {
@@ -130,7 +130,7 @@ class Installer {
 			$page_id   = wp_insert_post( $page_data );
 
 			/* phpcs:disable */
-			do_action( 'my_shop_front_page_created', $page_id, $page_data );
+			do_action( 'storesuite_page_created', $page_id, $page_data );
 			/* phpcs: enable */
 		}
 

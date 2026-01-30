@@ -1,6 +1,6 @@
 <?php
 
-namespace PluginizeLab\ShopFront\Product;
+namespace PluginizeLab\StoreSuite\Product;
 
 /**
  * Plugin order controller class
@@ -10,8 +10,8 @@ class ProductHooks {
      * The constructor.
      */
     public function __construct() {
-		add_filter( 'msf_product_types', array( $this, 'set_product_types' ), 10 );
-		add_filter( 'msf_product_statuses', array( $this, 'set_product_statuses' ), 10 );
+		add_filter( 'storesuite_product_types', array( $this, 'set_product_types' ), 10 );
+		add_filter( 'storesuite_product_statuses', array( $this, 'set_product_statuses' ), 10 );
 	}
 
 	/**

@@ -7,7 +7,7 @@ set -e
 cd "$(dirname "$0")"
 cd ..
 DIR=$(pwd)
-BUILD_DIR="$DIR/build/my-shop-front"
+BUILD_DIR="$DIR/build/my-storesuite"
 
 # Enable nicer messaging for build status.
 BLUE_BOLD='\033[1;34m'
@@ -43,7 +43,7 @@ status "Generating build... 👷‍♀️"
 
 # Copy all files
 status "Copying files... ✌️"
-FILES=(my-shop-front.php readme.txt dist includes templates assets languages composer.json composer.lock)
+FILES=(my-storesuite.php readme.txt dist includes templates assets languages composer.json composer.lock)
 
 for file in ${FILES[@]}; do
     if [ -f "$file" ] || [ -d "$file" ]; then
@@ -62,10 +62,10 @@ rm composer.json composer.lock
 # go one up, to the build dir
 status "Creating archive... 🎁"
 cd ..
-zip -r -q my-shop-front.zip my-shop-front
+zip -r -q my-storesuite.zip my-storesuite
 
 # remove the source directory
-rm -rf my-shop-front
+rm -rf my-storesuite
 
-success "Done. You've built My Shop Front! 🎉 "
-echo -e "\n${BLUE_BOLD}File Path${COLOR_RESET}: ${YELLOW_BOLD}$(pwd)/my-shop-front.zip${COLOR_RESET} \n"
+success "Done. You've built My StoreSuite! 🎉 "
+echo -e "\n${BLUE_BOLD}File Path${COLOR_RESET}: ${YELLOW_BOLD}$(pwd)/my-storesuite.zip${COLOR_RESET} \n"

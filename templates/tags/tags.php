@@ -2,25 +2,25 @@
 /**
  * MSFC tag List Page
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use PluginizeLab\ShopFront\ProductTag\Tags;
+use PluginizeLab\StoreSuite\ProductTag\Tags;
 
-do_action( 'msf_dashboard_wrapper_start' );
+do_action( 'storesuite_dashboard_wrapper_start' );
 ?>
-<div class="my-shop-front-container">
-	<aside class="my-shop-front-sidebar">
-		<?php do_action( 'msf_dashboard_navigation' ); ?>
+<div class="my-storesuite-container">
+	<aside class="my-storesuite-sidebar">
+		<?php do_action( 'storesuite_dashboard_navigation' ); ?>
 	</aside>
-	<div class="my-shop-front-wrapper">
-		<?php do_action( 'msf_dashboard_content_before' ); ?>
-		<main class="my-shop-front-page-content">
-			<?php do_action( 'msf_dashboard_before_main_content' ); ?>
+	<div class="my-storesuite-wrapper">
+		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
+		<main class="my-storesuite-page-content">
+			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="msf-table-header-part">
 				<div class="row">
 					<div class="col-md-6">
@@ -31,47 +31,47 @@ do_action( 'msf_dashboard_wrapper_start' );
 									<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 								</svg>
 							</div>
-							<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Tag', 'shop-front' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
+							<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Tag', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
 							</div>
 						</form>
 					</div>
 					<div class="col-md-6 text-right">
-						<a href="<?php echo esc_url( msfc_get_navigation_url( 'add-new-tag' ) ); ?>" class="my-shop-front-button">
+						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-tag' ) ); ?>" class="my-storesuite-button">
 							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
 							</svg>
-							<?php esc_html_e( 'Add Tag', 'shop-front' ); ?>
+							<?php esc_html_e( 'Add Tag', 'storesuite' ); ?>
 						</a>
 					</div>
 				</div>
 			</div>
 			<?php
 			$current_page  = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
-			$tags_per_page = apply_filters( 'msf_tags_per_page', 10 );
+			$tags_per_page = apply_filters( 'storesuite_tags_per_page', 10 );
 			$search_term   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
 			$product_tags  = new Tags();
 			$tags_data     = $product_tags->get_paginated_tags( $tags_per_page, $current_page, $search_term );
 			?>
 			<div class="msf-table-responsive">
-				<table class="my-shop-front-tbl my-shop-front-product-list-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table">
 					<thead>
 						<tr>
-							<th width="210"><?php echo esc_html__( 'Name', 'shop-front' ); ?></th>
-							<th><?php echo esc_html__( 'Description', 'shop-front' ); ?></th>
-							<th width="210"><?php echo esc_html__( 'Slug', 'shop-front' ); ?></th>
-							<th width="70"><?php echo esc_html__( 'Count', 'shop-front' ); ?></th>
-							<th class="text-right"><?php echo esc_html__( 'Action', 'shop-front' ); ?></th>
+							<th width="210"><?php echo esc_html__( 'Name', 'storesuite' ); ?></th>
+							<th><?php echo esc_html__( 'Description', 'storesuite' ); ?></th>
+							<th width="210"><?php echo esc_html__( 'Slug', 'storesuite' ); ?></th>
+							<th width="70"><?php echo esc_html__( 'Count', 'storesuite' ); ?></th>
+							<th class="text-right"><?php echo esc_html__( 'Action', 'storesuite' ); ?></th>
 						</tr>
 						<tbody>
 						<?php
 						if ( empty( $tags_data->tags ) ) {
 							echo '<tr id="tag-row-not-found"><td colspan="5">';
-							msf_get_template_part(
+							storesuite_get_template_part(
 								'not-found',
 								'',
 								array(
-									'title' => esc_html__( 'No tag found!', 'shop-front' ),
-									'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a tag.', 'shop-front' ),
+									'title' => esc_html__( 'No tag found!', 'storesuite' ),
+									'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a tag.', 'storesuite' ),
 								)
 							);
 							echo '</td></tr>';
@@ -83,7 +83,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 							<td><?php echo esc_html( wp_trim_words( $product_tag->description, '9', '...' ) ); ?></td>
 							<td><?php echo esc_html( $product_tag->slug ); ?></td>
 							<td><?php echo esc_html( $product_tag->count ); ?></td>
-							<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'shop-front' ); ?>">
+							<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
 								<div class="msfc-dropdown">
 									<span class="msfc-dropdown-icon">
 										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
@@ -93,15 +93,15 @@ do_action( 'msf_dashboard_wrapper_start' );
 									<ul class="msfc-dropdown-menu">
 										<li>
 											<a href="<?php echo esc_url( get_category_link( $product_tag->term_id ) ); ?>" class="dropdown-link">
-												<?php echo esc_html__( 'View', 'shop-front' ); ?>
+												<?php echo esc_html__( 'View', 'storesuite' ); ?>
 											</a>
 										</li>
 										<li>
-											<a href="<?php echo esc_url( sprintf( msfc_get_navigation_url( 'edit-tag' ) . '%s', $product_tag->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'shop-front' ); ?></a>
+											<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-tag' ) . '%s', $product_tag->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'storesuite' ); ?></a>
 										</li>
 										<li>
 											<button type="button" class="inline-button dropdown-link msfc-delete-tag" data-tag-id="<?php echo esc_attr( $product_tag->term_id ); ?>">
-												<?php echo esc_html__( 'Delete', 'shop-front' ); ?>
+												<?php echo esc_html__( 'Delete', 'storesuite' ); ?>
 											</button>
 										</li>
 									</ul>
@@ -117,7 +117,7 @@ do_action( 'msf_dashboard_wrapper_start' );
 				</table>
 				<?php
 				if ( $tags_data->max_num_pages > 1 ) {
-					msf_get_template_part(
+					storesuite_get_template_part(
 						'pagination',
 						'',
 						array(
@@ -133,4 +133,4 @@ do_action( 'msf_dashboard_wrapper_start' );
 		</main>
 	</div>
 </div>
-<?php do_action( 'msf_dashboard_wrapper_end' ); ?>
+<?php do_action( 'storesuite_dashboard_wrapper_end' ); ?>

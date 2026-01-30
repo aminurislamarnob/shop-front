@@ -2,7 +2,7 @@
 /**
  * Dashboard Logo Template
  *
- * @package ShopFront
+ * @package StoreSuite
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
