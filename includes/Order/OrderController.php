@@ -77,9 +77,9 @@ class OrderController {
 		}
 
 		// Validate inputs.
-		$order_id         = absint( $_POST['order_id'] );
-		$order_note       = wp_kses_post( trim( wp_unslash( $_POST['order_note'] ) ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$note_type        = sanitize_text_field( wp_unslash( $_POST['order_note_type'] ) );
+		$order_id         = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
+		$order_note       = isset( $_POST['order_note'] ) ? wp_kses_post( trim( wp_unslash( $_POST['order_note'] ) ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by wp_kses_post().
+		$note_type        = isset( $_POST['order_note_type'] ) ? sanitize_text_field( wp_unslash( $_POST['order_note_type'] ) ) : '';
 		$is_customer_note = ( 'customer' === $note_type ) ? 1 : 0;
 
 		if ( empty( $order_note ) ) {
@@ -184,8 +184,8 @@ class OrderController {
 				throw new \Exception( __( 'Invalid order', 'storesuite' ) );
 			}
 
-			$shipping_method_title = isset( $_POST['shipping_method_title'] ) ? sanitize_text_field( $_POST['shipping_method_title'] ) : __( 'Shipping', 'storesuite' );
-			$shipping_method_id    = isset( $_POST['shipping_method'] ) ? sanitize_text_field( $_POST['shipping_method'] ) : '';
+			$shipping_method_title = isset( $_POST['shipping_method_title'] ) ? sanitize_text_field( wp_unslash( $_POST['shipping_method_title'] ) ) : __( 'Shipping', 'storesuite' );
+			$shipping_method_id    = isset( $_POST['shipping_method'] ) ? sanitize_text_field( wp_unslash( $_POST['shipping_method'] ) ) : '';
 			$shipping_cost         = isset( $_POST['shipping_cost'] ) ? floatval( $_POST['shipping_cost'] ) : 0;
 
 			// Create shipping item
@@ -231,8 +231,8 @@ class OrderController {
 				throw new \Exception( __( 'Invalid order', 'storesuite' ) );
 			}
 
-			// Set customer id
-			if ( ! is_null( $_POST['customer_id'] ) ) {
+			// Set customer id.
+			if ( isset( $_POST['customer_id'] ) ) {
 				$order->set_customer_id( is_numeric( $_POST['customer_id'] ) ? absint( $_POST['customer_id'] ) : 0 );
 			}
 

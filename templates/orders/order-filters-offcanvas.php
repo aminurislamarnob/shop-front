@@ -9,13 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Get current filter values
+// Get current filter values.
+// phpcs:disable WordPress.Security.NonceVerification.Recommended
 $current_status        = isset( $_GET['order_status'] ) ? sanitize_text_field( wp_unslash( $_GET['order_status'] ) ) : '';
 $current_customer_user = isset( $_GET['_customer_user'] ) ? absint( wp_unslash( $_GET['_customer_user'] ) ) : 0;
 $current_channel       = isset( $_GET['order_channel'] ) ? sanitize_text_field( wp_unslash( $_GET['order_channel'] ) ) : '';
 $current_month         = isset( $_GET['m'] ) ? sanitize_text_field( wp_unslash( $_GET['m'] ) ) : '0';
+// phpcs:enable
 
-// Build WooCommerce-style month options
+// Build WooCommerce-style month options.
 $order_manager  = isset( $orders_obj ) ? $orders_obj : new \PluginizeLab\StoreSuite\Order\OrderManager();
 $months_options = method_exists( $order_manager, 'get_months_filter_options' ) ? $order_manager->get_months_filter_options() : array();
 global $wp_locale;

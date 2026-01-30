@@ -207,7 +207,6 @@ final class StoreSuite {
 	public function init_hooks() {
 		// initialize the classes.
 		add_action( 'init', array( $this, 'init_classes' ), 4 );
-		add_action( 'init', array( $this, 'init_plugin_textdomain' ), 4 );
 		add_action( 'plugins_loaded', array( $this, 'after_plugins_loaded' ) );
 	}
 
@@ -255,15 +254,6 @@ final class StoreSuite {
 		$this->container['storesuite_order_hooks']                 = new Order\OrderHooks();
 		$this->container['storesuite_coupon_controller']           = new Coupon\CouponController();
 		$this->container['storesuite_coupon_manager']              = new Coupon\CouponManager();
-	}
-
-	/**
-	 * Load the plugin text domain for translation
-	 *
-	 * @return void
-	 */
-	public function init_plugin_textdomain() {
-		load_plugin_textdomain( 'storesuite', false, STORESUITE_DIR . '/languages' );
 	}
 
 	/**

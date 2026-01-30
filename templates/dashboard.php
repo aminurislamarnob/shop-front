@@ -21,8 +21,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="msf-dashboard-title-wrapper">
 				<?php
-				$storesuite_dashboard_start = isset( $_GET['storesuite_dashboard_start'] ) ? sanitize_text_field( wp_unslash( $_GET['storesuite_dashboard_start'] ) ) : '';
-				$storesuite_dashboard_end   = isset( $_GET['storesuite_dashboard_end'] ) ? sanitize_text_field( wp_unslash( $_GET['storesuite_dashboard_end'] ) ) : '';
+				$storesuite_dashboard_start = isset( $_GET['storesuite_dashboard_start'] ) ? sanitize_text_field( wp_unslash( $_GET['storesuite_dashboard_start'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$storesuite_dashboard_end   = isset( $_GET['storesuite_dashboard_end'] ) ? sanitize_text_field( wp_unslash( $_GET['storesuite_dashboard_end'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$storesuite_dashboard_label = '';
 
 				if ( $storesuite_dashboard_start && $storesuite_dashboard_end ) {
@@ -31,10 +31,10 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 
 					if ( $start_ts && $end_ts ) {
 						if ( $end_ts < $start_ts ) {
-							$tmp                 = $start_ts;
-							$start_ts            = $end_ts;
-							$end_ts              = $tmp;
-							$tmp                 = $storesuite_dashboard_start;
+							$tmp                        = $start_ts;
+							$start_ts                   = $end_ts;
+							$end_ts                     = $tmp;
+							$tmp                        = $storesuite_dashboard_start;
 							$storesuite_dashboard_start = $storesuite_dashboard_end;
 							$storesuite_dashboard_end   = $tmp;
 						}

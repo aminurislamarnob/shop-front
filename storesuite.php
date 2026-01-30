@@ -8,10 +8,10 @@
  * Author URI: https://wordpress.org/plugins/storesuite/
  * Text Domain: storesuite
  * WC requires at least: 5.0.0
- * Domain Path: /languages/
  * Requires Plugins: woocommerce
  * License: GPL2
  */
+
 use PluginizeLab\StoreSuite\StoreSuite;
 
 // don't call the file directly

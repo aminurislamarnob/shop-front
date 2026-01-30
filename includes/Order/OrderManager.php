@@ -176,7 +176,8 @@ class OrderManager {
 	public function get_months_filter_options() {
 		global $wpdb;
 
-		$orders_table   = esc_sql( OrdersTableDataStore::get_orders_table_name() );
+		$orders_table = esc_sql( OrdersTableDataStore::get_orders_table_name() );
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name from WooCommerce core; cannot be a placeholder.
 		$min_max_months = $wpdb->get_row(
 			$wpdb->prepare(
 				"
@@ -190,6 +191,7 @@ class OrderManager {
 				OrderStatus::TRASH
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		// Normalize "this month" to first day in site timezone.
 		$this_month = new \WC_DateTime( 'now', new \DateTimeZone( 'UTC' ) );

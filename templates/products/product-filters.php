@@ -9,12 +9,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Get current filter values
+// Get current filter values.
+// phpcs:disable WordPress.Security.NonceVerification.Recommended
 $current_category = isset( $_GET['product_cat'] ) ? absint( $_GET['product_cat'] ) : '';
 $current_type     = isset( $_GET['product_type'] ) ? sanitize_text_field( wp_unslash( $_GET['product_type'] ) ) : '';
 $current_stock    = isset( $_GET['stock_status'] ) ? sanitize_text_field( wp_unslash( $_GET['stock_status'] ) ) : '';
 $current_brand    = isset( $_GET['product_brand'] ) ? absint( $_GET['product_brand'] ) : '';
 $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
+// phpcs:enable
 ?>
 
 <div class="msf-product-filters">

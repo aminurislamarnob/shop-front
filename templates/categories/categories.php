@@ -31,7 +31,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
-								<input type="text" name="search_by" id="search" placeholder="<?php esc_attr_e( 'Search Category', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
+								<input type="text" name="search_by" id="search" placeholder="<?php esc_attr_e( 'Search Category', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>" />
 							</div>
 						</form>
 					</div>
@@ -48,7 +48,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			<?php
 			$current_page        = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
 			$categories_per_page = apply_filters( 'storesuite_categories_per_page', 15 );
-			$search_term         = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
+			$search_term         = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$product_categories  = new Categories();
 			$categories_data     = $product_categories->get_paginated_categories_with_children( $categories_per_page, $current_page, $search_term );
 			?>

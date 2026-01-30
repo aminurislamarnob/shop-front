@@ -31,7 +31,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
-								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Product', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
+								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Product', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>" />
 							</div>
 						</form>
 					</div>
@@ -62,16 +62,17 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			<div class="msf-table-responsive">
 				<?php
 				$current_page = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-				$search_term  = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '';
+				$search_term  = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-				// Get filter parameters
+				// Get filter parameters.
+				// phpcs:disable WordPress.Security.NonceVerification.Recommended
 				$filters = array(
 					'category'     => isset( $_GET['product_cat'] ) ? absint( $_GET['product_cat'] ) : '',
 					'product_type' => isset( $_GET['product_type'] ) ? sanitize_text_field( wp_unslash( $_GET['product_type'] ) ) : '',
 					'stock_status' => isset( $_GET['stock_status'] ) ? sanitize_text_field( wp_unslash( $_GET['stock_status'] ) ) : '',
 					'brand'        => isset( $_GET['product_brand'] ) ? absint( $_GET['product_brand'] ) : '',
 				);
-
+				// phpcs:enable
 				$products_obj  = new Products();
 				$products_data = $products_obj->get_paginated_products( $current_page, $search_term, $filters );
 				$product_query = $products_data->products;
@@ -106,8 +107,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 						<?php
 						while ( $product_query->have_posts() ) :
 							$product_query->the_post();
-							$product_id     = get_the_ID();
-							$product        = wc_get_product( get_the_ID() );
+							$product_id           = get_the_ID();
+							$product              = wc_get_product( get_the_ID() );
 							$storesuite_wfm_thumb = get_the_post_thumbnail_url( $product_id, 'thumbnail' );
 							if ( ! empty( $storesuite_wfm_thumb ) ) {
 								$storesuite_wfm_thumb = $storesuite_wfm_thumb;

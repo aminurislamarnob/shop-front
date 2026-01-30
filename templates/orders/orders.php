@@ -45,7 +45,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
-								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Order', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); ?>" />
+								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Order', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>" />
 							</div>
 							<div class="msf-form-group">
 								<?php
@@ -65,7 +65,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								 */
 								$options       = apply_filters( 'woocommerce_hpos_admin_search_filters', $options );
 								$saved_setting = get_user_setting( 'wc-search-filter-hpos-admin', 'all' );
-								$selected      = sanitize_text_field( wp_unslash( $_REQUEST['search-filter'] ?? $saved_setting ) );
+								$selected      = sanitize_text_field( wp_unslash( $_REQUEST['search-filter'] ?? $saved_setting ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 								if ( $saved_setting !== $selected ) {
 									set_user_setting( 'wc-search-filter-hpos-admin', $selected );
 								}
@@ -143,7 +143,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							$current_page    = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
 							$orders_per_page = apply_filters( 'storesuite_orders_per_page', 10 );
 
-							// Build filters array
+							// Build filters array.
+							// phpcs:disable WordPress.Security.NonceVerification.Recommended
 							$filters = array(
 								'search_term'    => isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '',
 								'search_filter'  => isset( $_GET['search-filter'] ) ? sanitize_text_field( wp_unslash( $_GET['search-filter'] ) ) : 'all',
@@ -152,7 +153,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								'order_channel'  => isset( $_GET['order_channel'] ) ? sanitize_text_field( wp_unslash( $_GET['order_channel'] ) ) : '',
 								'm'              => isset( $_GET['m'] ) ? sanitize_text_field( wp_unslash( $_GET['m'] ) ) : '',
 							);
-
+							// phpcs:enable
 							$orders = $orders_obj->get_all_orders( $orders_per_page, $current_page, $filters );
 
 							if ( empty( $orders->orders ) ) {
