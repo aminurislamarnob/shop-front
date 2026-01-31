@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Manage your WooCommerce store easily from a single dashboard. Products, categories, tags, brands, coupons, orders, and quick analytics—all in one place.
+Manage your WooCommerce store easily from a front-end dashboard.
 
 == Description ==
 
