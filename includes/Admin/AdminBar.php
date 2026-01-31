@@ -69,24 +69,6 @@ class AdminBar {
 			)
 		);
 
-		$wp_admin_bar->add_menu(
-			array(
-				'id'     => 'storesuite-product',
-				'parent' => 'storesuite',
-				'title'  => __( 'Product', 'storesuite' ),
-				'href'   => admin_url( 'admin.php?page=storesuite#/product-settings' ),
-			)
-		);
-
-		$wp_admin_bar->add_menu(
-			array(
-				'id'     => 'storesuite-order',
-				'parent' => 'storesuite',
-				'title'  => __( 'Order', 'storesuite' ),
-				'href'   => admin_url( 'admin.php?page=storesuite#/product-settings' ),
-			)
-		);
-
 		/*
 		 * Add new or remove toolbar
 		 *

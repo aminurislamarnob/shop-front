@@ -65,6 +65,10 @@ class Dashboard {
 	 * @return void
 	 */
 	public function render_top_products_items_sold() {
+		$settings = get_option( 'storesuite_settings', array() );
+		if ( ! empty( $settings['storesuite_show_widget_top_products_items_sold'] ) && 'no' === $settings['storesuite_show_widget_top_products_items_sold'] ) {
+			return;
+		}
 		$enabled = apply_filters( 'storesuite_dashboard_enable_top_products_items_sold', true );
 		if ( true !== $enabled ) {
 			return;
@@ -95,6 +99,10 @@ class Dashboard {
 	 * @return void
 	 */
 	public function render_top_categories_items_sold() {
+		$settings = get_option( 'storesuite_settings', array() );
+		if ( ! empty( $settings['storesuite_show_widget_top_categories_items_sold'] ) && 'no' === $settings['storesuite_show_widget_top_categories_items_sold'] ) {
+			return;
+		}
 		$enabled = apply_filters( 'storesuite_dashboard_enable_top_categories_items_sold', true );
 		if ( true !== $enabled ) {
 			return;
@@ -125,6 +133,10 @@ class Dashboard {
 	 * @return void
 	 */
 	public function render_top_customers_total_spend() {
+		$settings = get_option( 'storesuite_settings', array() );
+		if ( ! empty( $settings['storesuite_show_widget_top_customers_total_spend'] ) && 'no' === $settings['storesuite_show_widget_top_customers_total_spend'] ) {
+			return;
+		}
 		$enabled = apply_filters( 'storesuite_dashboard_enable_top_customers_total_spend', true );
 		if ( true !== $enabled ) {
 			return;
@@ -155,6 +167,10 @@ class Dashboard {
 	 * @return void
 	 */
 	public function render_top_coupons_orders_count() {
+		$settings = get_option( 'storesuite_settings', array() );
+		if ( ! empty( $settings['storesuite_show_widget_top_coupons_orders_count'] ) && 'no' === $settings['storesuite_show_widget_top_coupons_orders_count'] ) {
+			return;
+		}
 		$enabled = apply_filters( 'storesuite_dashboard_enable_top_coupons_orders_count', true );
 		if ( true !== $enabled ) {
 			return;
@@ -261,6 +277,16 @@ class Dashboard {
 				'label'  => __( 'Downloads', 'storesuite' ),
 				'format' => 'number',
 			),
+		);
+
+		$settings = get_option( 'storesuite_settings', array() );
+		$stats    = array_filter(
+			$stats,
+			function ( $item ) use ( $settings ) {
+				$slug = str_replace( '/', '_', $item['stat'] );
+				$key  = 'storesuite_show_perf_' . $slug;
+				return empty( $settings[ $key ] ) || 'yes' === $settings[ $key ];
+			}
 		);
 
 		/**

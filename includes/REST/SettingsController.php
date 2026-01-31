@@ -89,8 +89,88 @@ class SettingsController extends WP_REST_Controller {
 			$storesuite_settings['storesuite_dashboard_page_id'] = sanitize_text_field( $request->get_param( 'storesuite_dashboard_page_id' ) );
 		}
 
+		if ( $request->has_param( 'storesuite_prevent_admin_access' ) ) {
+			$val = $request->get_param( 'storesuite_prevent_admin_access' );
+			$storesuite_settings['storesuite_prevent_admin_access'] = sanitize_text_field( $val );
+		}
+
+		$perf_keys = array(
+			'storesuite_show_perf_revenue_total_sales',
+			'storesuite_show_perf_revenue_gross_sales',
+			'storesuite_show_perf_revenue_net_revenue',
+			'storesuite_show_perf_orders_orders_count',
+			'storesuite_show_perf_orders_avg_order_value',
+			'storesuite_show_perf_products_items_sold',
+			'storesuite_show_perf_variations_items_sold',
+			'storesuite_show_perf_revenue_refunds',
+			'storesuite_show_perf_coupons_orders_count',
+			'storesuite_show_perf_coupons_amount',
+			'storesuite_show_perf_taxes_total_tax',
+			'storesuite_show_perf_taxes_order_tax',
+			'storesuite_show_perf_taxes_shipping_tax',
+			'storesuite_show_perf_revenue_shipping',
+			'storesuite_show_perf_downloads_download_count',
+		);
+		foreach ( $perf_keys as $key ) {
+			if ( $request->has_param( $key ) ) {
+				$val                         = $request->get_param( $key );
+				$storesuite_settings[ $key ] = sanitize_text_field( $val );
+			}
+		}
+
+		$widget_keys = array(
+			'storesuite_show_widget_top_products_items_sold',
+			'storesuite_show_widget_top_categories_items_sold',
+			'storesuite_show_widget_top_customers_total_spend',
+			'storesuite_show_widget_top_coupons_orders_count',
+		);
+		foreach ( $widget_keys as $key ) {
+			if ( $request->has_param( $key ) ) {
+				$val                         = $request->get_param( $key );
+				$storesuite_settings[ $key ] = sanitize_text_field( $val );
+			}
+		}
+
 		if ( $request->has_param( 'storesuite_product_per_page' ) ) {
 			$storesuite_settings['storesuite_product_per_page'] = sanitize_text_field( $request->get_param( 'storesuite_product_per_page' ) );
+		}
+
+		if ( $request->has_param( 'storesuite_order_per_page' ) ) {
+			$storesuite_settings['storesuite_order_per_page'] = sanitize_text_field( $request->get_param( 'storesuite_order_per_page' ) );
+		}
+
+		if ( $request->has_param( 'storesuite_category_per_page' ) ) {
+			$storesuite_settings['storesuite_category_per_page'] = sanitize_text_field( $request->get_param( 'storesuite_category_per_page' ) );
+		}
+
+		if ( $request->has_param( 'storesuite_tag_per_page' ) ) {
+			$storesuite_settings['storesuite_tag_per_page'] = sanitize_text_field( $request->get_param( 'storesuite_tag_per_page' ) );
+		}
+
+		if ( $request->has_param( 'storesuite_brand_per_page' ) ) {
+			$storesuite_settings['storesuite_brand_per_page'] = sanitize_text_field( $request->get_param( 'storesuite_brand_per_page' ) );
+		}
+
+		if ( $request->has_param( 'storesuite_coupon_per_page' ) ) {
+			$storesuite_settings['storesuite_coupon_per_page'] = sanitize_text_field( $request->get_param( 'storesuite_coupon_per_page' ) );
+		}
+
+		$color_keys = array(
+			'storesuite_color_button_text',
+			'storesuite_color_button_background',
+			'storesuite_color_button_border',
+			'storesuite_color_button_hover_text',
+			'storesuite_color_button_hover_background',
+			'storesuite_color_button_hover_border',
+			'storesuite_color_sidebar_menu_text',
+			'storesuite_color_sidebar_background',
+			'storesuite_color_sidebar_active_text',
+			'storesuite_color_sidebar_active_background',
+		);
+		foreach ( $color_keys as $key ) {
+			if ( $request->has_param( $key ) ) {
+				$storesuite_settings[ $key ] = sanitize_hex_color( $request->get_param( $key ) ) ?: sanitize_text_field( $request->get_param( $key ) );
+			}
 		}
 
 		update_option( 'storesuite_settings', $storesuite_settings );
@@ -129,14 +209,209 @@ class SettingsController extends WP_REST_Controller {
 			'title'      => 'settings',
 			'type'       => 'object',
 			'properties' => array(
-				'storesuite_dashboard_page_id' => array(
+				'storesuite_dashboard_page_id'             => array(
 					'description' => __( 'Dashboard Page.', 'storesuite' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
-				'storesuite_product_per_page'  => array(
+				'storesuite_prevent_admin_access'          => array(
+					'description' => __( 'Prevent vendors from accessing wp-admin. If HPOS is enabled, admin access is blocked regardless.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_revenue_total_sales' => array(
+					'description' => __( 'Show Total sales performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_revenue_gross_sales' => array(
+					'description' => __( 'Show Gross sales performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_revenue_net_revenue' => array(
+					'description' => __( 'Show Net sales performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_orders_orders_count' => array(
+					'description' => __( 'Show Orders performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_orders_avg_order_value' => array(
+					'description' => __( 'Show Average order value performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_products_items_sold' => array(
+					'description' => __( 'Show Products sold performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_variations_items_sold' => array(
+					'description' => __( 'Show Variations sold performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_revenue_refunds'     => array(
+					'description' => __( 'Show Returns performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_coupons_orders_count' => array(
+					'description' => __( 'Show Discounted orders performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_coupons_amount'      => array(
+					'description' => __( 'Show Net discount amount performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_taxes_total_tax'     => array(
+					'description' => __( 'Show Total tax performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_taxes_order_tax'     => array(
+					'description' => __( 'Show Order tax performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_taxes_shipping_tax'  => array(
+					'description' => __( 'Show Shipping tax performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_revenue_shipping'    => array(
+					'description' => __( 'Show Shipping performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_perf_downloads_download_count' => array(
+					'description' => __( 'Show Downloads performance box.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_product_per_page'              => array(
 					'description' => __( 'Products Per Page.', 'storesuite' ),
 					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_order_per_page'                => array(
+					'description' => __( 'Orders Per Page.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_category_per_page'             => array(
+					'description' => __( 'Categories Per Page.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_tag_per_page'                  => array(
+					'description' => __( 'Tags Per Page.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_brand_per_page'                => array(
+					'description' => __( 'Brands Per Page.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_coupon_per_page'               => array(
+					'description' => __( 'Coupons Per Page.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_button_text'             => array(
+					'description' => __( 'Button text color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_button_background'       => array(
+					'description' => __( 'Button background color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_button_border'           => array(
+					'description' => __( 'Button border color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_button_hover_text'       => array(
+					'description' => __( 'Button hover text color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_button_hover_background' => array(
+					'description' => __( 'Button hover background color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_button_hover_border'     => array(
+					'description' => __( 'Button hover border color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_sidebar_menu_text'       => array(
+					'description' => __( 'Dashboard sidebar menu text color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_sidebar_background'      => array(
+					'description' => __( 'Dashboard sidebar background color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_sidebar_active_text'     => array(
+					'description' => __( 'Dashboard sidebar active/hover menu text color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_sidebar_active_background' => array(
+					'description' => __( 'Dashboard sidebar active menu background color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_widget_top_products_items_sold' => array(
+					'description' => __( 'Show Top products - Items sold widget.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_widget_top_categories_items_sold' => array(
+					'description' => __( 'Show Top categories - Items sold widget.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_widget_top_customers_total_spend' => array(
+					'description' => __( 'Show Top customers - Total spend widget.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_show_widget_top_coupons_orders_count' => array(
+					'description' => __( 'Show Top coupons - Number of orders widget.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 			),

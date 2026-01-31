@@ -3,15 +3,12 @@ import { TabPanel } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import './TabPanelStyles.scss';
 import GeneralSettings from './GeneralSettings';
-import ProductSettings from './ProductSettings';
-import OrderSettings from './OrderSettings';
-import { Link } from 'react-router-dom';
+import PaginationSettings from './PaginationSettings';
 
 const TabPanelWrapper = () => {
 	return (
 		<div className="wrap">
 			<h1>{__('StoreSuite Settings', 'my-text-domain')}</h1>
-			<Link to="/order-settings">Go to Order Settings</Link>
 			<TabPanel
 				className="my-tab-panel"
 				activeClass="is-active"
@@ -22,14 +19,9 @@ const TabPanelWrapper = () => {
 						className: 'tab-one',
 					},
 					{
-						name: 'product',
-						title: __('Product', 'my-text-domain'),
-						className: 'tab-one',
-					},
-					{
-						name: 'order',
-						title: __('Order', 'my-text-domain'),
-						className: 'tab-two',
+						name: 'pagination',
+						title: __('Pagination', 'my-text-domain'),
+						className: 'tab-three',
 					},
 				]}
 			>
@@ -40,14 +32,9 @@ const TabPanelWrapper = () => {
 								<GeneralSettings />
 							</div>
 						)}
-						{tab.name === 'product' && (
+						{tab.name === 'pagination' && (
 							<div>
-								<ProductSettings />
-							</div>
-						)}
-						{tab.name === 'order' && (
-							<div>
-								<OrderSettings />
+								<PaginationSettings />
 							</div>
 						)}
 					</div>

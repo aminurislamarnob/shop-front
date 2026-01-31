@@ -125,3 +125,88 @@
 .storesuite-sidebar-nav nav ul li {
     margin: 0;
 }
+
+/* Color settings: label left, swatch + dropdown right (screenshot style) */
+.storesuite-color-control {
+    margin-bottom: 30px;
+}
+.storesuite-color-control .components-base-control__field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 12px;
+}
+.storesuite-color-control .components-base-control__label, .storesuite-settings-group label.components-base-control__label, .storesuite-settings-group label.components-input-control__label, .storesuite-settings-group.admin-area-access label.components-toggle-control__label {
+    margin-bottom: 0;
+    text-transform: capitalize!important;
+    font-size: 13px!important;
+    font-weight: 500;
+}
+.storesuite-settings-group label.components-base-control__label{
+    margin-bottom: 10px;
+}
+.storesuite-colors-form {
+    max-width: 480px;
+}
+.storesuite-color-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 80px;
+    padding: 4px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+.storesuite-color-toggle:hover {
+    border-color: #999;
+}
+.storesuite-color-toggle .component-color-indicator {
+    flex-shrink: 0;
+}
+.storesuite-color-toggle svg {
+    margin-left: auto;
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+}
+.storesuite-color-picker-popover {
+    padding: 12px;
+}
+.storesuite-color-picker-dropdown .components-popover__content {
+    padding: 0;
+}
+
+/* Section heading and description (settings subsections) */
+.storesuite-section-title {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.storesuite-section-title:first-child {
+    margin-top: 0;
+}
+
+.storesuite-section-description {
+    margin-bottom: 12px;
+    color: #757575;
+    font-size: 12px;
+}
+.storesuite-settings-group {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.storesuite-settings-group p, .storesuite-settings-group.admin-area-access .components-base-control.components-toggle-control {
+    margin: 0!important;
+}
+.storesuite-settings-sec-header {
+    margin-bottom: 20px;
+}
+
+.storesuite-settings-sec-header h3 {
+    margin-bottom: 5px;
+}
