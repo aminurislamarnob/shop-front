@@ -24,7 +24,7 @@ class Settings {
 	 */
 	public function add_admin_settings_menu() {
 		add_submenu_page(
-			'storesuite',
+			'woocommerce',
 			'StoreSuite Settings',
 			'StoreSuite',
 			'manage_options',

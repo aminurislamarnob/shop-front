@@ -3,11 +3,11 @@
  * Plugin Name: StoreSuite
  * Plugin URI:  https://wordpress.org/plugins/storesuite/
  * Description: This plugin enable frontend store management system for WooCommerce simple type product.
- * Version: 0.0.1
+ * Version: 1.0.0
  * Author: Aminur Islam Arnob
  * Author URI: https://wordpress.org/plugins/storesuite/
  * Text Domain: storesuite
- * WC requires at least: 5.0.0
+ * WC requires at least: 10.4.3
  * Requires Plugins: woocommerce
  * License: GPL2
  */
