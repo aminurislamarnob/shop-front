@@ -8,6 +8,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Assets {
 	/**
+	 * Default plugin slugs whose assets are kept on the StoreSuite dashboard.
+	 * Third parties can add more via the storesuite_allowed_plugin_slugs filter.
+	 *
+	 * @var string[]
+	 */
+	private static $allowed_plugin_slugs = array( 'woocommerce', 'storesuite' );
+
+	/**
+	 * Default script/style handles that are never removed on the StoreSuite dashboard.
+	 * Third parties can add more via the storesuite_allowed_asset_handles filter.
+	 *
+	 * @var string[]
+	 */
+	private static $allowed_asset_handles = array();
+
+	/**
 	 * The constructor.
 	 */
 	public function __construct() {
@@ -18,6 +34,33 @@ class Assets {
 		} else {
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_front_scripts' ) );
 		}
+
+		// Priority 7: after most themes enqueue (0–6) but before wp_print_styles (8).
+		add_action( 'wp_head', array( $this, 'remove_all_theme_assets' ), 7 );
+	}
+
+	/**
+	 * Whether an asset URL should be removed (theme or disallowed plugin).
+	 *
+	 * @param string   $src             Asset src URL.
+	 * @param string[] $theme_uris      Theme base URIs to match.
+	 * @param string[] $allowed_plugins Plugin slugs to keep.
+	 * @return bool
+	 */
+	private function should_remove_asset( $src, array $theme_uris, array $allowed_plugins ) {
+		foreach ( $theme_uris as $uri ) {
+			if ( strpos( $src, $uri ) === 0 ) {
+				return true;
+			}
+		}
+
+		$prefix = '/plugins/';
+		if ( strpos( $src, $prefix ) === false ) {
+			return false;
+		}
+
+		$slug = strtok( substr( $src, strpos( $src, $prefix ) + strlen( $prefix ) ), '/?' );
+		return $slug && ! in_array( $slug, $allowed_plugins, true );
 	}
 
 	/**
@@ -358,6 +401,58 @@ class Assets {
 				'StoreSuite_Product',
 				$product_script_data
 			);
+		}
+	}
+
+	/**
+	 * Remove theme and other-plugin assets on the StoreSuite dashboard (keep allowed plugins).
+	 *
+	 * @return void
+	 */
+	public function remove_all_theme_assets() {
+		if ( ! is_storesuite_dashboard_page() ) {
+			return;
+		}
+
+		$allowed_plugins = apply_filters( 'storesuite_allowed_plugin_slugs', self::$allowed_plugin_slugs );
+		$allowed_plugins = array_filter( array_map( 'strval', (array) $allowed_plugins ) );
+
+		$allowed_handles = apply_filters( 'storesuite_allowed_asset_handles', self::$allowed_asset_handles );
+		$allowed_handles = array_filter( array_map( 'strval', (array) $allowed_handles ) );
+
+		$theme_uris = array_filter(
+			array_unique(
+				array(
+					rtrim( get_stylesheet_directory_uri(), '/' ),
+					rtrim( get_template_directory_uri(), '/' ),
+				)
+			)
+		);
+
+		global $wp_styles, $wp_scripts;
+
+		if ( ! empty( $wp_styles->registered ) ) {
+			foreach ( $wp_styles->registered as $handle => $obj ) {
+				if ( in_array( $handle, $allowed_handles, true ) ) {
+					continue;
+				}
+				if ( isset( $obj->src ) && $this->should_remove_asset( $obj->src, $theme_uris, $allowed_plugins ) ) {
+					wp_dequeue_style( $handle );
+					wp_deregister_style( $handle );
+				}
+			}
+		}
+
+		if ( ! empty( $wp_scripts->registered ) ) {
+			foreach ( $wp_scripts->registered as $handle => $obj ) {
+				if ( in_array( $handle, $allowed_handles, true ) ) {
+					continue;
+				}
+				if ( isset( $obj->src ) && $this->should_remove_asset( $obj->src, $theme_uris, $allowed_plugins ) ) {
+					wp_dequeue_script( $handle );
+					wp_deregister_script( $handle );
+				}
+			}
 		}
 	}
 }
