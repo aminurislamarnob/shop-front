@@ -89,6 +89,7 @@ const GeneralSettings = () => {
 					);
 				}
 
+				// Performance boxes.
 				const perf = {};
 				PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
 					const opt = `storesuite_show_perf_${ key }`;
@@ -99,6 +100,7 @@ const GeneralSettings = () => {
 				} );
 				setPerformanceBoxes( perf );
 
+				// Dashboard widgets.
 				const widgets = {};
 				DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
 					const opt = `storesuite_show_widget_${ key }`;
@@ -165,19 +167,20 @@ const GeneralSettings = () => {
 					? 'yes'
 					: 'no',
 			};
+
+			// Performance boxes.
 			PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
 				data[ `storesuite_show_perf_${ key }` ] = toYesNo(
 					performanceBoxes[ key ] !== false
 				);
 			} );
 
+			// Dashboard widgets.
 			DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
 				data[ `storesuite_show_widget_${ key }` ] = toYesNo(
 					dashboardWidgets[ key ] !== false
 				);
 			} );
-
-			console.log( data );
 
 			const response = await apiFetch( {
 				path: '/storesuite/v1/settings',
@@ -194,6 +197,7 @@ const GeneralSettings = () => {
 				);
 			}
 
+			// Performance boxes.
 			const perf = {};
 			PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
 				const opt = `storesuite_show_perf_${ key }`;
@@ -204,6 +208,7 @@ const GeneralSettings = () => {
 			} );
 			setPerformanceBoxes( perf );
 
+			// Dashboard widgets.
 			const widgets = {};
 			DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
 				const opt = `storesuite_show_widget_${ key }`;

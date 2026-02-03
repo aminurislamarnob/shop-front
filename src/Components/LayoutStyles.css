@@ -7,7 +7,7 @@
     line-height: 1.4615384615;
     font-weight: bold;
     text-transform: uppercase;
-    color: #121116;
+    color: #0A2540;
 }
 
 .menu-title-description {
@@ -43,7 +43,7 @@
     display: block;
     padding: 16px 44px 18px 20px;
     text-decoration: none;
-    color: #121116;
+    color: #0A2540;
     border-top: 1px solid #e0e4e9;
     border-left: 2px solid transparent;
     overflow: hidden;
@@ -63,7 +63,7 @@
     text-align: center;
     font-size: 1.4375rem;
     line-height: 1;
-    color: #121116;
+    color: #0A2540;
     opacity: .4;
     transition: all 150ms ease-out;
     -webkit-transition: all 150ms ease-out;
@@ -85,7 +85,7 @@
     font-size: 24px;
     margin: 0;
     line-height: 1;
-    color: #121116;
+    color: #0A2540;
     font-weight: 600;
 }
 
@@ -97,15 +97,15 @@
     height: 2px;
     bottom: -1px;
     left: 0;
-    background: #f56640;
+    background: #5539FD;
 }
 .settings-header-icon {
     display: inline-flex;
     width: 48px;
     height: 48px;
     margin-right: 24px;
-    background: #fde0d9;
-    color: #f56640;
+    background: rgb(85 57 253 / 20%);
+    color: #5539FD;
     text-align: center;
     border-radius: 3px;
     align-items: center;
@@ -117,15 +117,40 @@
     height: 22px;
 }
 .storesuite-sidebar-nav nav ul li.active a {
-    color: #121116;
+    color: #0A2540;
     background: #fff;
-    border-left: 2px solid #f56640;
+    border-left: 2px solid #5539FD;
+}
+.storesuite-setting-wrapper label{
+    color: #0A2540;
 }
 
 .storesuite-sidebar-nav nav ul li {
     margin: 0;
 }
+.storesuite-setting-wrapper .components-button.is-primary{
+    background: #5539FD;
+}
 
+.storesuite-setting-wrapper .components-button.is-primary:hover{
+    background: #635BFF;
+}
+.storesuite-setting-wrapper .components-form-toggle .components-form-toggle__thumb{
+    background-color: #0A2540;
+}
+.storesuite-setting-wrapper .components-form-toggle.is-checked .components-form-toggle__thumb{
+    background-color: #fff;
+}
+.storesuite-setting-wrapper .components-form-toggle .components-form-toggle__track{
+    border-color: #0A2540;
+}
+.storesuite-setting-wrapper .components-form-toggle.is-checked .components-form-toggle__track{
+    background: #5539FD;
+    border-color: #5539FD;
+}
+.storesuite-setting-wrapper .components-form-toggle .components-form-toggle__input:focus+.components-form-toggle__track{
+    box-shadow: none;
+}
 /* Color settings: label left, swatch + dropdown right (screenshot style) */
 .storesuite-color-control {
     margin-bottom: 30px;
