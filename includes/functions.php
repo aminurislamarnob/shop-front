@@ -330,3 +330,30 @@ function storesuite_log( $message, $level = 'debug' ) {
 	$context = array( 'source' => 'storesuite' );
 	$logger->log( $level, $message, $context );
 }
+
+/**
+ * Redirect to login page if user not logged in
+ *
+ * @return void
+ */
+function storesuite_redirect_if_not_logged_in() {
+	if ( ! is_user_logged_in() ) {
+		$redirect_url = wc_get_page_permalink( 'myaccount' );
+		wp_safe_redirect( $redirect_url );
+		exit();
+	}
+}
+
+/**
+ * Redirect to homepage, If the current user is not manager.
+ *
+ * @param string $redirect
+ */
+function storesuite_redirect_if_not_manager( $redirect = '' ) {
+	if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		$redirect = empty( $redirect ) ? home_url( '/' ) : $redirect;
+
+		wp_safe_redirect( $redirect );
+		exit();
+	}
+}

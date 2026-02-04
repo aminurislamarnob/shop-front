@@ -228,6 +228,7 @@ final class StoreSuite {
 		require_once STORESUITE_INC_DIR . '/functions.php';
 
 		$this->container['cache']                                  = new Cache();
+		$this->container['storesuite_main']                        = new Main();
 		$this->container['scripts']                                = new Assets();
 		$this->container['storesuite_installer']                   = new Installer();
 		$this->container['storesuite_common']                      = new Common();

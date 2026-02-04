@@ -35,8 +35,6 @@ class Dashboard extends MyStoreSuiteShortcode {
 
 		ob_start();
 
-		// dd( $wp->query_vars );
-
 		if ( isset( $wp->query_vars['page'] ) ) {
 			storesuite_get_template_part( 'dashboard' );
 			return ob_get_clean();

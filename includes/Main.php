@@ -1,0 +1,168 @@
+<?php
+
+/**
+ * Main class.
+ *
+ * @package StoreSuite
+ */
+
+namespace PluginizeLab\StoreSuite;
+
+use Automattic\WooCommerce\Utilities\OrderUtil;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Main class.
+ *
+ * Handles main functionality of the plugin.
+ */
+class Main {
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 10, 2 );
+		add_filter( 'woocommerce_login_redirect', array( $this, 'redirect_after_login' ), 10, 2 );
+		add_action( 'admin_init', array( $this, 'block_admin_access' ) );
+		add_action( 'template_redirect', array( $this, 'redirect_if_not_logged_in_manager' ), 11 );
+		add_filter( 'show_admin_bar', array( $this, 'hide_admin_bar' ) );
+		add_action( 'woocommerce_account_dashboard', array( $this, 'add_storesuite_dashboard_btn' ), 1 );
+		add_action( 'wp_head', array( $this, 'add_storesuite_dashboard_btn_css' ) );
+	}
+
+	/**
+	 * Block user access to admin panel for specific roles
+	 *
+	 * @global string $pagenow
+	 */
+	public function block_admin_access() {
+		global $pagenow, $current_user;
+
+		if ( defined( 'WP_CLI' ) ) {
+			return;
+		}
+
+		$is_prevent_admin_access = storesuite_get_option_by_key( 'storesuite_prevent_admin_access' );
+
+		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			$is_prevent_admin_access = 'yes';
+		}
+
+		$valid_pages = array( 'admin-ajax.php', 'admin-post.php', 'async-upload.php', 'media-upload.php' );
+		$user_role   = reset( $current_user->roles );
+
+		if ( ( 'yes' === $is_prevent_admin_access ) && in_array( $user_role, array( 'shop_manager', 'customer' ), true ) && ( ! in_array( $pagenow, $valid_pages, true ) ) ) {
+			wp_safe_redirect( home_url() );
+			exit;
+		}
+	}
+
+	/**
+	 * Hide admin bar for logged-in users if prevent admin access is enabled.
+	 *
+	 * @param bool $show Whether to show the admin bar.
+	 * @return bool
+	 */
+	public function hide_admin_bar( $show ) {
+		if ( ! is_user_logged_in() ) {
+			return $show;
+		}
+
+		$is_prevent_admin_access = storesuite_get_option_by_key( 'storesuite_prevent_admin_access' );
+
+		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			$is_prevent_admin_access = 'yes';
+		}
+
+		if ( 'yes' === $is_prevent_admin_access ) {
+			return false;
+		}
+
+		return $show;
+	}
+
+	/**
+	 * Redirect if not logged in and not manager.
+	 *
+	 * @return void
+	 */
+	public function redirect_if_not_logged_in_manager() {
+		if ( is_page() && is_storesuite_dashboard_page() ) {
+			storesuite_redirect_if_not_logged_in();
+			storesuite_redirect_if_not_manager();
+		}
+	}
+
+	/**
+	 * Redirect after login
+	 * my account page
+	 *
+	 * @global string $action
+	 */
+	public function redirect_after_login() {
+		$page_id = (int) storesuite_get_option_by_key( 'storesuite_dashboard_page_id' );
+
+		if ( $page_id ) {
+			wp_safe_redirect( storesuite_get_navigation_url() );
+			exit();
+		}
+
+		wp_safe_redirect( wc_get_page_permalink( 'myaccount' ) );
+		exit();
+	}
+
+	/**
+	 * Add go to storesuite dashboard button to the woocommerce my account page
+	 *
+	 * @return string
+	 */
+	public function add_storesuite_dashboard_btn() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		printf(
+			'<div><a href="%s" class="storesuite-dashboard-btn my-storesuite-button">%s</a></div>',
+			esc_url( storesuite_get_navigation_url() ),
+			esc_html__( 'StoreSuite Dashboard', 'storesuite' )
+		);
+	}
+
+	/**
+	 * Add CSS for the storesuite dashboard button
+	 *
+	 * @return void
+	 */
+	public function add_storesuite_dashboard_btn_css() {
+
+		if ( ! is_user_logged_in() || ! is_account_page() || ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		?>
+		<style>
+			a.storesuite-dashboard-btn.my-storesuite-button {
+				background: #2d5bdb;
+				display: inline-flex;
+				align-items: center;
+				padding: 12px 20px;
+				font-size: 14px;
+				color: #fff;
+				border-radius: 6px;
+				cursor: pointer;
+				line-height: 1.15;
+				border: 1px solid #2d5bdb;
+				justify-content: center;
+				font-weight: 600;
+			}
+			a.storesuite-dashboard-btn.my-storesuite-button:hover {
+				background: #213fd4;
+				border: 1px solid #213fd4;
+			}
+		</style>
+		<?php
+	}
+}
