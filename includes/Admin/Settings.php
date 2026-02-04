@@ -41,6 +41,7 @@ class Settings {
 	public function settings_page_content() {
 		?>
 		<div class="wrap">
+			<h1><?php esc_html_e( 'StoreSuite Settings', 'storesuite' ); ?></h1>
 			<div id="storesuite-settings"></div>
 		</div>
 		<?php
