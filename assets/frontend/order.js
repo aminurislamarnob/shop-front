@@ -1,8 +1,8 @@
-(function ($) {
+( function ( $ ) {
 	var msfcLoader = {
-		block: function ($container, text) {
+		block: function ( $container, text ) {
 			text = text || 'Processing...';
-			if ($container.find('.msfc-loader-overlay').length === 0) {
+			if ( $container.find( '.msfc-loader-overlay' ).length === 0 ) {
 				$container.append(
 					'<div class="msfc-loader-overlay">' +
 						'<span class="msfc-loader-spinner"></span>' +
@@ -12,15 +12,15 @@
 						'</div>'
 				);
 			} else {
-				$container.find('.msfc-loader-text').text(text);
+				$container.find( '.msfc-loader-text' ).text( text );
 			}
 
-			setTimeout(function () {
-				$container.find('.msfc-loader-overlay').addClass('active');
-			}, 10);
+			setTimeout( function () {
+				$container.find( '.msfc-loader-overlay' ).addClass( 'active' );
+			}, 10 );
 		},
-		unblock: function ($container) {
-			$container.find('.msfc-loader-overlay').removeClass('active');
+		unblock: function ( $container ) {
+			$container.find( '.msfc-loader-overlay' ).removeClass( 'active' );
 		},
 	};
 
@@ -29,14 +29,14 @@
 			this.bindEvents();
 		},
 		bindEvents: function () {
-			$('#customer_user').show().selectWoo().hide();
+			$( '#customer_user' ).show().selectWoo().hide();
 			this.handleSelect2Customer(); // Handle select2 customer
-			$('#customer_user').on('change', this.changeCustomerUser);
-			$('.edit-msf-order-billing-address').on(
+			$( '#customer_user' ).on( 'change', this.changeCustomerUser );
+			$( '.edit-msf-order-billing-address' ).on(
 				'click',
 				this.showBillingAddressFields
 			);
-			$('.edit-msf-order-shipping-address').on(
+			$( '.edit-msf-order-shipping-address' ).on(
 				'click',
 				this.showShippingAddressFields
 			);
@@ -44,40 +44,44 @@
 
 		handleSelect2Customer: function () {
 			// Ajax customer search boxes
-			$(':input.wc-customer-search')
-				.filter(':not(.enhanced)')
-				.each(function () {
+			$( ':input.wc-customer-search' )
+				.filter( ':not(.enhanced)' )
+				.each( function () {
 					var select2_args = {
-						allowClear: $(this).data('allow_clear') ? true : false,
-						placeholder: $(this).data('placeholder'),
-						minimumInputLength: $(this).data('minimum_input_length')
-							? $(this).data('minimum_input_length')
+						allowClear: $( this ).data( 'allow_clear' )
+							? true
+							: false,
+						placeholder: $( this ).data( 'placeholder' ),
+						minimumInputLength: $( this ).data(
+							'minimum_input_length'
+						)
+							? $( this ).data( 'minimum_input_length' )
 							: '1',
-						escapeMarkup: function (m) {
+						escapeMarkup: function ( m ) {
 							return m;
 						},
 						ajax: {
 							url: StoreSuite_Order.ajax_url,
 							dataType: 'json',
 							delay: 1000,
-							data: function (params) {
+							data: function ( params ) {
 								return {
 									term: params.term,
 									action: 'woocommerce_json_search_customers',
 									security:
 										StoreSuite_Order.search_customers_nonce,
-									exclude: $(this).data('exclude'),
+									exclude: $( this ).data( 'exclude' ),
 								};
 							},
-							processResults: function (data) {
+							processResults: function ( data ) {
 								var terms = [];
-								if (data) {
-									$.each(data, function (id, text) {
-										terms.push({
+								if ( data ) {
+									$.each( data, function ( id, text ) {
+										terms.push( {
 											id: id,
 											text: text,
-										});
-									});
+										} );
+									} );
 								}
 								return {
 									results: terms,
@@ -92,15 +96,15 @@
 						StoreFrontOrderConfig.getEnhancedSelectFormatString()
 					);
 
-					$(this).selectWoo(select2_args).addClass('enhanced');
+					$( this ).selectWoo( select2_args ).addClass( 'enhanced' );
 
-					if ($(this).data('sortable')) {
-						var $select = $(this);
-						var $list = $(this)
-							.next('.select2-container')
-							.find('ul.select2-selection__rendered');
+					if ( $( this ).data( 'sortable' ) ) {
+						var $select = $( this );
+						var $list = $( this )
+							.next( '.select2-container' )
+							.find( 'ul.select2-selection__rendered' );
 
-						$list.sortable({
+						$list.sortable( {
 							placeholder:
 								'ui-state-highlight select2-selection__choice',
 							forcePlaceholderSize: true,
@@ -109,20 +113,20 @@
 							stop: function () {
 								$(
 									$list
-										.find('.select2-selection__choice')
+										.find( '.select2-selection__choice' )
 										.get()
 										.reverse()
-								).each(function () {
-									var id = $(this).data('data').id;
+								).each( function () {
+									var id = $( this ).data( 'data' ).id;
 									var option = $select.find(
 										'option[value="' + id + '"]'
-									)[0];
-									$select.prepend(option);
-								});
+									)[ 0 ];
+									$select.prepend( option );
+								} );
 							},
-						});
+						} );
 					}
-				});
+				} );
 		},
 
 		getEnhancedSelectFormatString: function () {
@@ -132,10 +136,10 @@
 						// Workaround for https://github.com/select2/select2/issues/4355 instead of i18n_ajax_error.
 						return StoreSuite_Order.i18n_searching;
 					},
-					inputTooLong: function (args) {
+					inputTooLong: function ( args ) {
 						var overChars = args.input.length - args.maximum;
 
-						if (1 === overChars) {
+						if ( 1 === overChars ) {
 							return StoreSuite_Order.i18n_input_too_long_1;
 						}
 
@@ -144,10 +148,10 @@
 							overChars
 						);
 					},
-					inputTooShort: function (args) {
+					inputTooShort: function ( args ) {
 						var remainingChars = args.minimum - args.input.length;
 
-						if (1 === remainingChars) {
+						if ( 1 === remainingChars ) {
 							return StoreSuite_Order.i18n_input_too_short_1;
 						}
 
@@ -159,8 +163,8 @@
 					loadingMore: function () {
 						return StoreSuite_Order.i18n_load_more;
 					},
-					maximumSelected: function (args) {
-						if (args.maximum === 1) {
+					maximumSelected: function ( args ) {
+						if ( args.maximum === 1 ) {
 							return StoreSuite_Order.i18n_selection_too_long_1;
 						}
 
@@ -180,47 +184,49 @@
 		},
 
 		changeCustomerUser: function () {
-			if (!$('#_billing_country').val()) {
-				$('a.edit_address').trigger('click');
-				StoreFrontOrderConfig.loadBilling(true);
-				StoreFrontOrderConfig.loadShipping(true);
+			if ( ! $( '#_billing_country' ).val() ) {
+				$( 'a.edit_address' ).trigger( 'click' );
+				StoreFrontOrderConfig.loadBilling( true );
+				StoreFrontOrderConfig.loadShipping( true );
 			}
 
 			var customerData = {
 				action: 'storesuite_set_customer_to_order',
 				order_id: StoreSuite_Order.post_id,
-				customer_id: $('#customer_user').val(),
+				customer_id: $( '#customer_user' ).val(),
 				security: StoreSuite_Order.order_item_nonce,
 			};
 
-			var prod_search_for_order_box = $('.product-serach-for-order-box');
-			msfcLoader.block(prod_search_for_order_box);
+			var prod_search_for_order_box = $(
+				'.product-serach-for-order-box'
+			);
+			msfcLoader.block( prod_search_for_order_box );
 
-			$.ajax({
+			$.ajax( {
 				url: StoreSuite_Order.ajax_url,
 				type: 'POST',
 				data: customerData,
-				success: function (response) {
-					if (response.success) {
+				success: function ( response ) {
+					if ( response.success ) {
 						// $( '#woocommerce-order-items' ).find( '.inside' ).empty();
 						// $( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
-						msfcLoader.unblock(prod_search_for_order_box);
+						msfcLoader.unblock( prod_search_for_order_box );
 					} else {
-						msfcLoader.unblock(prod_search_for_order_box);
-						window.alert(response.data.error);
+						msfcLoader.unblock( prod_search_for_order_box );
+						window.alert( response.data.error );
 					}
 				},
 				complete: function () {},
-			});
+			} );
 		},
 
-		loadBilling: function (force) {
+		loadBilling: function ( force ) {
 			if (
 				true === force ||
-				window.confirm(StoreSuite_Order.load_billing)
+				window.confirm( StoreSuite_Order.load_billing )
 			) {
 				// Get user ID to load data for
-				var user_id = $('#customer_user').val();
+				var user_id = $( '#customer_user' ).val();
 
 				// if ( ! user_id ) {
 				// 	window.alert( StoreSuite_Order.no_customer_selected );
@@ -233,43 +239,45 @@
 					security: StoreSuite_Order.get_customer_details_nonce,
 				};
 
-				msfcLoader.block($(this).closest('div.edit_address'));
+				msfcLoader.block( $( this ).closest( 'div.edit_address' ) );
 
-				$.ajax({
+				$.ajax( {
 					url: StoreSuite_Order.ajax_url,
 					data: data,
 					type: 'POST',
-					success: function (response) {
-						if (response && response.billing) {
-							$('.customer-address-box').addClass('show-address');
-							$.each(response.billing, function (key, data) {
-								$(':input#_billing_' + key)
-									.val(data)
-									.trigger('change');
+					success: function ( response ) {
+						if ( response && response.billing ) {
+							$( '.customer-address-box' ).addClass(
+								'show-address'
+							);
+							$.each( response.billing, function ( key, data ) {
+								$( ':input#_billing_' + key )
+									.val( data )
+									.trigger( 'change' );
 
-								if (data) {
-									$('li._billing_' + key + ' span').text(
+								if ( data ) {
+									$( 'li._billing_' + key + ' span' ).text(
 										data
 									);
 								} else {
-									$('li._billing_' + key).hide();
+									$( 'li._billing_' + key ).hide();
 								}
-							});
+							} );
 						}
-						msfcLoader.unblock($('div.edit_address'));
+						msfcLoader.unblock( $( 'div.edit_address' ) );
 					},
-				});
+				} );
 			}
 			return false;
 		},
 
-		loadShipping: function (force) {
+		loadShipping: function ( force ) {
 			if (
 				true === force ||
-				window.confirm(StoreSuite_Order.load_shipping)
+				window.confirm( StoreSuite_Order.load_shipping )
 			) {
 				// Get user ID to load data for
-				var user_id = $('#customer_user').val();
+				var user_id = $( '#customer_user' ).val();
 
 				// if ( ! user_id ) {
 				// 	window.alert( StoreSuite_Order.no_customer_selected );
@@ -282,67 +290,65 @@
 					security: StoreSuite_Order.get_customer_details_nonce,
 				};
 
-				msfcLoader.block($(this).closest('div.edit_address'));
+				msfcLoader.block( $( this ).closest( 'div.edit_address' ) );
 
-				$.ajax({
+				$.ajax( {
 					url: StoreSuite_Order.ajax_url,
 					data: data,
 					type: 'POST',
-					success: function (response) {
-						console.log(response);
+					success: function ( response ) {
+						if ( response && response.shipping ) {
+							$.each( response.shipping, function ( key, data ) {
+								$( ':input#_shipping_' + key )
+									.val( data )
+									.trigger( 'change' );
 
-						if (response && response.shipping) {
-							$.each(response.shipping, function (key, data) {
-								$(':input#_shipping_' + key)
-									.val(data)
-									.trigger('change');
-
-								if (data) {
-									$('li._shipping_' + key + ' span').text(
+								if ( data ) {
+									$( 'li._shipping_' + key + ' span' ).text(
 										data
 									);
 								} else {
-									$('li._shipping_' + key).hide();
+									$( 'li._shipping_' + key ).hide();
 								}
-							});
+							} );
 						}
-						msfcLoader.unblock($('div.edit_address'));
+						msfcLoader.unblock( $( 'div.edit_address' ) );
 					},
-				});
+				} );
 			}
 			return false;
 		},
 
 		copy_billing_to_shipping: function () {
-			if (window.confirm(StoreSuite_Order.copy_billing)) {
-				$('.order_data_column :input[name^="_billing_"]').each(
+			if ( window.confirm( StoreSuite_Order.copy_billing ) ) {
+				$( '.order_data_column :input[name^="_billing_"]' ).each(
 					function () {
-						var input_name = $(this).attr('name');
+						var input_name = $( this ).attr( 'name' );
 						input_name = input_name.replace(
 							'_billing_',
 							'_shipping_'
 						);
-						$(':input#' + input_name)
-							.val($(this).val())
-							.trigger('change');
+						$( ':input#' + input_name )
+							.val( $( this ).val() )
+							.trigger( 'change' );
 					}
 				);
 			}
 			return false;
 		},
 
-		showBillingAddressFields: function (e) {
+		showBillingAddressFields: function ( e ) {
 			e.preventDefault();
-			$(this).hide();
-			$('.customer-billing-address').hide();
-			$('.msf-billing-address-fields').show();
+			$( this ).hide();
+			$( '.customer-billing-address' ).hide();
+			$( '.msf-billing-address-fields' ).show();
 		},
 
-		showShippingAddressFields: function (e) {
+		showShippingAddressFields: function ( e ) {
 			e.preventDefault();
-			$(this).hide();
-			$('.customer-shipping-address').hide();
-			$('.msf-shipping-address-fields').show();
+			$( this ).hide();
+			$( '.customer-shipping-address' ).hide();
+			$( '.msf-shipping-address-fields' ).show();
 		},
 	};
 
@@ -351,65 +357,59 @@
 	 */
 	var NewOrderNotes = {
 		init: function () {
-			$('#new_order_notes')
-				.on('click', 'button.add-note', this.add_order_note)
-				.on('click', 'a.delete_note', this.delete_order_note);
+			$( '#new_order_notes' )
+				.on( 'click', 'button.add-note', this.add_order_note )
+				.on( 'click', 'a.delete_note', this.delete_order_note );
 		},
 
 		add_order_note: function () {
-			if (!$('textarea#add_order_note').val()) {
+			if ( ! $( 'textarea#add_order_note' ).val() ) {
 				return;
 			}
 
-			msfcLoader.block($('#new_order_notes'));
+			msfcLoader.block( $( '#new_order_notes' ) );
 
 			var data = {
 				action: 'woocommerce_add_order_note',
 				post_id: StoreSuite_Order.post_id,
-				note: $('textarea#add_order_note').val(),
-				note_type: $('select#order_note_type').val(),
+				note: $( 'textarea#add_order_note' ).val(),
+				note_type: $( 'select#order_note_type' ).val(),
 				security: StoreSuite_Order.add_order_note_nonce,
 			};
 
-			$.post(StoreSuite_Order.ajax_url, data, function (response) {
-				$('ul.order_notes .no-items').remove();
-				$('ul.order_notes').prepend(response);
-				msfcLoader.unblock($('#new_order_notes'));
-				$('#add_order_note').val('');
-				// console.log( response );
-				// window.wcTracks.recordEvent( 'order_edit_add_order_note', {
-				// 	order_id: woocommerce_admin_meta_boxes.post_id,
-				// 	note_type: data.note_type || 'private',
-				// 	status: $( '#order_status' ).val()
-				// } );
-			});
+			$.post( StoreSuite_Order.ajax_url, data, function ( response ) {
+				$( 'ul.order_notes .no-items' ).remove();
+				$( 'ul.order_notes' ).prepend( response );
+				msfcLoader.unblock( $( '#new_order_notes' ) );
+				$( '#add_order_note' ).val( '' );
+			} );
 
 			return false;
 		},
 
 		delete_order_note: function () {
-			if (window.confirm(StoreSuite_Order.i18n_delete_note)) {
-				var note = $(this).closest('li.note');
+			if ( window.confirm( StoreSuite_Order.i18n_delete_note ) ) {
+				var note = $( this ).closest( 'li.note' );
 
-				msfcLoader.block($(note));
+				msfcLoader.block( $( note ) );
 
 				var data = {
 					action: 'woocommerce_delete_order_note',
-					note_id: $(note).attr('rel'),
+					note_id: $( note ).attr( 'rel' ),
 					security: StoreSuite_Order.delete_order_note_nonce,
 				};
 
-				$.post(StoreSuite_Order.ajax_url, data, function () {
-					$(note).remove();
+				$.post( StoreSuite_Order.ajax_url, data, function () {
+					$( note ).remove();
 
-					if ($('ul.order_notes').find('li').length === 0) {
-						$('ul.order_notes').append(
+					if ( $( 'ul.order_notes' ).find( 'li' ).length === 0 ) {
+						$( 'ul.order_notes' ).append(
 							'<li class="note no-items"><div class="note_content"><p>' +
 								StoreSuite_Order.i18n_no_notes +
 								'</p></div></li>'
 						);
 					}
-				});
+				} );
 			}
 
 			return false;
@@ -422,10 +422,9 @@
 	var NewOrderProducts = {
 		init: function () {
 			this.bindEvents();
-			console.log('NewOrderProducts');
 		},
 		bindEvents: function () {
-			$('#storesuite_product_search').show().selectWoo().hide();
+			$( '#storesuite_product_search' ).show().selectWoo().hide();
 			this.handleProductSearch();
 			this.handleDeleteSearchItem();
 			this.selectProduct();
@@ -443,21 +442,21 @@
 			this.quantityChanged();
 		},
 
-		displayResult: function (self, select2_args) {
+		displayResult: function ( self, select2_args ) {
 			select2_args = $.extend(
 				select2_args,
 				StoreFrontOrderConfig.getEnhancedSelectFormatString()
 			);
 
-			$(self).selectWoo(select2_args).addClass('enhanced');
+			$( self ).selectWoo( select2_args ).addClass( 'enhanced' );
 
-			if ($(self).data('sortable')) {
-				var $select = $(self);
-				var $list = $(self)
-					.next('.select2-container')
-					.find('ul.select2-selection__rendered');
+			if ( $( self ).data( 'sortable' ) ) {
+				var $select = $( self );
+				var $list = $( self )
+					.next( '.select2-container' )
+					.find( 'ul.select2-selection__rendered' );
 
-				$list.sortable({
+				$list.sortable( {
 					placeholder: 'ui-state-highlight select2-selection__choice',
 					forcePlaceholderSize: true,
 					items: 'li:not(.select2-search__field)',
@@ -465,80 +464,84 @@
 					stop: function () {
 						$(
 							$list
-								.find('.select2-selection__choice')
+								.find( '.select2-selection__choice' )
 								.get()
 								.reverse()
-						).each(function () {
-							var id = $(this).data('data').id;
+						).each( function () {
+							var id = $( this ).data( 'data' ).id;
 							var option = $select.find(
 								'option[value="' + id + '"]'
-							)[0];
-							$select.prepend(option);
-						});
+							)[ 0 ];
+							$select.prepend( option );
+						} );
 					},
-				});
+				} );
 				// Keep multiselects ordered alphabetically if they are not sortable.
-			} else if ($(self).prop('multiple')) {
-				$(self).on('change', function () {
-					var $children = $(self).children();
-					$children.sort(function (a, b) {
+			} else if ( $( self ).prop( 'multiple' ) ) {
+				$( self ).on( 'change', function () {
+					var $children = $( self ).children();
+					$children.sort( function ( a, b ) {
 						var atext = a.text.toLowerCase();
 						var btext = b.text.toLowerCase();
 
-						if (atext > btext) {
+						if ( atext > btext ) {
 							return 1;
 						}
-						if (atext < btext) {
+						if ( atext < btext ) {
 							return -1;
 						}
 						return 0;
-					});
-					$(self).html($children);
-				});
+					} );
+					$( self ).html( $children );
+				} );
 			}
 		},
 
 		handleProductSearch: function () {
 			// Ajax product search box
-			$(':input.wc-product-search')
-				.filter(':not(.enhanced)')
-				.each(function () {
-					console.log(this);
+			$( ':input.wc-product-search' )
+				.filter( ':not(.enhanced)' )
+				.each( function () {
 					var select2_args = {
-						allowClear: $(this).data('allow_clear') ? true : false,
-						placeholder: $(this).data('placeholder'),
-						minimumInputLength: $(this).data('minimum_input_length')
-							? $(this).data('minimum_input_length')
+						allowClear: $( this ).data( 'allow_clear' )
+							? true
+							: false,
+						placeholder: $( this ).data( 'placeholder' ),
+						minimumInputLength: $( this ).data(
+							'minimum_input_length'
+						)
+							? $( this ).data( 'minimum_input_length' )
 							: '3',
-						escapeMarkup: function (m) {
+						escapeMarkup: function ( m ) {
 							return m;
 						},
 						ajax: {
 							url: StoreSuite_Order.ajax_url,
 							dataType: 'json',
 							delay: 250,
-							data: function (params) {
+							data: function ( params ) {
 								return {
 									term: params.term,
 									action:
-										$(this).data('action') ||
+										$( this ).data( 'action' ) ||
 										'woocommerce_json_search_products_and_variations',
 									security:
 										StoreSuite_Order.search_products_nonce,
-									exclude: $(this).data('exclude'),
-									exclude_type: $(this).data('exclude_type'),
-									include: $(this).data('include'),
-									limit: $(this).data('limit'),
+									exclude: $( this ).data( 'exclude' ),
+									exclude_type:
+										$( this ).data( 'exclude_type' ),
+									include: $( this ).data( 'include' ),
+									limit: $( this ).data( 'limit' ),
 									display_stock:
-										$(this).data('display_stock'),
+										$( this ).data( 'display_stock' ),
 								};
 							},
-							processResults: function (data) {
+							processResults: function ( data ) {
 								var terms = [];
-								if (data) {
-									$.each(data, function (id, text) {
-										terms.push({ id: id, text: text });
-									});
+								if ( data ) {
+									$.each( data, function ( id, text ) {
+										terms.push( { id: id, text: text } );
+									} );
 								}
 								return {
 									results: terms,
@@ -548,94 +551,104 @@
 						},
 					};
 
-					NewOrderProducts.displayResult(this, select2_args);
-				});
+					NewOrderProducts.displayResult( this, select2_args );
+				} );
 		},
 
 		handleDeleteSearchItem: function () {
-			$(document).on('click', '.delete-search-order-item', function (e) {
-				e.preventDefault();
+			$( document ).on(
+				'click',
+				'.delete-search-order-item',
+				function ( e ) {
+					e.preventDefault();
 
-				var $row = $(this).closest('tr');
+					var $row = $( this ).closest( 'tr' );
 
-				// Fade out and remove
-				$row.fadeOut(200, function () {
-					$(this).remove();
-				});
-			});
+					// Fade out and remove
+					$row.fadeOut( 200, function () {
+						$( this ).remove();
+					} );
+				}
+			);
 		},
 
 		selectProduct: function () {
-			$('#storesuite_product_search').on('change', function (e) {
-				var selectedValue = $(this).val();
-				var selectedText = $(this).find('option:selected').text();
+			$( '#storesuite_product_search' ).on( 'change', function ( e ) {
+				var selectedValue = $( this ).val();
+				var selectedText = $( this ).find( 'option:selected' ).text();
 
-				if (selectedValue) {
-					var row = `<td data-id="${selectedValue}">${selectedText}</td>
+				if ( selectedValue ) {
+					var row = `<td data-id="${ selectedValue }">${ selectedText }</td>
 					<td><input type="number" step="1" min="0" max="9999" autocomplete="off" name="item_qty" placeholder="1" size="4" class="msf-form-control quantity-input" /></td>
 					<td><button type="button" class="delete-btn delete-search-order-item"><span class="msf-delete-icon"></span></button></td>`;
 
-					var item_table = $('#search-order-items table.msf-table'),
-						item_table_body = item_table.find('tbody');
-					item_table_body.append('<tr>' + row + '</tr>');
+					var item_table = $( '#search-order-items table.msf-table' ),
+						item_table_body = item_table.find( 'tbody' );
+					item_table_body.append( '<tr>' + row + '</tr>' );
 
 					// Show table
 					NewOrderProducts.toggleOrderItemsTable();
 
 					// Clear after a short delay to show the selection was made
-					setTimeout(function () {
-						$('#storesuite_product_search')
-							.val(null)
-							.trigger('change');
-					}, 500);
+					setTimeout( function () {
+						$( '#storesuite_product_search' )
+							.val( null )
+							.trigger( 'change' );
+					}, 500 );
 				}
-			});
+			} );
 		},
 
 		deleteSearchOrderItem: function () {
-			$(document).on('click', '.delete-search-order-item', function (e) {
-				e.preventDefault();
+			$( document ).on(
+				'click',
+				'.delete-search-order-item',
+				function ( e ) {
+					e.preventDefault();
 
-				// Remove the closest table row
-				$(this).closest('tr').remove();
+					// Remove the closest table row
+					$( this ).closest( 'tr' ).remove();
 
-				// Show/hide table
-				NewOrderProducts.toggleOrderItemsTable();
-			});
+					// Show/hide table
+					NewOrderProducts.toggleOrderItemsTable();
+				}
+			);
 		},
 
 		toggleOrderItemsTable: function () {
-			var rowCount = $('#search-order-items tbody tr').length;
+			var rowCount = $( '#search-order-items tbody tr' ).length;
 
-			if (rowCount > 0) {
-				$('#search-order-items').show();
+			if ( rowCount > 0 ) {
+				$( '#search-order-items' ).show();
 			} else {
-				$('#search-order-items').hide();
+				$( '#search-order-items' ).hide();
 			}
 		},
 
 		addToOrder: function () {
-			$(document).on('click', '#add-to-order-items', function (e) {
+			$( document ).on( 'click', '#add-to-order-items', function ( e ) {
 				e.preventDefault();
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block(prod_search_for_order_box);
+				msfcLoader.block( prod_search_for_order_box );
 
-				var item_table = $('#search-order-items table.msf-table'),
-					item_table_body = item_table.find('tbody'),
-					rows = item_table_body.find('tr'),
+				var item_table = $( '#search-order-items table.msf-table' ),
+					item_table_body = item_table.find( 'tbody' ),
+					rows = item_table_body.find( 'tr' ),
 					add_items = [];
 
-				$(rows).each(function () {
-					var item_id = $(this).find('td[data-id]').data('id'),
-						item_qty = $(this).find('input[name="item_qty"]').val();
+				$( rows ).each( function () {
+					var item_id = $( this ).find( 'td[data-id]' ).data( 'id' ),
+						item_qty = $( this )
+							.find( 'input[name="item_qty"]' )
+							.val();
 
-					add_items.push({
+					add_items.push( {
 						id: item_id,
 						qty: item_qty ? item_qty : 1,
-					});
-				});
+					} );
+				} );
 
 				var data = {
 					action: 'woocommerce_add_order_item',
@@ -649,62 +662,63 @@
 				// 	data.items = $( 'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]' ).serialize();
 				// }
 
-				data = NewOrderProducts.filterData('add_items', data);
+				data = NewOrderProducts.filterData( 'add_items', data );
 
-				$.ajax({
+				$.ajax( {
 					type: 'POST',
 					url: StoreSuite_Order.ajax_url,
 					data: data,
-					success: function (response) {
-						if (response.success) {
+					success: function ( response ) {
+						if ( response.success ) {
 							// Hide table
-							$('#search-order-items').hide();
-							$('#search-order-items table tbody').empty();
-							$('.order-fee-and-shipping-box').addClass('active');
+							$( '#search-order-items' ).hide();
+							$( '#search-order-items table tbody' ).empty();
+							$( '.order-fee-and-shipping-box' ).addClass(
+								'active'
+							);
 
-							$('#woocommerce-order-items')
-								.find('.inside')
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
 								.empty();
-							$('#woocommerce-order-items')
-								.find('.inside')
-								.append(response.data.html);
-							// console.log( response.data.html );
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
+								.append( response.data.html );
 
 							// Update notes.
-							if (response.data.notes_html) {
-								$('ul.order_notes').empty();
-								$('ul.order_notes').append(
-									$(response.data.notes_html).find('li')
+							if ( response.data.notes_html ) {
+								$( 'ul.order_notes' ).empty();
+								$( 'ul.order_notes' ).append(
+									$( response.data.notes_html ).find( 'li' )
 								);
 							}
 
 							// prod_search_for_order_box.reloaded_items();
-							msfcLoader.unblock(prod_search_for_order_box);
+							msfcLoader.unblock( prod_search_for_order_box );
 						} else {
-							msfcLoader.unblock(prod_search_for_order_box);
-							window.alert(response.data.error);
+							msfcLoader.unblock( prod_search_for_order_box );
+							window.alert( response.data.error );
 						}
 					},
 					complete: function () {},
 					dataType: 'json',
-				});
-			});
+				} );
+			} );
 		},
 
 		// When the qty is changed, increase or decrease costs
 		quantityChanged: function () {
-			$(document).on('change', 'input.quantity', function (e) {
+			$( document ).on( 'change', 'input.quantity', function ( e ) {
 				e.preventDefault();
-				var $row = $(this).closest('tr.item');
-				var qty = $(this).val();
-				var o_qty = $(this).attr('data-qty');
-				var line_total = $('input.line_total', $row);
-				var line_subtotal = $('input.line_subtotal', $row);
+				var $row = $( this ).closest( 'tr.item' );
+				var qty = $( this ).val();
+				var o_qty = $( this ).attr( 'data-qty' );
+				var line_total = $( 'input.line_total', $row );
+				var line_subtotal = $( 'input.line_subtotal', $row );
 
 				// Totals
 				var unit_total =
 					accounting.unformat(
-						line_total.attr('data-total'),
+						line_total.attr( 'data-total' ),
 						StoreSuite_Order.mon_decimal_point
 					) / o_qty;
 				line_total.val(
@@ -716,12 +730,12 @@
 						)
 					)
 						.toString()
-						.replace('.', StoreSuite_Order.mon_decimal_point)
+						.replace( '.', StoreSuite_Order.mon_decimal_point )
 				);
 
 				var unit_subtotal =
 					accounting.unformat(
-						line_subtotal.attr('data-subtotal'),
+						line_subtotal.attr( 'data-subtotal' ),
 						StoreSuite_Order.mon_decimal_point
 					) / o_qty;
 				line_subtotal.val(
@@ -733,16 +747,16 @@
 						)
 					)
 						.toString()
-						.replace('.', StoreSuite_Order.mon_decimal_point)
+						.replace( '.', StoreSuite_Order.mon_decimal_point )
 				);
 
 				// Taxes
-				$('input.line_tax', $row).each(function () {
-					var $line_total_tax = $(this);
-					var tax_id = $line_total_tax.data('tax_id');
+				$( 'input.line_tax', $row ).each( function () {
+					var $line_total_tax = $( this );
+					var tax_id = $line_total_tax.data( 'tax_id' );
 					var unit_total_tax =
 						accounting.unformat(
-							$line_total_tax.attr('data-total_tax'),
+							$line_total_tax.attr( 'data-total_tax' ),
 							StoreSuite_Order.mon_decimal_point
 						) / o_qty;
 					var $line_subtotal_tax = $(
@@ -751,11 +765,11 @@
 					);
 					var unit_subtotal_tax =
 						accounting.unformat(
-							$line_subtotal_tax.attr('data-subtotal_tax'),
+							$line_subtotal_tax.attr( 'data-subtotal_tax' ),
 							StoreSuite_Order.mon_decimal_point
 						) / o_qty;
 
-					if (0 < unit_total_tax) {
+					if ( 0 < unit_total_tax ) {
 						$line_total_tax.val(
 							parseFloat(
 								accounting.formatNumber(
@@ -772,7 +786,7 @@
 						);
 					}
 
-					if (0 < unit_subtotal_tax) {
+					if ( 0 < unit_subtotal_tax ) {
 						$line_subtotal_tax.val(
 							parseFloat(
 								accounting.formatNumber(
@@ -788,27 +802,27 @@
 								)
 						);
 					}
-				});
+				} );
 
-				$(this).trigger('quantity_changed');
-			});
+				$( this ).trigger( 'quantity_changed' );
+			} );
 		},
 
 		addCoupon: function () {
-			$(document).on('click', '.msfc-apply-coupon', function (e) {
+			$( document ).on( 'click', '.msfc-apply-coupon', function ( e ) {
 				e.preventDefault();
 
-				var value = $('#coupon_code').val();
+				var value = $( '#coupon_code' ).val();
 
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block(prod_search_for_order_box);
+				msfcLoader.block( prod_search_for_order_box );
 
-				var user_id = $('#customer_user').val();
-				var user_email = $('#_billing_email').val();
+				var user_id = $( '#customer_user' ).val();
+				var user_email = $( '#_billing_email' ).val();
 
-				var data = $.extend({}, NewOrderProducts.getTaxableAddress(), {
+				var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
 					action: 'woocommerce_add_coupon_discount',
 					dataType: 'json',
 					order_id: StoreSuite_Order.post_id,
@@ -816,123 +830,127 @@
 					coupon: value,
 					user_id: user_id,
 					user_email: user_email,
-				});
+				} );
 
-				data = NewOrderProducts.filterData('add_coupon', data);
+				data = NewOrderProducts.filterData( 'add_coupon', data );
 
-				$.ajax({
+				$.ajax( {
 					url: StoreSuite_Order.ajax_url,
 					data: data,
 					type: 'POST',
-					success: function (response) {
-						if (response.success) {
-							$('#woocommerce-order-items')
-								.find('.inside')
+					success: function ( response ) {
+						if ( response.success ) {
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
 								.empty();
-							$('#woocommerce-order-items')
-								.find('.inside')
-								.append(response.data.html);
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
+								.append( response.data.html );
 
 							// Update notes.
-							if (response.data.notes_html) {
-								$('ul.order_notes').empty();
-								$('ul.order_notes').append(
-									$(response.data.notes_html).find('li')
+							if ( response.data.notes_html ) {
+								$( 'ul.order_notes' ).empty();
+								$( 'ul.order_notes' ).append(
+									$( response.data.notes_html ).find( 'li' )
 								);
 							}
 
 							// wc_meta_boxes_order_items.reloaded_items();
-							msfcLoader.unblock(prod_search_for_order_box);
+							msfcLoader.unblock( prod_search_for_order_box );
 						} else {
-							window.alert(response.data.error);
+							window.alert( response.data.error );
 						}
-						msfcLoader.unblock(prod_search_for_order_box);
+						msfcLoader.unblock( prod_search_for_order_box );
 					},
 					complete: function () {},
-				});
-			});
+				} );
+			} );
 		},
 
 		removeCoupon: function () {
-			$(document).on('click', '.remove-coupon', function (e) {
+			$( document ).on( 'click', '.remove-coupon', function ( e ) {
 				e.preventDefault();
-				var $this = $(this);
+				var $this = $( this );
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block(prod_search_for_order_box);
+				msfcLoader.block( prod_search_for_order_box );
 
-				var data = $.extend({}, NewOrderProducts.getTaxableAddress(), {
+				var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
 					action: 'woocommerce_remove_order_coupon',
 					dataType: 'json',
 					order_id: StoreSuite_Order.post_id,
 					security: StoreSuite_Order.order_item_nonce,
-					coupon: $this.data('code'),
-				});
+					coupon: $this.data( 'code' ),
+				} );
 
-				data = NewOrderProducts.filterData('remove_coupon', data);
+				data = NewOrderProducts.filterData( 'remove_coupon', data );
 
-				$.post(StoreSuite_Order.ajax_url, data, function (response) {
-					if (response.success) {
-						$('#woocommerce-order-items').find('.inside').empty();
-						$('#woocommerce-order-items')
-							.find('.inside')
-							.append(response.data.html);
+				$.post( StoreSuite_Order.ajax_url, data, function ( response ) {
+					if ( response.success ) {
+						$( '#woocommerce-order-items' )
+							.find( '.inside' )
+							.empty();
+						$( '#woocommerce-order-items' )
+							.find( '.inside' )
+							.append( response.data.html );
 
 						// Update notes.
-						if (response.data.notes_html) {
-							$('ul.order_notes').empty();
-							$('ul.order_notes').append(
-								$(response.data.notes_html).find('li')
+						if ( response.data.notes_html ) {
+							$( 'ul.order_notes' ).empty();
+							$( 'ul.order_notes' ).append(
+								$( response.data.notes_html ).find( 'li' )
 							);
 						}
-						msfcLoader.unblock(prod_search_for_order_box);
+						msfcLoader.unblock( prod_search_for_order_box );
 					} else {
-						window.alert(response.data.error);
+						window.alert( response.data.error );
 					}
-					msfcLoader.unblock(prod_search_for_order_box);
-				});
-			});
+					msfcLoader.unblock( prod_search_for_order_box );
+				} );
+			} );
 		},
 
 		addFee: function () {
-			$(document).on('click', '.msfc-add-fee', function (e) {
+			$( document ).on( 'click', '.msfc-add-fee', function ( e ) {
 				e.preventDefault();
 
-				var value = $('#add_fee').val();
+				var value = $( '#add_fee' ).val();
 
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block(prod_search_for_order_box);
+				msfcLoader.block( prod_search_for_order_box );
 
-				var data = $.extend({}, NewOrderProducts.getTaxableAddress(), {
+				var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
 					action: 'woocommerce_add_order_fee',
 					dataType: 'json',
 					order_id: StoreSuite_Order.post_id,
 					security: StoreSuite_Order.order_item_nonce,
 					amount: value,
-				});
+				} );
 
-				data = NewOrderProducts.filterData('add_fee', data);
+				data = NewOrderProducts.filterData( 'add_fee', data );
 
-				$.post(StoreSuite_Order.ajax_url, data, function (response) {
-					if (response.success) {
-						$('#woocommerce-order-items').find('.inside').empty();
-						$('#woocommerce-order-items')
-							.find('.inside')
-							.append(response.data.html);
-						msfcLoader.unblock(prod_search_for_order_box);
+				$.post( StoreSuite_Order.ajax_url, data, function ( response ) {
+					if ( response.success ) {
+						$( '#woocommerce-order-items' )
+							.find( '.inside' )
+							.empty();
+						$( '#woocommerce-order-items' )
+							.find( '.inside' )
+							.append( response.data.html );
+						msfcLoader.unblock( prod_search_for_order_box );
 					} else {
-						window.alert(response.data.error);
+						window.alert( response.data.error );
 					}
-					msfcLoader.unblock(prod_search_for_order_box);
-				});
-			});
+					msfcLoader.unblock( prod_search_for_order_box );
+				} );
+			} );
 		},
 
 		addShippingToOrder: function () {
-			$(document).on('click', '.msfc-add-shipping', function (e) {
+			$( document ).on( 'click', '.msfc-add-shipping', function ( e ) {
 				e.preventDefault();
 				var shippingData = {
 					action: 'storesuite_add_shipping_to_order',
@@ -952,88 +970,98 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block(prod_search_for_order_box);
+				msfcLoader.block( prod_search_for_order_box );
 
-				$.ajax({
+				$.ajax( {
 					url: StoreSuite_Order.ajax_url,
 					type: 'POST',
 					data: shippingData,
-					success: function (response) {
-						if (response.success) {
-							$('#woocommerce-order-items')
-								.find('.inside')
+					success: function ( response ) {
+						if ( response.success ) {
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
 								.empty();
-							$('#woocommerce-order-items')
-								.find('.inside')
-								.append(response.data.html);
-							msfcLoader.unblock(prod_search_for_order_box);
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
+								.append( response.data.html );
+							msfcLoader.unblock( prod_search_for_order_box );
 						} else {
-							msfcLoader.unblock(prod_search_for_order_box);
-							window.alert(response.data.error);
+							msfcLoader.unblock( prod_search_for_order_box );
+							window.alert( response.data.error );
 						}
 					},
 					complete: function () {},
-				});
-			});
+				} );
+			} );
 		},
 
 		recalculateOrder: function () {
-			$(document).on('click', 'button.calculate-action', function (e) {
-				e.preventDefault();
+			$( document ).on(
+				'click',
+				'button.calculate-action',
+				function ( e ) {
+					e.preventDefault();
 
-				var prod_search_for_order_box = $(
-					'.product-serach-for-order-box'
-				);
-				msfcLoader.block(prod_search_for_order_box);
+					var prod_search_for_order_box = $(
+						'.product-serach-for-order-box'
+					);
+					msfcLoader.block( prod_search_for_order_box );
 
-				var data = $.extend({}, NewOrderProducts.getTaxableAddress(), {
-					action: 'woocommerce_calc_line_taxes',
-					order_id: StoreSuite_Order.post_id,
-					items: $(
-						'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]'
-					).serialize(),
-					security: StoreSuite_Order.calc_totals_nonce,
-				});
+					var data = $.extend(
+						{},
+						NewOrderProducts.getTaxableAddress(),
+						{
+							action: 'woocommerce_calc_line_taxes',
+							order_id: StoreSuite_Order.post_id,
+							items: $(
+								'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]'
+							).serialize(),
+							security: StoreSuite_Order.calc_totals_nonce,
+						}
+					);
 
-				data = NewOrderProducts.filterData('recalculate', data);
+					data = NewOrderProducts.filterData( 'recalculate', data );
 
-				$(document.body).trigger(
-					'order-totals-recalculate-before',
-					data
-				);
+					$( document.body ).trigger(
+						'order-totals-recalculate-before',
+						data
+					);
 
-				$.ajax({
-					url: StoreSuite_Order.ajax_url,
-					data: data,
-					type: 'POST',
-					success: function (response) {
-						$('#woocommerce-order-items').find('.inside').empty();
-						$('#woocommerce-order-items')
-							.find('.inside')
-							.append(response);
-						msfcLoader.unblock(prod_search_for_order_box);
+					$.ajax( {
+						url: StoreSuite_Order.ajax_url,
+						data: data,
+						type: 'POST',
+						success: function ( response ) {
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
+								.empty();
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
+								.append( response );
+							msfcLoader.unblock( prod_search_for_order_box );
 
-						$(document.body).trigger(
-							'order-totals-recalculate-success',
-							response
-						);
-					},
-					complete: function (response) {
-						$(document.body).trigger(
-							'order-totals-recalculate-complete',
-							response
-						);
-					},
-				});
-			});
+							$( document.body ).trigger(
+								'order-totals-recalculate-success',
+								response
+							);
+						},
+						complete: function ( response ) {
+							$( document.body ).trigger(
+								'order-totals-recalculate-complete',
+								response
+							);
+						},
+					} );
+				}
+			);
 			return false;
 		},
 
 		saveLineItems: function () {
-			$(document).on(
+			$( document ).on(
 				'click',
 				'.wc-order-add-item .save-action',
-				function (e) {
+				function ( e ) {
 					e.preventDefault();
 
 					var data = {
@@ -1045,45 +1073,50 @@
 						security: StoreSuite_Order.order_item_nonce,
 					};
 
-					data = NewOrderProducts.filterData('save_line_items', data);
+					data = NewOrderProducts.filterData(
+						'save_line_items',
+						data
+					);
 
 					var prod_search_for_order_box = $(
 						'.product-serach-for-order-box'
 					);
-					msfcLoader.block(prod_search_for_order_box);
+					msfcLoader.block( prod_search_for_order_box );
 
-					$.ajax({
+					$.ajax( {
 						url: StoreSuite_Order.ajax_url,
 						data: data,
 						type: 'POST',
-						success: function (response) {
-							if (response.success) {
-								$('#woocommerce-order-items')
-									.find('.inside')
+						success: function ( response ) {
+							if ( response.success ) {
+								$( '#woocommerce-order-items' )
+									.find( '.inside' )
 									.empty();
-								$('#woocommerce-order-items')
-									.find('.inside')
-									.append(response.data.html);
+								$( '#woocommerce-order-items' )
+									.find( '.inside' )
+									.append( response.data.html );
 
 								// Update notes.
-								if (response.data.notes_html) {
-									$('ul.order_notes').empty();
-									$('ul.order_notes').append(
-										$(response.data.notes_html).find('li')
+								if ( response.data.notes_html ) {
+									$( 'ul.order_notes' ).empty();
+									$( 'ul.order_notes' ).append(
+										$( response.data.notes_html ).find(
+											'li'
+										)
 									);
 								}
 
 								// wc_meta_boxes_order_items.reloaded_items();
-								msfcLoader.unblock(prod_search_for_order_box);
+								msfcLoader.unblock( prod_search_for_order_box );
 							} else {
-								msfcLoader.unblock(prod_search_for_order_box);
-								window.alert(response.data.error);
+								msfcLoader.unblock( prod_search_for_order_box );
+								window.alert( response.data.error );
 							}
 						},
 						complete: function () {},
-					});
+					} );
 
-					$(this).trigger('items_saved');
+					$( this ).trigger( 'items_saved' );
 				}
 			);
 
@@ -1091,7 +1124,7 @@
 		},
 
 		createOrder: function () {
-			$(document).on('click', '.create-order-btn', function (e) {
+			$( document ).on( 'click', '.create-order-btn', function ( e ) {
 				e.preventDefault();
 				var data = {
 					action: 'storesuite_create_order',
@@ -1099,7 +1132,9 @@
 					order_status: $(
 						'.msf-form-group [name="order_status"]'
 					).val(),
-					order_date: $('.msf-form-group [name="order_date"]').val(),
+					order_date: $(
+						'.msf-form-group [name="order_date"]'
+					).val(),
 					order_date_hour: $(
 						'.msf-form-group [name="order_date_hour"]'
 					).val(),
@@ -1114,80 +1149,80 @@
 					).val(),
 
 					// Billing address
-					_billing_first_name: $('#_billing_first_name').val(),
-					_billing_last_name: $('#_billing_last_name').val(),
-					_billing_company: $('#_billing_company').val(),
-					_billing_address_1: $('#_billing_address_1').val(),
-					_billing_address_2: $('#_billing_address_2').val(),
-					_billing_city: $('#_billing_city').val(),
-					_billing_postcode: $('#_billing_postcode').val(),
-					_billing_country: $('#_billing_country').val(),
-					_billing_state: $('#_billing_state').val(),
-					_billing_email: $('#_billing_email').val(),
-					_billing_phone: $('#_billing_phone').val(),
+					_billing_first_name: $( '#_billing_first_name' ).val(),
+					_billing_last_name: $( '#_billing_last_name' ).val(),
+					_billing_company: $( '#_billing_company' ).val(),
+					_billing_address_1: $( '#_billing_address_1' ).val(),
+					_billing_address_2: $( '#_billing_address_2' ).val(),
+					_billing_city: $( '#_billing_city' ).val(),
+					_billing_postcode: $( '#_billing_postcode' ).val(),
+					_billing_country: $( '#_billing_country' ).val(),
+					_billing_state: $( '#_billing_state' ).val(),
+					_billing_email: $( '#_billing_email' ).val(),
+					_billing_phone: $( '#_billing_phone' ).val(),
 
 					// Shipping address
-					_shipping_first_name: $('#_shipping_first_name').val(),
-					_shipping_last_name: $('#_shipping_last_name').val(),
-					_shipping_company: $('#_shipping_company').val(),
-					_shipping_address_1: $('#_shipping_address_1').val(),
-					_shipping_address_2: $('#_shipping_address_2').val(),
-					_shipping_city: $('#_shipping_city').val(),
-					_shipping_postcode: $('#_shipping_postcode').val(),
-					_shipping_country: $('#_shipping_country').val(),
-					_shipping_state: $('#_shipping_state').val(),
-					_shipping_phone: $('#_shipping_phone').val(),
-					customer_note: $('#customer_note').val(),
+					_shipping_first_name: $( '#_shipping_first_name' ).val(),
+					_shipping_last_name: $( '#_shipping_last_name' ).val(),
+					_shipping_company: $( '#_shipping_company' ).val(),
+					_shipping_address_1: $( '#_shipping_address_1' ).val(),
+					_shipping_address_2: $( '#_shipping_address_2' ).val(),
+					_shipping_city: $( '#_shipping_city' ).val(),
+					_shipping_postcode: $( '#_shipping_postcode' ).val(),
+					_shipping_country: $( '#_shipping_country' ).val(),
+					_shipping_state: $( '#_shipping_state' ).val(),
+					_shipping_phone: $( '#_shipping_phone' ).val(),
+					customer_note: $( '#customer_note' ).val(),
 
 					// Payment
-					_payment_method: $('#_payment_method').val(),
-					_transaction_id: $('#_transaction_id').val(),
+					_payment_method: $( '#_payment_method' ).val(),
+					_transaction_id: $( '#_transaction_id' ).val(),
 					security: StoreSuite_Order.order_item_nonce,
 				};
 
-				var container = $('.msfc-dashboard-order-details');
+				var container = $( '.msfc-dashboard-order-details' );
 
 				// Show premium loader
-				msfcLoader.block(container);
+				msfcLoader.block( container );
 
-				$.ajax({
+				$.ajax( {
 					url: StoreSuite_Order.ajax_url,
 					type: 'POST',
 					data: data,
-					success: function (response) {
-						if (response.success) {
-							$('#woocommerce-order-items')
-								.find('.inside')
+					success: function ( response ) {
+						if ( response.success ) {
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
 								.empty();
-							$('#woocommerce-order-items')
-								.find('.inside')
-								.append(response.data.html);
+							$( '#woocommerce-order-items' )
+								.find( '.inside' )
+								.append( response.data.html );
 
 							// Update notes.
-							if (response.data.notes_html) {
-								$('ul.order_notes').empty();
-								$('ul.order_notes').append(
-									$(response.data.notes_html).find('li')
+							if ( response.data.notes_html ) {
+								$( 'ul.order_notes' ).empty();
+								$( 'ul.order_notes' ).append(
+									$( response.data.notes_html ).find( 'li' )
 								);
 							}
 						} else {
-							window.alert(response.data.error);
+							window.alert( response.data.error );
 						}
 					},
 					complete: function () {
-						msfcLoader.unblock(container);
+						msfcLoader.unblock( container );
 					},
-				});
-			});
+				} );
+			} );
 		},
 
-		filterData: function (handle, data) {
-			const filteredData = $('#woocommerce-order-items').triggerHandler(
-				`woocommerce_order_meta_box_${handle}_ajax_data`,
-				[data]
+		filterData: function ( handle, data ) {
+			const filteredData = $( '#woocommerce-order-items' ).triggerHandler(
+				`woocommerce_order_meta_box_${ handle }_ajax_data`,
+				[ data ]
 			);
 
-			if (filteredData) {
+			if ( filteredData ) {
 				return filteredData;
 			}
 
@@ -1200,18 +1235,18 @@
 			var postcode = '';
 			var city = '';
 
-			if ('shipping' === StoreSuite_Order.tax_based_on) {
-				country = $('#_shipping_country').val();
-				state = $('#_shipping_state').val();
-				postcode = $('#_shipping_postcode').val();
-				city = $('#_shipping_city').val();
+			if ( 'shipping' === StoreSuite_Order.tax_based_on ) {
+				country = $( '#_shipping_country' ).val();
+				state = $( '#_shipping_state' ).val();
+				postcode = $( '#_shipping_postcode' ).val();
+				city = $( '#_shipping_city' ).val();
 			}
 
-			if ('billing' === StoreSuite_Order.tax_based_on || !country) {
-				country = $('#_billing_country').val();
-				state = $('#_billing_state').val();
-				postcode = $('#_billing_postcode').val();
-				city = $('#_billing_city').val();
+			if ( 'billing' === StoreSuite_Order.tax_based_on || ! country ) {
+				country = $( '#_billing_country' ).val();
+				state = $( '#_billing_state' ).val();
+				postcode = $( '#_billing_postcode' ).val();
+				city = $( '#_billing_city' ).val();
 			}
 
 			return {
@@ -1223,40 +1258,47 @@
 		},
 
 		editOrderItem: function () {
-			$(document).on('click', 'a.edit-order-item', function (e) {
+			$( document ).on( 'click', 'a.edit-order-item', function ( e ) {
 				e.preventDefault();
-				$(this).closest('tr').find('.view').hide();
-				$(this).closest('tr').find('.edit').show();
-				$(this).hide();
-				$('.wc-order-data-row.wc-order-bulk-actions').hide();
-				$('.wc-order-data-row.wc-order-add-item').show();
-				$('button.cancel-action').attr('data-reload', true);
+				$( this ).closest( 'tr' ).find( '.view' ).hide();
+				$( this ).closest( 'tr' ).find( '.edit' ).show();
+				$( this ).hide();
+				$( '.wc-order-data-row.wc-order-bulk-actions' ).hide();
+				$( '.wc-order-data-row.wc-order-add-item' ).show();
+				$( 'button.cancel-action' ).attr( 'data-reload', true );
 				return false;
-			});
+			} );
 		},
 
 		deleteOrderItem: function () {
-			$(document).on('click', 'a.delete-order-item', function (e) {
+			$( document ).on( 'click', 'a.delete-order-item', function ( e ) {
 				var prod_search_for_order_box = $(
 					'.msfc-dashboard-order-details'
 				);
 				var notice = StoreSuite_Order.remove_item_notice;
 
-				if ($(this).parents('tbody#order_fee_line_items').length) {
+				if (
+					$( this ).parents( 'tbody#order_fee_line_items' ).length
+				) {
 					notice = StoreSuite_Order.remove_fee_notice;
 				}
 
-				if ($(this).parents('tbody#order_shipping_line_items').length) {
+				if (
+					$( this ).parents( 'tbody#order_shipping_line_items' )
+						.length
+				) {
 					notice = StoreSuite_Order.remove_shipping_notice;
 				}
 
-				var answer = window.confirm(notice);
+				var answer = window.confirm( notice );
 
-				if (answer) {
-					var $item = $(this).closest('tr.item, tr.fee, tr.shipping');
-					var order_item_id = $item.attr('data-order_item_id');
+				if ( answer ) {
+					var $item = $( this ).closest(
+						'tr.item, tr.fee, tr.shipping'
+					);
+					var order_item_id = $item.attr( 'data-order_item_id' );
 
-					msfcLoader.block(prod_search_for_order_box);
+					msfcLoader.block( prod_search_for_order_box );
 
 					var data = $.extend(
 						{},
@@ -1271,46 +1313,49 @@
 
 					// Check if items have changed, if so pass them through so we can save them before deleting.
 					if (
-						'true' === $('button.cancel-action').attr('data-reload')
+						'true' ===
+						$( 'button.cancel-action' ).attr( 'data-reload' )
 					) {
 						data.items = $(
 							'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]'
 						).serialize();
 					}
 
-					data = NewOrderProducts.filterData('delete_item', data);
+					data = NewOrderProducts.filterData( 'delete_item', data );
 
-					$.ajax({
+					$.ajax( {
 						url: StoreSuite_Order.ajax_url,
 						data: data,
 						type: 'POST',
-						success: function (response) {
-							if (response.success) {
-								$('#woocommerce-order-items')
-									.find('.inside')
+						success: function ( response ) {
+							if ( response.success ) {
+								$( '#woocommerce-order-items' )
+									.find( '.inside' )
 									.empty();
-								$('#woocommerce-order-items')
-									.find('.inside')
-									.append(response.data.html);
+								$( '#woocommerce-order-items' )
+									.find( '.inside' )
+									.append( response.data.html );
 
 								// Update notes.
-								if (response.data.notes_html) {
-									$('ul.order_notes').empty();
-									$('ul.order_notes').append(
-										$(response.data.notes_html).find('li')
+								if ( response.data.notes_html ) {
+									$( 'ul.order_notes' ).empty();
+									$( 'ul.order_notes' ).append(
+										$( response.data.notes_html ).find(
+											'li'
+										)
 									);
 								}
 
-								msfcLoader.unblock(prod_search_for_order_box);
+								msfcLoader.unblock( prod_search_for_order_box );
 							} else {
-								window.alert(response.data.error);
+								window.alert( response.data.error );
 							}
-							msfcLoader.unblock(prod_search_for_order_box);
+							msfcLoader.unblock( prod_search_for_order_box );
 						},
 						complete: function () {},
-					});
+					} );
 				}
-			});
+			} );
 			return false;
 		},
 	};
@@ -1321,113 +1366,115 @@
 		},
 		bindEvents: function () {
 			if (
-				!(
+				! (
 					typeof StoreSuite_Order === 'undefined' ||
 					typeof StoreSuite_Order.countries === 'undefined'
 				)
 			) {
 				/* State/Country select boxes */
 				this.states = JSON.parse(
-					StoreSuite_Order.countries.replace(/&quot;/g, '"')
+					StoreSuite_Order.countries.replace( /&quot;/g, '"' )
 				);
 			}
 
-			$('.js_field-country').selectWoo().on('change', this.changeCountry);
-			$('.js_field-country').trigger('change', [true]);
-			$(document.body).on(
+			$( '.js_field-country' )
+				.selectWoo()
+				.on( 'change', this.changeCountry );
+			$( '.js_field-country' ).trigger( 'change', [ true ] );
+			$( document.body ).on(
 				'change',
 				'select.js_field-state',
 				this.changeState
 			);
 		},
-		changeCountry: function (e, stickValue) {
+		changeCountry: function ( e, stickValue ) {
 			// Check for stickValue before using it
-			if (typeof stickValue === 'undefined') {
+			if ( typeof stickValue === 'undefined' ) {
 				stickValue = false;
 			}
 
 			// Prevent if we don't have the metabox data
-			if (ManageOrderAddress.states === null) {
+			if ( ManageOrderAddress.states === null ) {
 				return;
 			}
 
-			var $this = $(this),
+			var $this = $( this ),
 				country = $this.val(),
 				$state = $this
-					.parents('div.customer-address-box')
-					.find(':input.js_field-state'),
+					.parents( 'div.customer-address-box' )
+					.find( ':input.js_field-state' ),
 				$parent = $state.parent(),
 				stateValue = $state.val(),
-				input_name = $state.attr('name'),
-				input_id = $state.attr('id'),
-				value = $this.data('woocommerce.stickState-' + country)
-					? $this.data('woocommerce.stickState-' + country)
+				input_name = $state.attr( 'name' ),
+				input_id = $state.attr( 'id' ),
+				value = $this.data( 'woocommerce.stickState-' + country )
+					? $this.data( 'woocommerce.stickState-' + country )
 					: stateValue,
-				placeholder = $state.attr('placeholder'),
+				placeholder = $state.attr( 'placeholder' ),
 				$newstate;
 
-			if (stickValue) {
-				$this.data('woocommerce.stickState-' + country, value);
+			if ( stickValue ) {
+				$this.data( 'woocommerce.stickState-' + country, value );
 			}
 
 			// Remove the previous DOM element
-			$parent.show().find('.select2-container').remove();
+			$parent.show().find( '.select2-container' ).remove();
 
-			if (!$.isEmptyObject(ManageOrderAddress.states[country])) {
-				var state = ManageOrderAddress.states[country],
-					$defaultOption = $('<option value=""></option>').text(
+			if ( ! $.isEmptyObject( ManageOrderAddress.states[ country ] ) ) {
+				var state = ManageOrderAddress.states[ country ],
+					$defaultOption = $( '<option value=""></option>' ).text(
 						StoreSuite_Order.i18n_select_state_text
 					);
 
-				$newstate = $('<select></select>')
-					.prop('id', input_id)
-					.prop('name', input_name)
-					.prop('placeholder', placeholder)
-					.addClass('js_field-state select short')
-					.append($defaultOption);
+				$newstate = $( '<select></select>' )
+					.prop( 'id', input_id )
+					.prop( 'name', input_name )
+					.prop( 'placeholder', placeholder )
+					.addClass( 'js_field-state select short' )
+					.append( $defaultOption );
 
-				$.each(state, function (index) {
-					var $option = $('<option></option>')
-						.prop('value', index)
-						.text(state[index]);
-					if (index === stateValue) {
-						$option.prop('selected');
+				$.each( state, function ( index ) {
+					var $option = $( '<option></option>' )
+						.prop( 'value', index )
+						.text( state[ index ] );
+					if ( index === stateValue ) {
+						$option.prop( 'selected' );
 					}
-					$newstate.append($option);
-				});
+					$newstate.append( $option );
+				} );
 
-				$newstate.val(value);
+				$newstate.val( value );
 
-				$state.replaceWith($newstate);
+				$state.replaceWith( $newstate );
 
-				$newstate.show().selectWoo().hide().trigger('change');
+				$newstate.show().selectWoo().hide().trigger( 'change' );
 			} else {
-				$newstate = $('<input type="text" />')
-					.prop('id', input_id)
-					.prop('name', input_name)
-					.prop('placeholder', placeholder)
-					.addClass('js_field-state msf-form-control')
-					.val(stateValue);
-				$state.replaceWith($newstate);
+				$newstate = $( '<input type="text" />' )
+					.prop( 'id', input_id )
+					.prop( 'name', input_name )
+					.prop( 'placeholder', placeholder )
+					.addClass( 'js_field-state msf-form-control' )
+					.val( stateValue );
+				$state.replaceWith( $newstate );
 			}
 
 			// Trigger custom event
-			$(document.body).trigger('country-change.woocommerce', [
+			$( document.body ).trigger( 'country-change.woocommerce', [
 				country,
-				$(this).closest('div'),
-			]);
+				$( this ).closest( 'div' ),
+			] );
 		},
 
 		changeState: function () {
 			// Here we will find if state value on a select has changed and stick it to the country data
-			var $this = $(this),
+			var $this = $( this ),
 				state = $this.val(),
 				$country = $this
-					.parents('div.customer-address-box')
-					.find(':input.js_field-country'),
+					.parents( 'div.customer-address-box' )
+					.find( ':input.js_field-country' ),
 				country = $country.val();
 
-			$country.data('woocommerce.stickState-' + country, state);
+			$country.data( 'woocommerce.stickState-' + country, state );
 		},
 	};
 
@@ -1440,47 +1487,51 @@
 			itemMeta.remove();
 		},
 		add: function () {
-			$(document).on('click', 'button.add_order_item_meta', function (e) {
-				e.preventDefault();
-				var $button = $(this);
-				var $item = $button.closest('tr.item, tr.shipping');
-				var $items = $item.find('tbody.meta_items');
-				var index = $items.find('tr').length + 1;
-				var $row =
-					'<tr data-meta_id="0">' +
-					'<td>' +
-					'<input type="text" maxlength="255" placeholder="' +
-					StoreSuite_Order.placeholder_name +
-					'" name="meta_key[' +
-					$item.attr('data-order_item_id') +
-					'][new-' +
-					index +
-					']" />' +
-					'<textarea placeholder="' +
-					StoreSuite_Order.placeholder_value +
-					'" name="meta_value[' +
-					$item.attr('data-order_item_id') +
-					'][new-' +
-					index +
-					']"></textarea>' +
-					'</td>' +
-					'<td width="1%"><button class="remove_order_item_meta button">&times;</button></td>' +
-					'</tr>';
-				$items.append($row);
+			$( document ).on(
+				'click',
+				'button.add_order_item_meta',
+				function ( e ) {
+					e.preventDefault();
+					var $button = $( this );
+					var $item = $button.closest( 'tr.item, tr.shipping' );
+					var $items = $item.find( 'tbody.meta_items' );
+					var index = $items.find( 'tr' ).length + 1;
+					var $row =
+						'<tr data-meta_id="0">' +
+						'<td>' +
+						'<input type="text" maxlength="255" placeholder="' +
+						StoreSuite_Order.placeholder_name +
+						'" name="meta_key[' +
+						$item.attr( 'data-order_item_id' ) +
+						'][new-' +
+						index +
+						']" />' +
+						'<textarea placeholder="' +
+						StoreSuite_Order.placeholder_value +
+						'" name="meta_value[' +
+						$item.attr( 'data-order_item_id' ) +
+						'][new-' +
+						index +
+						']"></textarea>' +
+						'</td>' +
+						'<td width="1%"><button class="remove_order_item_meta button">&times;</button></td>' +
+						'</tr>';
+					$items.append( $row );
 
-				return false;
-			});
+					return false;
+				}
+			);
 		},
 
 		remove: function () {
-			$(document).on(
+			$( document ).on(
 				'click',
 				'button.remove_order_item_meta',
-				function (e) {
+				function ( e ) {
 					e.preventDefault();
-					if (window.confirm(StoreSuite_Order.remove_item_meta)) {
-						var $row = $(this).closest('tr');
-						$row.find(':input').val('');
+					if ( window.confirm( StoreSuite_Order.remove_item_meta ) ) {
+						var $row = $( this ).closest( 'tr' );
+						$row.find( ':input' ).val( '' );
 						$row.hide();
 					}
 					return false;
@@ -1494,4 +1545,4 @@
 	NewOrderProducts.init();
 	ManageOrderAddress.init();
 	itemMeta.init();
-})(jQuery);
+} )( jQuery );

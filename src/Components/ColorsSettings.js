@@ -182,7 +182,7 @@ const ColorsSettings = () => {
 						width="16"
 						height="16"
 						fill="currentColor"
-						class="bi bi-palette"
+						className="bi bi-palette"
 						viewBox="0 0 16 16"
 					>
 						<path d="M8 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m4 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M5.5 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />

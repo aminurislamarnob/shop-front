@@ -54,7 +54,7 @@ class Assets {
 			}
 		}
 
-		$prefix = '/plugins/';
+		$prefix = plugins_url();
 		if ( strpos( $src, $prefix ) === false ) {
 			return false;
 		}
@@ -89,7 +89,7 @@ class Assets {
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 		$storesuite_daterangepicker   = STORESUITE_PLUGIN_ASSET . '/frontend/library/daterangepicker.min.js';
 
-		wp_register_script( 'storesuite_admin_script', $admin_script, array( 'storesuite-block-editor-script' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_daterangepicker', $storesuite_daterangepicker, array( 'jquery', 'moment' ), '3.1.0', true );
 		wp_register_script( 'storesuite_script', $frontend_script, array( 'jquery', 'storesuite_daterangepicker' ), STORESUITE_PLUGIN_VERSION, true );
 
@@ -132,8 +132,6 @@ class Assets {
 	 * @return void
 	 */
 	public function enqueue_admin_scripts() {
-		wp_enqueue_script( 'storesuite_admin_script' );
-
 		$page = get_current_screen();
 		if ( 'woocommerce_page_storesuite' === $page->id ) {
 			$asset_file = include STORESUITE_DIR . '/assets/build/admin/script.asset.php';
