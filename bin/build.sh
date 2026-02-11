@@ -7,7 +7,7 @@ set -e
 cd "$(dirname "$0")"
 cd ..
 DIR=$(pwd)
-BUILD_DIR="$DIR/build/my-storesuite"
+BUILD_DIR="$DIR/build/storesuite"
 
 # Enable nicer messaging for build status.
 BLUE_BOLD='\033[1;34m'
@@ -40,10 +40,15 @@ mkdir -p "$BUILD_DIR"
 # npm install
 
 status "Generating build... 👷‍♀️"
+status "Installing node dependencies... 📦"
+npm install
+npm run build
+
+status "Generating build... 👷‍♀️"
 
 # Copy all files
 status "Copying files... ✌️"
-FILES=(my-storesuite.php readme.txt dist includes templates assets languages composer.json composer.lock)
+FILES=(storesuite.php readme.txt dist includes templates assets languages composer.json composer.lock)
 
 for file in ${FILES[@]}; do
     if [ -f "$file" ] || [ -d "$file" ]; then
@@ -62,10 +67,10 @@ rm composer.json composer.lock
 # go one up, to the build dir
 status "Creating archive... 🎁"
 cd ..
-zip -r -q my-storesuite.zip my-storesuite
+zip -r -q storesuite.zip storesuite
 
 # remove the source directory
-rm -rf my-storesuite
+rm -rf storesuite
 
 success "Done. You've built My StoreSuite! 🎉 "
-echo -e "\n${BLUE_BOLD}File Path${COLOR_RESET}: ${YELLOW_BOLD}$(pwd)/my-storesuite.zip${COLOR_RESET} \n"
+echo -e "\n${BLUE_BOLD}File Path${COLOR_RESET}: ${YELLOW_BOLD}$(pwd)/storesuite.zip${COLOR_RESET} \n"
