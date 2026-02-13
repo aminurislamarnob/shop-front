@@ -85,7 +85,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 													$shipping_methods = WC()->shipping() ? WC()->shipping()->load_shipping_methods() : array();
 
 													foreach ( $shipping_methods as $method ) {
-														echo '<option value="' . esc_attr( $method->id ) . '" ' . selected( true, $is_active, false ) . '>' . esc_html( $method->get_method_title() ) . '</option>';
+														echo '<option value="' . esc_attr( $method->id ) . '">' . esc_html( $method->get_method_title() ) . '</option>';
 													}
 
 													echo '<option value="other">' . esc_html__( 'Other', 'storesuite' ) . '</option>';
@@ -572,6 +572,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 				<!-- Action Buttons -->
 				<div class="action-buttons">
+					<input type="hidden" name="context" id="context" value="<?php echo esc_attr( $context ); ?>">
 					<button type="submit" class="create-order-btn"><?php echo ( 'auto-draft' === $order->get_status() ) ? esc_html__( 'Create Order', 'storesuite' ) : esc_html__( 'Update Order', 'storesuite' ); ?></button>
 				</div>
 

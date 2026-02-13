@@ -101,6 +101,7 @@ class Installer {
 		if ( $valid_page_found ) {
 			if ( $option ) {
 				update_option( $option, $valid_page_found );
+				self::set_dashboard_page_to_settings( $valid_page_found );
 			}
 			return $valid_page_found;
 		}
@@ -141,8 +142,21 @@ class Installer {
 
 		if ( $option ) {
 			update_option( $option, $page_id );
+			self::set_dashboard_page_to_settings( $page_id );
 		}
 
 		return $page_id;
+	}
+	
+	/**
+	 * Set the dashboard page ID to the settings.
+	 *
+	 * @param int $page_id The page ID.
+	 * @return void
+	 */
+	public static function set_dashboard_page_to_settings( $page_id ) {
+		$storesuite_settings = get_option( 'storesuite_settings', array() );
+		$storesuite_settings['storesuite_dashboard_page_id'] = $page_id;
+		update_option( 'storesuite_settings', $storesuite_settings );
 	}
 }

@@ -20,7 +20,7 @@ class OrderController {
 		add_action( 'wp_ajax_storesuite_add_order_note', array( $this, 'handle_add_order_note' ) );
 		add_action( 'wp_ajax_storesuite_delete_order_note', array( $this, 'handle_delete_order_note' ) );
 		add_action( 'wp_ajax_storesuite_add_shipping_to_order', array( $this, 'storesuite_add_shipping_to_order' ) );
-		add_action( 'wp_ajax_storesuite_set_customer_to_order', array( $this, 'storesuite_set_customer_to_order' ) );
+		// add_action( 'wp_ajax_storesuite_set_customer_to_order', array( $this, 'storesuite_set_customer_to_order' ) );
 		add_action( 'wp_ajax_storesuite_create_order', array( $this, 'storesuite_create_order' ) );
 		add_action( 'template_redirect', array( $this, 'handle_order_bulk_actions' ) );
 	}
@@ -271,6 +271,11 @@ class OrderController {
 				throw new \Exception( __( 'Invalid order', 'storesuite' ) );
 			}
 
+			// Set customer id.
+			if ( isset( $_POST['customer_id'] ) ) {
+				$order->set_customer_id( is_numeric( $_POST['customer_id'] ) ? absint( $_POST['customer_id'] ) : 0 );
+			}
+
 			// Handle button actions.
 			if ( ! empty( $_POST['order_action'] ) ) { // @codingStandardsIgnoreLine
 
@@ -419,8 +424,17 @@ class OrderController {
 
 			$response = array(
 				'html'       => $items_html,
-				'notes_html' => $notes_html,
+				'notes_html' => $notes_html
 			);
+
+			if( isset( $_POST['context'] ) && $_POST['context'] === 'add' ) {
+				$response['redirect_url'] = esc_url( storesuite_get_navigation_url( 'edit-order' ) . $order_id );
+				$response['message'] 	  = __( 'Order created successfully!', 'storesuite' );
+				$response['context'] 	  = 'add';
+			}else{
+				$response['message'] = __( 'Order updated successfully!', 'storesuite' );
+				$response['context'] = 'edit';
+			}
 		} catch ( \Exception $e ) {
 			wp_send_json_error( array( 'error' => $e->getMessage() ) );
 		}

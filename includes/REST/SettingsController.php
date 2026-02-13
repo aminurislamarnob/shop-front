@@ -211,7 +211,7 @@ class SettingsController extends WP_REST_Controller {
 			'properties' => array(
 				'storesuite_dashboard_page_id'             => array(
 					'description' => __( 'Dashboard Page.', 'storesuite' ),
-					'type'        => 'string',
+					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'storesuite_prevent_admin_access'          => array(

@@ -209,7 +209,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										?>
 									</td>
 									<td data-title="<?php echo esc_attr__( 'Date', 'storesuite' ); ?>">
-										<time datetime="<?php echo esc_attr( $order->get_date_created()->date( 'c' ) ); ?>"><?php echo esc_html( wc_format_datetime( $order->get_date_created() ) ); ?></time>
+										<?php echo wp_kses_post( $orders_obj->get_order_date_column_value( $order ) ); ?>
 									</td>
 									<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
 										<div class="msfc-dropdown">

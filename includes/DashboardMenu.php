@@ -31,8 +31,13 @@ class DashboardMenu {
 			if ( current_user_can( $menu['permission'] ) ) {
 				$active_class = ( $current_url === $menu['url'] ) ? ' class=active' : '';
 
+				// Hide wp dashboard menu item if prevent admin access is enabled.
+				if ( 'wp_dashboard' === $key && storesuite_get_option_by_key( 'storesuite_prevent_admin_access' ) === 'yes' && ! current_user_can( 'administrator' ) ) {
+					continue;
+				}
+
 				echo '<li>';
-				echo '<a href="' . esc_url( $menu['url'] ) . '"' . esc_attr( $active_class ) . '>';
+				echo '<a href="' . esc_url( $menu['url'] ) . '"' . esc_attr( $active_class ) . ' target="' . esc_attr( $menu['target'] ) . '">';
 				echo wp_kses(
 					$menu['icon'],
 					array(
@@ -107,6 +112,7 @@ class DashboardMenu {
 				'url'        => storesuite_get_navigation_url(),
 				'pos'        => 10,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
 			),
 			'products'     => array(
 				'title'      => __( 'Products', 'storesuite' ),
@@ -114,6 +120,7 @@ class DashboardMenu {
 				'url'        => storesuite_get_navigation_url( 'products' ),
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
 			),
 			'orders'       => array(
 				'title'      => __( 'Orders', 'storesuite' ),
@@ -123,6 +130,7 @@ class DashboardMenu {
 				'url'        => storesuite_get_navigation_url( 'orders' ),
 				'pos'        => 50,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
 			),
 			'categories'   => array(
 				'title'      => __( 'Categories', 'storesuite' ),
@@ -130,6 +138,7 @@ class DashboardMenu {
 				'url'        => storesuite_get_navigation_url( 'categories' ),
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
 			),
 			'brands'       => array(
 				'title'      => __( 'Brands', 'storesuite' ),
@@ -137,6 +146,7 @@ class DashboardMenu {
 				'url'        => storesuite_get_navigation_url( 'brands' ),
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
 			),
 			'tags'         => array(
 				'title'      => __( 'Tags', 'storesuite' ),
@@ -144,6 +154,7 @@ class DashboardMenu {
 				'url'        => storesuite_get_navigation_url( 'tags' ),
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
 			),
 			'coupons'      => array(
 				'title'      => __( 'Coupons', 'storesuite' ),
@@ -151,6 +162,7 @@ class DashboardMenu {
 				'url'        => storesuite_get_navigation_url( 'coupons' ),
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
 			),
 			'home'         => array(
 				'title'      => __( 'Visit Home', 'storesuite' ),
@@ -158,6 +170,7 @@ class DashboardMenu {
 				'url'        => get_home_url(),
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_blank',
 			),
 			'wp_dashboard' => array(
 				'title'      => __( 'WP Dashboard', 'storesuite' ),
@@ -165,37 +178,16 @@ class DashboardMenu {
 				'url'        => get_dashboard_url(),
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
 			),
 			'logout'       => array(
 				'title'      => __( 'Logout', 'storesuite' ),
 				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24"><path d="M22.829,9.172,18.95,5.293a1,1,0,0,0-1.414,1.414l3.879,3.879a2.057,2.057,0,0,1,.3.39c-.015,0-.027-.008-.042-.008h0L5.989,11a1,1,0,0,0,0,2h0l15.678-.032c.028,0,.051-.014.078-.016a2,2,0,0,1-.334.462l-3.879,3.879a1,1,0,1,0,1.414,1.414l3.879-3.879a4,4,0,0,0,0-5.656Z"/><path d="M7,22H5a3,3,0,0,1-3-3V5A3,3,0,0,1,5,2H7A1,1,0,0,0,7,0H5A5.006,5.006,0,0,0,0,5V19a5.006,5.006,0,0,0,5,5H7a1,1,0,0,0,0-2Z"/></svg>',
-				'url'        => '',
+				'url'        => esc_url( wp_logout_url( home_url() ) ),
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
 			),
-			// 'settings'  => array(
-			// 'title'      => __( 'Settings', 'storesuite' ),
-			// 'icon'       => '<i class="fas fa-cog"></i>',
-			// 'url'        => dokan_get_navigation_url( 'settings/store' ),
-			// 'pos'        => 200,
-			// 'permission' => 'manage_woocommerce',
-			// 'submenu'    => array(
-			// 'store'   => array(
-			// 'title'      => __( 'Store', 'storesuite' ),
-			// 'icon'       => '<i class="fas fa-university"></i>',
-			// 'url'        => dokan_get_navigation_url( 'settings/store' ),
-			// 'pos'        => 30,
-			// 'permission' => 'manage_woocommerce',
-			// ),
-			// 'payment' => array(
-			// 'title'      => __( 'Payment', 'storesuite' ),
-			// 'icon'       => '<i class="far fa-credit-card"></i>',
-			// 'url'        => dokan_get_navigation_url( 'settings/payment' ),
-			// 'pos'        => 50,
-			// 'permission' => 'manage_woocommerce',
-			// ),
-			// ),
-			// ),
 		);
 
 		return apply_filters( 'storesuite_dashboard_menus', $menus );
