@@ -20,7 +20,6 @@ class OrderController {
 		add_action( 'wp_ajax_storesuite_add_order_note', array( $this, 'handle_add_order_note' ) );
 		add_action( 'wp_ajax_storesuite_delete_order_note', array( $this, 'handle_delete_order_note' ) );
 		add_action( 'wp_ajax_storesuite_add_shipping_to_order', array( $this, 'storesuite_add_shipping_to_order' ) );
-		// add_action( 'wp_ajax_storesuite_set_customer_to_order', array( $this, 'storesuite_set_customer_to_order' ) );
 		add_action( 'wp_ajax_storesuite_create_order', array( $this, 'storesuite_create_order' ) );
 		add_action( 'template_redirect', array( $this, 'handle_order_bulk_actions' ) );
 	}
@@ -202,46 +201,6 @@ class OrderController {
 			ob_start();
 			include WC()->plugin_path() . '/includes/admin/meta-boxes/views/html-order-items.php';
 			$response['html'] = ob_get_clean();
-		} catch ( \Exception $e ) {
-			wp_send_json_error( array( 'error' => $e->getMessage() ) );
-		}
-
-		// wp_send_json_success must be outside the try block not to break phpunit tests.
-		wp_send_json_success( $response );
-	}
-
-	/**
-	 * Handle the AJAX request for setting a customer to an order.
-	 */
-	public function storesuite_set_customer_to_order() {
-		// Verify nonce
-		check_ajax_referer( 'order-item', 'security' );
-
-		if ( ! current_user_can( 'edit_shop_orders' ) ) {
-			wp_die( -1 );
-		}
-
-		$response = array();
-
-		try {
-			$order_id = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
-			$order    = wc_get_order( $order_id );
-
-			if ( ! $order ) {
-				throw new \Exception( __( 'Invalid order', 'storesuite' ) );
-			}
-
-			// Set customer id.
-			if ( isset( $_POST['customer_id'] ) ) {
-				$order->set_customer_id( is_numeric( $_POST['customer_id'] ) ? absint( $_POST['customer_id'] ) : 0 );
-			}
-
-			$order->save();
-
-			$response = array(
-				'order_id'    => $order_id,
-				'customer_id' => $order->get_customer_id(),
-			);
 		} catch ( \Exception $e ) {
 			wp_send_json_error( array( 'error' => $e->getMessage() ) );
 		}

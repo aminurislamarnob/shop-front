@@ -188,40 +188,9 @@
 		},
 
 		changeCustomerUser: function () {
-			// if ( ! $( '#_billing_country' ).val() ) {
 			$( 'a.edit_address' ).trigger( 'click' );
 			StoreFrontOrderConfig.loadBilling( true );
 			StoreFrontOrderConfig.loadShipping( true );
-			// }
-
-			// var customerData = {
-			// 	action: 'storesuite_set_customer_to_order',
-			// 	order_id: StoreSuite_Order.post_id,
-			// 	customer_id: $( '#customer_user' ).val(),
-			// 	security: StoreSuite_Order.order_item_nonce,
-			// };
-
-			// var prod_search_for_order_box = $(
-			// 	'.product-serach-for-order-box'
-			// );
-			// msfcLoader.block( prod_search_for_order_box );
-
-			// $.ajax( {
-			// 	url: StoreSuite_Order.ajax_url,
-			// 	type: 'POST',
-			// 	data: customerData,
-			// 	success: function ( response ) {
-			// 		if ( response.success ) {
-			// 			// $( '#woocommerce-order-items' ).find( '.inside' ).empty();
-			// 			// $( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
-			// 			msfcLoader.unblock( prod_search_for_order_box );
-			// 		} else {
-			// 			msfcLoader.unblock( prod_search_for_order_box );
-			// 			window.alert( response.data.error );
-			// 		}
-			// 	},
-			// 	complete: function () {},
-			// } );
 		},
 
 		loadBilling: function ( force ) {
