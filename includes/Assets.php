@@ -373,6 +373,17 @@ class Assets {
 					'remove_item_meta'                => __( 'Remove this item meta?', 'storesuite' ),
 					'mon_decimal_point'               => wc_get_price_decimal_separator(),
 					'rounding_precision'              => wc_get_rounding_precision(),
+					'i18n_select_items'            => __( 'Please select some items.', 'storesuite' ),
+					'i18n_do_refund'               => __( 'Are you sure you wish to process this refund request? This action cannot be undone.', 'dokan' ),
+					'i18n_delete_refund'           => __( 'Are you sure you wish to delete this refund? This action cannot be undone.', 'dokan' ),
+					'currency_format_num_decimals' => wc_get_price_decimals(),
+					'currency_format_symbol'       => get_woocommerce_currency_symbol(),
+					'currency_format_decimal_sep'  => esc_attr( wc_get_price_decimal_separator() ),
+					'currency_format_thousand_sep' => esc_attr( wc_get_price_thousand_separator() ),
+					'currency_format'              => esc_attr( str_replace( [ '%1$s', '%2$s' ], [ '%s', '%v' ], get_woocommerce_price_format() ) ), // For accounting JS
+					'round_at_subtotal'            => get_option( 'woocommerce_tax_round_at_subtotal', 'no' ),
+					'order_ok_button'              => __( 'OK', 'storesuite' ),
+					'order_success_title'          => __( 'Success!', 'storesuite' ),
 				)
 			);
 

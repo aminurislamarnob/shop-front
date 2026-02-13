@@ -32,8 +32,6 @@ class ProductManager {
 
 		$data = wp_parse_args( $args, $defaults );
 
-		// dd( $data );
-
 		if ( empty( $data['product_title'] ) ) {
 			return new WP_Error( 'no-title', __( 'Please enter product title', 'storesuite' ) );
 		}

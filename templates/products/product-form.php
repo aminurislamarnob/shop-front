@@ -146,7 +146,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<small class="msf-form-text"><?php esc_html_e( 'It is usually all lowercase and contains only letters, numbers, and hyphens.', 'storesuite' ); ?></small>
 					</div>
 					<div class="msf-form-group">
-						<label for="product_description"><?php esc_html_e( 'Product Description', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></strong></label>
+						<label for="product_description"><?php esc_html_e( 'Product Description', 'storesuite' ); ?></strong></label>
 							<?php
 							$editor_id = 'product_description';
 							$settings  = array(
@@ -280,7 +280,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<div class="row">
 							<div class="col-md-6">
 								<div class="msf-form-group">
-									<label for="regular_price"><?php esc_html_e( 'Regular Price', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></label>
+									<label for="regular_price"><?php esc_html_e( 'Regular Price', 'storesuite' ); ?></label>
 									<input type="number" class="msf-form-control" id="regular_price" name="regular_price" step="any" value="<?php echo esc_attr( $regular_price ); ?>">
 								</div>
 							</div>
@@ -518,7 +518,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 					<h3 class="msf-card-title"><?php esc_html_e( 'General Informations', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="msf-form-group">
-							<label for="post_type"><?php esc_html_e( 'Type', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></label>
+							<label for="post_type"><?php esc_html_e( 'Type', 'storesuite' ); ?></label>
 							<select class="msf-form-control" id="post_type" name="post_type">
 								<?php foreach ( $product_types as $key => $value ) : ?>
 									<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $product_type, $key ); ?>><?php echo esc_html( $value ); ?></option>
@@ -526,7 +526,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 							</select>
 						</div>
 						<div class="msf-form-group">
-							<label for="post_status"><?php esc_html_e( 'Status', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></label>
+							<label for="post_status"><?php esc_html_e( 'Status', 'storesuite' ); ?></label>
 							<select class="msf-form-control" id="post_status" name="post_status">
 								<?php foreach ( $product_statuses as $key => $value ) : ?>
 									<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $product_status, $key ); ?>><?php echo esc_html( $value ); ?></option>

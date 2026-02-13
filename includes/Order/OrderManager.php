@@ -344,4 +344,37 @@ class OrderManager {
 		 */
 		return apply_filters( 'woocommerce_order_actions', $actions, $order );
 	}
+
+	/**
+	 * Renders the order date.
+	 *
+	 * @param WC_Order $order The order object for the current row.
+	 *
+	 * @return void
+	 */
+	public function get_order_date_column_value( WC_Order $order ): void {
+		$order_timestamp = $order->get_date_created() ? $order->get_date_created()->getTimestamp() : '';
+
+		if ( ! $order_timestamp ) {
+			echo '&ndash;';
+			return;
+		}
+
+		// Check if the order was created within the last 24 hours, and not in the future.
+		if ( $order_timestamp > strtotime( '-1 day', time() ) && $order_timestamp <= time() ) {
+			$show_date = sprintf(
+			/* translators: %s: human-readable time difference */
+				_x( '%s ago', '%s = human-readable time difference', 'woocommerce' ),
+				human_time_diff( $order->get_date_created()->getTimestamp(), time() )
+			);
+		} else {
+			$show_date = $order->get_date_created()->date_i18n( apply_filters( 'woocommerce_admin_order_date_format', __( 'M j, Y', 'woocommerce' ) ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+		}
+		printf(
+			'<time datetime="%1$s" title="%2$s">%3$s</time>',
+			esc_attr( $order->get_date_created()->date( 'c' ) ),
+			esc_html( $order->get_date_created()->date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) ),
+			esc_html( $show_date )
+		);
+	}
 }

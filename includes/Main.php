@@ -8,8 +8,6 @@
 
 namespace PluginizeLab\StoreSuite;
 
-use Automattic\WooCommerce\Utilities\OrderUtil;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -24,8 +22,8 @@ class Main {
 	 * Constructor.
 	 */
 	public function __construct() {
-		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 10, 2 );
-		add_filter( 'woocommerce_login_redirect', array( $this, 'redirect_after_login' ), 10, 2 );
+		add_filter( 'login_redirect', array( $this, 'redirect_after_login' ), 1, 2 );
+		add_filter( 'woocommerce_login_redirect', array( $this, 'redirect_after_login' ), 1, 2 );
 		add_action( 'admin_init', array( $this, 'block_admin_access' ) );
 		add_action( 'template_redirect', array( $this, 'redirect_if_not_logged_in_manager' ), 11 );
 		add_filter( 'show_admin_bar', array( $this, 'hide_admin_bar' ) );
@@ -46,11 +44,6 @@ class Main {
 		}
 
 		$is_prevent_admin_access = storesuite_get_option_by_key( 'storesuite_prevent_admin_access' );
-
-		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-			$is_prevent_admin_access = 'yes';
-		}
-
 		$valid_pages = array( 'admin-ajax.php', 'admin-post.php', 'async-upload.php', 'media-upload.php' );
 		$user_role   = reset( $current_user->roles );
 
@@ -73,10 +66,6 @@ class Main {
 
 		$is_prevent_admin_access = storesuite_get_option_by_key( 'storesuite_prevent_admin_access' );
 
-		if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-			$is_prevent_admin_access = 'yes';
-		}
-
 		if ( 'yes' === $is_prevent_admin_access ) {
 			return false;
 		}
@@ -97,21 +86,41 @@ class Main {
 	}
 
 	/**
-	 * Redirect after login
+	 * Redirect after wooCommerce login
 	 * my account page
 	 *
 	 * @global string $action
 	 */
-	public function redirect_after_login() {
+	public function redirect_after_login( $redirect_to, $user ) {
+
+		// 1) Admins → WP admin dashboard.
+		if ( $user instanceof \WP_User && in_array( 'administrator', (array) $user->roles, true ) ) {
+			wp_safe_redirect( admin_url() );
+			exit();
+		}
+	
+		// 2) Non-admins who can manage WooCommerce → StoreSuite dashboard.
+		if ( user_can( $user, 'manage_woocommerce' ) ) {
+			$this->redirect_to_storesuite_dashboard(); // This already redirects & exits if page is set.
+		}
+	
+		// 3) Everyone else → normal My Account page.
+		wp_safe_redirect( wc_get_page_permalink( 'myaccount' ) );
+		exit();
+	}
+
+	/**
+	 * Redirect to the storesuite dashboard page
+	 *
+	 * @return void
+	 */
+	public function redirect_to_storesuite_dashboard() {
 		$page_id = (int) storesuite_get_option_by_key( 'storesuite_dashboard_page_id' );
 
 		if ( $page_id ) {
 			wp_safe_redirect( storesuite_get_navigation_url() );
 			exit();
 		}
-
-		wp_safe_redirect( wc_get_page_permalink( 'myaccount' ) );
-		exit();
 	}
 
 	/**

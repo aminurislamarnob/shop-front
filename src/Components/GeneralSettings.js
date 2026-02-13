@@ -284,11 +284,11 @@ const GeneralSettings = () => {
 						<div className="storesuite-settings-group admin-area-access">
 							<ToggleControl
 								label={ __(
-									'Admin Area Access',
+									'Restrict Admin Area Access',
 									'storesuite'
 								) }
 								help={ __(
-									'Prevent shop manager from accessing the wp-admin dashboard area. If HPOS feature is enabled, admin access will be blocked regardless of this setting.',
+									'Prevent shop manager from accessing the wp-admin dashboard area.',
 									'storesuite'
 								) }
 								checked={ preventAdminAccess }

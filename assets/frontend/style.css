@@ -445,7 +445,7 @@ template {
 .my-storesuite-container .msf-form-control{
   width: 100%;
 }
-.my-storesuite-container .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea{
+.my-storesuite-container .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea, .wc-order-refund-items input[type="text"]{
   border-radius: 0px;
   font-size: 14px;
   border: 1px solid var(--storesuite-input-border-color);
@@ -990,6 +990,13 @@ span.order-failed {
   color: #fff;
   background: var(--storesuite-primary-bg-hover);
   border: 1px solid var(--storesuite-primary-bg-hover);
+}
+.refund-actions button.button.cancel-action {
+  background: rgb(244 63 94);
+}
+
+.refund-actions button.button.cancel-action:hover {
+  background: red;
 }
 
 /*Add Product Form*/
@@ -1927,13 +1934,13 @@ span.select2-selection__clear {
   font-size: 14px;
 }
 
-.my-storesuite-wrapper .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
+.my-storesuite-wrapper .msf-form-control, .woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea, .wc-order-refund-items input[type="text"]{
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   background-color: #fff;
 }
 
-.my-storesuite-wrapper .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus, .woocommerce_order_items_wrapper textarea:focus {
+.my-storesuite-wrapper .msf-form-control:focus, .woocommerce_order_items_wrapper input[type="text"]:focus, .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select:focus, .woocommerce_order_items_wrapper textarea:focus, .wc-order-refund-items input[type="text"]:focus {
   outline: none;
   border-color: var(--storesuite-primary-bg);
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
@@ -2176,6 +2183,13 @@ span.select2-selection__clear {
   font-size: 14px;
   color: var(--storesuite-text-color);
 }
+.msfc-order-items-box .woocommerce_order_items small.refunded {
+  display: block;
+  color: red;
+  white-space: nowrap;
+  margin-top: 5px;
+  margin-bottom: 5px
+}
 
 .msfc-dashboard-order-details .quantity-input {
   width: 80px;
@@ -2205,19 +2219,30 @@ span.select2-selection__clear {
   flex: 1;
 }
 
-.msfc-dashboard-order-details .apply-btn {
+.msfc-dashboard-order-details .apply-btn, .refund-actions button.button {
   background-color: var(--storesuite-primary-bg);
   color: #ffffff;
   border: none;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.3s;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
 }
-
-.msfc-dashboard-order-details .apply-btn:hover {
+.refund-actions button.button {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.msfc-dashboard-order-details .apply-btn:hover, .refund-actions button.button:hover {
   background-color: var(--storesuite-primary-bg-hover);
+}
+.msfc-order-items-box .refund-actions {
+  padding: 10px;
 }
 
 .msfc-dashboard-order-details .fee-group {
@@ -2712,7 +2737,7 @@ button.remove_order_item_meta.button:hover {
   position: absolute !important;
   width: 1px !important;
 }
-.woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea {
+.woocommerce_order_items_wrapper input[type="text"], .woocommerce_order_items_wrapper input[type="number"], .woocommerce_order_items_wrapper select, .woocommerce_order_items_wrapper textarea, .wc-order-refund-items input[type="text"]{
   width: auto;
   padding: 7px 16px;
   height: 35px;

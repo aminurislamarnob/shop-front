@@ -1,4 +1,8 @@
 ( function ( $ ) {
+	// Stand-in wcTracks.recordEvent in case tracks is not available (for any reason).
+	window.wcTracks = window.wcTracks || {};
+	window.wcTracks.recordEvent = window.wcTracks.recordEvent || function () {};
+
 	var msfcLoader = {
 		block: function ( $container, text ) {
 			text = text || 'Processing...';
@@ -184,40 +188,9 @@
 		},
 
 		changeCustomerUser: function () {
-			if ( ! $( '#_billing_country' ).val() ) {
-				$( 'a.edit_address' ).trigger( 'click' );
-				StoreFrontOrderConfig.loadBilling( true );
-				StoreFrontOrderConfig.loadShipping( true );
-			}
-
-			var customerData = {
-				action: 'storesuite_set_customer_to_order',
-				order_id: StoreSuite_Order.post_id,
-				customer_id: $( '#customer_user' ).val(),
-				security: StoreSuite_Order.order_item_nonce,
-			};
-
-			var prod_search_for_order_box = $(
-				'.product-serach-for-order-box'
-			);
-			msfcLoader.block( prod_search_for_order_box );
-
-			$.ajax( {
-				url: StoreSuite_Order.ajax_url,
-				type: 'POST',
-				data: customerData,
-				success: function ( response ) {
-					if ( response.success ) {
-						// $( '#woocommerce-order-items' ).find( '.inside' ).empty();
-						// $( '#woocommerce-order-items' ).find( '.inside' ).append( response.data.html );
-						msfcLoader.unblock( prod_search_for_order_box );
-					} else {
-						msfcLoader.unblock( prod_search_for_order_box );
-						window.alert( response.data.error );
-					}
-				},
-				complete: function () {},
-			} );
+			$( 'a.edit_address' ).trigger( 'click' );
+			StoreFrontOrderConfig.loadBilling( true );
+			StoreFrontOrderConfig.loadShipping( true );
 		},
 
 		loadBilling: function ( force ) {
@@ -247,9 +220,7 @@
 					type: 'POST',
 					success: function ( response ) {
 						if ( response && response.billing ) {
-							$( '.customer-address-box' ).addClass(
-								'show-address'
-							);
+							StoreFrontOrderConfig.showShippingAddress();
 							$.each( response.billing, function ( key, data ) {
 								$( ':input#_billing_' + key )
 									.val( data )
@@ -298,6 +269,7 @@
 					type: 'POST',
 					success: function ( response ) {
 						if ( response && response.shipping ) {
+							StoreFrontOrderConfig.showShippingAddress();
 							$.each( response.shipping, function ( key, data ) {
 								$( ':input#_shipping_' + key )
 									.val( data )
@@ -318,7 +290,10 @@
 			}
 			return false;
 		},
-
+		showShippingAddress: function () {
+			$( '.customer-address-box' ).addClass( 'show-address' );
+			$( '.customer-address-box' ).removeClass( 'hide-address' );
+		},
 		copy_billing_to_shipping: function () {
 			if ( window.confirm( StoreSuite_Order.copy_billing ) ) {
 				$( '.order_data_column :input[name^="_billing_"]' ).each(
@@ -417,6 +392,415 @@
 	};
 
 	/**
+	 * Order Refunds Panel
+	 */
+	var HandleRefunds = {
+		init: function () {
+			this.bindEvents();
+		},
+		bindEvents: function () {
+			$( '#woocommerce-order-items' )
+				.on( 'click', '.refund-items', this.addRefund )
+				.on( 'click', '.cancel-action', this.cancel )
+				.on(
+					'click',
+					'.refund-actions .cancel-action',
+					this.trackCancel
+				)
+				.on( 'click', '.delete_refund', this.deleteRefund )
+				.on(
+					'click',
+					'button.do-api-refund, button.do-manual-refund',
+					this.doRefund
+				)
+				.on(
+					'change',
+					'.refund input.refund_line_total, .refund input.refund_line_tax',
+					this.refundInputChanged
+				)
+				.on(
+					'change keyup',
+					'.wc-order-refund-items #refund_amount',
+					this.refundAmountChanged
+				)
+				.on(
+					'change',
+					'input.refund_order_item_qty',
+					this.refundQuantityChanged
+				);
+		},
+		addRefund: function () {
+			$( 'div.wc-order-refund-items' ).slideDown();
+			$( 'div.wc-order-data-row-toggle' )
+				.not( 'div.wc-order-refund-items' )
+				.slideUp();
+			$( 'div.wc-order-totals-items' ).slideUp();
+			$( '#woocommerce-order-items' ).find( 'div.refund' ).show();
+			$(
+				'.wc-order-edit-line-item .wc-order-edit-line-item-actions'
+			).hide();
+
+			window.wcTracks.recordEvent( 'order_edit_refund_button_click', {
+				order_id: StoreSuite_Order.post_id,
+				status: $( '#order_status' ).val(),
+			} );
+
+			return false;
+		},
+		cancel: function () {
+			$( 'div.wc-order-data-row-toggle' )
+				.not( 'div.wc-order-bulk-actions' )
+				.slideUp();
+			$( 'div.wc-order-bulk-actions' ).slideDown();
+			$( 'div.wc-order-totals-items' ).slideDown();
+			$( '#woocommerce-order-items' ).find( 'div.refund' ).hide();
+			$(
+				'.wc-order-edit-line-item .wc-order-edit-line-item-actions'
+			).show();
+
+			// Reload the items
+			if ( 'true' === $( this ).attr( 'data-reload' ) ) {
+				HandleRefunds.reloadItems();
+			}
+
+			window.wcTracks.recordEvent( 'order_edit_add_items_cancelled', {
+				order_id: StoreSuite_Order.post_id,
+				status: $( '#order_status' ).val(),
+			} );
+
+			return false;
+		},
+		trackCancel: function () {
+			window.wcTracks.recordEvent( 'order_edit_refund_cancel', {
+				order_id: StoreSuite_Order.post_id,
+				status: $( '#order_status' ).val(),
+			} );
+		},
+		reloadItems: function () {
+			var data = {
+				order_id: StoreSuite_Order.post_id,
+				action: 'woocommerce_load_order_items',
+				security: StoreSuite_Order.order_item_nonce,
+			};
+
+			data = NewOrderProducts.filterData( 'reload_items', data );
+
+			msfcLoader.block( $( '#woocommerce-order-items' ) );
+
+			$.ajax( {
+				url: StoreSuite_Order.ajax_url,
+				data: data,
+				type: 'POST',
+				success: function ( response ) {
+					$( '#woocommerce-order-items' ).find( '.inside' ).empty();
+					$( '#woocommerce-order-items' )
+						.find( '.inside' )
+						.append( response );
+					msfcLoader.unblock( $( '#woocommerce-order-items' ) );
+				},
+			} );
+		},
+		deleteRefund: function () {
+			if ( window.confirm( StoreSuite_Order.i18n_delete_refund ) ) {
+				var $refund = $( this ).closest( 'tr.refund' );
+				var refund_id = $refund.attr( 'data-order_refund_id' );
+
+				msfcLoader.block( $( '#woocommerce-order-items' ) );
+
+				var data = {
+					action: 'woocommerce_delete_refund',
+					refund_id: refund_id,
+					security: StoreSuite_Order.order_item_nonce,
+				};
+
+				data = NewOrderProducts.filterData( 'delete_refund', data );
+
+				$.ajax( {
+					url: StoreSuite_Order.ajax_url,
+					data: data,
+					type: 'POST',
+					success: function () {
+						HandleRefunds.reloadItems();
+					},
+				} );
+			}
+			return false;
+		},
+		doRefund: function () {
+			msfcLoader.block( $( '#woocommerce-order-items' ) );
+
+			if ( window.confirm( StoreSuite_Order.i18n_do_refund ) ) {
+				var refund_amount = $( 'input#refund_amount' ).val();
+				var refund_reason = $( 'input#refund_reason' ).val();
+				var refunded_amount = $( 'input#refunded_amount' ).val();
+
+				// Get line item refunds
+				var line_item_qtys = {};
+				var line_item_totals = {};
+				var line_item_tax_totals = {};
+
+				$( '.refund input.refund_order_item_qty' ).each(
+					function ( index, item ) {
+						if (
+							$( item ).closest( 'tr' ).data( 'order_item_id' )
+						) {
+							if ( item.value ) {
+								line_item_qtys[
+									$( item )
+										.closest( 'tr' )
+										.data( 'order_item_id' )
+								] = item.value;
+							}
+						}
+					}
+				);
+
+				$( '.refund input.refund_line_total' ).each(
+					function ( index, item ) {
+						if (
+							$( item ).closest( 'tr' ).data( 'order_item_id' )
+						) {
+							line_item_totals[
+								$( item )
+									.closest( 'tr' )
+									.data( 'order_item_id' )
+							] = accounting.unformat(
+								item.value,
+								StoreSuite_Order.mon_decimal_point
+							);
+						}
+					}
+				);
+
+				$( '.refund input.refund_line_tax' ).each(
+					function ( index, item ) {
+						if (
+							$( item ).closest( 'tr' ).data( 'order_item_id' )
+						) {
+							var tax_id = $( item ).data( 'tax_id' );
+
+							if (
+								! line_item_tax_totals[
+									$( item )
+										.closest( 'tr' )
+										.data( 'order_item_id' )
+								]
+							) {
+								line_item_tax_totals[
+									$( item )
+										.closest( 'tr' )
+										.data( 'order_item_id' )
+								] = {};
+							}
+
+							line_item_tax_totals[
+								$( item )
+									.closest( 'tr' )
+									.data( 'order_item_id' )
+							][ tax_id ] = accounting.unformat(
+								item.value,
+								StoreSuite_Order.mon_decimal_point
+							);
+						}
+					}
+				);
+
+				var data = {
+					action: 'woocommerce_refund_line_items',
+					order_id: StoreSuite_Order.post_id,
+					refund_amount: refund_amount,
+					refunded_amount: refunded_amount,
+					refund_reason: refund_reason,
+					line_item_qtys: JSON.stringify( line_item_qtys, null, '' ),
+					line_item_totals: JSON.stringify(
+						line_item_totals,
+						null,
+						''
+					),
+					line_item_tax_totals: JSON.stringify(
+						line_item_tax_totals,
+						null,
+						''
+					),
+					api_refund: $( this ).is( '.do-api-refund' ),
+					restock_refunded_items: $(
+						'#restock_refunded_items:checked'
+					).length
+						? 'true'
+						: 'false',
+					security: StoreSuite_Order.order_item_nonce,
+				};
+
+				data = NewOrderProducts.filterData( 'do_refund', data );
+
+				$.ajax( {
+					url: StoreSuite_Order.ajax_url,
+					data: data,
+					type: 'POST',
+					success: function ( response ) {
+						if ( true === response.success ) {
+							// Redirect to same page for show the refunded status
+							window.location.reload();
+						} else {
+							window.alert( response.data.error );
+							HandleRefunds.reloadItems();
+						}
+					},
+					complete: function () {
+						window.wcTracks.recordEvent( 'order_edit_refunded', {
+							order_id: data.order_id,
+							status: $( '#order_status' ).val(),
+							api_refund: data.api_refund,
+							has_reason: Boolean( data.refund_reason.length ),
+							restock: 'true' === data.restock_refunded_items,
+						} );
+					},
+				} );
+			} else {
+				msfcLoader.unblock( $( '#woocommerce-order-items' ) );
+			}
+		},
+		refundInputChanged: function () {
+			var refund_amount = 0;
+			var $items = $( '.woocommerce_order_items' ).find(
+				'tr.item, tr.fee, tr.shipping'
+			);
+			var round_at_subtotal =
+				'yes' === StoreSuite_Order.round_at_subtotal;
+
+			$items.each( function () {
+				var $row = $( this );
+				var refund_cost_fields = $row.find(
+					'.refund input:not(.refund_order_item_qty)'
+				);
+
+				refund_cost_fields.each( function ( index, el ) {
+					var field_amount = accounting.unformat(
+						$( el ).val() || 0,
+						StoreSuite_Order.mon_decimal_point
+					);
+					refund_amount += parseFloat(
+						round_at_subtotal
+							? field_amount
+							: accounting.formatNumber(
+									field_amount,
+									StoreSuite_Order.currency_format_num_decimals,
+									''
+							  )
+					);
+				} );
+			} );
+
+			$( '#refund_amount' )
+				.val(
+					accounting.formatNumber(
+						refund_amount,
+						StoreSuite_Order.currency_format_num_decimals,
+						'',
+						StoreSuite_Order.mon_decimal_point
+					)
+				)
+				.trigger( 'change' );
+		},
+		refundAmountChanged: function () {
+			var total = accounting.unformat(
+				$( this ).val(),
+				StoreSuite_Order.mon_decimal_point
+			);
+
+			$( 'button .wc-order-refund-amount .amount' ).text(
+				accounting.formatMoney( total, {
+					symbol: StoreSuite_Order.currency_format_symbol,
+					decimal: StoreSuite_Order.currency_format_decimal_sep,
+					thousand: StoreSuite_Order.currency_format_thousand_sep,
+					precision: StoreSuite_Order.currency_format_num_decimals,
+					format: StoreSuite_Order.currency_format,
+				} )
+			);
+		},
+		refundQuantityChanged: function () {
+			var $row = $( this ).closest( 'tr.item' );
+			var qty = $row.find( 'input.quantity' ).val();
+			var refund_qty = $( this ).val();
+			var line_total = $( 'input.line_total', $row );
+			var refund_line_total = $( 'input.refund_line_total', $row );
+
+			// Totals
+			var unit_total =
+				accounting.unformat(
+					line_total.attr( 'data-total' ),
+					StoreSuite_Order.mon_decimal_point
+				) / qty;
+
+			refund_line_total
+				.val(
+					parseFloat(
+						accounting.formatNumber(
+							unit_total * refund_qty,
+							StoreSuite_Order.rounding_precision,
+							''
+						)
+					)
+						.toString()
+						.replace( '.', StoreSuite_Order.mon_decimal_point )
+				)
+				.trigger( 'change' );
+
+			// Taxes
+			$( '.refund_line_tax', $row ).each( function () {
+				var $refund_line_total_tax = $( this );
+				var tax_id = $refund_line_total_tax.data( 'tax_id' );
+				var line_total_tax = $(
+					'input.line_tax[data-tax_id="' + tax_id + '"]',
+					$row
+				);
+				var unit_total_tax =
+					accounting.unformat(
+						line_total_tax.data( 'total_tax' ),
+						StoreSuite_Order.mon_decimal_point
+					) / qty;
+
+				if ( 0 < unit_total_tax ) {
+					$refund_line_total_tax
+						.val(
+							parseFloat(
+								accounting.formatNumber(
+									unit_total_tax * refund_qty,
+									StoreSuite_Order.rounding_precision,
+									''
+								)
+							)
+								.toString()
+								.replace(
+									'.',
+									StoreSuite_Order.mon_decimal_point
+								)
+						)
+						.trigger( 'change' );
+				} else {
+					$refund_line_total_tax.val( 0 ).trigger( 'change' );
+				}
+			} );
+
+			// Restock checkbox
+			if ( refund_qty > 0 ) {
+				$( '#restock_refunded_items' ).closest( 'tr' ).show();
+			} else {
+				$( '#restock_refunded_items' ).closest( 'tr' ).hide();
+				$(
+					'.woocommerce_order_items input.refund_order_item_qty'
+				).each( function () {
+					if ( $( this ).val() > 0 ) {
+						$( '#restock_refunded_items' ).closest( 'tr' ).show();
+					}
+				} );
+			}
+
+			$( this ).trigger( 'refund_quantity_changed' );
+		},
+	};
+
+	/**
 	 * Order Notes Panel
 	 */
 	var NewOrderProducts = {
@@ -435,13 +819,16 @@
 			this.addFee();
 			this.addShippingToOrder();
 			this.createOrder();
-			this.recalculateOrder();
 			this.saveLineItems();
 			this.editOrderItem();
 			this.deleteOrderItem();
 			this.quantityChanged();
+			$( document ).on(
+				'click',
+				'button.calculate-action',
+				this.recalculateOrder
+			);
 		},
-
 		displayResult: function ( self, select2_args ) {
 			select2_args = $.extend(
 				select2_args,
@@ -699,7 +1086,9 @@
 							window.alert( response.data.error );
 						}
 					},
-					complete: function () {},
+					complete: function () {
+						NewOrderProducts.recalculateOrder();
+					},
 					dataType: 'json',
 				} );
 			} );
@@ -807,7 +1196,6 @@
 				$( this ).trigger( 'quantity_changed' );
 			} );
 		},
-
 		addCoupon: function () {
 			$( document ).on( 'click', '.msfc-apply-coupon', function ( e ) {
 				e.preventDefault();
@@ -996,64 +1384,51 @@
 		},
 
 		recalculateOrder: function () {
-			$( document ).on(
-				'click',
-				'button.calculate-action',
-				function ( e ) {
-					e.preventDefault();
+			var prod_search_for_order_box = $(
+				'.product-serach-for-order-box'
+			);
+			msfcLoader.block( prod_search_for_order_box );
 
-					var prod_search_for_order_box = $(
-						'.product-serach-for-order-box'
-					);
-					msfcLoader.block( prod_search_for_order_box );
+			var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
+				action: 'woocommerce_calc_line_taxes',
+				order_id: StoreSuite_Order.post_id,
+				items: $(
+					'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]'
+				).serialize(),
+				security: StoreSuite_Order.calc_totals_nonce,
+			} );
 
-					var data = $.extend(
-						{},
-						NewOrderProducts.getTaxableAddress(),
-						{
-							action: 'woocommerce_calc_line_taxes',
-							order_id: StoreSuite_Order.post_id,
-							items: $(
-								'table.woocommerce_order_items :input[name], .wc-order-totals-items :input[name]'
-							).serialize(),
-							security: StoreSuite_Order.calc_totals_nonce,
-						}
-					);
+			data = NewOrderProducts.filterData( 'recalculate', data );
 
-					data = NewOrderProducts.filterData( 'recalculate', data );
+			$( document.body ).trigger(
+				'order-totals-recalculate-before',
+				data
+			);
+
+			$.ajax( {
+				url: StoreSuite_Order.ajax_url,
+				data: data,
+				type: 'POST',
+				success: function ( response ) {
+					$( '#woocommerce-order-items' ).find( '.inside' ).empty();
+					$( '#woocommerce-order-items' )
+						.find( '.inside' )
+						.append( response );
+					msfcLoader.unblock( prod_search_for_order_box );
 
 					$( document.body ).trigger(
-						'order-totals-recalculate-before',
-						data
+						'order-totals-recalculate-success',
+						response
 					);
+				},
+				complete: function ( response ) {
+					$( document.body ).trigger(
+						'order-totals-recalculate-complete',
+						response
+					);
+				},
+			} );
 
-					$.ajax( {
-						url: StoreSuite_Order.ajax_url,
-						data: data,
-						type: 'POST',
-						success: function ( response ) {
-							$( '#woocommerce-order-items' )
-								.find( '.inside' )
-								.empty();
-							$( '#woocommerce-order-items' )
-								.find( '.inside' )
-								.append( response );
-							msfcLoader.unblock( prod_search_for_order_box );
-
-							$( document.body ).trigger(
-								'order-totals-recalculate-success',
-								response
-							);
-						},
-						complete: function ( response ) {
-							$( document.body ).trigger(
-								'order-totals-recalculate-complete',
-								response
-							);
-						},
-					} );
-				}
-			);
 			return false;
 		},
 
@@ -1129,6 +1504,8 @@
 				var data = {
 					action: 'storesuite_create_order',
 					order_id: StoreSuite_Order.post_id,
+					customer_id: $( '#customer_user' ).val(),
+					context: $( '#context' ).val(),
 					order_status: $(
 						'.msf-form-group [name="order_status"]'
 					).val(),
@@ -1204,6 +1581,30 @@
 								$( 'ul.order_notes' ).append(
 									$( response.data.notes_html ).find( 'li' )
 								);
+							}
+
+							// Show success message
+							if ( response.data.context === 'add' ) {
+								Swal.fire( {
+									icon: 'success',
+									title: StoreSuite_Order.order_success_title,
+									text: response.data.message,
+									confirmButtonText:
+										StoreSuite_Order.order_ok_button,
+								} ).then( function ( result ) {
+									if ( result.isConfirmed ) {
+										window.location.href =
+											response.data.redirect_url;
+									}
+								} );
+							} else if ( response.data.context === 'edit' ) {
+								Swal.fire( {
+									icon: 'success',
+									title: StoreSuite_Order.order_success_title,
+									text: response.data.message,
+									confirmButtonText:
+										StoreSuite_Order.order_ok_button,
+								} );
 							}
 						} else {
 							window.alert( response.data.error );
@@ -1545,4 +1946,5 @@
 	NewOrderProducts.init();
 	ManageOrderAddress.init();
 	itemMeta.init();
+	HandleRefunds.init();
 } )( jQuery );
