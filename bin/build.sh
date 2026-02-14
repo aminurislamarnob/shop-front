@@ -48,7 +48,7 @@ status "Generating build... 👷‍♀️"
 
 # Copy all files
 status "Copying files... ✌️"
-FILES=(storesuite.php readme.txt dist includes templates assets languages composer.json composer.lock)
+FILES=(storesuite.php readme.txt dist includes templates assets languages composer.json composer.lock package.json package-lock.json)
 
 for file in ${FILES[@]}; do
     if [ -f "$file" ] || [ -d "$file" ]; then
@@ -62,7 +62,8 @@ cd $BUILD_DIR
 composer install --optimize-autoloader --no-dev -q
 
 # Remove composer files
-rm composer.json composer.lock
+rm composer.lock
+rm package-lock.json
 
 # go one up, to the build dir
 status "Creating archive... 🎁"

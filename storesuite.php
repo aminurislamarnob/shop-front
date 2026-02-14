@@ -5,7 +5,7 @@
  * Description: This plugin enable frontend store management system for WooCommerce simple type product.
  * Version: 1.0.0
  * Author: Aminur Islam Arnob
- * Author URI: https://wordpress.org/plugins/storesuite/
+ * Author URI: https://github.com/aminurislamarnob/
  * Text Domain: storesuite
  * WC requires at least: 10.4.3
  * Requires Plugins: woocommerce
