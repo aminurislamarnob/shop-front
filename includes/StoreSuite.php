@@ -93,10 +93,8 @@ final class StoreSuite {
 	 */
 	public function activate() {
 
-		// Rewrite rules during StoreSuite activation.
-		if ( $this->has_woocommerce() ) {
-			$this->flush_rewrite_rules();
-		}
+		// Schedule flush on next request (after our rules are registered on init).
+		update_option( 'storesuite_flush_rewrite_rules', 1 );
 
 		// Create plugin page.
 		Installer::create_plugin_page();
@@ -208,6 +206,7 @@ final class StoreSuite {
 		// initialize the classes.
 		add_action( 'init', array( $this, 'init_classes' ), 4 );
 		add_action( 'plugins_loaded', array( $this, 'after_plugins_loaded' ) );
+		add_action( 'init', array( $this, 'maybe_flush_rewrite_rules' ), 999 );
 	}
 
 	/**
@@ -267,6 +266,18 @@ final class StoreSuite {
 	 */
 	public function after_plugins_loaded() {
 		// Initiate background processes and other tasks.
+	}
+
+	/**
+	 * Maybe flush rewrite rules
+	 *
+	 * @return void
+	 */
+	public function maybe_flush_rewrite_rules() {
+		if ( get_option( 'storesuite_flush_rewrite_rules' ) ) {
+			flush_rewrite_rules();
+			delete_option( 'storesuite_flush_rewrite_rules' );
+		}
 	}
 
 	/**
