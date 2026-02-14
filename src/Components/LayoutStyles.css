@@ -171,9 +171,6 @@
 .storesuite-settings-group label.components-base-control__label{
     margin-bottom: 10px;
 }
-.storesuite-colors-form {
-    max-width: 480px;
-}
 .storesuite-color-toggle {
     display: inline-flex;
     align-items: center;
@@ -234,4 +231,19 @@
 
 .storesuite-settings-sec-header h3 {
     margin-bottom: 5px;
+}
+
+.storesuite-colors-form .storesuite-settings-group {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    padding-right: 20px;
+    padding-left: 20px;
+    margin-bottom: 0;
+    padding-top: 20px;
+}
+.storesuite-colors-form-wrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-bottom: 20px;
 }

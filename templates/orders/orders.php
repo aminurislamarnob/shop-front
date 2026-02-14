@@ -88,7 +88,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-4 text-right">
+					<div class="col-md text-right">
 						<div class="row justify-content-end">
 							<div class="col-md-auto">
 								<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-order' ) ); ?>" class="my-storesuite-button">

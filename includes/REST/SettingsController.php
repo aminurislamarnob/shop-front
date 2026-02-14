@@ -158,14 +158,18 @@ class SettingsController extends WP_REST_Controller {
 		$color_keys = array(
 			'storesuite_color_button_text',
 			'storesuite_color_button_background',
-			'storesuite_color_button_border',
 			'storesuite_color_button_hover_text',
 			'storesuite_color_button_hover_background',
-			'storesuite_color_button_hover_border',
+			'storesuite_text_color',
+			'storesuite_title_text_color',
+			'storesuite_lite_text_color',
+			'storesuite_icon_color',
 			'storesuite_color_sidebar_menu_text',
 			'storesuite_color_sidebar_background',
 			'storesuite_color_sidebar_active_text',
 			'storesuite_color_sidebar_active_background',
+			'storesuite_color_border',
+			'storesuite_color_lite_bg',
 		);
 		foreach ( $color_keys as $key ) {
 			if ( $request->has_param( $key ) ) {

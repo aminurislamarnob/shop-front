@@ -29,6 +29,7 @@ class Main {
 		add_filter( 'show_admin_bar', array( $this, 'hide_admin_bar' ) );
 		add_action( 'woocommerce_account_dashboard', array( $this, 'add_storesuite_dashboard_btn' ), 1 );
 		add_action( 'wp_head', array( $this, 'add_storesuite_dashboard_btn_css' ) );
+		add_action( 'wp_head', array( $this, 'add_storesuite_css_variables' ) );
 	}
 
 	/**
@@ -170,6 +171,48 @@ class Main {
 			a.storesuite-dashboard-btn.my-storesuite-button:hover {
 				background: #213fd4;
 				border: 1px solid #213fd4;
+			}
+		</style>
+		<?php
+	}
+
+	public function add_storesuite_css_variables() {
+		if ( ! is_storesuite_dashboard_page() ) {
+			return;
+		}
+
+		$css_vars = array(
+			'--storesuite-primary-bg'             => 'storesuite_color_button_background',
+			'--storesuite-primary-bg-hover'      => 'storesuite_color_button_hover_background',
+			'--storesuite-button-text-color'     => 'storesuite_color_button_text',
+			'--storesuite-button-text-hover-color' => 'storesuite_color_button_hover_text',
+			'--storesuite-text-black'             => 'storesuite_title_text_color',
+			'--storesuite-text-color'             => 'storesuite_text_color',
+			'--storesuite-text-color-light'       => 'storesuite_lite_text_color',
+			'--storesuite-icon-color'             => 'storesuite_icon_color',
+			'--storesuite-sidebar-bg-color'       => 'storesuite_color_sidebar_background',
+			'--storesuite-sidebar-menu-text'     => 'storesuite_color_sidebar_menu_text',
+			'--storesuite-sidebar-active-text'    => 'storesuite_color_sidebar_active_text',
+			'--storesuite-sidebar-active-background' => 'storesuite_color_sidebar_active_background',
+			'--storesuite-bg-color-light'         => 'storesuite_color_lite_bg',
+			'--storesuite-border-color'           => 'storesuite_color_border',
+		);
+
+		$rules = array();
+		foreach ( $css_vars as $var_name => $option_key ) {
+			$value = storesuite_get_option_by_key( $option_key );
+			if ( $value !== '' && $value !== null ) {
+				$rules[] = $var_name . ': ' . esc_attr( $value );
+			}
+		}
+
+		if ( empty( $rules ) ) {
+			return;
+		}
+		?>
+		<style>
+			:root{
+				<?php echo implode( ";\n\t\t\t\t", $rules ); ?>
 			}
 		</style>
 		<?php
