@@ -64,7 +64,7 @@ class Assets {
 	}
 
 	/**
-	 * Register all Dokan scripts and styles.
+	 * Register all scripts and styles.
 	 *
 	 * @return void
 	 */
@@ -374,8 +374,8 @@ class Assets {
 					'mon_decimal_point'               => wc_get_price_decimal_separator(),
 					'rounding_precision'              => wc_get_rounding_precision(),
 					'i18n_select_items'            => __( 'Please select some items.', 'storesuite' ),
-					'i18n_do_refund'               => __( 'Are you sure you wish to process this refund request? This action cannot be undone.', 'dokan' ),
-					'i18n_delete_refund'           => __( 'Are you sure you wish to delete this refund? This action cannot be undone.', 'dokan' ),
+					'i18n_do_refund'               => __( 'Are you sure you wish to process this refund request? This action cannot be undone.', 'storesuite' ),
+					'i18n_delete_refund'           => __( 'Are you sure you wish to delete this refund? This action cannot be undone.', 'storesuite' ),
 					'currency_format_num_decimals' => wc_get_price_decimals(),
 					'currency_format_symbol'       => get_woocommerce_currency_symbol(),
 					'currency_format_decimal_sep'  => esc_attr( wc_get_price_decimal_separator() ),

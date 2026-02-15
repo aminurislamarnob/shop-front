@@ -211,9 +211,7 @@ class Main {
 		}
 		?>
 		<style>
-			:root{
-				<?php echo implode( ";\n\t\t\t\t", $rules ); ?>
-			}
+			:root{ <?php echo implode( ";", $rules ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> }
 		</style>
 		<?php
 	}
