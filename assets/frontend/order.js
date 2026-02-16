@@ -3,31 +3,6 @@
 	window.wcTracks = window.wcTracks || {};
 	window.wcTracks.recordEvent = window.wcTracks.recordEvent || function () {};
 
-	var msfcLoader = {
-		block: function ( $container, text ) {
-			text = text || 'Processing...';
-			if ( $container.find( '.msfc-loader-overlay' ).length === 0 ) {
-				$container.append(
-					'<div class="msfc-loader-overlay">' +
-						'<span class="msfc-loader-spinner"></span>' +
-						'<span class="msfc-loader-text">' +
-						text +
-						'</span>' +
-						'</div>'
-				);
-			} else {
-				$container.find( '.msfc-loader-text' ).text( text );
-			}
-
-			setTimeout( function () {
-				$container.find( '.msfc-loader-overlay' ).addClass( 'active' );
-			}, 10 );
-		},
-		unblock: function ( $container ) {
-			$container.find( '.msfc-loader-overlay' ).removeClass( 'active' );
-		},
-	};
-
 	var StoreFrontOrderConfig = {
 		init: function () {
 			this.bindEvents();
@@ -212,7 +187,9 @@
 					security: StoreSuite_Order.get_customer_details_nonce,
 				};
 
-				msfcLoader.block( $( this ).closest( 'div.edit_address' ) );
+				window.StoreSuite.msfcLoader.block(
+					$( this ).closest( 'div.edit_address' )
+				);
 
 				$.ajax( {
 					url: StoreSuite_Order.ajax_url,
@@ -235,7 +212,9 @@
 								}
 							} );
 						}
-						msfcLoader.unblock( $( 'div.edit_address' ) );
+						window.StoreSuite.msfcLoader.unblock(
+							$( 'div.edit_address' )
+						);
 					},
 				} );
 			}
@@ -261,7 +240,9 @@
 					security: StoreSuite_Order.get_customer_details_nonce,
 				};
 
-				msfcLoader.block( $( this ).closest( 'div.edit_address' ) );
+				window.StoreSuite.msfcLoader.block(
+					$( this ).closest( 'div.edit_address' )
+				);
 
 				$.ajax( {
 					url: StoreSuite_Order.ajax_url,
@@ -284,7 +265,9 @@
 								}
 							} );
 						}
-						msfcLoader.unblock( $( 'div.edit_address' ) );
+						window.StoreSuite.msfcLoader.unblock(
+							$( 'div.edit_address' )
+						);
 					},
 				} );
 			}
@@ -342,7 +325,7 @@
 				return;
 			}
 
-			msfcLoader.block( $( '#new_order_notes' ) );
+			window.StoreSuite.msfcLoader.block( $( '#new_order_notes' ) );
 
 			var data = {
 				action: 'woocommerce_add_order_note',
@@ -355,7 +338,7 @@
 			$.post( StoreSuite_Order.ajax_url, data, function ( response ) {
 				$( 'ul.order_notes .no-items' ).remove();
 				$( 'ul.order_notes' ).prepend( response );
-				msfcLoader.unblock( $( '#new_order_notes' ) );
+				window.StoreSuite.msfcLoader.unblock( $( '#new_order_notes' ) );
 				$( '#add_order_note' ).val( '' );
 			} );
 
@@ -366,7 +349,7 @@
 			if ( window.confirm( StoreSuite_Order.i18n_delete_note ) ) {
 				var note = $( this ).closest( 'li.note' );
 
-				msfcLoader.block( $( note ) );
+				window.StoreSuite.msfcLoader.block( $( note ) );
 
 				var data = {
 					action: 'woocommerce_delete_order_note',
@@ -485,7 +468,9 @@
 
 			data = NewOrderProducts.filterData( 'reload_items', data );
 
-			msfcLoader.block( $( '#woocommerce-order-items' ) );
+			window.StoreSuite.msfcLoader.block(
+				$( '#woocommerce-order-items' )
+			);
 
 			$.ajax( {
 				url: StoreSuite_Order.ajax_url,
@@ -496,7 +481,9 @@
 					$( '#woocommerce-order-items' )
 						.find( '.inside' )
 						.append( response );
-					msfcLoader.unblock( $( '#woocommerce-order-items' ) );
+					window.StoreSuite.msfcLoader.unblock(
+						$( '#woocommerce-order-items' )
+					);
 				},
 			} );
 		},
@@ -505,7 +492,9 @@
 				var $refund = $( this ).closest( 'tr.refund' );
 				var refund_id = $refund.attr( 'data-order_refund_id' );
 
-				msfcLoader.block( $( '#woocommerce-order-items' ) );
+				window.StoreSuite.msfcLoader.block(
+					$( '#woocommerce-order-items' )
+				);
 
 				var data = {
 					action: 'woocommerce_delete_refund',
@@ -527,7 +516,9 @@
 			return false;
 		},
 		doRefund: function () {
-			msfcLoader.block( $( '#woocommerce-order-items' ) );
+			window.StoreSuite.msfcLoader.block(
+				$( '#woocommerce-order-items' )
+			);
 
 			if ( window.confirm( StoreSuite_Order.i18n_do_refund ) ) {
 				var refund_amount = $( 'input#refund_amount' ).val();
@@ -657,7 +648,9 @@
 					},
 				} );
 			} else {
-				msfcLoader.unblock( $( '#woocommerce-order-items' ) );
+				window.StoreSuite.msfcLoader.unblock(
+					$( '#woocommerce-order-items' )
+				);
 			}
 		},
 		refundInputChanged: function () {
@@ -1018,7 +1011,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block( prod_search_for_order_box );
+				window.StoreSuite.msfcLoader.block( prod_search_for_order_box );
 
 				var item_table = $( '#search-order-items table.msf-table' ),
 					item_table_body = item_table.find( 'tbody' ),
@@ -1080,9 +1073,13 @@
 							}
 
 							// prod_search_for_order_box.reloaded_items();
-							msfcLoader.unblock( prod_search_for_order_box );
+							window.StoreSuite.msfcLoader.unblock(
+								prod_search_for_order_box
+							);
 						} else {
-							msfcLoader.unblock( prod_search_for_order_box );
+							window.StoreSuite.msfcLoader.unblock(
+								prod_search_for_order_box
+							);
 							window.alert( response.data.error );
 						}
 					},
@@ -1205,7 +1202,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block( prod_search_for_order_box );
+				window.StoreSuite.msfcLoader.block( prod_search_for_order_box );
 
 				var user_id = $( '#customer_user' ).val();
 				var user_email = $( '#_billing_email' ).val();
@@ -1244,11 +1241,15 @@
 							}
 
 							// wc_meta_boxes_order_items.reloaded_items();
-							msfcLoader.unblock( prod_search_for_order_box );
+							window.StoreSuite.msfcLoader.unblock(
+								prod_search_for_order_box
+							);
 						} else {
 							window.alert( response.data.error );
 						}
-						msfcLoader.unblock( prod_search_for_order_box );
+						window.StoreSuite.msfcLoader.unblock(
+							prod_search_for_order_box
+						);
 					},
 					complete: function () {},
 				} );
@@ -1262,7 +1263,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block( prod_search_for_order_box );
+				window.StoreSuite.msfcLoader.block( prod_search_for_order_box );
 
 				var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
 					action: 'woocommerce_remove_order_coupon',
@@ -1290,11 +1291,15 @@
 								$( response.data.notes_html ).find( 'li' )
 							);
 						}
-						msfcLoader.unblock( prod_search_for_order_box );
+						window.StoreSuite.msfcLoader.unblock(
+							prod_search_for_order_box
+						);
 					} else {
 						window.alert( response.data.error );
 					}
-					msfcLoader.unblock( prod_search_for_order_box );
+					window.StoreSuite.msfcLoader.unblock(
+						prod_search_for_order_box
+					);
 				} );
 			} );
 		},
@@ -1308,7 +1313,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block( prod_search_for_order_box );
+				window.StoreSuite.msfcLoader.block( prod_search_for_order_box );
 
 				var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
 					action: 'woocommerce_add_order_fee',
@@ -1328,11 +1333,15 @@
 						$( '#woocommerce-order-items' )
 							.find( '.inside' )
 							.append( response.data.html );
-						msfcLoader.unblock( prod_search_for_order_box );
+						window.StoreSuite.msfcLoader.unblock(
+							prod_search_for_order_box
+						);
 					} else {
 						window.alert( response.data.error );
 					}
-					msfcLoader.unblock( prod_search_for_order_box );
+					window.StoreSuite.msfcLoader.unblock(
+						prod_search_for_order_box
+					);
 				} );
 			} );
 		},
@@ -1358,7 +1367,7 @@
 				var prod_search_for_order_box = $(
 					'.product-serach-for-order-box'
 				);
-				msfcLoader.block( prod_search_for_order_box );
+				window.StoreSuite.msfcLoader.block( prod_search_for_order_box );
 
 				$.ajax( {
 					url: StoreSuite_Order.ajax_url,
@@ -1372,9 +1381,13 @@
 							$( '#woocommerce-order-items' )
 								.find( '.inside' )
 								.append( response.data.html );
-							msfcLoader.unblock( prod_search_for_order_box );
+							window.StoreSuite.msfcLoader.unblock(
+								prod_search_for_order_box
+							);
 						} else {
-							msfcLoader.unblock( prod_search_for_order_box );
+							window.StoreSuite.msfcLoader.unblock(
+								prod_search_for_order_box
+							);
 							window.alert( response.data.error );
 						}
 					},
@@ -1387,7 +1400,7 @@
 			var prod_search_for_order_box = $(
 				'.product-serach-for-order-box'
 			);
-			msfcLoader.block( prod_search_for_order_box );
+			window.StoreSuite.msfcLoader.block( prod_search_for_order_box );
 
 			var data = $.extend( {}, NewOrderProducts.getTaxableAddress(), {
 				action: 'woocommerce_calc_line_taxes',
@@ -1414,7 +1427,9 @@
 					$( '#woocommerce-order-items' )
 						.find( '.inside' )
 						.append( response );
-					msfcLoader.unblock( prod_search_for_order_box );
+					window.StoreSuite.msfcLoader.unblock(
+						prod_search_for_order_box
+					);
 
 					$( document.body ).trigger(
 						'order-totals-recalculate-success',
@@ -1456,7 +1471,9 @@
 					var prod_search_for_order_box = $(
 						'.product-serach-for-order-box'
 					);
-					msfcLoader.block( prod_search_for_order_box );
+					window.StoreSuite.msfcLoader.block(
+						prod_search_for_order_box
+					);
 
 					$.ajax( {
 						url: StoreSuite_Order.ajax_url,
@@ -1482,9 +1499,13 @@
 								}
 
 								// wc_meta_boxes_order_items.reloaded_items();
-								msfcLoader.unblock( prod_search_for_order_box );
+								window.StoreSuite.msfcLoader.unblock(
+									prod_search_for_order_box
+								);
 							} else {
-								msfcLoader.unblock( prod_search_for_order_box );
+								window.StoreSuite.msfcLoader.unblock(
+									prod_search_for_order_box
+								);
 								window.alert( response.data.error );
 							}
 						},
@@ -1560,7 +1581,7 @@
 				var container = $( '.msfc-dashboard-order-details' );
 
 				// Show premium loader
-				msfcLoader.block( container );
+				window.StoreSuite.msfcLoader.block( container );
 
 				$.ajax( {
 					url: StoreSuite_Order.ajax_url,
@@ -1611,7 +1632,7 @@
 						}
 					},
 					complete: function () {
-						msfcLoader.unblock( container );
+						window.StoreSuite.msfcLoader.unblock( container );
 					},
 				} );
 			} );
@@ -1699,7 +1720,9 @@
 					);
 					var order_item_id = $item.attr( 'data-order_item_id' );
 
-					msfcLoader.block( prod_search_for_order_box );
+					window.StoreSuite.msfcLoader.block(
+						prod_search_for_order_box
+					);
 
 					var data = $.extend(
 						{},
@@ -1747,11 +1770,15 @@
 									);
 								}
 
-								msfcLoader.unblock( prod_search_for_order_box );
+								window.StoreSuite.msfcLoader.unblock(
+									prod_search_for_order_box
+								);
 							} else {
 								window.alert( response.data.error );
 							}
-							msfcLoader.unblock( prod_search_for_order_box );
+							window.StoreSuite.msfcLoader.unblock(
+								prod_search_for_order_box
+							);
 						},
 						complete: function () {},
 					} );

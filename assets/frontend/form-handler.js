@@ -1,4 +1,4 @@
-(function ($) {
+( function ( $ ) {
 	'use strict';
 
 	var StoreFrontFormHandler = {
@@ -32,35 +32,39 @@
 		 * @param {Array} fields - Array of objects with selector and message properties
 		 * @return {boolean} - Returns true if all fields are valid, false otherwise
 		 */
-		validateRequiredFields: function ($form, fields) {
+		validateRequiredFields: function ( $form, fields ) {
 			var isValid = true;
 			var self = this;
 
 			// Clear all previous errors
-			$form.find('.msf-field-error').remove();
-			$form.find('.msf-form-control').removeClass('msf-field-invalid');
+			$form.find( '.msf-field-error' ).remove();
+			$form
+				.find( '.msf-form-control' )
+				.removeClass( 'msf-field-invalid' );
 
 			// Validate each field
-			$.each(fields, function (index, field) {
-				var $field = $form.find(field.selector);
+			$.each( fields, function ( index, field ) {
+				var $field = $form.find( field.selector );
 				var value = $field.val();
 
 				// Check if field is empty or invalid
 				var isEmpty = false;
-				if ($field.is('select')) {
-					isEmpty = !value || value === '';
-				} else if (field.type === 'number') {
+				if ( $field.is( 'select' ) ) {
+					isEmpty = ! value || value === '';
+				} else if ( field.type === 'number' ) {
 					isEmpty =
-						!value || value.trim() === '' || parseFloat(value) < 0;
+						! value ||
+						value.trim() === '' ||
+						parseFloat( value ) < 0;
 				} else {
-					isEmpty = !value || value.trim() === '';
+					isEmpty = ! value || value.trim() === '';
 				}
 
-				if (isEmpty) {
+				if ( isEmpty ) {
 					isValid = false;
-					self.markFieldAsInvalid($field, field.message);
+					self.markFieldAsInvalid( $field, field.message );
 				}
-			});
+			} );
 
 			return isValid;
 		},
@@ -71,9 +75,9 @@
 		 * @param {jQuery} $field - The field element
 		 * @param {string} message - Error message to display
 		 */
-		markFieldAsInvalid: function ($field, message) {
+		markFieldAsInvalid: function ( $field, message ) {
 			// Add invalid class to field
-			$field.addClass('msf-field-invalid');
+			$field.addClass( 'msf-field-invalid' );
 
 			// Create error message element
 			var $errorMsg = $(
@@ -81,32 +85,32 @@
 			);
 
 			// Insert error message after the field or its wrapper
-			if ($field.parent().hasClass('msf-coupon-code-wrapper')) {
-				$field.parent().after($errorMsg);
+			if ( $field.parent().hasClass( 'msf-coupon-code-wrapper' ) ) {
+				$field.parent().after( $errorMsg );
 			} else {
-				$field.after($errorMsg);
+				$field.after( $errorMsg );
 			}
 
 			// Remove error on field change
-			$field.one('input change', function () {
-				$(this).removeClass('msf-field-invalid');
-				$(this).siblings('.msf-field-error').remove();
-				$(this).parent().siblings('.msf-field-error').remove();
-			});
+			$field.one( 'input change', function () {
+				$( this ).removeClass( 'msf-field-invalid' );
+				$( this ).siblings( '.msf-field-error' ).remove();
+				$( this ).parent().siblings( '.msf-field-error' ).remove();
+			} );
 		},
 
 		/**
 		 * Initialize datepicker for expiry date field
 		 */
 		initDatePicker: function () {
-			if ($('#expiry_date').length) {
-				$('#expiry_date').datepicker({
+			if ( $( '#expiry_date' ).length ) {
+				$( '#expiry_date' ).datepicker( {
 					defaultDate: '',
 					dateFormat: 'yy-mm-dd',
 					numberOfMonths: 1,
 					showButtonPanel: true,
 					minDate: 0, // Prevent selecting past dates
-				});
+				} );
 			}
 		},
 
@@ -114,44 +118,49 @@
 		 * Initialize AJAX product search for coupon form
 		 */
 		initProductSearch: function () {
-			$(':input.wc-coupon-product-search')
-				.filter(':not(.enhanced)')
-				.each(function () {
+			$( ':input.wc-coupon-product-search' )
+				.filter( ':not(.enhanced)' )
+				.each( function () {
 					var select2_args = {
-						allowClear: $(this).data('allow_clear') ? true : false,
-						placeholder: $(this).data('placeholder'),
-						minimumInputLength: $(this).data('minimum_input_length')
-							? $(this).data('minimum_input_length')
+						allowClear: $( this ).data( 'allow_clear' )
+							? true
+							: false,
+						placeholder: $( this ).data( 'placeholder' ),
+						minimumInputLength: $( this ).data(
+							'minimum_input_length'
+						)
+							? $( this ).data( 'minimum_input_length' )
 							: '3',
-						escapeMarkup: function (m) {
+						escapeMarkup: function ( m ) {
 							return m;
 						},
 						ajax: {
 							url: MSF_Form_Handler.ajax_url,
 							dataType: 'json',
 							delay: 250,
-							data: function (params) {
+							data: function ( params ) {
 								return {
 									term: params.term,
 									action:
-										$(this).data('action') ||
+										$( this ).data( 'action' ) ||
 										'woocommerce_json_search_products_and_variations',
 									security:
 										MSF_Form_Handler.search_products_nonce,
-									exclude: $(this).data('exclude'),
-									exclude_type: $(this).data('exclude_type'),
-									include: $(this).data('include'),
-									limit: $(this).data('limit'),
+									exclude: $( this ).data( 'exclude' ),
+									exclude_type:
+										$( this ).data( 'exclude_type' ),
+									include: $( this ).data( 'include' ),
+									limit: $( this ).data( 'limit' ),
 									display_stock:
-										$(this).data('display_stock'),
+										$( this ).data( 'display_stock' ),
 								};
 							},
-							processResults: function (data) {
+							processResults: function ( data ) {
 								var terms = [];
-								if (data) {
-									$.each(data, function (id, text) {
-										terms.push({ id: id, text: text });
-									});
+								if ( data ) {
+									$.each( data, function ( id, text ) {
+										terms.push( { id: id, text: text } );
+									} );
 								}
 								return {
 									results: terms,
@@ -161,26 +170,26 @@
 						},
 					};
 
-					$(this).selectWoo(select2_args).addClass('enhanced');
-				});
+					$( this ).selectWoo( select2_args ).addClass( 'enhanced' );
+				} );
 		},
 
 		/**
 		 * Handle generate coupon code button click
 		 */
 		handleGenerateCouponCode: function () {
-			$(document).on(
+			$( document ).on(
 				'click',
 				'.button.generate-coupon-code',
-				function (e) {
+				function ( e ) {
 					e.preventDefault();
 
-					var $coupon_code_field = $('#coupon_code'),
+					var $coupon_code_field = $( '#coupon_code' ),
 						result = '',
 						generator = MSF_Form_Handler.coupon_code_generator;
 
 					// Generate random code
-					for (var i = 0; i < generator.char_length; i++) {
+					for ( var i = 0; i < generator.char_length; i++ ) {
 						result += generator.characters.charAt(
 							Math.floor(
 								Math.random() * generator.characters.length
@@ -193,10 +202,10 @@
 
 					// Set the generated code to the input field
 					$coupon_code_field
-						.trigger('focus')
-						.val(result)
-						.trigger('input')
-						.trigger('change');
+						.trigger( 'focus' )
+						.val( result )
+						.trigger( 'input' )
+						.trigger( 'change' );
 				}
 			);
 		},
@@ -204,8 +213,8 @@
 		/**
 		 * Show loading state with SweetAlert2
 		 */
-		showLoading: function (title) {
-			Swal.fire({
+		showLoading: function ( title ) {
+			Swal.fire( {
 				title: title || MSF_Form_Handler.i18n.processing,
 				text: MSF_Form_Handler.i18n.please_wait,
 				icon: 'info',
@@ -213,31 +222,31 @@
 				didOpen: () => {
 					Swal.showLoading();
 				},
-			});
+			} );
 		},
 
 		/**
 		 * Show success message
 		 */
-		showSuccess: function (message) {
-			Swal.fire({
+		showSuccess: function ( message ) {
+			Swal.fire( {
 				icon: 'success',
 				title: MSF_Form_Handler.i18n.success_title,
 				text: message,
 				confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-			});
+			} );
 		},
 
 		/**
 		 * Show error message
 		 */
-		showError: function (message) {
-			Swal.fire({
+		showError: function ( message ) {
+			Swal.fire( {
 				icon: 'error',
 				title: MSF_Form_Handler.i18n.error_title,
 				text: message || MSF_Form_Handler.i18n.unexpected_error,
 				confirmButtonText: MSF_Form_Handler.i18n.ok_button,
-			});
+			} );
 		},
 
 		/**
@@ -246,10 +255,10 @@
 		handleCategoryAdd: function () {
 			var self = this;
 
-			$(document).on('submit', '#msfc-add-category', function (e) {
+			$( document ).on( 'submit', '#msfc-add-category', function ( e ) {
 				e.preventDefault();
 
-				var $form = $(this);
+				var $form = $( this );
 
 				// Define required fields for validation
 				var requiredFields = [
@@ -260,49 +269,57 @@
 				];
 
 				// Validate required fields
-				if (!self.validateRequiredFields($form, requiredFields)) {
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				var formData = new FormData(this);
-				var $submitBtn = $form.find('button[type="submit"]');
-				$submitBtn.prop('disabled', true);
+				var formData = new FormData( this );
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
 
-				$.ajax({
+				// Show loader
+				window.StoreSuite.msfcLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+
+				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
 					contentType: false,
-					success: function (response) {
+					success: function ( response ) {
 						Swal.close();
 
-						if (response.success) {
-							self.showSuccess(response.data.message);
-							$form[0].reset();
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							$form[ 0 ].reset();
 							// Clear category image.
-							$('#product_category_thumbnail_id').val('');
-							$('#product_category_thumbnail_url').val('');
-							$('#category_thumb_img').html('');
-							$('#category-single-image').removeClass(
+							$( '#product_category_thumbnail_id' ).val( '' );
+							$( '#product_category_thumbnail_url' ).val( '' );
+							$( '#category_thumb_img' ).html( '' );
+							$( '#category-single-image' ).removeClass(
 								'image-drop-bg'
 							);
 							$(
 								'#category-single-image .image-drop-text span'
-							).text(MSF_Form_Handler.i18n.upload_image_text);
+							).text( MSF_Form_Handler.i18n.upload_image_text );
 						} else {
-							self.showError(response.data.error);
+							self.showError( response.data.error );
 						}
 					},
-					error: function (xhr, status, error) {
+					error: function ( xhr, status, error ) {
 						Swal.close();
 						self.showError();
 					},
 					complete: function () {
-						$submitBtn.prop('disabled', false);
+						$submitBtn.prop( 'disabled', false );
+						window.StoreSuite.msfcLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
 					},
-				});
-			});
+				} );
+			} );
 		},
 
 		/**
@@ -311,10 +328,10 @@
 		handleCategoryEdit: function () {
 			var self = this;
 
-			$(document).on('submit', '#msfc-edit-category', function (e) {
+			$( document ).on( 'submit', '#msfc-edit-category', function ( e ) {
 				e.preventDefault();
 
-				var $form = $(this);
+				var $form = $( this );
 
 				// Define required fields for validation
 				var requiredFields = [
@@ -325,38 +342,45 @@
 				];
 
 				// Validate required fields
-				if (!self.validateRequiredFields($form, requiredFields)) {
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				var formData = new FormData(this);
-				var $submitBtn = $form.find('button[type="submit"]');
-				$submitBtn.prop('disabled', true);
+				var formData = new FormData( this );
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
 
-				$.ajax({
+				// Show loader
+				window.StoreSuite.msfcLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
 					contentType: false,
-					success: function (response) {
+					success: function ( response ) {
 						Swal.close();
 
-						if (response.success) {
-							self.showSuccess(response.data.message);
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
 						} else {
-							self.showError(response.data.error);
+							self.showError( response.data.error );
 						}
 					},
-					error: function (xhr, status, error) {
+					error: function ( xhr, status, error ) {
 						Swal.close();
 						self.showError();
 					},
 					complete: function () {
-						$submitBtn.prop('disabled', false);
+						$submitBtn.prop( 'disabled', false );
+						window.StoreSuite.msfcLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
 					},
-				});
-			});
+				} );
+			} );
 		},
 
 		/**
@@ -365,31 +389,31 @@
 		handleCategoryDelete: function () {
 			var self = this;
 
-			$(document).on('click', '.msfc-delete-category', function (e) {
+			$( document ).on( 'click', '.msfc-delete-category', function ( e ) {
 				e.preventDefault();
 
-				var categoryId = $(this).data('category-id');
+				var categoryId = $( this ).data( 'category-id' );
 
-				if (!categoryId) {
+				if ( ! categoryId ) {
 					return;
 				}
 
-				Swal.fire({
+				Swal.fire( {
 					title: MSF_Form_Handler.i18n.are_you_sure,
 					text: MSF_Form_Handler.i18n.delete_category_warning,
 					icon: 'warning',
 					showCancelButton: true,
 					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
 					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
-				}).then(function (result) {
-					if (!result.isConfirmed) {
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
 						return;
 					}
 
-					self.showLoading(MSF_Form_Handler.i18n.deleting);
+					self.showLoading( MSF_Form_Handler.i18n.deleting );
 
 					var formData = new FormData();
-					formData.append('id', categoryId);
+					formData.append( 'id', categoryId );
 					formData.append(
 						'action',
 						'storesuite_delete_product_category'
@@ -399,34 +423,34 @@
 						MSF_Form_Handler.storesuite_woo_delete_nonce_
 					);
 
-					$.ajax({
+					$.ajax( {
 						url: MSF_Form_Handler.ajax_url,
 						type: 'POST',
 						data: formData,
 						processData: false,
 						contentType: false,
-						success: function (response) {
+						success: function ( response ) {
 							Swal.close();
 
-							if (response.success) {
-								self.showSuccess(response.data.message);
-								$('#category-row-' + categoryId).fadeOut(
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$( '#category-row-' + categoryId ).fadeOut(
 									300,
 									function () {
-										$(this).remove();
+										$( this ).remove();
 									}
 								);
 							} else {
-								self.showError(response.data.error);
+								self.showError( response.data.error );
 							}
 						},
-						error: function (xhr, status, error) {
+						error: function ( xhr, status, error ) {
 							Swal.close();
 							self.showError();
 						},
-					});
-				});
-			});
+					} );
+				} );
+			} );
 		},
 
 		/**
@@ -435,10 +459,10 @@
 		handleTagAdd: function () {
 			var self = this;
 
-			$(document).on('submit', '#msfc-add-tag', function (e) {
+			$( document ).on( 'submit', '#msfc-add-tag', function ( e ) {
 				e.preventDefault();
 
-				var $form = $(this);
+				var $form = $( this );
 
 				// Define required fields for validation
 				var requiredFields = [
@@ -449,39 +473,47 @@
 				];
 
 				// Validate required fields
-				if (!self.validateRequiredFields($form, requiredFields)) {
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				var formData = new FormData(this);
-				var $submitBtn = $form.find('button[type="submit"]');
-				$submitBtn.prop('disabled', true);
+				var formData = new FormData( this );
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
 
-				$.ajax({
+				// Show loader
+				window.StoreSuite.msfcLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+
+				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
 					contentType: false,
-					success: function (response) {
+					success: function ( response ) {
 						Swal.close();
 
-						if (response.success) {
-							self.showSuccess(response.data.message);
-							$form[0].reset();
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							$form[ 0 ].reset();
 						} else {
-							self.showError(response.data.error);
+							self.showError( response.data.error );
 						}
 					},
-					error: function (xhr, status, error) {
+					error: function ( xhr, status, error ) {
 						Swal.close();
 						self.showError();
 					},
 					complete: function () {
-						$submitBtn.prop('disabled', false);
+						$submitBtn.prop( 'disabled', false );
+						window.StoreSuite.msfcLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
 					},
-				});
-			});
+				} );
+			} );
 		},
 
 		/**
@@ -490,10 +522,10 @@
 		handleTagEdit: function () {
 			var self = this;
 
-			$(document).on('submit', '#msfc-edit-tag', function (e) {
+			$( document ).on( 'submit', '#msfc-edit-tag', function ( e ) {
 				e.preventDefault();
 
-				var $form = $(this);
+				var $form = $( this );
 
 				// Define required fields for validation
 				var requiredFields = [
@@ -504,38 +536,45 @@
 				];
 
 				// Validate required fields
-				if (!self.validateRequiredFields($form, requiredFields)) {
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				var formData = new FormData(this);
-				var $submitBtn = $form.find('button[type="submit"]');
-				$submitBtn.prop('disabled', true);
+				var formData = new FormData( this );
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
 
-				$.ajax({
+				// Show loader
+				window.StoreSuite.msfcLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
 					contentType: false,
-					success: function (response) {
+					success: function ( response ) {
 						Swal.close();
 
-						if (response.success) {
-							self.showSuccess(response.data.message);
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
 						} else {
-							self.showError(response.data.error);
+							self.showError( response.data.error );
 						}
 					},
-					error: function (xhr, status, error) {
+					error: function ( xhr, status, error ) {
 						Swal.close();
 						self.showError();
 					},
 					complete: function () {
-						$submitBtn.prop('disabled', false);
+						$submitBtn.prop( 'disabled', false );
+						window.StoreSuite.msfcLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
 					},
-				});
-			});
+				} );
+			} );
 		},
 
 		/**
@@ -544,65 +583,68 @@
 		handleTagDelete: function () {
 			var self = this;
 
-			$(document).on('click', '.msfc-delete-tag', function (e) {
+			$( document ).on( 'click', '.msfc-delete-tag', function ( e ) {
 				e.preventDefault();
 
-				var tagId = $(this).data('tag-id');
+				var tagId = $( this ).data( 'tag-id' );
 
-				if (!tagId) {
+				if ( ! tagId ) {
 					return;
 				}
 
-				Swal.fire({
+				Swal.fire( {
 					title: MSF_Form_Handler.i18n.are_you_sure,
 					text: MSF_Form_Handler.i18n.delete_tag_warning,
 					icon: 'warning',
 					showCancelButton: true,
 					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
 					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
-				}).then(function (result) {
-					if (!result.isConfirmed) {
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
 						return;
 					}
 
-					self.showLoading(MSF_Form_Handler.i18n.deleting);
+					self.showLoading( MSF_Form_Handler.i18n.deleting );
 
 					var formData = new FormData();
-					formData.append('id', tagId);
-					formData.append('action', 'storesuite_delete_product_tag');
+					formData.append( 'id', tagId );
+					formData.append(
+						'action',
+						'storesuite_delete_product_tag'
+					);
 					formData.append(
 						'storesuite_delete_product_tag_nonce',
 						MSF_Form_Handler.storesuite_woo_delete_nonce_
 					);
 
-					$.ajax({
+					$.ajax( {
 						url: MSF_Form_Handler.ajax_url,
 						type: 'POST',
 						data: formData,
 						processData: false,
 						contentType: false,
-						success: function (response) {
+						success: function ( response ) {
 							Swal.close();
 
-							if (response.success) {
-								self.showSuccess(response.data.message);
-								$('#tag-row-' + tagId).fadeOut(
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$( '#tag-row-' + tagId ).fadeOut(
 									300,
 									function () {
-										$(this).remove();
+										$( this ).remove();
 									}
 								);
 							} else {
-								self.showError(response.data.error);
+								self.showError( response.data.error );
 							}
 						},
-						error: function (xhr, status, error) {
+						error: function ( xhr, status, error ) {
 							Swal.close();
 							self.showError();
 						},
-					});
-				});
-			});
+					} );
+				} );
+			} );
 		},
 
 		/**
@@ -611,10 +653,10 @@
 		handleBrandAdd: function () {
 			var self = this;
 
-			$(document).on('submit', '#msfc-add-brand', function (e) {
+			$( document ).on( 'submit', '#msfc-add-brand', function ( e ) {
 				e.preventDefault();
 
-				var $form = $(this);
+				var $form = $( this );
 
 				// Define required fields for validation
 				var requiredFields = [
@@ -625,49 +667,56 @@
 				];
 
 				// Validate required fields
-				if (!self.validateRequiredFields($form, requiredFields)) {
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				var formData = new FormData(this);
-				var $submitBtn = $form.find('button[type="submit"]');
-				$submitBtn.prop('disabled', true);
+				var formData = new FormData( this );
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
 
-				$.ajax({
+				// Show loader
+				window.StoreSuite.msfcLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
 					contentType: false,
-					success: function (response) {
+					success: function ( response ) {
 						Swal.close();
 
-						if (response.success) {
-							self.showSuccess(response.data.message);
-							$form[0].reset();
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							$form[ 0 ].reset();
 							// Clear brand image.
-							$('#product_brand_thumbnail_id').val('');
-							$('#product_brand_thumbnail_url').val('');
-							$('#brand_thumb_img').html('');
-							$('#brand-single-image').removeClass(
+							$( '#product_brand_thumbnail_id' ).val( '' );
+							$( '#product_brand_thumbnail_url' ).val( '' );
+							$( '#brand_thumb_img' ).html( '' );
+							$( '#brand-single-image' ).removeClass(
 								'image-drop-bg'
 							);
-							$('#brand-single-image .image-drop-text span').text(
-								MSF_Form_Handler.i18n.upload_image_text
-							);
+							$(
+								'#brand-single-image .image-drop-text span'
+							).text( MSF_Form_Handler.i18n.upload_image_text );
 						} else {
-							self.showError(response.data.error);
+							self.showError( response.data.error );
 						}
 					},
-					error: function (xhr, status, error) {
+					error: function ( xhr, status, error ) {
 						Swal.close();
 						self.showError();
 					},
 					complete: function () {
-						$submitBtn.prop('disabled', false);
+						$submitBtn.prop( 'disabled', false );
+						window.StoreSuite.msfcLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
 					},
-				});
-			});
+				} );
+			} );
 		},
 
 		/**
@@ -676,10 +725,10 @@
 		handleBrandEdit: function () {
 			var self = this;
 
-			$(document).on('submit', '#msfc-edit-brand', function (e) {
+			$( document ).on( 'submit', '#msfc-edit-brand', function ( e ) {
 				e.preventDefault();
 
-				var $form = $(this);
+				var $form = $( this );
 
 				// Define required fields for validation
 				var requiredFields = [
@@ -690,38 +739,45 @@
 				];
 
 				// Validate required fields
-				if (!self.validateRequiredFields($form, requiredFields)) {
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				var formData = new FormData(this);
-				var $submitBtn = $form.find('button[type="submit"]');
-				$submitBtn.prop('disabled', true);
+				var formData = new FormData( this );
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
 
-				$.ajax({
+				// Show loader
+				window.StoreSuite.msfcLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
 					contentType: false,
-					success: function (response) {
+					success: function ( response ) {
 						Swal.close();
 
-						if (response.success) {
-							self.showSuccess(response.data.message);
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
 						} else {
-							self.showError(response.data.error);
+							self.showError( response.data.error );
 						}
 					},
-					error: function (xhr, status, error) {
+					error: function ( xhr, status, error ) {
 						Swal.close();
 						self.showError();
 					},
 					complete: function () {
-						$submitBtn.prop('disabled', false);
+						$submitBtn.prop( 'disabled', false );
+						window.StoreSuite.msfcLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
 					},
-				});
-			});
+				} );
+			} );
 		},
 
 		/**
@@ -730,29 +786,29 @@
 		handleBrandDelete: function () {
 			var self = this;
 
-			$(document).on('click', '.msfc-delete-brand', function (e) {
+			$( document ).on( 'click', '.msfc-delete-brand', function ( e ) {
 				e.preventDefault();
 
-				var brandId = $(this).data('brand-id');
+				var brandId = $( this ).data( 'brand-id' );
 
-				if (!brandId) {
+				if ( ! brandId ) {
 					return;
 				}
 
-				Swal.fire({
+				Swal.fire( {
 					title: MSF_Form_Handler.i18n.are_you_sure,
 					text: MSF_Form_Handler.i18n.delete_brand_warning,
 					icon: 'warning',
 					showCancelButton: true,
 					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
 					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
-				}).then(function (result) {
-					if (!result.isConfirmed) {
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
 						return;
 					}
 
 					var formData = new FormData();
-					formData.append('id', brandId);
+					formData.append( 'id', brandId );
 					formData.append(
 						'action',
 						'storesuite_delete_product_brand'
@@ -762,34 +818,34 @@
 						MSF_Form_Handler.storesuite_woo_delete_nonce_
 					);
 
-					$.ajax({
+					$.ajax( {
 						url: MSF_Form_Handler.ajax_url,
 						type: 'POST',
 						data: formData,
 						processData: false,
 						contentType: false,
-						success: function (response) {
+						success: function ( response ) {
 							Swal.close();
 
-							if (response.success) {
-								self.showSuccess(response.data.message);
-								$('#brand-row-' + brandId).fadeOut(
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$( '#brand-row-' + brandId ).fadeOut(
 									300,
 									function () {
-										$(this).remove();
+										$( this ).remove();
 									}
 								);
 							} else {
-								self.showError(response.data.error);
+								self.showError( response.data.error );
 							}
 						},
-						error: function (xhr, status, error) {
+						error: function ( xhr, status, error ) {
 							Swal.close();
 							self.showError();
 						},
-					});
-				});
-			});
+					} );
+				} );
+			} );
 		},
 
 		/**
@@ -798,10 +854,10 @@
 		handleCouponAdd: function () {
 			var self = this;
 
-			$(document).on('submit', '#msf-add-coupon', function (e) {
+			$( document ).on( 'submit', '#msf-add-coupon', function ( e ) {
 				e.preventDefault();
 
-				var $form = $(this);
+				var $form = $( this );
 
 				// Define required fields for validation
 				var requiredFields = [
@@ -822,46 +878,53 @@
 				];
 
 				// Validate required fields
-				if (!self.validateRequiredFields($form, requiredFields)) {
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				var formData = new FormData(this);
-				var $submitBtn = $form.find('button[type="submit"]');
-				$submitBtn.prop('disabled', true);
+				var formData = new FormData( this );
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
 
-				$.ajax({
+				// Show loader
+				window.StoreSuite.msfcLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
 					contentType: false,
-					success: function (response) {
+					success: function ( response ) {
 						Swal.close();
 
-						if (response.success) {
-							self.showSuccess(response.data.message);
-							setTimeout(function () {
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							setTimeout( function () {
 								window.location.href =
 									MSF_Form_Handler.coupons_url ||
 									window.location.href.replace(
 										'add-new-coupon',
 										'coupons'
 									);
-							}, 1500);
+							}, 1500 );
 						} else {
-							self.showError(response.data.error);
+							self.showError( response.data.error );
 						}
 					},
-					error: function (xhr, status, error) {
+					error: function ( xhr, status, error ) {
 						Swal.close();
 						self.showError();
 					},
 					complete: function () {
-						$submitBtn.prop('disabled', false);
+						$submitBtn.prop( 'disabled', false );
+						window.StoreSuite.msfcLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
 					},
-				});
-			});
+				} );
+			} );
 		},
 
 		/**
@@ -870,10 +933,10 @@
 		handleCouponEdit: function () {
 			var self = this;
 
-			$(document).on('submit', '#msf-edit-coupon', function (e) {
+			$( document ).on( 'submit', '#msf-edit-coupon', function ( e ) {
 				e.preventDefault();
 
-				var $form = $(this);
+				var $form = $( this );
 
 				// Define required fields for validation
 				var requiredFields = [
@@ -894,46 +957,54 @@
 				];
 
 				// Validate required fields
-				if (!self.validateRequiredFields($form, requiredFields)) {
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
 					return;
 				}
 
-				var formData = new FormData(this);
-				var $submitBtn = $form.find('button[type="submit"]');
-				$submitBtn.prop('disabled', true);
+				var formData = new FormData( this );
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
 
-				$.ajax({
+				// Show loader
+				window.StoreSuite.msfcLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+
+				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
 					contentType: false,
-					success: function (response) {
+					success: function ( response ) {
 						Swal.close();
 
-						if (response.success) {
-							self.showSuccess(response.data.message);
-							setTimeout(function () {
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+							setTimeout( function () {
 								window.location.href =
 									MSF_Form_Handler.coupons_url ||
 									window.location.href.replace(
 										/edit-coupon\/\d+/,
 										'coupons'
 									);
-							}, 1500);
+							}, 1500 );
 						} else {
-							self.showError(response.data.error);
+							self.showError( response.data.error );
 						}
 					},
-					error: function (xhr, status, error) {
+					error: function ( xhr, status, error ) {
 						Swal.close();
 						self.showError();
 					},
 					complete: function () {
-						$submitBtn.prop('disabled', false);
+						$submitBtn.prop( 'disabled', false );
+						window.StoreSuite.msfcLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
 					},
-				});
-			});
+				} );
+			} );
 		},
 
 		/**
@@ -942,63 +1013,68 @@
 		handleCouponDelete: function () {
 			var self = this;
 
-			$(document).on('submit', '.delete-coupon-form', function (e) {
+			$( document ).on( 'submit', '.delete-coupon-form', function ( e ) {
 				e.preventDefault();
 
-				var $form = $(this);
-				var couponId = $form.find('input[name="coupon_id"]').val();
+				var $form = $( this );
+				var couponId = $form.find( 'input[name="coupon_id"]' ).val();
 
-				if (!couponId) {
+				if ( ! couponId ) {
 					return;
 				}
 
-				Swal.fire({
+				Swal.fire( {
 					title: MSF_Form_Handler.i18n.are_you_sure,
 					text: MSF_Form_Handler.i18n.delete_coupon_warning,
 					icon: 'warning',
 					showCancelButton: true,
 					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
 					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
-				}).then(function (result) {
-					if (!result.isConfirmed) {
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
 						return;
 					}
 
-					var formData = new FormData($form[0]);
+					var formData = new FormData( $form[ 0 ] );
 
-					$.ajax({
+					$.ajax( {
 						url: MSF_Form_Handler.ajax_url,
 						type: 'POST',
 						data: formData,
 						processData: false,
 						contentType: false,
-						success: function (response) {
+						success: function ( response ) {
 							Swal.close();
 
-							if (response.success) {
-								self.showSuccess(response.data.message);
-								$form.closest('tr').fadeOut(300, function () {
-									$(this).remove();
-									// Reload page if no coupons left
-									if ($('.single-coupon-item').length === 0) {
-										window.location.reload();
-									}
-								});
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$form
+									.closest( 'tr' )
+									.fadeOut( 300, function () {
+										$( this ).remove();
+										// Reload page if no coupons left
+										if (
+											$( '.single-coupon-item' )
+												.length === 0
+										) {
+											window.location.reload();
+										}
+									} );
 							} else {
-								self.showError(response.data.error);
+								self.showError( response.data.error );
 							}
 						},
-						error: function (xhr, status, error) {
+						error: function ( xhr, status, error ) {
 							Swal.close();
 							self.showError();
 						},
-					});
-				});
+					} );
+				} );
 
 				return false;
-			});
+			} );
 		},
 	};
 
 	StoreFrontFormHandler.init();
-})(jQuery);
+} )( jQuery );

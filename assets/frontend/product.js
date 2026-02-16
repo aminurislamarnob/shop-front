@@ -149,6 +149,11 @@
 				var $submitBtn = $form.find( 'button[type="submit"]' );
 				$submitBtn.prop( 'disabled', true );
 
+				// Show loader
+				window.StoreSuite.msfcLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+
 				$.ajax( {
 					url: MSF_Form_Handler.ajax_url,
 					type: 'POST',
@@ -224,6 +229,9 @@
 					},
 					complete: function () {
 						$submitBtn.prop( 'disabled', false );
+						window.StoreSuite.msfcLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
 					},
 				} );
 			} );
