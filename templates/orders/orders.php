@@ -149,7 +149,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								'search_term'    => isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '',
 								'search_filter'  => isset( $_GET['search-filter'] ) ? sanitize_text_field( wp_unslash( $_GET['search-filter'] ) ) : 'all',
 								'order_status'   => isset( $_GET['order_status'] ) ? sanitize_text_field( wp_unslash( $_GET['order_status'] ) ) : '',
-								'_customer_user' => isset( $_GET['_customer_user'] ) ? sanitize_text_field( wp_unslash( $_GET['_customer_user'] ) ) : '',
+								'_customer_user' => isset( $_GET['_customer_user'] ) ? absint( $_GET['_customer_user'] ) : '',
 								'order_channel'  => isset( $_GET['order_channel'] ) ? sanitize_text_field( wp_unslash( $_GET['order_channel'] ) ) : '',
 								'm'              => isset( $_GET['m'] ) ? sanitize_text_field( wp_unslash( $_GET['m'] ) ) : '',
 							);

@@ -66,7 +66,7 @@ global $wp_locale;
 
 		        // phpcs:disable WordPress.Security.NonceVerification.Recommended
 				if ( ! empty( $_GET['_customer_user'] ) ) {
-					$user_id = absint( $_GET['_customer_user'] );
+					$user_id = absint( wp_unslash( $_GET['_customer_user'] ) );
 					$user    = get_user_by( 'id', $user_id );
 
 					$user_string = sprintf(

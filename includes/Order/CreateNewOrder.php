@@ -139,7 +139,7 @@ class CreateNewOrder {
 		$locked = $edit_lock->is_locked_by_another_user( $this->order );
 
 		// Take over order?
-		if ( ! empty( $_GET['claim-lock'] ) && wp_verify_nonce( $_GET['_wpnonce'] ?? '', 'claim-lock-' . $this->order->get_id() ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		if ( ! empty( $_GET['claim-lock'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ?? '' ) ), 'claim-lock-' . $this->order->get_id() ) ) {
 			$edit_lock->lock( $this->order );
 			wp_safe_redirect( $this->get_edit_url( $this->order->get_id() ) );
 			exit;

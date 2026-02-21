@@ -152,7 +152,7 @@ class TagController {
 		}
 
 		// Validate category ID.
-		$tag_id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+		$tag_id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 		if ( ! $tag_id || ! term_exists( $tag_id, 'product_tag' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Invalid tag ID', 'storesuite' ) ) );
 		}

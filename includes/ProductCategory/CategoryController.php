@@ -196,7 +196,7 @@ class CategoryController {
 		}
 
 		// Validate category ID.
-		$category_id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+		$category_id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 		if ( ! $category_id || ! term_exists( $category_id, 'product_cat' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Invalid category ID', 'storesuite' ) ) );
 		}

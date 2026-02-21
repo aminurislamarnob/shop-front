@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 
 				<!-- Discounts & Fees and Order Summary Section -->
-				<div class="order-fee-and-shipping-box<?php echo $order->get_item_count() > 0 ? ' active' : ''; ?>">
+				<div class="order-fee-and-shipping-box<?php echo esc_attr( $order->get_item_count() > 0 ? ' active' : '' ); ?>">
 					<div class="row">
 						<div class="col-md-6">
 							<div class="msf-card">
@@ -104,7 +104,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<!-- Billing & Shipping Address Section -->
 				<div class="row">
 					<div class="col-md-6">
-						<div class="msf-card customer-address-box <?php echo 'edit' === $context ? 'show-address' : 'hide-address'; ?>">
+						<div class="msf-card customer-address-box <?php echo esc_attr( 'edit' === $context ? 'show-address' : 'hide-address' ); ?>">
 							<h3 class="msf-card-title">
 								<?php esc_html_e( 'Billing Address', 'storesuite' ); ?>
 								<button class="edit-msf-order-address edit-msf-order-billing-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
@@ -319,7 +319,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 					</div>
 					<div class="col-md-6">
-						<div class="msf-card customer-address-box <?php echo 'edit' === $context ? 'show-address' : 'hide-address'; ?>">
+						<div class="msf-card customer-address-box <?php echo esc_attr( 'edit' === $context ? 'show-address' : 'hide-address' ); ?>">
 							<h3 class="msf-card-title">
 								<?php esc_html_e( 'Shipping Address', 'storesuite' ); ?>
 								<button class="edit-msf-order-address edit-msf-order-shipping-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
@@ -527,7 +527,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php
 								$order_date_created_localised = ! is_null( $order->get_date_created() ) ? $order->get_date_created()->getOffsetTimestamp() : '';
 								?>
-								<input type="date" class="date-picker msf-form-control date-input" name="order_date" maxlength="10" value="<?php echo esc_attr( date_i18n( 'Y-m-d', $order_date_created_localised ) ); ?>" pattern="<?php echo esc_attr( apply_filters( 'woocommerce_date_input_html_pattern', '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])' ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment ?>" />@
+								<input type="date" class="date-picker msf-form-control date-input" name="order_date" maxlength="10" value="<?php echo esc_attr( date_i18n( 'Y-m-d', $order_date_created_localised ) ); ?>" pattern="<?php echo esc_attr( apply_filters( 'woocommerce_date_input_html_pattern', '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])' ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment ?>" />
 								&lrm;
 								<input type="number" class="hour msf-form-control time-input" placeholder="<?php esc_attr_e( 'h', 'storesuite' ); ?>" name="order_date_hour" min="0" max="23" step="1" value="<?php echo esc_attr( date_i18n( 'H', $order_date_created_localised ) ); ?>" pattern="([01]?[0-9]{1}|2[0-3]{1})" />:
 								<input type="number" class="minute msf-form-control time-input" placeholder="<?php esc_attr_e( 'm', 'storesuite' ); ?>" name="order_date_minute" min="0" max="59" step="1" value="<?php echo esc_attr( date_i18n( 'i', $order_date_created_localised ) ); ?>" pattern="[0-5]{1}[0-9]{1}" />
