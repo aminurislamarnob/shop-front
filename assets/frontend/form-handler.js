@@ -22,6 +22,8 @@
 			this.handleCouponEdit();
 			this.handleCouponDelete();
 			this.handleGenerateCouponCode();
+			this.handleEditAccount();
+			this.initEditAccountPasswordToggle();
 		},
 
 		/**
@@ -1072,6 +1074,89 @@
 				} );
 
 				return false;
+			} );
+		},
+
+		/**
+		 * Handle Edit Account form submit (AJAX)
+		 */
+		handleEditAccount: function () {
+			var self = this;
+
+			$( document ).on( 'submit', '#msf-edit-account-form', function ( e ) {
+				e.preventDefault();
+
+				var $form = $( this );
+
+				var requiredFields = [
+					{
+						selector: '#account_first_name',
+						message: MSF_Form_Handler.i18n.account_first_name_required,
+					},
+					{
+						selector: '#account_last_name',
+						message: MSF_Form_Handler.i18n.account_last_name_required,
+					},
+					{
+						selector: '#account_display_name',
+						message: MSF_Form_Handler.i18n.account_display_name_required,
+					},
+					{
+						selector: '#account_email',
+						message: MSF_Form_Handler.i18n.account_email_required,
+					},
+				];
+
+				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
+					return;
+				}
+
+				var formData = new FormData( this );
+				var $submitBtn = $form.find( 'button[type="submit"]' );
+				$submitBtn.prop( 'disabled', true );
+
+				if ( window.StoreSuite && window.StoreSuite.msfcLoader ) {
+					window.StoreSuite.msfcLoader.block( $( '.msf-main-dashboard' ) );
+				}
+
+				$.ajax( {
+					url: MSF_Form_Handler.ajax_url,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function ( response ) {
+						if ( response.success ) {
+							self.showSuccess( response.data.message );
+						} else {
+							self.showError( response.data.error );
+						}
+					},
+					error: function () {
+						self.showError();
+					},
+					complete: function () {
+						$submitBtn.prop( 'disabled', false );
+						if ( window.StoreSuite && window.StoreSuite.msfcLoader ) {
+							window.StoreSuite.msfcLoader.unblock( $( '.msf-main-dashboard' ) );
+						}
+					},
+				} );
+			} );
+		},
+
+		/**
+		 * Toggle visibility of the password change card on edit-account form.
+		 */
+		initEditAccountPasswordToggle: function () {
+			var $switch = $( '#show_password_change' );
+			var $card = $( '#msf-edit-account-password-card' );
+			if ( ! $switch.length || ! $card.length ) {
+				return;
+			}
+			$card.toggle( $switch.is( ':checked' ) );
+			$switch.on( 'change', function () {
+				$card.toggle( $( this ).is( ':checked' ) );
 			} );
 		},
 	};
