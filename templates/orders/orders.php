@@ -45,7 +45,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
-								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Order', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>" />
+								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Order', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change. ?>" />
 							</div>
 							<div class="msf-form-group">
 								<?php
@@ -58,14 +58,14 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								);
 
 								/**
-								 * Filters the search filters available in the admin order search. Can be used to add new or remove existing filters.
+								 * Filters the search filters available in the order search. Can be used to add new or remove existing filters.
 								 * When adding new filters, `woocommerce_hpos_generate_where_for_search_filter` should also be used to generate the WHERE clause for the new filter
 								 *
 								 * @param $options array List of available filters.
 								 */
 								$options       = apply_filters( 'woocommerce_hpos_admin_search_filters', $options );
 								$saved_setting = get_user_setting( 'wc-search-filter-hpos-admin', 'all' );
-								$selected      = sanitize_text_field( wp_unslash( $_REQUEST['search-filter'] ?? $saved_setting ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+								$selected      = isset( $_REQUEST['search-filter'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['search-filter'] ) ) : $saved_setting; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search filter; no state change.
 								if ( $saved_setting !== $selected ) {
 									set_user_setting( 'wc-search-filter-hpos-admin', $selected );
 								}
@@ -143,7 +143,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							$current_page    = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
 							$orders_per_page = apply_filters( 'storesuite_orders_per_page', 10 );
 
-							// Build filters array.
+							// Build filters array. Nonce not required: read-only filter parameters; no state change.
 							// phpcs:disable WordPress.Security.NonceVerification.Recommended
 							$filters = array(
 								'search_term'    => isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '',

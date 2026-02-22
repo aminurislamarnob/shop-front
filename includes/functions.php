@@ -51,13 +51,13 @@ function storesuite_get_template_part( $slug, $name = '', $args = array() ) {
 }
 
 /**
- * Is_storesuite_endpoint_url - Check if an endpoint is showing.
+ * storesuite_is_endpoint_url - Check if an endpoint is showing.
  *
  * @param string|false $endpoint Whether endpoint.
  * @return bool
  */
-if ( ! function_exists( 'is_storesuite_endpoint_url' ) ) {
-	function is_storesuite_endpoint_url( $endpoint = false ) {
+if ( ! function_exists( 'storesuite_is_endpoint_url' ) ) {
+	function storesuite_is_endpoint_url( $endpoint = false ) {
 		global $wp;
 
 		$storesuite_endpoints = pluginizelab_storesuite()->get_storesuite_query()->query_vars;
@@ -268,7 +268,7 @@ function storesuite_get_navigation_url( $name = '' ) {
  *
  * @return bool
  */
-function is_storesuite_dashboard_page() {
+function storesuite_is_dashboard_page() {
 	$page_id = (int) storesuite_get_option_by_key( 'storesuite_dashboard_page_id' );
 
 	return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'storesuite_dashboard' );
@@ -303,7 +303,7 @@ function storesuite_is_page( $endpoint ) {
 		return false;
 	}
 
-	if ( ! is_storesuite_dashboard_page() ) {
+	if ( ! storesuite_is_dashboard_page() ) {
 		return false;
 	}
 

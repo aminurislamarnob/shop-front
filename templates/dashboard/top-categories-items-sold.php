@@ -69,7 +69,7 @@ defined( 'ABSPATH' ) || exit;
 									<td><?php echo esc_html( number_format_i18n( (float) ( $row['items_sold'] ?? 0 ) ) ); ?></td>
 									<td>
 										<?php
-										echo $dashboard->format_value( $row['net_revenue'] ?? null, 'currency' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo wp_kses_post( $dashboard->format_value( $row['net_revenue'] ?? null, 'currency' ) );
 										?>
 									</td>
 								</tr>

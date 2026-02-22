@@ -182,7 +182,7 @@ class BrandController {
 		}
 
 		// Validate brand ID.
-		$brand_id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+		$brand_id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 		if ( ! $brand_id || ! term_exists( $brand_id, 'product_brand' ) ) {
 			wp_send_json_error( array( 'error' => __( 'Invalid brand ID', 'storesuite' ) ) );
 		}

@@ -31,7 +31,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
-								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Product', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>" />
+								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Product', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change. ?>" />
 							</div>
 						</form>
 					</div>
@@ -62,9 +62,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			<div class="msf-table-responsive">
 				<?php
 				$current_page = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-				$search_term  = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$search_term  = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change.
 
-				// Get filter parameters.
+				// Get filter parameters. Nonce not required: read-only filter values; no state change.
 				// phpcs:disable WordPress.Security.NonceVerification.Recommended
 				$filters = array(
 					'category'     => isset( $_GET['product_cat'] ) ? absint( $_GET['product_cat'] ) : '',
@@ -116,7 +116,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								$storesuite_wfm_thumb = wc_placeholder_img_src( 'thumbnail' );
 							}
 							?>
-							<tr class="single-product-item">
+							<tr class="single-product-item" id="product-row-<?php echo esc_attr( $product_id ); ?>">
 								<td>
 									<label class="my-storesuite-checkbox">
 										<input type="checkbox" name="" id="" class="my-storesuite-checkbox-input">
@@ -188,12 +188,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 												<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-product' ) . '%s', $product_id ) ); ?>" class="dropdown-link"><?php esc_html_e( 'Edit', 'storesuite' ); ?></a>
 											</li>
 											<li>
-												<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="POST">
-													<?php wp_nonce_field( 'storesuite_wfm_dlt_product_nonce_211', 'storesuite_wfm_dlt_nonce' ); ?>
-													<input type="hidden" name="id" value="<?php echo esc_attr( $product_id ); ?>">
-													<input type="hidden" name="action" value="storesuite_wfm_trash_product_action">
-													<button type="submit" class="inline-button dropdown-link"><?php esc_html_e( 'Delete', 'storesuite' ); ?></button>
-												</form>
+												<button type="button" class="inline-button dropdown-link msfc-delete-product" data-product-id="<?php echo esc_attr( $product_id ); ?>"><?php esc_html_e( 'Delete', 'storesuite' ); ?></button>
 											</li>
 										</ul>
 									</div>

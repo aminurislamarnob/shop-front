@@ -41,9 +41,9 @@ class TemplateParts {
 
 		$title = '';
 
-		if ( ! is_null( $wp_query ) && ! is_admin() && is_main_query() && in_the_loop() && is_page() && is_storesuite_endpoint_url() ) {
+		if ( ! is_null( $wp_query ) && ! is_admin() && is_main_query() && in_the_loop() && is_page() && storesuite_is_endpoint_url() ) {
 			$endpoint       = pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
-			$action         = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$action         = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only; used only for page title display.
 			$endpoint_title = pluginizelab_storesuite()->get_storesuite_query()->get_endpoint_title( $endpoint, $action );
 			$title          = $endpoint_title ? $endpoint_title : $title;
 

@@ -148,7 +148,7 @@ class OrderController {
 			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
 		}
 
-		$note_id = (int) $_POST['note_id'];
+		$note_id = isset( $_POST['note_id'] ) ? absint( $_POST['note_id'] ) : 0;
 
 		$is_deleted = false;
 		if ( $note_id > 0 ) {
@@ -185,7 +185,7 @@ class OrderController {
 
 			$shipping_method_title = isset( $_POST['shipping_method_title'] ) ? sanitize_text_field( wp_unslash( $_POST['shipping_method_title'] ) ) : __( 'Shipping', 'storesuite' );
 			$shipping_method_id    = isset( $_POST['shipping_method'] ) ? sanitize_text_field( wp_unslash( $_POST['shipping_method'] ) ) : '';
-			$shipping_cost         = isset( $_POST['shipping_cost'] ) ? floatval( $_POST['shipping_cost'] ) : 0;
+			$shipping_cost         = isset( $_POST['shipping_cost'] ) ? (float) sanitize_text_field( wp_unslash( $_POST['shipping_cost'] ) ) : 0;
 
 			// Create shipping item
 			$shipping_item = new \WC_Order_Item_Shipping();
@@ -386,7 +386,7 @@ class OrderController {
 				'notes_html' => $notes_html
 			);
 
-			if( isset( $_POST['context'] ) && $_POST['context'] === 'add' ) {
+			if ( isset( $_POST['context'] ) && sanitize_text_field( wp_unslash( $_POST['context'] ) ) === 'add' ) {
 				$response['redirect_url'] = esc_url( storesuite_get_navigation_url( 'edit-order' ) . $order_id );
 				$response['message'] 	  = __( 'Order created successfully!', 'storesuite' );
 				$response['context'] 	  = 'add';
@@ -411,8 +411,12 @@ class OrderController {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		if ( ! wp_verify_nonce( wp_unslash( $_POST['storesuite_bulk_action_nonce'] ), 'storesuite_order_bulk_action' ) ) {
+		if ( ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_bulk_action_nonce'] ) ), 'storesuite_order_bulk_action' ) ) {
+			wp_safe_redirect( storesuite_get_navigation_url( 'orders' ) );
+			exit;
+		}
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			wp_safe_redirect( storesuite_get_navigation_url( 'orders' ) );
 			exit;
 		}
@@ -429,7 +433,7 @@ class OrderController {
 			exit;
 		}
 
-		$order_ids = array_map( 'absint', $_POST['bulk_order_ids'] );
+		$order_ids = array_map( 'absint', wp_unslash( $_POST['bulk_order_ids'] ) );
 
 		foreach ( $order_ids as $order_id ) {
 			$order = wc_get_order( $order_id );

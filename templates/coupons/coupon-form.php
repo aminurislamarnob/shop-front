@@ -82,7 +82,7 @@ if ( isset( $query_vars['edit-coupon'] ) && ! empty( $query_vars['edit-coupon'] 
 
 $discount_types = wc_get_coupon_types();
 ?>
-<form id="<?php echo $is_edit_mode ? 'msf-edit-coupon' : 'msf-add-coupon'; ?>">
+<form id="<?php echo esc_attr( $is_edit_mode ? 'msf-edit-coupon' : 'msf-add-coupon' ); ?>">
 	<div class="row">
 		<div class="col-md-8">
 			<div class="msf-card msf-card-with-header msf-mb-24">

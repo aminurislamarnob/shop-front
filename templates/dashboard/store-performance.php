@@ -52,7 +52,7 @@ defined( 'ABSPATH' ) || exit;
 								<div class="msf-kpi-label"><?php echo esc_html( $stat_config['label'] ?? $stat_key ); ?></div>
 								<div class="msf-kpi-row">
 									<div class="msf-kpi-value">
-										<?php echo $dashboard->format_value( $value, $stat_config['format'] ?? 'number' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+										<?php echo wp_kses_post( $dashboard->format_value( $value, $stat_config['format'] ?? 'number' ) ); ?>
 									</div>
 									<div class="msf-kpi-change"><?php echo esc_html( $change_text ); ?></div>
 								</div>

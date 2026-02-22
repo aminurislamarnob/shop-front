@@ -65,7 +65,7 @@ defined( 'ABSPATH' ) || exit;
 									<td><?php echo esc_html( number_format_i18n( (int) ( $row['orders_count'] ?? 0 ) ) ); ?></td>
 									<td>
 										<?php
-										echo $dashboard->format_value( $row['amount'] ?? null, 'currency' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										echo wp_kses_post( $dashboard->format_value( $row['amount'] ?? null, 'currency' ) );
 										?>
 									</td>
 								</tr>

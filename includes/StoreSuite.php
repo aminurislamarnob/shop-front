@@ -128,7 +128,7 @@ final class StoreSuite {
 	 * @return array
 	 */
 	public function plugin_action_links( $links ) {
-		$links[] = '<a href="' . admin_url( 'admin.php?page=storesuite' ) . '">' . __( 'Settings', 'storesuite' ) . '</a>';
+		$links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=storesuite' ) ) . '">' . esc_html__( 'Settings', 'storesuite' ) . '</a>';
 		return $links;
 	}
 
@@ -158,7 +158,6 @@ final class StoreSuite {
 		defined( 'STORESUITE_INC_DIR' ) || define( 'STORESUITE_INC_DIR', STORESUITE_DIR . '/includes' );
 		defined( 'STORESUITE_TEMPLATE_DIR' ) || define( 'STORESUITE_TEMPLATE_DIR', STORESUITE_DIR . '/templates' );
 		defined( 'STORESUITE_PLUGIN_ASSET' ) || define( 'STORESUITE_PLUGIN_ASSET', plugins_url( 'assets', STORESUITE_FILE ) );
-		defined( 'STORESUITE_NONCE_SALT' ) || define( 'STORESUITE_NONCE_SALT', 'iG685CuXEZI2J?@~-t 3v)*_z]e,+CXh/Mu#8Fq4W<B^w9m^c]C8XGn(V~#:dn%C' );
 
 		// give a way to turn off loading styles and scripts from parent theme.
 		defined( 'STORESUITE_LOAD_STYLE' ) || define( 'STORESUITE_LOAD_STYLE', true );

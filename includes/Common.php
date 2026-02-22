@@ -22,7 +22,7 @@ class Common {
 	 * @return string
 	 */
 	public function storesuite_register_page_template( $template ) {
-		if ( is_page() && is_storesuite_dashboard_page() ) {
+		if ( is_page() && storesuite_is_dashboard_page() ) {
 			$custom_template = STORESUITE_TEMPLATE_DIR . '/page-template.php';
 			if ( file_exists( $custom_template ) ) {
 				return $custom_template;
@@ -39,7 +39,7 @@ class Common {
 	 * @return array
 	 */
 	public function storesuite_add_body_class( $classes ) {
-		if ( is_storesuite_dashboard_page() ) {
+		if ( storesuite_is_dashboard_page() ) {
 			$classes[] = 'msf-main-dashboard';
 		}
 

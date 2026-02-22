@@ -314,8 +314,8 @@ class Dashboard {
 		$end_dt   = $now->modify( 'last day of this month' )->setTime( 23, 59, 59 );
 		$label    = __( 'This month', 'storesuite' );
 
-		// Override from dashboard date range picker when both dates are present and valid.
-		$start_param = isset( $_GET['storesuite_dashboard_start'] ) ? \sanitize_text_field( \wp_unslash( $_GET['storesuite_dashboard_start'] ) ) : ''; // phpcs:ignore 	WordPress.Security.NonceVerification.Recommended
+		// Override from dashboard date range picker when both dates are present and valid. Nonce not required: read-only filter; no state change.
+		$start_param = isset( $_GET['storesuite_dashboard_start'] ) ? \sanitize_text_field( \wp_unslash( $_GET['storesuite_dashboard_start'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$end_param   = isset( $_GET['storesuite_dashboard_end'] ) ? \sanitize_text_field( \wp_unslash( $_GET['storesuite_dashboard_end'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		if ( '' !== $start_param && '' !== $end_param ) {

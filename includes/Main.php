@@ -28,8 +28,8 @@ class Main {
 		add_action( 'template_redirect', array( $this, 'redirect_if_not_logged_in_manager' ), 11 );
 		add_filter( 'show_admin_bar', array( $this, 'hide_admin_bar' ) );
 		add_action( 'woocommerce_account_dashboard', array( $this, 'add_storesuite_dashboard_btn' ), 1 );
-		add_action( 'wp_head', array( $this, 'add_storesuite_dashboard_btn_css' ) );
-		add_action( 'wp_head', array( $this, 'add_storesuite_css_variables' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_dashboard_btn_css' ), 20 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_css_variables' ), 20 );
 	}
 
 	/**
@@ -80,7 +80,7 @@ class Main {
 	 * @return void
 	 */
 	public function redirect_if_not_logged_in_manager() {
-		if ( is_page() && is_storesuite_dashboard_page() ) {
+		if ( is_page() && storesuite_is_dashboard_page() ) {
 			storesuite_redirect_if_not_logged_in();
 			storesuite_redirect_if_not_manager();
 		}
@@ -152,32 +152,32 @@ class Main {
 			return;
 		}
 
-		?>
-		<style>
-			a.storesuite-dashboard-btn.my-storesuite-button {
-				background: #2d5bdb;
-				display: inline-flex;
-				align-items: center;
-				padding: 12px 20px;
-				font-size: 14px;
-				color: #fff;
-				border-radius: 6px;
-				cursor: pointer;
-				line-height: 1.15;
-				border: 1px solid #2d5bdb;
-				justify-content: center;
-				font-weight: 600;
-			}
-			a.storesuite-dashboard-btn.my-storesuite-button:hover {
-				background: #213fd4;
-				border: 1px solid #213fd4;
-			}
-		</style>
-		<?php
+		$css = 'a.storesuite-dashboard-btn.my-storesuite-button {
+			background: #2d5bdb;
+			display: inline-flex;
+			align-items: center;
+			padding: 12px 20px;
+			font-size: 14px;
+			color: #fff;
+			border-radius: 6px;
+			cursor: pointer;
+			line-height: 1.15;
+			border: 1px solid #2d5bdb;
+			justify-content: center;
+			font-weight: 600;
+		}
+		a.storesuite-dashboard-btn.my-storesuite-button:hover {
+			background: #213fd4;
+			border: 1px solid #213fd4;
+		}';
+
+		wp_register_style( 'storesuite-dashboard-btn', false );
+		wp_enqueue_style( 'storesuite-dashboard-btn' );
+		wp_add_inline_style( 'storesuite-dashboard-btn', $css );
 	}
 
 	public function add_storesuite_css_variables() {
-		if ( ! is_storesuite_dashboard_page() ) {
+		if ( ! storesuite_is_dashboard_page() ) {
 			return;
 		}
 
@@ -209,10 +209,10 @@ class Main {
 		if ( empty( $rules ) ) {
 			return;
 		}
-		?>
-		<style>
-			:root{ <?php echo implode( ";", $rules ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> }
-		</style>
-		<?php
+		
+		$css = ':root{ ' . esc_attr( implode( ';', $rules ) ) . ' }';
+		wp_register_style( 'storesuite-css-variables', false );
+		wp_enqueue_style( 'storesuite-css-variables' );
+		wp_add_inline_style( 'storesuite-css-variables', $css );
 	}
 }

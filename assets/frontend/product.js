@@ -8,6 +8,7 @@
 			this.toggleStockFields();
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
+			this.handleProductDelete();
 		},
 		bindEvents: function () {
 			var self = this;
@@ -418,6 +419,95 @@
 			$( '.sale_price_dates_fields' ).find( 'input' ).val( '' );
 
 			return false;
+		},
+
+		/**
+		 * Handle product delete (move to trash) via AJAX.
+		 */
+		handleProductDelete: function () {
+			var self = this;
+
+			$( document ).on( 'click', '.msfc-delete-product', function ( e ) {
+				e.preventDefault();
+
+				var productId = $( this ).data( 'product-id' );
+
+				if ( ! productId || typeof Swal === 'undefined' || typeof MSF_Form_Handler === 'undefined' ) {
+					return;
+				}
+
+				var i18n = MSF_Form_Handler.i18n || {};
+				var confirmTitle = i18n.product_delete_confirm_title || i18n.are_you_sure || 'Are you sure?';
+				var confirmText = i18n.product_delete_warning || 'Do you want to delete this product? It will be moved to trash.';
+				var confirmButton = i18n.yes_delete || 'Yes, delete it!';
+				var cancelButton = i18n.cancel_button || 'Cancel';
+				var deletingText = i18n.deleting || 'Deleting...';
+				var successTitle = i18n.success_title || 'Success!';
+				var errorTitle = i18n.error_title || 'Error!';
+
+				Swal.fire( {
+					title: confirmTitle,
+					text: confirmText,
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: confirmButton,
+					cancelButtonText: cancelButton,
+				} ).then( function ( result ) {
+					if ( ! result.isConfirmed ) {
+						return;
+					}
+
+					Swal.fire( {
+						title: deletingText,
+						text: MSF_Form_Handler.i18n.please_wait || 'Please wait...',
+						allowOutsideClick: false,
+						didOpen: function () {
+							Swal.showLoading();
+						},
+					} );
+
+					var formData = new FormData();
+					formData.append( 'id', productId );
+					formData.append( 'action', 'storesuite_delete_product' );
+					formData.append( 'storesuite_delete_product_nonce', MSF_Form_Handler.storesuite_woo_delete_nonce_ );
+
+					$.ajax( {
+						url: MSF_Form_Handler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								Swal.fire( {
+									icon: 'success',
+									title: successTitle,
+									text: response.data.message || '',
+								} );
+								$( '#product-row-' + productId ).fadeOut( 300, function () {
+									$( this ).remove();
+								} );
+							} else {
+								Swal.fire( {
+									icon: 'error',
+									title: errorTitle,
+									text: response.data && response.data.error ? response.data.error : ( MSF_Form_Handler.i18n.unexpected_error || 'An unexpected error occurred.' ),
+								} );
+							}
+						},
+						error: function () {
+							Swal.close();
+							Swal.fire( {
+								icon: 'error',
+								title: errorTitle,
+								text: MSF_Form_Handler.i18n.unexpected_error || 'An unexpected error occurred. Please try again.',
+							} );
+						},
+					} );
+				} );
+			} );
 		},
 	};
 	StoreFrontProduct.init();

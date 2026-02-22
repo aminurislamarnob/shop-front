@@ -122,7 +122,6 @@ class Assets {
 		wp_register_style( 'storesuite_daterangepicker', $storesuite_daterangepicker_style, array(), '3.1.0' );
 
 		wp_register_style( 'storesuite_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
-		wp_register_style( 'storesuite_poppins', 'https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap', array(), STORESUITE_PLUGIN_VERSION );
 		wp_register_style( 'storesuite_jquery-ui-style', WC()->plugin_url() . '/assets/css/jquery-ui/jquery-ui.min.css', array(), STORESUITE_PLUGIN_VERSION );
 	}
 
@@ -161,7 +160,7 @@ class Assets {
 	 * @return void
 	 */
 	public function enqueue_front_scripts() {
-		if ( is_storesuite_dashboard_page() ) {
+		if ( storesuite_is_dashboard_page() ) {
 			wp_enqueue_style( 'select2' );
 			wp_enqueue_style( 'storesuite_style' );
 			wp_enqueue_style( 'storesuite_bs_grid' );
@@ -198,7 +197,6 @@ class Assets {
 				)
 			);
 
-			wp_enqueue_style( 'storesuite_poppins' );
 			wp_enqueue_style( 'storesuite_sweetalert2_style' );
 			wp_enqueue_script( 'storesuite_sweetalert2_script' );
 			wp_enqueue_script( 'storesuite_form_handler_script' );
@@ -275,6 +273,8 @@ class Assets {
 						'product_added_successfully'     => __( 'Product added successfully!', 'storesuite' ),
 						'product_updating'               => __( 'Updating Product...', 'storesuite' ),
 						'product_updated_successfully'   => __( 'Product updated successfully!', 'storesuite' ),
+						'product_delete_confirm_title'   => __( 'Are you sure?', 'storesuite' ),
+						'product_delete_warning'         => __( 'Do you want to delete this product? It will be moved to trash.', 'storesuite' ),
 						'upload_image_text'              => __( 'Upload Image', 'storesuite' ),
 
 						// Coupon messages.
@@ -419,7 +419,7 @@ class Assets {
 	 * @return void
 	 */
 	public function remove_all_theme_assets() {
-		if ( ! is_storesuite_dashboard_page() ) {
+		if ( ! storesuite_is_dashboard_page() ) {
 			return;
 		}
 
