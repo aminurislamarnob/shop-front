@@ -274,7 +274,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						</div>
 					</div>
 				</div>
-				<div class="msf-card msf-card-with-header msf-mb-24">
+				<div class="msf-card msf-card-with-header msf-mb-24 hide_if_variable" id="product-pricing-card">
 					<h3 class="msf-card-title"><?php esc_html_e( 'Pricing', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="row">
@@ -317,7 +317,142 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						</div>
 					</div>
 				</div>
-				<div class="msf-card msf-card-with-header msf-mb-24">
+				<?php
+				$product_attributes   = array();
+				$attribute_taxonomies = array();
+				$variations_data      = array();
+				$parent_data_variations = array();
+				if ( $is_edit_mode && $product_id && $product_type === 'variable' ) {
+					$product_attributes   = (array) maybe_unserialize( get_post_meta( $product_id, '_product_attributes', true ) );
+					$attribute_taxonomies = wc_get_attribute_taxonomies();
+					$args = array(
+						'post_type'   => 'product_variation',
+						'post_status' => array( 'private', 'publish' ),
+						'numberposts' => -1,
+						'orderby'     => 'menu_order',
+						'order'       => 'ASC',
+						'post_parent' => $product_id,
+					);
+					$variations_data = get_posts( $args );
+					$parent_data_variations = array(
+						'id'                => $product_id,
+						'attributes'        => $product_attributes,
+						'tax_class_options' => array( '' => __( 'Standard', 'storesuite' ) ),
+						'sku'               => $product ? $product->get_sku() : '',
+						'weight'            => $product ? $product->get_weight() : '',
+						'length'            => $product ? $product->get_length() : '',
+						'width'             => $product ? $product->get_width() : '',
+						'height'            => $product ? $product->get_height() : '',
+						'backorder_options' => wc_get_product_backorder_options(),
+						'stock_status_options' => wc_get_product_stock_status_options(),
+					);
+					if ( class_exists( 'WC_Tax' ) ) {
+						foreach ( \WC_Tax::get_tax_classes() as $class ) {
+							$parent_data_variations['tax_class_options'][ sanitize_title( $class ) ] = esc_html( $class );
+						}
+					}
+				}
+				?>
+				<div class="msf-card msf-card-with-header msf-mb-24 show_if_variable" id="product-attributes-variations-card" style="<?php echo $product_type !== 'variable' ? 'display:none;' : ''; ?>">
+					<h3 class="msf-card-title"><?php esc_html_e( 'Attributes & Variations', 'storesuite' ); ?></h3>
+					<div class="msf-card-content">
+						<?php if ( ! $is_edit_mode || ! $product_id ) : ?>
+							<p class="storesuite-variable-notice"><?php esc_html_e( 'Save the product first, then you can add attributes and variations here.', 'storesuite' ); ?></p>
+						<?php else : ?>
+							<div class="storesuite-attributes-section msf-mb-24">
+								<h4 class="msf-subtitle"><?php esc_html_e( 'Attributes', 'storesuite' ); ?> <small><?php esc_html_e( 'Different types of this product (e.g. size, color)', 'storesuite' ); ?></small></h4>
+								<ul class="storesuite-attribute-list msf-attribute-ul list-unstyled" id="storesuite-product-attributes">
+									<?php
+									$position = 0;
+									if ( ! empty( $product_attributes ) ) {
+										global $wc_product_attributes;
+										foreach ( $product_attributes as $attr_name => $attribute ) {
+											$taxonomy = '';
+											$attribute_taxonomy = null;
+											$attribute_label = $attribute['name'];
+											if ( ! empty( $attribute['is_taxonomy'] ) && taxonomy_exists( $attr_name ) ) {
+												$taxonomy = $attr_name;
+												$attribute_label = wc_attribute_label( $attr_name );
+												$attribute_taxonomy = isset( $wc_product_attributes[ $taxonomy ] ) ? $wc_product_attributes[ $taxonomy ] : null;
+											}
+											$pos = isset( $attribute['position'] ) ? absint( $attribute['position'] ) : $position;
+											storesuite_get_template_part(
+												'products/edit/html-product-attribute',
+												'',
+												array(
+													'thepostid'          => $product_id,
+													'taxonomy'           => $taxonomy,
+													'attribute_taxonomy' => $attribute_taxonomy,
+													'attribute_label'    => $attribute_label,
+													'attribute'          => $attribute,
+													'metabox_class'      => $taxonomy ? array( 'taxonomy', $taxonomy ) : array(),
+													'position'           => $pos,
+													'i'                  => $position,
+												)
+											);
+											++$position;
+										}
+									}
+									?>
+								</ul>
+								<p class="storesuite-attribute-toolbar">
+									<select class="msf-form-control" id="storesuite-predefined-attribute" name="storesuite_predefined_attribute" style="max-width:220px;display:inline-block;">
+										<option value=""><?php esc_html_e( 'Custom attribute', 'storesuite' ); ?></option>
+										<?php foreach ( $attribute_taxonomies as $tax ) : ?>
+											<option value="<?php echo esc_attr( wc_attribute_taxonomy_name( $tax->attribute_name ) ); ?>"><?php echo esc_html( wc_attribute_label( wc_attribute_taxonomy_name( $tax->attribute_name ) ) ); ?></option>
+										<?php endforeach; ?>
+									</select>
+									<button type="button" class="my-storesuite-button storesuite-add-attribute"><?php esc_html_e( 'Add attribute', 'storesuite' ); ?></button>
+								</p>
+								<script type="text/template" id="tmpl-storesuite-custom-attribute">
+									<li class="product-attribute-list msf-attribute-list" data-taxonomy="">
+										<div class="msf-attribute-heading">
+											<span><strong><?php esc_html_e( 'Attribute Name', 'storesuite' ); ?></strong></span>
+											<a href="#" class="storesuite-remove-attribute"><?php esc_html_e( 'Remove', 'storesuite' ); ?></a>
+											<a href="#" class="storesuite-toggle-attribute"><span class="toggle-icon">▼</span></a>
+										</div>
+										<div class="msf-attribute-item msf-clearfix storesuite-attribute-content" style="display:none;">
+											<div class="msf-form-group">
+												<label class="form-label"><?php esc_html_e( 'Name', 'storesuite' ); ?></label>
+												<input type="text" class="msf-form-control attribute_name" name="attribute_names[{{i}}]" value="" />
+												<input type="hidden" name="attribute_position[{{i}}]" class="attribute_position" value="{{i}}" />
+												<input type="hidden" name="attribute_is_taxonomy[{{i}}]" value="0" />
+												<label class="msf-checkbox-label"><input type="checkbox" name="attribute_visibility[{{i}}]" value="1" /> <?php esc_html_e( 'Visible on the product page', 'storesuite' ); ?></label>
+												<label class="msf-checkbox-label show_if_variable"><input type="checkbox" checked name="attribute_variation[{{i}}]" value="1" /> <?php esc_html_e( 'Used for variations', 'storesuite' ); ?></label>
+											</div>
+											<div class="msf-form-group dokan-attribute-values">
+												<label class="form-label"><?php esc_html_e( 'Value(s)', 'storesuite' ); ?></label>
+												<select name="attribute_values[{{i}}][]" multiple style="width:100%" class="msf-form-control msf-select2 storesuite-attr-values" data-placeholder="<?php echo esc_attr( sprintf( __( 'Enter text or separate with "%s"', 'storesuite' ), WC_DELIMITER ) ); ?>" data-tags="true" data-token-separators="[',', '|']"></select>
+											</div>
+										</div>
+									</li>
+								</script>
+							</div>
+							<div class="storesuite-variations-section">
+								<h4 class="msf-subtitle"><?php esc_html_e( 'Variations', 'storesuite' ); ?></h4>
+								<div id="storesuite-variations-container" class="storesuite-variations-list">
+									<?php
+									$loop = 0;
+									$controller = pluginizelab_storesuite()->storesuite_product_controller;
+									foreach ( $variations_data as $variation_post ) {
+										$variation_id = $variation_post->ID;
+										echo $controller->get_variation_row_html( $product_id, $variation_id, $loop ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										++$loop;
+									}
+									?>
+								</div>
+								<p class="storesuite-variations-toolbar">
+									<button type="button" class="my-storesuite-button storesuite-add-variation"><?php esc_html_e( 'Add variation', 'storesuite' ); ?></button>
+									<button type="button" class="my-storesuite-button my-storesuite-button-light storesuite-link-all-variations"><?php esc_html_e( 'Generate all variations', 'storesuite' ); ?></button>
+									<input type="hidden" id="storesuite-variation-loop" value="<?php echo (int) $loop; ?>" />
+									<input type="hidden" id="storesuite-product-id" value="<?php echo (int) $product_id; ?>" />
+									<?php wp_nonce_field( 'storesuite_variations', 'storesuite_variations_nonce', false ); ?>
+								</p>
+							</div>
+						<?php endif; ?>
+					</div>
+				</div>
+				<div class="msf-card msf-card-with-header msf-mb-24 hide_if_variable" id="product-inventory-card">
 					<h3 class="msf-card-title"><?php esc_html_e( 'Inventory', 'storesuite' ); ?></h3>
 					<div class="msf-card-content">
 						<div class="row">

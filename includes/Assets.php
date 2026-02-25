@@ -84,7 +84,8 @@ class Assets {
 		$admin_script                 = STORESUITE_PLUGIN_ASSET . '/admin/script.js';
 		$frontend_script              = STORESUITE_PLUGIN_ASSET . '/frontend/script.js';
 		$frontend_order_script        = STORESUITE_PLUGIN_ASSET . '/frontend/order.js';
-		$frontend_product_script      = STORESUITE_PLUGIN_ASSET . '/frontend/product.js';
+		$frontend_product_script       = STORESUITE_PLUGIN_ASSET . '/frontend/product.js';
+		$frontend_product_variation_js = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
 		$frontend_form_handler_script = STORESUITE_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 		$storesuite_daterangepicker   = STORESUITE_PLUGIN_ASSET . '/frontend/library/daterangepicker.min.js';
@@ -100,6 +101,7 @@ class Assets {
 		// Order scripts.
 		wp_register_script( 'storesuite_order_script', $frontend_order_script, array( 'storesuite_selectWoo' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_product_variation_script', $frontend_product_variation_js, array( 'jquery', 'storesuite_product_script' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 	}
@@ -390,6 +392,7 @@ class Assets {
 			// product styles and scripts.
 			wp_enqueue_style( 'storesuite_jquery-ui-style' );
 			wp_enqueue_script( 'storesuite_product_script' );
+			wp_enqueue_script( 'storesuite_product_variation_script' );
 
 			// Prepare product script data.
 			$product_script_data = array(
@@ -409,6 +412,25 @@ class Assets {
 				'storesuite_product_script',
 				'StoreSuite_Product',
 				$product_script_data
+			);
+
+			wp_localize_script(
+				'storesuite_product_variation_script',
+				'StoreSuite_Variations',
+				array(
+					'ajax_url'        => admin_url( 'admin-ajax.php' ),
+					'nonce'           => wp_create_nonce( 'storesuite_variations' ),
+					'placeholder_img' => wc_placeholder_img_src(),
+					'i18n'            => array(
+						'add_variation'  => __( 'Add variation', 'storesuite' ),
+						'link_all'       => __( 'Generate all variations', 'storesuite' ),
+						'remove'         => __( 'Remove', 'storesuite' ),
+						'variations_added' => __( 'Variation(s) created.', 'storesuite' ),
+						'error_generic'  => __( 'An error occurred. Please try again.', 'storesuite' ),
+						'choose_image'   => __( 'Choose image', 'storesuite' ),
+						'set_image'      => __( 'Set variation image', 'storesuite' ),
+					),
+				)
 			);
 		}
 	}

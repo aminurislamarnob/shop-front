@@ -6,6 +6,7 @@
 			this.initSalePriceSchedule();
 			this.initSelect2();
 			this.toggleStockFields();
+			this.toggleProductTypeSections();
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
 			this.handleProductDelete();
@@ -14,6 +15,9 @@
 			var self = this;
 			$( document ).on( 'change', '#_manage_stock', function () {
 				self.toggleStockFields();
+			} );
+			$( document ).on( 'change', '#post_type', function () {
+				self.toggleProductTypeSections();
 			} );
 			$( document.body ).on(
 				'keyup',
@@ -164,6 +168,12 @@
 					success: function ( response ) {
 						Swal.close();
 						if ( response.success ) {
+							// Variable product: redirect to edit page to add attributes/variations.
+							if ( response.data.context === 'add' && response.data.redirect_edit_url ) {
+								window.location.href = response.data.redirect_edit_url;
+								return;
+							}
+
 							Swal.fire( {
 								icon: 'success',
 								title: MSF_Form_Handler.i18n.success_title,
@@ -276,6 +286,16 @@
 				is_checked
 					? $( '._stock_status_field' ).slideUp( 'fast' )
 					: $( '._stock_status_field' ).slideDown( 'fast' );
+			}
+		},
+		toggleProductTypeSections: function () {
+			var product_type = $( 'select#post_type' ).val();
+			if ( 'variable' === product_type ) {
+				$( '.hide_if_variable' ).slideUp( 'fast' );
+				$( '.show_if_variable' ).slideDown( 'fast' );
+			} else {
+				$( '.hide_if_variable' ).slideDown( 'fast' );
+				$( '.show_if_variable' ).slideUp( 'fast' );
 			}
 		},
 		validateGlobalUniqueIdOnKeyUp: function () {
