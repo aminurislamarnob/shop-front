@@ -323,7 +323,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 				$variations_data      = array();
 				$parent_data_variations = array();
 				if ( $is_edit_mode && $product_id && $product_type === 'variable' ) {
-					$product_attributes   = (array) maybe_unserialize( get_post_meta( $product_id, '_product_attributes', true ) );
+					$product_attributes   = $product ? $product->get_attributes() : array();
 					$attribute_taxonomies = wc_get_attribute_taxonomies();
 					$args = array(
 						'post_type'   => 'product_variation',
@@ -367,15 +367,31 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									if ( ! empty( $product_attributes ) ) {
 										global $wc_product_attributes;
 										foreach ( $product_attributes as $attr_name => $attribute ) {
+											if ( ! $attribute instanceof WC_Product_Attribute && ! $attribute instanceof \WC_Product_Attribute ) {
+												continue;
+											}
 											$taxonomy = '';
 											$attribute_taxonomy = null;
-											$attribute_label = $attribute['name'];
-											if ( ! empty( $attribute['is_taxonomy'] ) && taxonomy_exists( $attr_name ) ) {
-												$taxonomy = $attr_name;
-												$attribute_label = wc_attribute_label( $attr_name );
+											$attribute_label = $attribute->get_name();
+
+											if ( $attribute->is_taxonomy() && taxonomy_exists( $attribute->get_name() ) ) {
+												$taxonomy = $attribute->get_name();
+												$attribute_label = wc_attribute_label( $taxonomy );
 												$attribute_taxonomy = isset( $wc_product_attributes[ $taxonomy ] ) ? $wc_product_attributes[ $taxonomy ] : null;
 											}
-											$pos = isset( $attribute['position'] ) ? absint( $attribute['position'] ) : $position;
+
+											$pos = $attribute->get_position();
+
+											// Map WC_Product_Attribute object into the array shape expected by the template.
+											$attribute_array = array(
+												'name'         => $attribute->get_name(),
+												'value'        => $attribute->is_taxonomy() ? '' : implode( ' ' . WC_DELIMITER . ' ', $attribute->get_options() ),
+												'position'     => $pos,
+												'is_visible'   => $attribute->get_visible() ? 1 : 0,
+												'is_variation' => $attribute->get_variation() ? 1 : 0,
+												'is_taxonomy'  => $attribute->is_taxonomy() ? 1 : 0,
+											);
+
 											storesuite_get_template_part(
 												'products/edit/html-product-attribute',
 												'',
@@ -384,7 +400,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 													'taxonomy'           => $taxonomy,
 													'attribute_taxonomy' => $attribute_taxonomy,
 													'attribute_label'    => $attribute_label,
-													'attribute'          => $attribute,
+													'attribute'          => $attribute_array,
 													'metabox_class'      => $taxonomy ? array( 'taxonomy', $taxonomy ) : array(),
 													'position'           => $pos,
 													'i'                  => $position,
