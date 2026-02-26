@@ -60,8 +60,6 @@ class TemplateParts {
 				$endpoint = 'coupons';
 			} elseif ( 'order-details' === $endpoint ) {
 				$endpoint = 'orders';
-			} elseif ( 'edit-account-details' === $endpoint ) {
-				$endpoint = 'dashboard';
 			}
 
 			$parent_endpoint_title = $dashboard_menu->get_dashboard_menus()[ $endpoint ]['title'] ?? '';

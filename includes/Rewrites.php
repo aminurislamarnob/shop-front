@@ -60,7 +60,7 @@ class Rewrites {
 				'coupons'          => get_option( 'storesuite_myshop_coupons_endpoint', 'coupons' ),
 				'add-new-coupon'   => get_option( 'storesuite_myshop_new_coupon_endpoint', 'add-new-coupon' ),
 				'edit-coupon'      => get_option( 'storesuite_myshop_edit_coupon_endpoint', 'edit-coupon' ),
-				'edit-account-details'     => get_option( 'storesuite_myshop_edit_account_endpoint', 'edit-account-details' ),
+				'edit-account-details'	=> get_option( 'storesuite_myshop_edit_account_endpoint', 'edit-account-details' ),
 			)
 		);
 	}

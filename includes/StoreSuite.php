@@ -254,7 +254,7 @@ final class StoreSuite {
 		$this->container['storesuite_order_hooks']                 = new Order\OrderHooks();
 		$this->container['storesuite_coupon_controller']           = new Coupon\CouponController();
 		$this->container['storesuite_coupon_manager']              = new Coupon\CouponManager();
-		$this->container['storesuite_account_controller']         = new Account\AccountController();
+		$this->container['storesuite_account_controller']          = new Account\AccountController();
 		$this->container['storesuite_handle_paginations']          = new HandlePaginations();
 	}
 

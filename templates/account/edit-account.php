@@ -44,26 +44,26 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								<div class="row">
 									<div class="col-md-6">
 										<div class="msf-form-group">
-											<label for="account_first_name"><?php esc_html_e( 'First name', 'woocommerce' ); ?> <span class="req">*</span></label>
+											<label for="account_first_name"><?php esc_html_e( 'First name', 'storesuite' ); ?> <span class="req">*</span></label>
 											<input type="text" class="msf-form-control" name="account_first_name" id="account_first_name" autocomplete="given-name" value="<?php echo esc_attr( $user->first_name ); ?>" />
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="msf-form-group">
-											<label for="account_last_name"><?php esc_html_e( 'Last name', 'woocommerce' ); ?> <span class="req">*</span></label>
+											<label for="account_last_name"><?php esc_html_e( 'Last name', 'storesuite' ); ?> <span class="req">*</span></label>
 											<input type="text" class="msf-form-control" name="account_last_name" id="account_last_name" autocomplete="family-name" value="<?php echo esc_attr( $user->last_name ); ?>" />
 										</div>
 									</div>
 								</div>
 
 								<div class="msf-form-group">
-									<label for="account_display_name"><?php esc_html_e( 'Display name', 'woocommerce' ); ?> <span class="req">*</span></label>
+									<label for="account_display_name"><?php esc_html_e( 'Display name', 'storesuite' ); ?> <span class="req">*</span></label>
 									<input type="text" class="msf-form-control" name="account_display_name" id="account_display_name" value="<?php echo esc_attr( $user->display_name ); ?>" />
-									<small class="msf-form-text"><?php esc_html_e( 'This will be how your name will be displayed in the account section and in reviews', 'woocommerce' ); ?></small>
+									<small class="msf-form-text"><?php esc_html_e( 'This will be how your name will be displayed in the account section and in reviews', 'storesuite' ); ?></small>
 								</div>
 
 								<div class="msf-form-group">
-									<label for="account_email"><?php esc_html_e( 'Email address', 'woocommerce' ); ?> <span class="req">*</span></label>
+									<label for="account_email"><?php esc_html_e( 'Email address', 'storesuite' ); ?> <span class="req">*</span></label>
 									<input type="email" class="msf-form-control" name="account_email" id="account_email" autocomplete="email" value="<?php echo esc_attr( $user->user_email ); ?>" />
 								</div>
 
@@ -77,18 +77,18 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 						</div>
 
 						<div id="msf-edit-account-password-card" class="msf-card msf-card-with-header msf-mb-24">
-							<h3 class="msf-card-title"><?php esc_html_e( 'Password change', 'woocommerce' ); ?></h3>
+							<h3 class="msf-card-title"><?php esc_html_e( 'Password change', 'storesuite' ); ?></h3>
 							<div class="msf-card-content">
 								<div class="msf-form-group">
-									<label for="password_current"><?php esc_html_e( 'Current password (leave blank to leave unchanged)', 'woocommerce' ); ?></label>
+									<label for="password_current"><?php esc_html_e( 'Current password (leave blank to leave unchanged)', 'storesuite' ); ?></label>
 									<input type="password" class="msf-form-control" name="password_current" id="password_current" autocomplete="current-password" />
 								</div>
 								<div class="msf-form-group">
-									<label for="password_1"><?php esc_html_e( 'New password (leave blank to leave unchanged)', 'woocommerce' ); ?></label>
+									<label for="password_1"><?php esc_html_e( 'New password (leave blank to leave unchanged)', 'storesuite' ); ?></label>
 									<input type="password" class="msf-form-control" name="password_1" id="password_1" autocomplete="new-password" />
 								</div>
 								<div class="msf-form-group">
-									<label for="password_2"><?php esc_html_e( 'Confirm new password', 'woocommerce' ); ?></label>
+									<label for="password_2"><?php esc_html_e( 'Confirm new password', 'storesuite' ); ?></label>
 									<input type="password" class="msf-form-control" name="password_2" id="password_2" autocomplete="new-password" />
 								</div>
 							</div>

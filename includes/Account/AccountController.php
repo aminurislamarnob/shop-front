@@ -45,9 +45,9 @@ class AccountController {
 		$account_last_name    = ! empty( $_POST['account_last_name'] ) ? wc_clean( wp_unslash( $_POST['account_last_name'] ) ) : '';
 		$account_display_name = ! empty( $_POST['account_display_name'] ) ? wc_clean( wp_unslash( $_POST['account_display_name'] ) ) : '';
 		$account_email        = ! empty( $_POST['account_email'] ) ? wc_clean( wp_unslash( $_POST['account_email'] ) ) : '';
-		$pass_cur             = ! empty( $_POST['password_current'] ) ? $_POST['password_current'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$pass1                = ! empty( $_POST['password_1'] ) ? $_POST['password_1'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$pass2                = ! empty( $_POST['password_2'] ) ? $_POST['password_2'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$pass_cur             = ! empty( $_POST['password_current'] ) ? $_POST['password_current'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$pass1                = ! empty( $_POST['password_1'] ) ? $_POST['password_1'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$pass2                = ! empty( $_POST['password_2'] ) ? $_POST['password_2'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		$save_pass            = true;
 
 		$current_user       = get_user_by( 'id', $user_id );
@@ -87,18 +87,19 @@ class AccountController {
 		}
 
 		if ( ! empty( $pass_cur ) && empty( $pass1 ) && empty( $pass2 ) ) {
+			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'Please fill out all password fields.', 'storesuite' ) ) );
-		}
-		if ( ! empty( $pass1 ) && empty( $pass_cur ) ) {
+		} else if ( ! empty( $pass1 ) && empty( $pass_cur ) ) {
+			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'Please enter your current password.', 'storesuite' ) ) );
-		}
-		if ( ! empty( $pass1 ) && empty( $pass2 ) ) {
+		} else if ( ! empty( $pass1 ) && empty( $pass2 ) ) {
+			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'Please re-enter your password.', 'storesuite' ) ) );
-		}
-		if ( ( ! empty( $pass1 ) || ! empty( $pass2 ) ) && $pass1 !== $pass2 ) {
+		} else if ( ( ! empty( $pass1 ) || ! empty( $pass2 ) ) && $pass1 !== $pass2 ) {
+			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'New passwords do not match.', 'storesuite' ) ) );
-		}
-		if ( ! empty( $pass1 ) && ! wp_check_password( $pass_cur, $current_user->user_pass, $current_user->ID ) ) {
+		} else if ( ! empty( $pass1 ) && ! wp_check_password( $pass_cur, $current_user->user_pass, $current_user->ID ) ) {
+			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'Your current password is incorrect.', 'storesuite' ) ) );
 		}
 
