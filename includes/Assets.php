@@ -290,6 +290,12 @@ class Assets {
 						'are_you_sure'                   => __( 'Are you sure?', 'storesuite' ),
 						'yes_delete'                     => __( 'Yes, delete it!', 'storesuite' ),
 						'validation_error'               => __( 'Validation Error', 'storesuite' ),
+
+						// Account details (edit account).
+						'account_first_name_required'    => __( 'First name is required.', 'storesuite' ),
+						'account_last_name_required'     => __( 'Last name is required.', 'storesuite' ),
+						'account_display_name_required'  => __( 'Display name is required.', 'storesuite' ),
+						'account_email_required'         => __( 'Email address is required.', 'storesuite' ),
 					),
 					'coupons_url'                  => storesuite_get_navigation_url( 'coupons' ),
 				)

@@ -3334,3 +3334,10 @@ form.msf-dashboard-date-range-form button.my-storesuite-button.msf-dashboard-dat
 .my-storesuite-wrapper .clear {
   clear: both;
 }
+.msfc-dropdown.msf-header-dropdown .msfc-dropdown-menu li:not(:last-child) {
+  border-bottom: 1px solid rgba(0,0,0,.1)!important;
+}
+
+.msfc-dropdown.msf-header-dropdown .msfc-dropdown-menu a.dropdown-link {
+  padding: 7px 15px;
+}

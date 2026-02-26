@@ -25,7 +25,7 @@ class Rewrites {
 	 * Hook into the functions
 	 */
 	public function __construct() {
-		$this->store_front_base = 'storesuite-dashboard'; // need to set dynamically from options table.
+		$this->store_front_base = $this->get_dashboard_page_slug();
 		add_action( 'init', array( $this, 'add_endpoints' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ), 0 );
 		add_filter( 'woocommerce_get_query_vars', array( $this, 'resolve_wocommerce_my_acc_query_conflict' ) );
@@ -60,6 +60,7 @@ class Rewrites {
 				'coupons'          => get_option( 'storesuite_myshop_coupons_endpoint', 'coupons' ),
 				'add-new-coupon'   => get_option( 'storesuite_myshop_new_coupon_endpoint', 'add-new-coupon' ),
 				'edit-coupon'      => get_option( 'storesuite_myshop_edit_coupon_endpoint', 'edit-coupon' ),
+				'edit-account-details'	=> get_option( 'storesuite_myshop_edit_account_endpoint', 'edit-account-details' ),
 			)
 		);
 	}
@@ -81,6 +82,26 @@ class Rewrites {
 		}
 
 		return $query_vars;
+	}
+
+	/**
+	 * Get dashboard page slug from the actual page post.
+	 *
+	 * @return string
+	 */
+	protected function get_dashboard_page_slug() {
+		$page_id = (int) storesuite_get_option_by_key( 'storesuite_dashboard_page_id' );
+		if ( ! $page_id ) {
+			$page_id = (int) Helper::storesuite_get_page_id( 'myshopdashboard' );
+		}
+		if ( ! $page_id ) {
+			return 'storesuite-dashboard';
+		}
+		$page = get_post( $page_id );
+		if ( $page && 'page' === $page->post_type && ! empty( $page->post_name ) ) {
+			return $page->post_name;
+		}
+		return 'storesuite-dashboard';
 	}
 
 	/**
@@ -134,6 +155,14 @@ class Rewrites {
 		add_rewrite_rule(
 			$this->store_front_base . '/coupons/page/([^/]+)/?$',
 			'index.php?pagename=' . $this->store_front_base . '&coupons=1&paged=$matches[1]',
+			'top'
+		);
+
+		// Add rewrite rule for edit-account endpoint.
+		$edit_account_slug = isset( $this->query_vars['edit-account-details'] ) ? $this->query_vars['edit-account-details'] : 'edit-account-details';
+		add_rewrite_rule(
+			$this->store_front_base . '/' . $edit_account_slug . '/?$',
+			'index.php?pagename=' . $this->store_front_base . '&' . $edit_account_slug . '=1',
 			'top'
 		);
 	}
@@ -220,6 +249,9 @@ class Rewrites {
 				break;
 			case 'edit-coupon':
 				$title = __( 'Edit Coupon', 'storesuite' );
+				break;
+			case 'edit-account-details':
+				$title = __( 'Account details', 'storesuite' );
 				break;
 			default:
 				$title = '';
