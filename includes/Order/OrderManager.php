@@ -161,10 +161,10 @@ class OrderManager {
 		);
 
 		if ( ! empty( $order_ids ) ) {
-			$args['post__in'] = array_map( 'absint', $order_ids );
+			$args['include'] = array_map( 'absint', $order_ids );
 		} else {
 			// Return empty result if no matching products found
-			$args['post__in'] = array( 0 );
+			$args['include'] = array( 0 );
 		}
 	}
 

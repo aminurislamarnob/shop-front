@@ -146,8 +146,6 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 													<?php
 													global $wpdb;
 													foreach ( $coupons as $item_id => $item ) {
-														$post_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_title = %s AND post_type = 'shop_coupon' AND post_status = 'publish' LIMIT 1;", $item['name'] ) ); // phpcs:ignore
-
 														echo '<li><span>' . esc_html( $item['name'] ) . '</span></li>';
 													}
 													?>
