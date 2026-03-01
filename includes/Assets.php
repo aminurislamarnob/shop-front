@@ -54,12 +54,14 @@ class Assets {
 			}
 		}
 
-		$prefix = plugins_url();
-		if ( strpos( $src, $prefix ) === false ) {
+		$prefix = plugins_url( '', STORESUITE_PLUGIN_FILE );
+		// Get the parent plugins directory URL.
+		$plugins_base_url = dirname( $prefix );
+		if ( strpos( $src, $plugins_base_url ) === false ) {
 			return false;
 		}
 
-		$slug = strtok( substr( $src, strpos( $src, $prefix ) + strlen( $prefix ) ), '/?' );
+		$slug = strtok( substr( $src, strpos( $src, $plugins_base_url ) + strlen( $plugins_base_url ) + 1 ), '/?' );
 		return $slug && ! in_array( $slug, $allowed_plugins, true );
 	}
 
@@ -168,7 +170,7 @@ class Assets {
 			wp_enqueue_script( 'storesuite_script' );
 			wp_localize_script(
 				'storesuite_script',
-				'MSF_Front_Script',
+				'storeSuiteFrontScript',
 				array(
 					'upload_image_text'     => __( 'Upload Image', 'storesuite' ),
 					'remove_image_text'     => __( 'Remove Image', 'storesuite' ),
@@ -186,7 +188,7 @@ class Assets {
 
 			wp_localize_script(
 				'storesuite_script',
-				'MSF_Dashboard_DateRanges_I18n',
+				'storeSuiteDateRangesI18n',
 				array(
 					'today'      => __( 'Today', 'storesuite' ),
 					'yesterday'  => __( 'Yesterday', 'storesuite' ),
@@ -202,7 +204,7 @@ class Assets {
 			wp_enqueue_script( 'storesuite_form_handler_script' );
 			wp_localize_script(
 				'storesuite_form_handler_script',
-				'MSF_Form_Handler',
+				'storeSuiteFormHandler',
 				array(
 					'ajax_url'                     => admin_url( 'admin-ajax.php' ),
 					'storesuite_woo_delete_nonce_' => wp_create_nonce( '_storesuite_delete_nonce_' ),

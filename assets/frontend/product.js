@@ -120,15 +120,15 @@
 				var requiredFields = [
 					{
 						selector: '#product_title',
-						message: MSF_Form_Handler.i18n.product_title_required,
+						message: storeSuiteFormHandler.i18n.product_title_required,
 					},
 					{
 						selector: '#post_type',
-						message: MSF_Form_Handler.i18n.product_type_required,
+						message: storeSuiteFormHandler.i18n.product_type_required,
 					},
 					{
 						selector: '#post_status',
-						message: MSF_Form_Handler.i18n.product_status_required,
+						message: storeSuiteFormHandler.i18n.product_status_required,
 					},
 				];
 
@@ -156,7 +156,7 @@
 				);
 
 				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
+					url: storeSuiteFormHandler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
@@ -166,10 +166,10 @@
 						if ( response.success ) {
 							Swal.fire( {
 								icon: 'success',
-								title: MSF_Form_Handler.i18n.success_title,
+								title: storeSuiteFormHandler.i18n.success_title,
 								text: response.data.message,
 								confirmButtonText:
-									MSF_Form_Handler.i18n.ok_button,
+									storeSuiteFormHandler.i18n.ok_button,
 							} );
 
 							// Reset form fields only if adding (not editing)
@@ -240,9 +240,9 @@
 		showError: function ( message ) {
 			Swal.fire( {
 				icon: 'error',
-				title: MSF_Form_Handler.i18n.error_title,
-				text: message || MSF_Form_Handler.i18n.unexpected_error,
-				confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+				title: storeSuiteFormHandler.i18n.error_title,
+				text: message || storeSuiteFormHandler.i18n.unexpected_error,
+				confirmButtonText: storeSuiteFormHandler.i18n.ok_button,
 			} );
 		},
 		initSelect2: function () {
@@ -432,11 +432,11 @@
 
 				var productId = $( this ).data( 'product-id' );
 
-				if ( ! productId || typeof Swal === 'undefined' || typeof MSF_Form_Handler === 'undefined' ) {
+				if ( ! productId || typeof Swal === 'undefined' || typeof storeSuiteFormHandler === 'undefined' ) {
 					return;
 				}
 
-				var i18n = MSF_Form_Handler.i18n || {};
+				var i18n = storeSuiteFormHandler.i18n || {};
 				var confirmTitle = i18n.product_delete_confirm_title || i18n.are_you_sure || 'Are you sure?';
 				var confirmText = i18n.product_delete_warning || 'Do you want to delete this product? It will be moved to trash.';
 				var confirmButton = i18n.yes_delete || 'Yes, delete it!';
@@ -459,7 +459,7 @@
 
 					Swal.fire( {
 						title: deletingText,
-						text: MSF_Form_Handler.i18n.please_wait || 'Please wait...',
+						text: storeSuiteFormHandler.i18n.please_wait || 'Please wait...',
 						allowOutsideClick: false,
 						didOpen: function () {
 							Swal.showLoading();
@@ -469,10 +469,10 @@
 					var formData = new FormData();
 					formData.append( 'id', productId );
 					formData.append( 'action', 'storesuite_delete_product' );
-					formData.append( 'storesuite_delete_product_nonce', MSF_Form_Handler.storesuite_woo_delete_nonce_ );
+					formData.append( 'storesuite_delete_product_nonce', storeSuiteFormHandler.storesuite_woo_delete_nonce_ );
 
 					$.ajax( {
-						url: MSF_Form_Handler.ajax_url,
+						url: storeSuiteFormHandler.ajax_url,
 						type: 'POST',
 						data: formData,
 						processData: false,
@@ -493,7 +493,7 @@
 								Swal.fire( {
 									icon: 'error',
 									title: errorTitle,
-									text: response.data && response.data.error ? response.data.error : ( MSF_Form_Handler.i18n.unexpected_error || 'An unexpected error occurred.' ),
+									text: response.data && response.data.error ? response.data.error : ( storeSuiteFormHandler.i18n.unexpected_error || 'An unexpected error occurred.' ),
 								} );
 							}
 						},
@@ -502,7 +502,7 @@
 							Swal.fire( {
 								icon: 'error',
 								title: errorTitle,
-								text: MSF_Form_Handler.i18n.unexpected_error || 'An unexpected error occurred. Please try again.',
+								text: storeSuiteFormHandler.i18n.unexpected_error || 'An unexpected error occurred. Please try again.',
 							} );
 						},
 					} );

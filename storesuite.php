@@ -19,8 +19,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Plugin constants.
 if ( ! defined( 'STORESUITE_FILE' ) ) {
 	define( 'STORESUITE_FILE', __FILE__ );
+}
+if ( ! defined( 'STORESUITE_PLUGIN_FILE' ) ) {
+	define( 'STORESUITE_PLUGIN_FILE', __FILE__ );
+}
+if ( ! defined( 'STORESUITE_PLUGIN_DIR' ) ) {
+	define( 'STORESUITE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+if ( ! defined( 'STORESUITE_PLUGIN_URL' ) ) {
+	define( 'STORESUITE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 
 require_once __DIR__ . '/vendor/autoload.php';

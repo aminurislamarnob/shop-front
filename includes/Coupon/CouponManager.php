@@ -17,13 +17,13 @@ class CouponManager {
 	 * Update coupon post status/visibility after saving WC_Coupon props.
 	 *
 	 * @param int   $coupon_id Coupon ID.
-	 * @param array $data Coupon request data.
+	 * @param array $data Sanitized coupon request data.
 	 *
 	 * @return true|WP_Error
 	 */
 	private function update_coupon_post_state( $coupon_id, $data ) {
-		$status     = isset( $data['coupon_status'] ) ? sanitize_key( wp_unslash( $data['coupon_status'] ) ) : 'publish';
-		$visibility = isset( $data['coupon_visibility'] ) ? sanitize_key( wp_unslash( $data['coupon_visibility'] ) ) : 'public';
+		$status     = isset( $data['coupon_status'] ) ? $data['coupon_status'] : 'publish';
+		$visibility = isset( $data['coupon_visibility'] ) ? $data['coupon_visibility'] : 'public';
 
 		$allowed_statuses     = array( 'publish', 'pending', 'draft' );
 		$allowed_visibilities = array( 'public', 'private' );
@@ -58,7 +58,7 @@ class CouponManager {
 	/**
 	 * Create a new coupon
 	 *
-	 * @param array $data Coupon data.
+	 * @param array $data Sanitized coupon data.
 	 *
 	 * @return int|WP_Error Coupon ID on success, WP_Error on failure.
 	 */
@@ -67,27 +67,27 @@ class CouponManager {
 			// Create new coupon object.
 			$coupon = new WC_Coupon();
 
-			// Set coupon properties.
+			// Set coupon properties - data is already sanitized by controller.
 			$errors = $coupon->set_props(
 				array(
-					'code'                        => isset( $data['coupon_code'] ) ? wc_format_coupon_code( sanitize_text_field( wp_unslash( $data['coupon_code'] ) ) ) : '',
-					'discount_type'               => isset( $data['discount_type'] ) ? sanitize_text_field( wp_unslash( $data['discount_type'] ) ) : 'fixed_cart',
-					'amount'                      => isset( $data['coupon_amount'] ) ? wc_format_decimal( wp_unslash( $data['coupon_amount'] ) ) : 0,
-					'description'                 => isset( $data['description'] ) ? sanitize_textarea_field( wp_unslash( $data['description'] ) ) : '',
-					'date_expires'                => isset( $data['expiry_date'] ) ? sanitize_text_field( wp_unslash( $data['expiry_date'] ) ) : null,
-					'individual_use'              => isset( $data['individual_use'] ),
+					'code'                        => isset( $data['coupon_code'] ) ? wc_format_coupon_code( $data['coupon_code'] ) : '',
+					'discount_type'               => isset( $data['discount_type'] ) ? $data['discount_type'] : 'fixed_cart',
+					'amount'                      => isset( $data['coupon_amount'] ) ? $data['coupon_amount'] : 0,
+					'description'                 => isset( $data['description'] ) ? $data['description'] : '',
+					'date_expires'                => isset( $data['expiry_date'] ) ? $data['expiry_date'] : null,
+					'individual_use'              => isset( $data['individual_use'] ) && $data['individual_use'],
 					'product_ids'                 => isset( $data['product_ids'] ) ? array_filter( array_map( 'intval', (array) $data['product_ids'] ) ) : array(),
 					'excluded_product_ids'        => isset( $data['exclude_product_ids'] ) ? array_filter( array_map( 'intval', (array) $data['exclude_product_ids'] ) ) : array(),
 					'usage_limit'                 => isset( $data['usage_limit'] ) ? absint( $data['usage_limit'] ) : 0,
 					'usage_limit_per_user'        => isset( $data['usage_limit_per_user'] ) ? absint( $data['usage_limit_per_user'] ) : 0,
 					'limit_usage_to_x_items'      => isset( $data['limit_usage_to_x_items'] ) ? absint( $data['limit_usage_to_x_items'] ) : null,
-					'free_shipping'               => isset( $data['free_shipping'] ),
+					'free_shipping'               => isset( $data['free_shipping'] ) && $data['free_shipping'],
 					'product_categories'          => isset( $data['product_categories'] ) ? array_filter( array_map( 'intval', (array) $data['product_categories'] ) ) : array(),
 					'excluded_product_categories' => isset( $data['exclude_product_categories'] ) ? array_filter( array_map( 'intval', (array) $data['exclude_product_categories'] ) ) : array(),
-					'exclude_sale_items'          => isset( $data['exclude_sale_items'] ),
-					'minimum_amount'              => isset( $data['minimum_amount'] ) ? wc_format_decimal( wp_unslash( $data['minimum_amount'] ) ) : '',
-					'maximum_amount'              => isset( $data['maximum_amount'] ) ? wc_format_decimal( wp_unslash( $data['maximum_amount'] ) ) : '',
-					'email_restrictions'          => isset( $data['customer_email'] ) ? array_filter( array_map( 'trim', explode( ',', sanitize_text_field( wp_unslash( $data['customer_email'] ) ) ) ) ) : array(),
+					'exclude_sale_items'          => isset( $data['exclude_sale_items'] ) && $data['exclude_sale_items'],
+					'minimum_amount'              => isset( $data['minimum_amount'] ) ? $data['minimum_amount'] : '',
+					'maximum_amount'              => isset( $data['maximum_amount'] ) ? $data['maximum_amount'] : '',
+					'email_restrictions'          => isset( $data['customer_email'] ) ? array_filter( array_map( 'trim', explode( ',', $data['customer_email'] ) ) ) : array(),
 				)
 			);
 
@@ -116,7 +116,7 @@ class CouponManager {
 	 * Update an existing coupon
 	 *
 	 * @param int   $coupon_id Coupon ID.
-	 * @param array $data Coupon data.
+	 * @param array $data Sanitized coupon data.
 	 *
 	 * @return bool|WP_Error True on success, WP_Error on failure.
 	 */
@@ -128,27 +128,27 @@ class CouponManager {
 				return new WP_Error( 'invalid_coupon', __( 'Coupon not found', 'storesuite' ) );
 			}
 
-			// Set coupon properties.
+			// Set coupon properties - data is already sanitized by controller.
 			$errors = $coupon->set_props(
 				array(
-					'code'                        => isset( $data['coupon_code'] ) ? wc_format_coupon_code( sanitize_text_field( wp_unslash( $data['coupon_code'] ) ) ) : $coupon->get_code(),
-					'discount_type'               => isset( $data['discount_type'] ) ? sanitize_text_field( wp_unslash( $data['discount_type'] ) ) : $coupon->get_discount_type(),
-					'amount'                      => isset( $data['coupon_amount'] ) ? wc_format_decimal( wp_unslash( $data['coupon_amount'] ) ) : $coupon->get_amount(),
-					'description'                 => isset( $data['description'] ) ? sanitize_textarea_field( wp_unslash( $data['description'] ) ) : $coupon->get_description(),
-					'date_expires'                => isset( $data['expiry_date'] ) ? sanitize_text_field( wp_unslash( $data['expiry_date'] ) ) : $coupon->get_date_expires(),
-					'individual_use'              => isset( $data['individual_use'] ),
+					'code'                        => isset( $data['coupon_code'] ) ? wc_format_coupon_code( $data['coupon_code'] ) : $coupon->get_code(),
+					'discount_type'               => isset( $data['discount_type'] ) ? $data['discount_type'] : $coupon->get_discount_type(),
+					'amount'                      => isset( $data['coupon_amount'] ) ? $data['coupon_amount'] : $coupon->get_amount(),
+					'description'                 => isset( $data['description'] ) ? $data['description'] : $coupon->get_description(),
+					'date_expires'                => isset( $data['expiry_date'] ) ? $data['expiry_date'] : $coupon->get_date_expires(),
+					'individual_use'              => isset( $data['individual_use'] ) && $data['individual_use'],
 					'product_ids'                 => isset( $data['product_ids'] ) ? array_filter( array_map( 'intval', (array) $data['product_ids'] ) ) : array(),
 					'excluded_product_ids'        => isset( $data['exclude_product_ids'] ) ? array_filter( array_map( 'intval', (array) $data['exclude_product_ids'] ) ) : array(),
 					'usage_limit'                 => isset( $data['usage_limit'] ) ? absint( $data['usage_limit'] ) : $coupon->get_usage_limit(),
 					'usage_limit_per_user'        => isset( $data['usage_limit_per_user'] ) ? absint( $data['usage_limit_per_user'] ) : $coupon->get_usage_limit_per_user(),
 					'limit_usage_to_x_items'      => isset( $data['limit_usage_to_x_items'] ) ? absint( $data['limit_usage_to_x_items'] ) : $coupon->get_limit_usage_to_x_items(),
-					'free_shipping'               => isset( $data['free_shipping'] ),
+					'free_shipping'               => isset( $data['free_shipping'] ) && $data['free_shipping'],
 					'product_categories'          => isset( $data['product_categories'] ) ? array_filter( array_map( 'intval', (array) $data['product_categories'] ) ) : array(),
 					'excluded_product_categories' => isset( $data['exclude_product_categories'] ) ? array_filter( array_map( 'intval', (array) $data['exclude_product_categories'] ) ) : array(),
-					'exclude_sale_items'          => isset( $data['exclude_sale_items'] ),
-					'minimum_amount'              => isset( $data['minimum_amount'] ) ? wc_format_decimal( wp_unslash( $data['minimum_amount'] ) ) : $coupon->get_minimum_amount(),
-					'maximum_amount'              => isset( $data['maximum_amount'] ) ? wc_format_decimal( wp_unslash( $data['maximum_amount'] ) ) : $coupon->get_maximum_amount(),
-					'email_restrictions'          => isset( $data['customer_email'] ) ? array_filter( array_map( 'trim', explode( ',', sanitize_text_field( wp_unslash( $data['customer_email'] ) ) ) ) ) : array(),
+					'exclude_sale_items'          => isset( $data['exclude_sale_items'] ) && $data['exclude_sale_items'],
+					'minimum_amount'              => isset( $data['minimum_amount'] ) ? $data['minimum_amount'] : $coupon->get_minimum_amount(),
+					'maximum_amount'              => isset( $data['maximum_amount'] ) ? $data['maximum_amount'] : $coupon->get_maximum_amount(),
+					'email_restrictions'          => isset( $data['customer_email'] ) ? array_filter( array_map( 'trim', explode( ',', $data['customer_email'] ) ) ) : array(),
 				)
 			);
 

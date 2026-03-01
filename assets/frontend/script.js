@@ -80,7 +80,7 @@
 				);
 			}
 
-			var labels = window.MSF_Dashboard_DateRanges_I18n || {};
+			var labels = window.storeSuiteDateRangesI18n || {};
 			var ranges = {};
 
 			ranges[ labels.today || 'Today' ] = [ moment(), moment() ];
@@ -162,7 +162,7 @@
 					$( '#product_thumb_img' ).html( '' );
 					$( targetContainer )
 						.find( '.image-drop-text span' )
-						.text( MSF_Front_Script.upload_image_text );
+						.text( storeSuiteFrontScript.upload_image_text );
 					$( targetContainer ).removeClass( 'image-drop-bg' );
 				} else {
 					// If the media frame already exists, reopen it.
@@ -173,9 +173,9 @@
 
 					// Create a new media frame
 					var frame = wp.media( {
-						title: MSF_Front_Script.upload_product_image,
+						title: storeSuiteFrontScript.upload_product_image,
 						button: {
-							text: MSF_Front_Script.insert_image,
+							text: storeSuiteFrontScript.insert_image,
 						},
 						multiple: false,
 					} );
@@ -195,7 +195,7 @@
 							'<img src="' +
 								attachment.sizes.thumbnail.url +
 								'" alt="' +
-								MSF_Front_Script.product_image +
+								storeSuiteFrontScript.product_image +
 								'"/>'
 						);
 						$( '#product_thumbnail_url' ).val(
@@ -205,7 +205,7 @@
 						//add class to hide text normaly
 						$( targetContainer ).addClass( 'image-drop-bg' );
 						$( '#product-single-image .image-drop-text span' ).text(
-							MSF_Front_Script.remove_image_text
+							storeSuiteFrontScript.remove_image_text
 						);
 					} );
 
@@ -226,9 +226,9 @@
 
 				// Create a new media frame
 				var gframe = wp.media( {
-					title: MSF_Front_Script.upload_gallery_images,
+					title: storeSuiteFrontScript.upload_gallery_images,
 					button: {
-						text: MSF_Front_Script.insert_image,
+						text: storeSuiteFrontScript.insert_image,
 					},
 					multiple: true,
 				} );
@@ -279,7 +279,7 @@
 									'" data-id="' +
 									attachment.id +
 									'" alt="' +
-									MSF_Front_Script.product_gallery_image +
+									storeSuiteFrontScript.product_gallery_image +
 									'"/></div>'
 							);
 						}
@@ -336,7 +336,7 @@
 					$( '#category_thumb_img' ).html( '' );
 					$( targetContainer )
 						.find( '.image-drop-text span' )
-						.text( MSF_Front_Script.upload_image_text );
+						.text( storeSuiteFrontScript.upload_image_text );
 					$( targetContainer ).removeClass( 'image-drop-bg' );
 				} else {
 					// If the media frame already exists, reopen it.
@@ -347,9 +347,9 @@
 
 					// Create a new media frame
 					var frame = wp.media( {
-						title: MSF_Front_Script.upload_category_image,
+						title: storeSuiteFrontScript.upload_category_image,
 						button: {
-							text: MSF_Front_Script.insert_image,
+							text: storeSuiteFrontScript.insert_image,
 						},
 						multiple: false,
 					} );
@@ -371,7 +371,7 @@
 							'<img src="' +
 								attachment.sizes.thumbnail.url +
 								'" alt="' +
-								MSF_Front_Script.category_image +
+								storeSuiteFrontScript.category_image +
 								'"/>'
 						);
 						$( '#product_category_thumbnail_url' ).val(
@@ -382,7 +382,7 @@
 						$( targetContainer ).addClass( 'image-drop-bg' );
 						$(
 							'#category-single-image .image-drop-text span'
-						).text( MSF_Front_Script.remove_image_text );
+						).text( storeSuiteFrontScript.remove_image_text );
 					} );
 
 					frame.open();
@@ -402,7 +402,7 @@
 					$( '#brand_thumb_img' ).html( '' );
 					$( targetContainer )
 						.find( '.image-drop-text span' )
-						.text( MSF_Front_Script.upload_image_text );
+						.text( storeSuiteFrontScript.upload_image_text );
 					$( targetContainer ).removeClass( 'image-drop-bg' );
 				} else {
 					// If the media frame already exists, reopen it.
@@ -413,9 +413,9 @@
 
 					// Create a new media frame
 					var frame = wp.media( {
-						title: MSF_Front_Script.upload_brand_image,
+						title: storeSuiteFrontScript.upload_brand_image,
 						button: {
-							text: MSF_Front_Script.insert_image,
+							text: storeSuiteFrontScript.insert_image,
 						},
 						multiple: false,
 					} );
@@ -435,7 +435,7 @@
 							'<img src="' +
 								attachment.sizes.thumbnail.url +
 								'" alt="' +
-								MSF_Front_Script.brand_image +
+								storeSuiteFrontScript.brand_image +
 								'"/>'
 						);
 						$( '#product_brand_thumbnail_url' ).val(
@@ -445,7 +445,7 @@
 						//add class to hide text normaly
 						$( targetContainer ).addClass( 'image-drop-bg' );
 						$( '#brand-single-image .image-drop-text span' ).text(
-							MSF_Front_Script.remove_image_text
+							storeSuiteFrontScript.remove_image_text
 						);
 					} );
 

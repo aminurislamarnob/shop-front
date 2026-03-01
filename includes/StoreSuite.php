@@ -157,7 +157,7 @@ final class StoreSuite {
 		defined( 'STORESUITE_DIR' ) || define( 'STORESUITE_DIR', dirname( STORESUITE_FILE ) );
 		defined( 'STORESUITE_INC_DIR' ) || define( 'STORESUITE_INC_DIR', STORESUITE_DIR . '/includes' );
 		defined( 'STORESUITE_TEMPLATE_DIR' ) || define( 'STORESUITE_TEMPLATE_DIR', STORESUITE_DIR . '/templates' );
-		defined( 'STORESUITE_PLUGIN_ASSET' ) || define( 'STORESUITE_PLUGIN_ASSET', plugins_url( 'assets', STORESUITE_FILE ) );
+		defined( 'STORESUITE_PLUGIN_ASSET' ) || define( 'STORESUITE_PLUGIN_ASSET', plugins_url( 'assets', STORESUITE_PLUGIN_FILE ) );
 
 		// give a way to turn off loading styles and scripts from parent theme.
 		defined( 'STORESUITE_LOAD_STYLE' ) || define( 'STORESUITE_LOAD_STYLE', true );
