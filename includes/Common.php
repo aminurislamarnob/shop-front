@@ -33,7 +33,7 @@ class Common {
 	}
 
 	/**
-	 * Add body class for MSF dashboard page.
+	 * Add body class for StoreSuite dashboard page.
 	 *
 	 * @param  array $classes Array of body classes.
 	 * @return array

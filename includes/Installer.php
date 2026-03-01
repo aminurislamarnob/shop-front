@@ -13,7 +13,7 @@ class Installer {
 	}
 
 	/**
-	 * Add a post display state for special MSF pages.
+	 * Add a post display state for special StoreSuite pages.
 	 *
 	 * @param array  $post_states
 	 * @param object $post
