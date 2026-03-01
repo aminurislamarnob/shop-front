@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC order edit page.
+ * StoreSuite order edit page.
  *
  * @package StoreSuite
  */

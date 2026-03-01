@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC order details customer history template.
+ * StoreSuite order details customer history template.
  *
  * @package StoreSuite
  */
@@ -17,11 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var float $avg_order_value The average money spent by the current customer.
  */
 ?>
-<div class="msf-card">
+<div class="storesuite-card">
 	<div class="card-title-with-link">
-		<h3 class="msf-card-title"><?php esc_html_e( 'Customer History', 'storesuite' ); ?></h3>
+		<h3 class="storesuite-card-title"><?php esc_html_e( 'Customer History', 'storesuite' ); ?></h3>
 	</div>
-	<div class="msf-card-content">
+	<div class="storesuite-card-content">
 		<div class="customer-history order-attribution-metabox">
 			<div class="customer-history-item">
 				<h4><?php esc_html_e( 'Total orders', 'storesuite' ); ?></h4>

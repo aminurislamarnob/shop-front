@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC order details note
+ * StoreSuite order details note
  *
  * @package StoreSuite
  */
@@ -16,9 +16,9 @@ if ( 0 !== $order_id ) {
 }
 ?>
 <!-- Order Notes Section -->
-<div id="new_order_notes" class="msf-card">
-	<h3 class="msf-card-title"><?php esc_html_e( 'Order notes', 'storesuite' ); ?></h3>
-	<div class="msf-card-content">
+<div id="new_order_notes" class="storesuite-card">
+	<h3 class="storesuite-card-title"><?php esc_html_e( 'Order notes', 'storesuite' ); ?></h3>
+	<div class="storesuite-card-content">
 		<!-- Existing Notes -->
 		<ul class="existing-notes order_notes">
 		<?php
@@ -68,13 +68,13 @@ if ( 0 !== $order_id ) {
 			<div class="add-note-header">
 				<h4 class="add-note-title"><?php esc_html_e( 'Add Note', 'storesuite' ); ?></h4>
 			</div>
-			<div class="msf-form-group">
-				<textarea id="add_order_note" class="msf-form-control note-textarea" placeholder="<?php echo esc_attr__( 'Enter your note here...', 'storesuite' ); ?>" rows="4"></textarea>
+			<div class="storesuite-form-group">
+				<textarea id="add_order_note" class="storesuite-form-control note-textarea" placeholder="<?php echo esc_attr__( 'Enter your note here...', 'storesuite' ); ?>" rows="4"></textarea>
 				<small><?php esc_html_e( 'Add a note for your reference, or add a customer note (the user will be notified).', 'storesuite' ); ?></small>
 			</div>
 			<div class="note-options">
-				<div class="msf-form-group">
-					<select class="msf-form-control" id="order_note_type">
+				<div class="storesuite-form-group">
+					<select class="storesuite-form-control" id="order_note_type">
 						<option><?php esc_html_e( 'Internal note', 'storesuite' ); ?></option>
 						<option value="customer"><?php esc_html_e( 'Note to customer', 'storesuite' ); ?></option>
 					</select>

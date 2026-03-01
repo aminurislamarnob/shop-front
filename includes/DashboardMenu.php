@@ -24,7 +24,7 @@ class DashboardMenu {
 		$menus       = $this->get_dashboard_menus();
 		$current_url = storesuite_get_navigation_url( $this->get_active_menu() );
 
-		echo '<ul class="msfc-dashboard-menu">';
+		echo '<ul class="storesuite-dashboard-menu">';
 
 		foreach ( $menus as $key => $menu ) {
 			// Check if the current user has permission to view this menu item.

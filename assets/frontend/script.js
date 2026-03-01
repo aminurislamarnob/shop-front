@@ -1,31 +1,37 @@
 ( function ( $ ) {
-	var msfcLoader = {
+	var storeSuiteLoader = {
 		block: function ( $container, text ) {
 			text = text || 'Processing...';
-			if ( $container.find( '.msfc-loader-overlay' ).length === 0 ) {
+			if (
+				$container.find( '.storesuite-loader-overlay' ).length === 0
+			) {
 				$container.append(
-					'<div class="msfc-loader-overlay">' +
-						'<span class="msfc-loader-spinner"></span>' +
-						'<span class="msfc-loader-text">' +
+					'<div class="storesuite-loader-overlay">' +
+						'<span class="storesuite-loader-spinner"></span>' +
+						'<span class="storesuite-loader-text">' +
 						text +
 						'</span>' +
 						'</div>'
 				);
 			} else {
-				$container.find( '.msfc-loader-text' ).text( text );
+				$container.find( '.storesuite-loader-text' ).text( text );
 			}
 
 			setTimeout( function () {
-				$container.find( '.msfc-loader-overlay' ).addClass( 'active' );
+				$container
+					.find( '.storesuite-loader-overlay' )
+					.addClass( 'active' );
 			}, 10 );
 		},
 		unblock: function ( $container ) {
-			$container.find( '.msfc-loader-overlay' ).removeClass( 'active' );
+			$container
+				.find( '.storesuite-loader-overlay' )
+				.removeClass( 'active' );
 		},
 	};
 	// Expose for other StoreSuite scripts
 	window.StoreSuite = window.StoreSuite || {};
-	window.StoreSuite.msfcLoader = msfcLoader;
+	window.StoreSuite.storeSuiteLoader = storeSuiteLoader;
 
 	var StoreFrontCommonConfig = {
 		init: function () {
@@ -70,7 +76,7 @@
 				? moment( initialEnd, 'YYYY-MM-DD' )
 				: moment().endOf( 'month' );
 
-			function msfUpdateDashboardRange( startDate, endDate ) {
+			function storeSuiteUpdateDashboardRange( startDate, endDate ) {
 				$start.val( startDate.format( 'YYYY-MM-DD' ) );
 				$end.val( endDate.format( 'YYYY-MM-DD' ) );
 				$range.val(
@@ -117,12 +123,12 @@
 					ranges: ranges,
 				},
 				function ( startDate, endDate ) {
-					msfUpdateDashboardRange( startDate, endDate );
+					storeSuiteUpdateDashboardRange( startDate, endDate );
 				}
 			);
 
 			// Initialize display/value on load.
-			msfUpdateDashboardRange( start, end );
+			storeSuiteUpdateDashboardRange( start, end );
 		},
 		handleBulkActionCheckbox: function () {
 			$( '#cb-select-all-orders' ).on( 'click', function () {
@@ -134,18 +140,24 @@
 			} );
 		},
 		handleDropdown: function () {
-			$( document ).on( 'click', '.msfc-dropdown-icon', function () {
-				$( '.msfc-dropdown-menu' ).hide();
-				$( this )
-					.closest( '.msfc-dropdown' )
-					.find( '.msfc-dropdown-menu' )
-					.toggle();
-			} );
+			$( document ).on(
+				'click',
+				'.storesuite-dropdown-icon',
+				function () {
+					$( '.storesuite-dropdown-menu' ).hide();
+					$( this )
+						.closest( '.storesuite-dropdown' )
+						.find( '.storesuite-dropdown-menu' )
+						.toggle();
+				}
+			);
 		},
 		closeDropdownOutside: function () {
 			$( document ).on( 'click', function ( event ) {
-				if ( ! $( event.target ).closest( '.msfc-dropdown' ).length ) {
-					$( '.msfc-dropdown-menu' ).hide();
+				if (
+					! $( event.target ).closest( '.storesuite-dropdown' ).length
+				) {
+					$( '.storesuite-dropdown-menu' ).hide();
 				}
 			} );
 		},
@@ -454,10 +466,10 @@
 			} );
 		},
 		handleFilterOffcanvas: function () {
-			var filterToggle = $( '#msf-filter-toggle' );
-			var filterOffcanvas = $( '#msf-filter-offcanvas' );
-			var filterClose = $( '#msf-filter-close' );
-			var filterOverlay = $( '#msf-filter-overlay' );
+			var filterToggle = $( '#storesuite-filter-toggle' );
+			var filterOffcanvas = $( '#storesuite-filter-offcanvas' );
+			var filterClose = $( '#storesuite-filter-close' );
+			var filterOverlay = $( '#storesuite-filter-overlay' );
 
 			// Open off-canvas when filter button is clicked
 			filterToggle.on( 'click', function ( event ) {
@@ -492,10 +504,12 @@
 			} );
 		},
 		handleOrderFilterOffcanvas: function () {
-			var orderFilterToggle = $( '#msf-order-filter-toggle' );
-			var orderFilterOffcanvas = $( '#msf-order-filter-offcanvas' );
-			var orderFilterClose = $( '#msf-order-filter-close' );
-			var orderFilterOverlay = $( '#msf-order-filter-overlay' );
+			var orderFilterToggle = $( '#storesuite-order-filter-toggle' );
+			var orderFilterOffcanvas = $(
+				'#storesuite-order-filter-offcanvas'
+			);
+			var orderFilterClose = $( '#storesuite-order-filter-close' );
+			var orderFilterOverlay = $( '#storesuite-order-filter-overlay' );
 
 			// Open off-canvas when filter button is clicked
 			orderFilterToggle.on( 'click', function ( event ) {

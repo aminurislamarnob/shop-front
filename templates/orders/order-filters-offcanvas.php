@@ -23,23 +23,23 @@ $months_options = method_exists( $order_manager, 'get_months_filter_options' ) ?
 global $wp_locale;
 ?>
 
-<div class="msf-filter-offcanvas-overlay" id="msf-order-filter-overlay"></div>
-<div class="msf-filter-offcanvas" id="msf-order-filter-offcanvas">
-	<div class="msf-filter-offcanvas-header">
+<div class="storesuite-filter-offcanvas-overlay" id="storesuite-order-filter-overlay"></div>
+<div class="storesuite-filter-offcanvas" id="storesuite-order-filter-offcanvas">
+	<div class="storesuite-filter-offcanvas-header">
 		<h3><?php esc_html_e( 'Filter Orders', 'storesuite' ); ?></h3>
-		<button type="button" class="msf-filter-close" id="msf-order-filter-close">
+		<button type="button" class="storesuite-filter-close" id="storesuite-order-filter-close">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
 				<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
 			</svg>
 		</button>
 	</div>
 
-	<div class="msf-filter-offcanvas-body">
-		<form method="get" class="msf-filters-form-offcanvas">
+	<div class="storesuite-filter-offcanvas-body">
+		<form method="get" class="storesuite-filters-form-offcanvas">
 			<!-- Filter by Order Status -->
-			<div class="msf-form-group">
+			<div class="storesuite-form-group">
 				<label><?php esc_html_e( 'Order Status', 'storesuite' ); ?></label>
-				<select name="order_status" class="msf-form-control">
+				<select name="order_status" class="storesuite-form-control">
 					<option value=""><?php esc_html_e( 'All Statuses', 'storesuite' ); ?></option>
 					<?php
 					$order_statuses = wc_get_order_statuses();
@@ -58,7 +58,7 @@ global $wp_locale;
 			</div>
 
 			<!-- Filter by Registered Customer -->
-			<div class="msf-form-group">
+			<div class="storesuite-form-group">
 				<label><?php esc_html_e( 'Registered Customer', 'storesuite' ); ?></label>
 				<?php
 				$user_string = '';
@@ -78,15 +78,15 @@ global $wp_locale;
 					);
 				}
 				?>
-				<select class="wc-customer-search msf-form-control" name="_customer_user" data-placeholder="<?php esc_attr_e( 'Filter by registered customer', 'storesuite' ); ?>" data-allow_clear="true">
+				<select class="wc-customer-search storesuite-form-control" name="_customer_user" data-placeholder="<?php esc_attr_e( 'Filter by registered customer', 'storesuite' ); ?>" data-allow_clear="true">
 					<option value="<?php echo esc_attr( $user_id ); ?>" selected="selected"><?php echo htmlspecialchars( wp_kses_post( $user_string ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Note: use of htmlspecialchars (below) is to prevent XSS when rendered by selectWoo. wooCommerce follow the same security rules. ?></option>
 				</select>
 			</div>
 
 			<!-- Filter by Sales Channel -->
-			<div class="msf-form-group">
+			<div class="storesuite-form-group">
 				<label><?php esc_html_e( 'Sales Channel', 'storesuite' ); ?></label>
-				<select name="order_channel" class="msf-form-control">
+				<select name="order_channel" class="storesuite-form-control">
 					<?php
 					$created_via_options = array(
 						''                   => __( 'All sales channels', 'storesuite' ),
@@ -107,9 +107,9 @@ global $wp_locale;
 			</div>
 
 			<!-- Filter by Date (WooCommerce month dropdown: m=YYYYMM) -->
-			<div class="msf-form-group">
+			<div class="storesuite-form-group">
 				<label><?php esc_html_e( 'Date', 'storesuite' ); ?></label>
-				<select name="m" id="filter-by-date" class="msf-form-control">
+				<select name="m" id="filter-by-date" class="storesuite-form-control">
 					<option value="0" <?php selected( (int) $current_month, 0, true ); ?>><?php esc_html_e( 'All dates', 'storesuite' ); ?></option>
 					<?php
 					foreach ( $months_options as $option ) {
@@ -132,9 +132,9 @@ global $wp_locale;
 				</select>
 			</div>
 
-			<div class="msf-filter-offcanvas-footer">
+			<div class="storesuite-filter-offcanvas-footer">
 				<button type="submit" class="my-storesuite-button"><?php esc_html_e( 'Apply Filters', 'storesuite' ); ?></button>
-				<a href="?" class="my-storesuite-button msf-filter-reset"><?php esc_html_e( 'Reset', 'storesuite' ); ?></a>
+				<a href="?" class="my-storesuite-button storesuite-filter-reset"><?php esc_html_e( 'Reset', 'storesuite' ); ?></a>
 			</div>
 		</form>
 	</div>

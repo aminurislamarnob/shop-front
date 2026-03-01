@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC brands list page
+ * StoreSuite brands list page
  *
  * @package StoreSuite
  */
@@ -21,12 +21,12 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
-			<div class="msf-table-header-part">
+			<div class="storesuite-table-header-part">
 				<div class="row">
 					<div class="col-md-6">
 					<form action="" method="get">
-						<div class="msf-table-search-input">
-							<div class="msf-table-search-icon">
+						<div class="storesuite-table-search-input">
+							<div class="storesuite-table-search-icon">
 								<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 									<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 								</svg>
@@ -52,7 +52,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			$product_brands  = new Brands();
 			$brands_data     = $product_brands->get_paginated_brands_with_children( $brands_per_page, $current_page, $search_term );
 			?>
-			<div class="msf-table-responsive">
+			<div class="storesuite-table-responsive">
 				<table class="my-storesuite-tbl my-storesuite-product-list-table">
 					<thead>
 						<tr>

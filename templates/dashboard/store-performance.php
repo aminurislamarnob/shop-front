@@ -16,15 +16,15 @@
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<div class="msf-card msf-card-with-header msf-store-performance">
-	<h2 class="msf-card-title">
+<div class="storesuite-card storesuite-card-with-header storesuite-store-performance">
+	<h2 class="storesuite-card-title">
 		<?php echo esc_html__( 'Store performance', 'storesuite' ); ?>
 	</h2>
-	<div class="msf-card-content">
+	<div class="storesuite-card-content">
 		<?php if ( is_wp_error( $current_values ) ) : ?>
 			<p><?php echo esc_html( $current_values->get_error_message() ); ?></p>
 		<?php else : ?>
-			<div class="msf-kpi-summary">
+			<div class="storesuite-kpi-summary">
 				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-0">
 					<?php foreach ( $stats_config as $stat_config ) : ?>
 						<?php
@@ -48,13 +48,13 @@ defined( 'ABSPATH' ) || exit;
 						}
 						?>
 						<div class="col">
-							<div class="msf-kpi-card msf-kpi-card--<?php echo esc_attr( $change_dir ); ?>">
-								<div class="msf-kpi-label"><?php echo esc_html( $stat_config['label'] ?? $stat_key ); ?></div>
-								<div class="msf-kpi-row">
-									<div class="msf-kpi-value">
+							<div class="storesuite-kpi-card storesuite-kpi-card--<?php echo esc_attr( $change_dir ); ?>">
+								<div class="storesuite-kpi-label"><?php echo esc_html( $stat_config['label'] ?? $stat_key ); ?></div>
+								<div class="storesuite-kpi-row">
+									<div class="storesuite-kpi-value">
 										<?php echo wp_kses_post( $dashboard->format_value( $value, $stat_config['format'] ?? 'number' ) ); ?>
 									</div>
-									<div class="msf-kpi-change"><?php echo esc_html( $change_text ); ?></div>
+									<div class="storesuite-kpi-change"><?php echo esc_html( $change_text ); ?></div>
 								</div>
 							</div>
 						</div>

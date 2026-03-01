@@ -40,7 +40,7 @@ class Common {
 	 */
 	public function storesuite_add_body_class( $classes ) {
 		if ( storesuite_is_dashboard_page() ) {
-			$classes[] = 'msf-main-dashboard';
+			$classes[] = 'storesuite-main-dashboard';
 		}
 
 		return $classes;

@@ -177,10 +177,10 @@ function storesuite_get_post_status_label_class( $status = '' ) {
 	$labels = apply_filters(
 		'storesuite_get_post_status_label_class',
 		array(
-			'publish' => 'msf-label-success',
-			'draft'   => 'msf-label-default',
-			'pending' => 'msf-label-danger',
-			'future'  => 'msf-label-warning',
+			'publish' => 'storesuite-label-success',
+			'draft'   => 'storesuite-label-default',
+			'pending' => 'storesuite-label-danger',
+			'future'  => 'storesuite-label-warning',
 		)
 	);
 
