@@ -6,6 +6,7 @@
 			this.initSalePriceSchedule();
 			this.initSelect2();
 			this.toggleStockFields();
+			this.toggleProductTypeFields();
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
 			this.handleProductDelete();
@@ -14,6 +15,9 @@
 			var self = this;
 			$( document ).on( 'change', '#_manage_stock', function () {
 				self.toggleStockFields();
+			} );
+			$( document ).on( 'change', 'select#post_type', function () {
+				self.toggleProductTypeFields();
 			} );
 			$( document.body ).on(
 				'keyup',
@@ -289,6 +293,17 @@
 				is_checked
 					? $( '._stock_status_field' ).slideUp( 'fast' )
 					: $( '._stock_status_field' ).slideDown( 'fast' );
+			}
+		},
+		toggleProductTypeFields: function () {
+			const product_type = $( 'select#post_type' ).val();
+
+			if ( 'variable' === product_type ) {
+				$( '.show_if_simple' ).slideUp( 'fast' );
+				$( '.show_if_variable' ).slideDown( 'fast' );
+			} else {
+				$( '.show_if_simple' ).slideDown( 'fast' );
+				$( '.show_if_variable' ).slideUp( 'fast' );
 			}
 		},
 		validateGlobalUniqueIdOnKeyUp: function () {

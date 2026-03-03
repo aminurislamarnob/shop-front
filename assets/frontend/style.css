@@ -2795,6 +2795,32 @@ button.remove_order_item_meta.button:hover {
   padding: 7px 16px;
   height: 35px;
 }
+
+/* Product attributes UI */
+.storesuite-attribute-toolbar-spacing {
+  margin-top: 12px;
+}
+
+.storesuite-attribute-header-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.storesuite-attribute-remove {
+  color: #d63638;
+  margin-left: 8px;
+}
+
+.storesuite-attribute-body-hidden {
+  display: none;
+}
+
+.storesuite-attribute-terms-toggle {
+  margin-top: 6px;
+}
 #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td input {
   margin-bottom: 5px;
 }
@@ -3248,7 +3274,7 @@ form.storesuite-search-form.storesuite-order-search-form .my-storesuite-button {
 
 /* Premium Loader Overlay */
 .storesuite-loader-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;

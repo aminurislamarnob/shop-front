@@ -90,6 +90,7 @@ class Assets {
 		$frontend_form_handler_script = STORESUITE_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 		$storesuite_daterangepicker   = STORESUITE_PLUGIN_ASSET . '/frontend/library/daterangepicker.min.js';
+		$frontend_variation_script 	  = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_daterangepicker', $storesuite_daterangepicker, array( 'jquery', 'moment' ), '3.1.0', true );
@@ -104,6 +105,7 @@ class Assets {
 		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
+		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable' ), STORESUITE_PLUGIN_VERSION, true );
 	}
 
 	/**
@@ -418,6 +420,23 @@ class Assets {
 				'StoreSuite_Product',
 				$product_script_data
 			);
+
+			wp_enqueue_script( 'storesuite_variation_script' );
+			wp_localize_script( 'storesuite_variation_script', 'StoreSuiteVariation', array(
+				'ajax_url'   => admin_url( 'admin-ajax.php' ),
+				'nonce'      => wp_create_nonce( 'storesuite-variation-nonce' ),
+				'add_attribute_nonce'	=> wp_create_nonce( 'add-attribute' ),
+				'save_attributes_nonce'	=> wp_create_nonce( 'save-attributes' ),
+				'product_id' => absint( get_query_var( 'edit-product' ) ),
+				'per_page'   => 15,
+				'i18n'       => array(
+					'confirm_remove'   => __( 'Remove this variation?', 'storesuite' ),
+					'confirm_delete_all' => __( 'Delete All variations? This cannot be undone.', 'storesuite' ),
+					'generated'        => __( 'variations created.', 'storesuite' ),
+					'no_attributes'    => __( 'Add variation attributes first.', 'storesuite' ),
+					'saved'            => __( 'Changes saved.', 'storesuite' ),
+				),
+			) );
 		}
 	}
 
