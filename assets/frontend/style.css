@@ -971,6 +971,12 @@ tr.single-product-item:hover .product-list-action {
   visibility: visible;
 }
 
+/* Always show actions in attribute terms table */
+.storesuite-attribute-terms-table .product-list-action {
+  visibility: visible;
+  opacity: 1;
+}
+
 /*Order List Page*/
 span.order-pending {
   color: #f39c12;

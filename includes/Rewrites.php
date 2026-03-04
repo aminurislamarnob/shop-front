@@ -57,6 +57,10 @@ class Rewrites {
 				'brands'           => get_option( 'storesuite_myshop_brands_endpoint', 'brands' ),
 				'add-new-brand'    => get_option( 'storesuite_myshop_new_brand_endpoint', 'add-new-brand' ),
 				'edit-brand'       => get_option( 'storesuite_myshop_edit_brand_endpoint', 'edit-brand' ),
+				'attributes'       => get_option( 'storesuite_myshop_attributes_endpoint', 'attributes' ),
+				'add-new-attribute' => get_option( 'storesuite_myshop_new_attribute_endpoint', 'add-new-attribute' ),
+				'edit-attribute'   => get_option( 'storesuite_myshop_edit_attribute_endpoint', 'edit-attribute' ),
+				'attribute-terms'  => get_option( 'storesuite_myshop_attribute_terms_endpoint', 'attribute-terms' ),
 				'coupons'          => get_option( 'storesuite_myshop_coupons_endpoint', 'coupons' ),
 				'add-new-coupon'   => get_option( 'storesuite_myshop_new_coupon_endpoint', 'add-new-coupon' ),
 				'edit-coupon'      => get_option( 'storesuite_myshop_edit_coupon_endpoint', 'edit-coupon' ),
@@ -151,6 +155,13 @@ class Rewrites {
 			'top'
 		);
 
+		// Add rewrite rule for attributes list pagination.
+		add_rewrite_rule(
+			$this->store_front_base . '/attributes/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&attributes=1&paged=$matches[1]',
+			'top'
+		);
+
 		// Add rewrite rule for coupon list pagination.
 		add_rewrite_rule(
 			$this->store_front_base . '/coupons/page/([^/]+)/?$',
@@ -240,6 +251,36 @@ class Rewrites {
 				break;
 			case 'edit-brand':
 				$title = __( 'Edit Product Brand', 'storesuite' );
+				break;
+			case 'attributes':
+				$title = __( 'Product Attributes', 'storesuite' );
+				break;
+			case 'add-new-attribute':
+				$title = __( 'Add New Attribute', 'storesuite' );
+				break;
+			case 'edit-attribute':
+				$title = __( 'Edit Attribute', 'storesuite' );
+				break;
+			case 'attribute-terms':
+				$title    = __( 'Attribute Terms', 'storesuite' );
+				$taxonomy = isset( $_GET['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_GET['taxonomy'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only for title.
+				if ( $taxonomy && taxonomy_exists( $taxonomy ) ) {
+					$attribute_label = '';
+					$taxonomies      = \wc_get_attribute_taxonomies();
+					if ( ! empty( $taxonomies ) ) {
+						foreach ( $taxonomies as $attr ) {
+							$attr_taxonomy = \wc_attribute_taxonomy_name( $attr->attribute_name );
+							if ( $attr_taxonomy === $taxonomy ) {
+								$attribute_label = $attr->attribute_label;
+								break;
+							}
+						}
+					}
+					if ( $attribute_label ) {
+						/* translators: %s: attribute label */
+						$title = sprintf( __( 'Attribute Terms for %s', 'storesuite' ), $attribute_label );
+					}
+				}
 				break;
 			case 'coupons':
 				$title = __( 'Coupons', 'storesuite' );

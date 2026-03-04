@@ -264,6 +264,23 @@ class Assets {
 						'brand_deleting'                 => __( 'Deleting Brand...', 'storesuite' ),
 						'brand_deleted_successfully'     => __( 'Brand deleted successfully!', 'storesuite' ),
 
+						// Attribute messages.
+						'attribute_name_required'        => __( 'Please enter attribute name.', 'storesuite' ),
+						'attribute_deleting'             => __( 'Deleting Attribute...', 'storesuite' ),
+						'delete_attribute_warning'       => __( 'Do you want to delete this attribute?', 'storesuite' ),
+
+						// Attribute term messages.
+						'attribute_term_name_required'           => __( 'Please enter term name.', 'storesuite' ),
+						'attribute_term_updating'               => __( 'Updating term...', 'storesuite' ),
+						'attribute_term_deleting'               => __( 'Deleting term...', 'storesuite' ),
+						'delete_attribute_term_warning'         => __( 'Do you want to delete this term?', 'storesuite' ),
+						'edit_attribute_term'                   => __( 'Edit attribute term', 'storesuite' ),
+						'attribute_term_name_placeholder'       => __( 'Term name (e.g. Blue)', 'storesuite' ),
+						'attribute_term_slug_placeholder'       => __( 'Term slug (optional)', 'storesuite' ),
+						'attribute_term_description_placeholder'=> __( 'Optional term description', 'storesuite' ),
+						'edit_label'                            => __( 'Edit', 'storesuite' ),
+						'delete_label'                          => __( 'Delete', 'storesuite' ),
+
 						// Product messages.
 						'product_title_required'         => __( 'Please enter product title.', 'storesuite' ),
 						'product_type_required'          => __( 'Please select a product type.', 'storesuite' ),
@@ -300,6 +317,7 @@ class Assets {
 						'account_email_required'         => __( 'Email address is required.', 'storesuite' ),
 					),
 					'coupons_url'                  => storesuite_get_navigation_url( 'coupons' ),
+					'attribute_terms_url'          => storesuite_get_navigation_url( 'attribute-terms' ),
 				)
 			);
 			wp_enqueue_media();
