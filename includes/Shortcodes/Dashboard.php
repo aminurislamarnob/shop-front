@@ -134,6 +134,26 @@ class Dashboard extends MyStoreSuiteShortcode {
 			return ob_get_clean();
 		}
 
+		if ( isset( $wp->query_vars['attributes'] ) ) {
+			storesuite_get_template_part( 'attributes/attributes' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['add-new-attribute'] ) ) {
+			storesuite_get_template_part( 'attributes/add-new-attribute' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['edit-attribute'] ) ) {
+			storesuite_get_template_part( 'attributes/edit-attribute' );
+			return ob_get_clean();
+		}
+
+		if ( isset( $wp->query_vars['attribute-terms'] ) ) {
+			storesuite_get_template_part( 'attributes/attribute-terms' );
+			return ob_get_clean();
+		}
+
 		if ( isset( $wp->query_vars['coupons'] ) ) {
 			do_action( 'storesuite_load_coupons_template', $wp->query_vars );
 			return ob_get_clean();

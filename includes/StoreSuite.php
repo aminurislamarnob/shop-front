@@ -245,6 +245,7 @@ final class StoreSuite {
 		$this->container['storesuite_product_brand_controller']    = new ProductBrand\BrandController();
 		$this->container['storesuite_product_tags']                = new ProductTag\Tags();
 		$this->container['storesuite_product_tag_controller']      = new ProductTag\TagController();
+		$this->container['storesuite_product_attribute_controller'] = new ProductAttribute\AttributeController();
 		$this->container['storesuite_product_controller']          = new Product\ProductController();
 		$this->container['storesuite_product_hooks']               = new Product\ProductHooks();
 		$this->container['storesuite_variation_ajax']              = new Product\VariationAjax();
