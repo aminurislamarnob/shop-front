@@ -17,9 +17,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 	</aside>
 	<div class="my-storesuite-wrapper">
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
-		<main class="my-storesuite-page-content msf-main-dashboard">
+		<main class="my-storesuite-page-content storesuite-main-dashboard">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
-			<div class="msf-dashboard-title-wrapper">
+			<div class="storesuite-dashboard-title-wrapper">
 				<?php
 				$storesuite_dashboard_start = isset( $_GET['storesuite_dashboard_start'] ) ? sanitize_text_field( wp_unslash( $_GET['storesuite_dashboard_start'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended --  Nonce not required: read-only date range filter for display; no state change.
 				$storesuite_dashboard_end   = isset( $_GET['storesuite_dashboard_end'] ) ? sanitize_text_field( wp_unslash( $_GET['storesuite_dashboard_end'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended --  Nonce not required: read-only date range filter for display; no state change.
@@ -60,21 +60,21 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 					);
 				}
 				?>
-				<div class="msf-dashboard-title">
-					<h3 class="msf-page-main-title">
+				<div class="storesuite-dashboard-title">
+					<h3 class="storesuite-page-main-title">
 						<?php echo esc_html__( 'Dashboard', 'storesuite' ); ?>
 						<small>(<?php echo esc_html( $storesuite_dashboard_label ); ?>)</small>
 					</h3>
 				</div>
-				<div class="msf-dashboard-date-range-picker">
-					<form method="get" class="msf-dashboard-date-range-form">
+				<div class="storesuite-dashboard-date-range-picker">
+					<form method="get" class="storesuite-dashboard-date-range-form">
 						<label for="storesuite_dashboard_range" class="screen-reader-text">
 							<?php esc_html_e( 'Date range', 'storesuite' ); ?>
 						</label>
 						<input
 							type="text"
 							id="storesuite_dashboard_range"
-							class="msf-form-control msf-dashboard-date-field"
+							class="storesuite-form-control storesuite-dashboard-date-field"
 							placeholder="<?php esc_attr_e( 'Select date range', 'storesuite' ); ?>"
 							autocomplete="off"
 							value="<?php echo esc_attr( $storesuite_dashboard_start && $storesuite_dashboard_end ? $storesuite_dashboard_start . ' - ' . $storesuite_dashboard_end : '' ); ?>"
@@ -91,7 +91,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							name="storesuite_dashboard_end"
 							value="<?php echo esc_attr( $storesuite_dashboard_end ); ?>"
 						/>
-						<button type="submit" class="my-storesuite-button msf-dashboard-date-apply">
+						<button type="submit" class="my-storesuite-button storesuite-dashboard-date-apply">
 							<?php esc_html_e( 'Apply', 'storesuite' ); ?>
 						</button>
 					</form>

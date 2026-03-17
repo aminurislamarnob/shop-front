@@ -26,11 +26,17 @@ class Dashboard extends MyStoreSuiteShortcode {
 
 		if ( ! function_exists( 'WC' ) ) {
 			// translators: 1) wooCommerce installation url
-			return sprintf( __( 'Please install <a href="%s"><strong>WooCommerce</strong></a> plugin first', 'storesuite' ), esc_url( 'http://wordpress.org/plugins/woocommerce/' ) );
+			return wp_kses_post(
+				sprintf(
+					/* translators: %s: WooCommerce installation URL */
+					__( 'Please install <a href="%s"><strong>WooCommerce</strong></a> plugin first', 'storesuite' ),
+					esc_url( 'http://wordpress.org/plugins/woocommerce/' )
+				)
+			);
 		}
 
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			return __( 'You have no permission to view this page', 'storesuite' );
+			return esc_html__( 'You have no permission to view this page', 'storesuite' );
 		}
 
 		ob_start();

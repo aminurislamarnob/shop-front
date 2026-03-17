@@ -39,10 +39,10 @@
 			var self = this;
 
 			// Clear all previous errors
-			$form.find( '.msf-field-error' ).remove();
+			$form.find( '.storesuite-field-error' ).remove();
 			$form
-				.find( '.msf-form-control' )
-				.removeClass( 'msf-field-invalid' );
+				.find( '.storesuite-form-control' )
+				.removeClass( 'storesuite-field-invalid' );
 
 			// Validate each field
 			$.each( fields, function ( index, field ) {
@@ -79,15 +79,17 @@
 		 */
 		markFieldAsInvalid: function ( $field, message ) {
 			// Add invalid class to field
-			$field.addClass( 'msf-field-invalid' );
+			$field.addClass( 'storesuite-field-invalid' );
 
 			// Create error message element
 			var $errorMsg = $(
-				'<span class="msf-field-error">' + message + '</span>'
+				'<span class="storesuite-field-error">' + message + '</span>'
 			);
 
 			// Insert error message after the field or its wrapper
-			if ( $field.parent().hasClass( 'msf-coupon-code-wrapper' ) ) {
+			if (
+				$field.parent().hasClass( 'storesuite-coupon-code-wrapper' )
+			) {
 				$field.parent().after( $errorMsg );
 			} else {
 				$field.after( $errorMsg );
@@ -95,9 +97,12 @@
 
 			// Remove error on field change
 			$field.one( 'input change', function () {
-				$( this ).removeClass( 'msf-field-invalid' );
-				$( this ).siblings( '.msf-field-error' ).remove();
-				$( this ).parent().siblings( '.msf-field-error' ).remove();
+				$( this ).removeClass( 'storesuite-field-invalid' );
+				$( this ).siblings( '.storesuite-field-error' ).remove();
+				$( this )
+					.parent()
+					.siblings( '.storesuite-field-error' )
+					.remove();
 			} );
 		},
 
@@ -137,7 +142,7 @@
 							return m;
 						},
 						ajax: {
-							url: MSF_Form_Handler.ajax_url,
+							url: storeSuiteFormHandler.ajax_url,
 							dataType: 'json',
 							delay: 250,
 							data: function ( params ) {
@@ -147,7 +152,7 @@
 										$( this ).data( 'action' ) ||
 										'woocommerce_json_search_products_and_variations',
 									security:
-										MSF_Form_Handler.search_products_nonce,
+										storeSuiteFormHandler.search_products_nonce,
 									exclude: $( this ).data( 'exclude' ),
 									exclude_type:
 										$( this ).data( 'exclude_type' ),
@@ -188,7 +193,7 @@
 
 					var $coupon_code_field = $( '#coupon_code' ),
 						result = '',
-						generator = MSF_Form_Handler.coupon_code_generator;
+						generator = storeSuiteFormHandler.coupon_code_generator;
 
 					// Generate random code
 					for ( var i = 0; i < generator.char_length; i++ ) {
@@ -217,8 +222,8 @@
 		 */
 		showLoading: function ( title ) {
 			Swal.fire( {
-				title: title || MSF_Form_Handler.i18n.processing,
-				text: MSF_Form_Handler.i18n.please_wait,
+				title: title || storeSuiteFormHandler.i18n.processing,
+				text: storeSuiteFormHandler.i18n.please_wait,
 				icon: 'info',
 				allowOutsideClick: false,
 				didOpen: () => {
@@ -233,9 +238,9 @@
 		showSuccess: function ( message ) {
 			Swal.fire( {
 				icon: 'success',
-				title: MSF_Form_Handler.i18n.success_title,
+				title: storeSuiteFormHandler.i18n.success_title,
 				text: message,
-				confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+				confirmButtonText: storeSuiteFormHandler.i18n.ok_button,
 			} );
 		},
 
@@ -245,9 +250,9 @@
 		showError: function ( message ) {
 			Swal.fire( {
 				icon: 'error',
-				title: MSF_Form_Handler.i18n.error_title,
-				text: message || MSF_Form_Handler.i18n.unexpected_error,
-				confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+				title: storeSuiteFormHandler.i18n.error_title,
+				text: message || storeSuiteFormHandler.i18n.unexpected_error,
+				confirmButtonText: storeSuiteFormHandler.i18n.ok_button,
 			} );
 		},
 
@@ -257,176 +262,42 @@
 		handleCategoryAdd: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '#msfc-add-category', function ( e ) {
-				e.preventDefault();
+			$( document ).on(
+				'submit',
+				'#storesuite-add-category',
+				function ( e ) {
+					e.preventDefault();
 
-				var $form = $( this );
+					var $form = $( this );
 
-				// Define required fields for validation
-				var requiredFields = [
-					{
-						selector: '#product_category_name',
-						message: MSF_Form_Handler.i18n.category_name_required,
-					},
-				];
+					// Define required fields for validation
+					var requiredFields = [
+						{
+							selector: '#product_category_name',
+							message:
+								storeSuiteFormHandler.i18n
+									.category_name_required,
+						},
+					];
 
-				// Validate required fields
-				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
-					return;
-				}
-
-				var formData = new FormData( this );
-				var $submitBtn = $form.find( 'button[type="submit"]' );
-				$submitBtn.prop( 'disabled', true );
-
-				// Show loader
-				window.StoreSuite.msfcLoader.block(
-					$( '.my-storesuite-wrapper' )
-				);
-
-				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function ( response ) {
-						Swal.close();
-
-						if ( response.success ) {
-							self.showSuccess( response.data.message );
-							$form[ 0 ].reset();
-							// Clear category image.
-							$( '#product_category_thumbnail_id' ).val( '' );
-							$( '#product_category_thumbnail_url' ).val( '' );
-							$( '#category_thumb_img' ).html( '' );
-							$( '#category-single-image' ).removeClass(
-								'image-drop-bg'
-							);
-							$(
-								'#category-single-image .image-drop-text span'
-							).text( MSF_Form_Handler.i18n.upload_image_text );
-						} else {
-							self.showError( response.data.error );
-						}
-					},
-					error: function ( xhr, status, error ) {
-						Swal.close();
-						self.showError();
-					},
-					complete: function () {
-						$submitBtn.prop( 'disabled', false );
-						window.StoreSuite.msfcLoader.unblock(
-							$( '.my-storesuite-wrapper' )
-						);
-					},
-				} );
-			} );
-		},
-
-		/**
-		 * Handle Category Edit
-		 */
-		handleCategoryEdit: function () {
-			var self = this;
-
-			$( document ).on( 'submit', '#msfc-edit-category', function ( e ) {
-				e.preventDefault();
-
-				var $form = $( this );
-
-				// Define required fields for validation
-				var requiredFields = [
-					{
-						selector: '#product_category_name',
-						message: MSF_Form_Handler.i18n.category_name_required,
-					},
-				];
-
-				// Validate required fields
-				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
-					return;
-				}
-
-				var formData = new FormData( this );
-				var $submitBtn = $form.find( 'button[type="submit"]' );
-				$submitBtn.prop( 'disabled', true );
-
-				// Show loader
-				window.StoreSuite.msfcLoader.block(
-					$( '.my-storesuite-wrapper' )
-				);
-				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function ( response ) {
-						Swal.close();
-
-						if ( response.success ) {
-							self.showSuccess( response.data.message );
-						} else {
-							self.showError( response.data.error );
-						}
-					},
-					error: function ( xhr, status, error ) {
-						Swal.close();
-						self.showError();
-					},
-					complete: function () {
-						$submitBtn.prop( 'disabled', false );
-						window.StoreSuite.msfcLoader.unblock(
-							$( '.my-storesuite-wrapper' )
-						);
-					},
-				} );
-			} );
-		},
-
-		/**
-		 * Handle Category Delete
-		 */
-		handleCategoryDelete: function () {
-			var self = this;
-
-			$( document ).on( 'click', '.msfc-delete-category', function ( e ) {
-				e.preventDefault();
-
-				var categoryId = $( this ).data( 'category-id' );
-
-				if ( ! categoryId ) {
-					return;
-				}
-
-				Swal.fire( {
-					title: MSF_Form_Handler.i18n.are_you_sure,
-					text: MSF_Form_Handler.i18n.delete_category_warning,
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
-					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
-				} ).then( function ( result ) {
-					if ( ! result.isConfirmed ) {
+					// Validate required fields
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
 						return;
 					}
 
-					self.showLoading( MSF_Form_Handler.i18n.deleting );
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
 
-					var formData = new FormData();
-					formData.append( 'id', categoryId );
-					formData.append(
-						'action',
-						'storesuite_delete_product_category'
-					);
-					formData.append(
-						'storesuite_delete_product_category_nonce',
-						MSF_Form_Handler.storesuite_woo_delete_nonce_
+					// Show loader
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
 					);
 
 					$.ajax( {
-						url: MSF_Form_Handler.ajax_url,
+						url: storeSuiteFormHandler.ajax_url,
 						type: 'POST',
 						data: formData,
 						processData: false,
@@ -436,11 +307,20 @@
 
 							if ( response.success ) {
 								self.showSuccess( response.data.message );
-								$( '#category-row-' + categoryId ).fadeOut(
-									300,
-									function () {
-										$( this ).remove();
-									}
+								$form[ 0 ].reset();
+								// Clear category image.
+								$( '#product_category_thumbnail_id' ).val( '' );
+								$( '#product_category_thumbnail_url' ).val(
+									''
+								);
+								$( '#category_thumb_img' ).html( '' );
+								$( '#category-single-image' ).removeClass(
+									'image-drop-bg'
+								);
+								$(
+									'#category-single-image .image-drop-text span'
+								).text(
+									storeSuiteFormHandler.i18n.upload_image_text
 								);
 							} else {
 								self.showError( response.data.error );
@@ -450,9 +330,161 @@
 							Swal.close();
 							self.showError();
 						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
 					} );
-				} );
-			} );
+				}
+			);
+		},
+
+		/**
+		 * Handle Category Edit
+		 */
+		handleCategoryEdit: function () {
+			var self = this;
+
+			$( document ).on(
+				'submit',
+				'#storesuite-edit-category',
+				function ( e ) {
+					e.preventDefault();
+
+					var $form = $( this );
+
+					// Define required fields for validation
+					var requiredFields = [
+						{
+							selector: '#product_category_name',
+							message:
+								storeSuiteFormHandler.i18n
+									.category_name_required,
+						},
+					];
+
+					// Validate required fields
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
+
+					// Show loader
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
+				}
+			);
+		},
+
+		/**
+		 * Handle Category Delete
+		 */
+		handleCategoryDelete: function () {
+			var self = this;
+
+			$( document ).on(
+				'click',
+				'.storesuite-delete-category',
+				function ( e ) {
+					e.preventDefault();
+
+					var categoryId = $( this ).data( 'category-id' );
+
+					if ( ! categoryId ) {
+						return;
+					}
+
+					Swal.fire( {
+						title: storeSuiteFormHandler.i18n.are_you_sure,
+						text: storeSuiteFormHandler.i18n
+							.delete_category_warning,
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonText:
+							storeSuiteFormHandler.i18n.yes_delete,
+						cancelButtonText:
+							storeSuiteFormHandler.i18n.cancel_button,
+					} ).then( function ( result ) {
+						if ( ! result.isConfirmed ) {
+							return;
+						}
+
+						self.showLoading( storeSuiteFormHandler.i18n.deleting );
+
+						var formData = new FormData();
+						formData.append( 'id', categoryId );
+						formData.append(
+							'action',
+							'storesuite_delete_product_category'
+						);
+						formData.append(
+							'storesuite_delete_product_category_nonce',
+							storeSuiteFormHandler.storesuite_woo_delete_nonce_
+						);
+
+						$.ajax( {
+							url: storeSuiteFormHandler.ajax_url,
+							type: 'POST',
+							data: formData,
+							processData: false,
+							contentType: false,
+							success: function ( response ) {
+								Swal.close();
+
+								if ( response.success ) {
+									self.showSuccess( response.data.message );
+									$( '#category-row-' + categoryId ).fadeOut(
+										300,
+										function () {
+											$( this ).remove();
+										}
+									);
+								} else {
+									self.showError( response.data.error );
+								}
+							},
+							error: function ( xhr, status, error ) {
+								Swal.close();
+								self.showError();
+							},
+						} );
+					} );
+				}
+			);
 		},
 
 		/**
@@ -461,7 +493,7 @@
 		handleTagAdd: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '#msfc-add-tag', function ( e ) {
+			$( document ).on( 'submit', '#storesuite-add-tag', function ( e ) {
 				e.preventDefault();
 
 				var $form = $( this );
@@ -470,7 +502,7 @@
 				var requiredFields = [
 					{
 						selector: '#name',
-						message: MSF_Form_Handler.i18n.tag_name_required,
+						message: storeSuiteFormHandler.i18n.tag_name_required,
 					},
 				];
 
@@ -484,12 +516,12 @@
 				$submitBtn.prop( 'disabled', true );
 
 				// Show loader
-				window.StoreSuite.msfcLoader.block(
+				window.StoreSuite.storeSuiteLoader.block(
 					$( '.my-storesuite-wrapper' )
 				);
 
 				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
+					url: storeSuiteFormHandler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
@@ -510,7 +542,7 @@
 					},
 					complete: function () {
 						$submitBtn.prop( 'disabled', false );
-						window.StoreSuite.msfcLoader.unblock(
+						window.StoreSuite.storeSuiteLoader.unblock(
 							$( '.my-storesuite-wrapper' )
 						);
 					},
@@ -524,7 +556,7 @@
 		handleTagEdit: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '#msfc-edit-tag', function ( e ) {
+			$( document ).on( 'submit', '#storesuite-edit-tag', function ( e ) {
 				e.preventDefault();
 
 				var $form = $( this );
@@ -533,7 +565,7 @@
 				var requiredFields = [
 					{
 						selector: '#name',
-						message: MSF_Form_Handler.i18n.tag_name_required,
+						message: storeSuiteFormHandler.i18n.tag_name_required,
 					},
 				];
 
@@ -547,11 +579,11 @@
 				$submitBtn.prop( 'disabled', true );
 
 				// Show loader
-				window.StoreSuite.msfcLoader.block(
+				window.StoreSuite.storeSuiteLoader.block(
 					$( '.my-storesuite-wrapper' )
 				);
 				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
+					url: storeSuiteFormHandler.ajax_url,
 					type: 'POST',
 					data: formData,
 					processData: false,
@@ -571,7 +603,7 @@
 					},
 					complete: function () {
 						$submitBtn.prop( 'disabled', false );
-						window.StoreSuite.msfcLoader.unblock(
+						window.StoreSuite.storeSuiteLoader.unblock(
 							$( '.my-storesuite-wrapper' )
 						);
 					},
@@ -585,68 +617,74 @@
 		handleTagDelete: function () {
 			var self = this;
 
-			$( document ).on( 'click', '.msfc-delete-tag', function ( e ) {
-				e.preventDefault();
+			$( document ).on(
+				'click',
+				'.storesuite-delete-tag',
+				function ( e ) {
+					e.preventDefault();
 
-				var tagId = $( this ).data( 'tag-id' );
+					var tagId = $( this ).data( 'tag-id' );
 
-				if ( ! tagId ) {
-					return;
-				}
-
-				Swal.fire( {
-					title: MSF_Form_Handler.i18n.are_you_sure,
-					text: MSF_Form_Handler.i18n.delete_tag_warning,
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
-					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
-				} ).then( function ( result ) {
-					if ( ! result.isConfirmed ) {
+					if ( ! tagId ) {
 						return;
 					}
 
-					self.showLoading( MSF_Form_Handler.i18n.deleting );
+					Swal.fire( {
+						title: storeSuiteFormHandler.i18n.are_you_sure,
+						text: storeSuiteFormHandler.i18n.delete_tag_warning,
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonText:
+							storeSuiteFormHandler.i18n.yes_delete,
+						cancelButtonText:
+							storeSuiteFormHandler.i18n.cancel_button,
+					} ).then( function ( result ) {
+						if ( ! result.isConfirmed ) {
+							return;
+						}
 
-					var formData = new FormData();
-					formData.append( 'id', tagId );
-					formData.append(
-						'action',
-						'storesuite_delete_product_tag'
-					);
-					formData.append(
-						'storesuite_delete_product_tag_nonce',
-						MSF_Form_Handler.storesuite_woo_delete_nonce_
-					);
+						self.showLoading( storeSuiteFormHandler.i18n.deleting );
 
-					$.ajax( {
-						url: MSF_Form_Handler.ajax_url,
-						type: 'POST',
-						data: formData,
-						processData: false,
-						contentType: false,
-						success: function ( response ) {
-							Swal.close();
+						var formData = new FormData();
+						formData.append( 'id', tagId );
+						formData.append(
+							'action',
+							'storesuite_delete_product_tag'
+						);
+						formData.append(
+							'storesuite_delete_product_tag_nonce',
+							storeSuiteFormHandler.storesuite_woo_delete_nonce_
+						);
 
-							if ( response.success ) {
-								self.showSuccess( response.data.message );
-								$( '#tag-row-' + tagId ).fadeOut(
-									300,
-									function () {
-										$( this ).remove();
-									}
-								);
-							} else {
-								self.showError( response.data.error );
-							}
-						},
-						error: function ( xhr, status, error ) {
-							Swal.close();
-							self.showError();
-						},
+						$.ajax( {
+							url: storeSuiteFormHandler.ajax_url,
+							type: 'POST',
+							data: formData,
+							processData: false,
+							contentType: false,
+							success: function ( response ) {
+								Swal.close();
+
+								if ( response.success ) {
+									self.showSuccess( response.data.message );
+									$( '#tag-row-' + tagId ).fadeOut(
+										300,
+										function () {
+											$( this ).remove();
+										}
+									);
+								} else {
+									self.showError( response.data.error );
+								}
+							},
+							error: function ( xhr, status, error ) {
+								Swal.close();
+								self.showError();
+							},
+						} );
 					} );
-				} );
-			} );
+				}
+			);
 		},
 
 		/**
@@ -655,173 +693,40 @@
 		handleBrandAdd: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '#msfc-add-brand', function ( e ) {
-				e.preventDefault();
+			$( document ).on(
+				'submit',
+				'#storesuite-add-brand',
+				function ( e ) {
+					e.preventDefault();
 
-				var $form = $( this );
+					var $form = $( this );
 
-				// Define required fields for validation
-				var requiredFields = [
-					{
-						selector: '#product_brand_name',
-						message: MSF_Form_Handler.i18n.brand_name_required,
-					},
-				];
+					// Define required fields for validation
+					var requiredFields = [
+						{
+							selector: '#product_brand_name',
+							message:
+								storeSuiteFormHandler.i18n.brand_name_required,
+						},
+					];
 
-				// Validate required fields
-				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
-					return;
-				}
-
-				var formData = new FormData( this );
-				var $submitBtn = $form.find( 'button[type="submit"]' );
-				$submitBtn.prop( 'disabled', true );
-
-				// Show loader
-				window.StoreSuite.msfcLoader.block(
-					$( '.my-storesuite-wrapper' )
-				);
-				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function ( response ) {
-						Swal.close();
-
-						if ( response.success ) {
-							self.showSuccess( response.data.message );
-							$form[ 0 ].reset();
-							// Clear brand image.
-							$( '#product_brand_thumbnail_id' ).val( '' );
-							$( '#product_brand_thumbnail_url' ).val( '' );
-							$( '#brand_thumb_img' ).html( '' );
-							$( '#brand-single-image' ).removeClass(
-								'image-drop-bg'
-							);
-							$(
-								'#brand-single-image .image-drop-text span'
-							).text( MSF_Form_Handler.i18n.upload_image_text );
-						} else {
-							self.showError( response.data.error );
-						}
-					},
-					error: function ( xhr, status, error ) {
-						Swal.close();
-						self.showError();
-					},
-					complete: function () {
-						$submitBtn.prop( 'disabled', false );
-						window.StoreSuite.msfcLoader.unblock(
-							$( '.my-storesuite-wrapper' )
-						);
-					},
-				} );
-			} );
-		},
-
-		/**
-		 * Handle Brand Edit
-		 */
-		handleBrandEdit: function () {
-			var self = this;
-
-			$( document ).on( 'submit', '#msfc-edit-brand', function ( e ) {
-				e.preventDefault();
-
-				var $form = $( this );
-
-				// Define required fields for validation
-				var requiredFields = [
-					{
-						selector: '#product_brand_name',
-						message: MSF_Form_Handler.i18n.brand_name_required,
-					},
-				];
-
-				// Validate required fields
-				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
-					return;
-				}
-
-				var formData = new FormData( this );
-				var $submitBtn = $form.find( 'button[type="submit"]' );
-				$submitBtn.prop( 'disabled', true );
-
-				// Show loader
-				window.StoreSuite.msfcLoader.block(
-					$( '.my-storesuite-wrapper' )
-				);
-				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function ( response ) {
-						Swal.close();
-
-						if ( response.success ) {
-							self.showSuccess( response.data.message );
-						} else {
-							self.showError( response.data.error );
-						}
-					},
-					error: function ( xhr, status, error ) {
-						Swal.close();
-						self.showError();
-					},
-					complete: function () {
-						$submitBtn.prop( 'disabled', false );
-						window.StoreSuite.msfcLoader.unblock(
-							$( '.my-storesuite-wrapper' )
-						);
-					},
-				} );
-			} );
-		},
-
-		/**
-		 * Handle Brand Delete
-		 */
-		handleBrandDelete: function () {
-			var self = this;
-
-			$( document ).on( 'click', '.msfc-delete-brand', function ( e ) {
-				e.preventDefault();
-
-				var brandId = $( this ).data( 'brand-id' );
-
-				if ( ! brandId ) {
-					return;
-				}
-
-				Swal.fire( {
-					title: MSF_Form_Handler.i18n.are_you_sure,
-					text: MSF_Form_Handler.i18n.delete_brand_warning,
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
-					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
-				} ).then( function ( result ) {
-					if ( ! result.isConfirmed ) {
+					// Validate required fields
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
 						return;
 					}
 
-					var formData = new FormData();
-					formData.append( 'id', brandId );
-					formData.append(
-						'action',
-						'storesuite_delete_product_brand'
-					);
-					formData.append(
-						'storesuite_delete_product_brand_nonce',
-						MSF_Form_Handler.storesuite_woo_delete_nonce_
-					);
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
 
+					// Show loader
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
 					$.ajax( {
-						url: MSF_Form_Handler.ajax_url,
+						url: storeSuiteFormHandler.ajax_url,
 						type: 'POST',
 						data: formData,
 						processData: false,
@@ -831,11 +736,18 @@
 
 							if ( response.success ) {
 								self.showSuccess( response.data.message );
-								$( '#brand-row-' + brandId ).fadeOut(
-									300,
-									function () {
-										$( this ).remove();
-									}
+								$form[ 0 ].reset();
+								// Clear brand image.
+								$( '#product_brand_thumbnail_id' ).val( '' );
+								$( '#product_brand_thumbnail_url' ).val( '' );
+								$( '#brand_thumb_img' ).html( '' );
+								$( '#brand-single-image' ).removeClass(
+									'image-drop-bg'
+								);
+								$(
+									'#brand-single-image .image-drop-text span'
+								).text(
+									storeSuiteFormHandler.i18n.upload_image_text
 								);
 							} else {
 								self.showError( response.data.error );
@@ -845,9 +757,157 @@
 							Swal.close();
 							self.showError();
 						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
 					} );
-				} );
-			} );
+				}
+			);
+		},
+
+		/**
+		 * Handle Brand Edit
+		 */
+		handleBrandEdit: function () {
+			var self = this;
+
+			$( document ).on(
+				'submit',
+				'#storesuite-edit-brand',
+				function ( e ) {
+					e.preventDefault();
+
+					var $form = $( this );
+
+					// Define required fields for validation
+					var requiredFields = [
+						{
+							selector: '#product_brand_name',
+							message:
+								storeSuiteFormHandler.i18n.brand_name_required,
+						},
+					];
+
+					// Validate required fields
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
+
+					// Show loader
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
+				}
+			);
+		},
+
+		/**
+		 * Handle Brand Delete
+		 */
+		handleBrandDelete: function () {
+			var self = this;
+
+			$( document ).on(
+				'click',
+				'.storesuite-delete-brand',
+				function ( e ) {
+					e.preventDefault();
+
+					var brandId = $( this ).data( 'brand-id' );
+
+					if ( ! brandId ) {
+						return;
+					}
+
+					Swal.fire( {
+						title: storeSuiteFormHandler.i18n.are_you_sure,
+						text: storeSuiteFormHandler.i18n.delete_brand_warning,
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonText:
+							storeSuiteFormHandler.i18n.yes_delete,
+						cancelButtonText:
+							storeSuiteFormHandler.i18n.cancel_button,
+					} ).then( function ( result ) {
+						if ( ! result.isConfirmed ) {
+							return;
+						}
+
+						var formData = new FormData();
+						formData.append( 'id', brandId );
+						formData.append(
+							'action',
+							'storesuite_delete_product_brand'
+						);
+						formData.append(
+							'storesuite_delete_product_brand_nonce',
+							storeSuiteFormHandler.storesuite_woo_delete_nonce_
+						);
+
+						$.ajax( {
+							url: storeSuiteFormHandler.ajax_url,
+							type: 'POST',
+							data: formData,
+							processData: false,
+							contentType: false,
+							success: function ( response ) {
+								Swal.close();
+
+								if ( response.success ) {
+									self.showSuccess( response.data.message );
+									$( '#brand-row-' + brandId ).fadeOut(
+										300,
+										function () {
+											$( this ).remove();
+										}
+									);
+								} else {
+									self.showError( response.data.error );
+								}
+							},
+							error: function ( xhr, status, error ) {
+								Swal.close();
+								self.showError();
+							},
+						} );
+					} );
+				}
+			);
 		},
 
 		/**
@@ -856,77 +916,87 @@
 		handleCouponAdd: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '#msf-add-coupon', function ( e ) {
-				e.preventDefault();
+			$( document ).on(
+				'submit',
+				'#storesuite-add-coupon',
+				function ( e ) {
+					e.preventDefault();
 
-				var $form = $( this );
+					var $form = $( this );
 
-				// Define required fields for validation
-				var requiredFields = [
-					{
-						selector: '#coupon_code',
-						message: MSF_Form_Handler.i18n.coupon_code_required,
-					},
-					{
-						selector: '#discount_type',
-						message:
-							MSF_Form_Handler.i18n.coupon_discount_type_required,
-					},
-					{
-						selector: '#coupon_amount',
-						message: MSF_Form_Handler.i18n.coupon_amount_required,
-						type: 'number',
-					},
-				];
+					// Define required fields for validation
+					var requiredFields = [
+						{
+							selector: '#coupon_code',
+							message:
+								storeSuiteFormHandler.i18n.coupon_code_required,
+						},
+						{
+							selector: '#discount_type',
+							message:
+								storeSuiteFormHandler.i18n
+									.coupon_discount_type_required,
+						},
+						{
+							selector: '#coupon_amount',
+							message:
+								storeSuiteFormHandler.i18n
+									.coupon_amount_required,
+							type: 'number',
+						},
+					];
 
-				// Validate required fields
-				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
-					return;
+					// Validate required fields
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
+
+					// Show loader
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								setTimeout( function () {
+									window.location.href =
+										storeSuiteFormHandler.coupons_url ||
+										window.location.href.replace(
+											'add-new-coupon',
+											'coupons'
+										);
+								}, 1500 );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
 				}
-
-				var formData = new FormData( this );
-				var $submitBtn = $form.find( 'button[type="submit"]' );
-				$submitBtn.prop( 'disabled', true );
-
-				// Show loader
-				window.StoreSuite.msfcLoader.block(
-					$( '.my-storesuite-wrapper' )
-				);
-				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function ( response ) {
-						Swal.close();
-
-						if ( response.success ) {
-							self.showSuccess( response.data.message );
-							setTimeout( function () {
-								window.location.href =
-									MSF_Form_Handler.coupons_url ||
-									window.location.href.replace(
-										'add-new-coupon',
-										'coupons'
-									);
-							}, 1500 );
-						} else {
-							self.showError( response.data.error );
-						}
-					},
-					error: function ( xhr, status, error ) {
-						Swal.close();
-						self.showError();
-					},
-					complete: function () {
-						$submitBtn.prop( 'disabled', false );
-						window.StoreSuite.msfcLoader.unblock(
-							$( '.my-storesuite-wrapper' )
-						);
-					},
-				} );
-			} );
+			);
 		},
 
 		/**
@@ -935,78 +1005,88 @@
 		handleCouponEdit: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '#msf-edit-coupon', function ( e ) {
-				e.preventDefault();
+			$( document ).on(
+				'submit',
+				'#storesuite-edit-coupon',
+				function ( e ) {
+					e.preventDefault();
 
-				var $form = $( this );
+					var $form = $( this );
 
-				// Define required fields for validation
-				var requiredFields = [
-					{
-						selector: '#coupon_code',
-						message: MSF_Form_Handler.i18n.coupon_code_required,
-					},
-					{
-						selector: '#discount_type',
-						message:
-							MSF_Form_Handler.i18n.coupon_discount_type_required,
-					},
-					{
-						selector: '#coupon_amount',
-						message: MSF_Form_Handler.i18n.coupon_amount_required,
-						type: 'number',
-					},
-				];
+					// Define required fields for validation
+					var requiredFields = [
+						{
+							selector: '#coupon_code',
+							message:
+								storeSuiteFormHandler.i18n.coupon_code_required,
+						},
+						{
+							selector: '#discount_type',
+							message:
+								storeSuiteFormHandler.i18n
+									.coupon_discount_type_required,
+						},
+						{
+							selector: '#coupon_amount',
+							message:
+								storeSuiteFormHandler.i18n
+									.coupon_amount_required,
+							type: 'number',
+						},
+					];
 
-				// Validate required fields
-				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
-					return;
+					// Validate required fields
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
+
+					// Show loader
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								setTimeout( function () {
+									window.location.href =
+										storeSuiteFormHandler.coupons_url ||
+										window.location.href.replace(
+											/edit-coupon\/\d+/,
+											'coupons'
+										);
+								}, 1500 );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
 				}
-
-				var formData = new FormData( this );
-				var $submitBtn = $form.find( 'button[type="submit"]' );
-				$submitBtn.prop( 'disabled', true );
-
-				// Show loader
-				window.StoreSuite.msfcLoader.block(
-					$( '.my-storesuite-wrapper' )
-				);
-
-				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function ( response ) {
-						Swal.close();
-
-						if ( response.success ) {
-							self.showSuccess( response.data.message );
-							setTimeout( function () {
-								window.location.href =
-									MSF_Form_Handler.coupons_url ||
-									window.location.href.replace(
-										/edit-coupon\/\d+/,
-										'coupons'
-									);
-							}, 1500 );
-						} else {
-							self.showError( response.data.error );
-						}
-					},
-					error: function ( xhr, status, error ) {
-						Swal.close();
-						self.showError();
-					},
-					complete: function () {
-						$submitBtn.prop( 'disabled', false );
-						window.StoreSuite.msfcLoader.unblock(
-							$( '.my-storesuite-wrapper' )
-						);
-					},
-				} );
-			} );
+			);
 		},
 
 		/**
@@ -1026,12 +1106,12 @@
 				}
 
 				Swal.fire( {
-					title: MSF_Form_Handler.i18n.are_you_sure,
-					text: MSF_Form_Handler.i18n.delete_coupon_warning,
+					title: storeSuiteFormHandler.i18n.are_you_sure,
+					text: storeSuiteFormHandler.i18n.delete_coupon_warning,
 					icon: 'warning',
 					showCancelButton: true,
-					confirmButtonText: MSF_Form_Handler.i18n.yes_delete,
-					cancelButtonText: MSF_Form_Handler.i18n.cancel_button,
+					confirmButtonText: storeSuiteFormHandler.i18n.yes_delete,
+					cancelButtonText: storeSuiteFormHandler.i18n.cancel_button,
 				} ).then( function ( result ) {
 					if ( ! result.isConfirmed ) {
 						return;
@@ -1040,7 +1120,7 @@
 					var formData = new FormData( $form[ 0 ] );
 
 					$.ajax( {
-						url: MSF_Form_Handler.ajax_url,
+						url: storeSuiteFormHandler.ajax_url,
 						type: 'POST',
 						data: formData,
 						processData: false,
@@ -1083,66 +1163,90 @@
 		handleEditAccount: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '#msf-edit-account-form', function ( e ) {
-				e.preventDefault();
+			$( document ).on(
+				'submit',
+				'#storesuite-edit-account-form',
+				function ( e ) {
+					e.preventDefault();
 
-				var $form = $( this );
+					var $form = $( this );
 
-				var requiredFields = [
-					{
-						selector: '#account_first_name',
-						message: MSF_Form_Handler.i18n.account_first_name_required,
-					},
-					{
-						selector: '#account_last_name',
-						message: MSF_Form_Handler.i18n.account_last_name_required,
-					},
-					{
-						selector: '#account_display_name',
-						message: MSF_Form_Handler.i18n.account_display_name_required,
-					},
-					{
-						selector: '#account_email',
-						message: MSF_Form_Handler.i18n.account_email_required,
-					},
-				];
+					var requiredFields = [
+						{
+							selector: '#account_first_name',
+							message:
+								storeSuiteFormHandler.i18n
+									.account_first_name_required,
+						},
+						{
+							selector: '#account_last_name',
+							message:
+								storeSuiteFormHandler.i18n
+									.account_last_name_required,
+						},
+						{
+							selector: '#account_display_name',
+							message:
+								storeSuiteFormHandler.i18n
+									.account_display_name_required,
+						},
+						{
+							selector: '#account_email',
+							message:
+								storeSuiteFormHandler.i18n
+									.account_email_required,
+						},
+					];
 
-				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
-					return;
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
+
+					if (
+						window.StoreSuite &&
+						window.StoreSuite.storeSuiteLoader
+					) {
+						window.StoreSuite.storeSuiteLoader.block(
+							$( '.storesuite-main-dashboard' )
+						);
+					}
+
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function () {
+							self.showError();
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							if (
+								window.StoreSuite &&
+								window.StoreSuite.storeSuiteLoader
+							) {
+								window.StoreSuite.storeSuiteLoader.unblock(
+									$( '.storesuite-main-dashboard' )
+								);
+							}
+						},
+					} );
 				}
-
-				var formData = new FormData( this );
-				var $submitBtn = $form.find( 'button[type="submit"]' );
-				$submitBtn.prop( 'disabled', true );
-
-				if ( window.StoreSuite && window.StoreSuite.msfcLoader ) {
-					window.StoreSuite.msfcLoader.block( $( '.msf-main-dashboard' ) );
-				}
-
-				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function ( response ) {
-						if ( response.success ) {
-							self.showSuccess( response.data.message );
-						} else {
-							self.showError( response.data.error );
-						}
-					},
-					error: function () {
-						self.showError();
-					},
-					complete: function () {
-						$submitBtn.prop( 'disabled', false );
-						if ( window.StoreSuite && window.StoreSuite.msfcLoader ) {
-							window.StoreSuite.msfcLoader.unblock( $( '.msf-main-dashboard' ) );
-						}
-					},
-				} );
-			} );
+			);
 		},
 
 		/**
@@ -1150,7 +1254,7 @@
 		 */
 		initEditAccountPasswordToggle: function () {
 			var $switch = $( '#show_password_change' );
-			var $card = $( '#msf-edit-account-password-card' );
+			var $card = $( '#storesuite-edit-account-password-card' );
 			if ( ! $switch.length || ! $card.length ) {
 				return;
 			}

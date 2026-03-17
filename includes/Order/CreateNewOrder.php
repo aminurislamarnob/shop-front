@@ -115,9 +115,9 @@ class CreateNewOrder {
 		$this->order->save();
 		$this->handle_edit_lock();
 
-		// Schedule auto-draft cleanup. We re-use the WP event here on purpose.
-		if ( ! wp_next_scheduled( 'wp_scheduled_auto_draft_delete' ) ) {
-			wp_schedule_event( time(), 'daily', 'wp_scheduled_auto_draft_delete' );
+		// Schedule auto-draft cleanup with our own prefixed hook.
+		if ( ! wp_next_scheduled( 'storesuite_scheduled_auto_draft_delete' ) ) {
+			wp_schedule_event( time(), 'daily', 'storesuite_scheduled_auto_draft_delete' );
 		}
 
 		$theorder = $this->order;

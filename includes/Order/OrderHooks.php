@@ -24,6 +24,28 @@ class OrderHooks {
 		$this->set_fields_and_prefix(); // Set the fields and the field prefix for order attribution meta.
 		add_action( 'storesuite_after_order_details_action', array( $this, 'add_order_notes' ) );
 		add_action( 'storesuite_after_order_details_action', array( $this, 'add_customer_history' ) );
+		add_action( 'storesuite_scheduled_auto_draft_delete', array( $this, 'delete_old_auto_draft_orders' ) );
+	}
+
+	/**
+	 * Delete auto-draft orders older than a week.
+	 *
+	 * @return void
+	 */
+	public function delete_old_auto_draft_orders() {
+		$week_ago = gmdate( 'Y-m-d H:i:s', strtotime( '-1 week' ) );
+
+		$orders = wc_get_orders(
+			array(
+				'status'       => 'auto-draft',
+				'date_created' => '<' . $week_ago,
+				'limit'        => 50,
+			)
+		);
+
+		foreach ( $orders as $order ) {
+			$order->delete( true );
+		}
 	}
 
 	/**

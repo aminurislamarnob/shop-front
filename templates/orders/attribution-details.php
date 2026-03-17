@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC order details customer attribution template.
+ * StoreSuite order details customer attribution template.
  *
  * @package StoreSuite
  */
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @var bool  $has_more_details Whether to show the more details toggle.
  */
 ?>
-<div class="msf-card">
+<div class="storesuite-card">
 	<div class="order-attribution-metabox">
 
 		<?php if ( array_key_exists( 'origin', $meta ) ) : ?>

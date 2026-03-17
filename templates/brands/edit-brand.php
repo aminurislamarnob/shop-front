@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC brand edit page
+ * StoreSuite brand edit page
  *
  * @package StoreSuite
  */
@@ -44,20 +44,20 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="row">
 				<div class="col-md-6">
-					<div class="msf-card">
-						<form id="msfc-edit-brand">
-							<div class="msf-form-group">
+					<div class="storesuite-card">
+						<form id="storesuite-edit-brand">
+							<div class="storesuite-form-group">
 								<label for="product_brand_name"><?php esc_html_e( 'Brand Name', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></label>
-								<input type="text" class="msf-form-control" id="product_brand_name" name="product_brand_name" value="<?php echo esc_attr( $brand->name ); ?>" placeholder="<?php echo esc_attr__( 'Product brand name', 'storesuite' ); ?>">
+								<input type="text" class="storesuite-form-control" id="product_brand_name" name="product_brand_name" value="<?php echo esc_attr( $brand->name ); ?>" placeholder="<?php echo esc_attr__( 'Product brand name', 'storesuite' ); ?>">
 							</div>
-							<div class="msf-form-group">
+							<div class="storesuite-form-group">
 								<label for="product_brand_slug"><?php esc_html_e( 'Slug', 'storesuite' ); ?></label>
-								<input type="text" class="msf-form-control" id="product_brand_slug" name="product_brand_slug" placeholder="<?php echo esc_attr__( 'Brand slug', 'storesuite' ); ?>" value="<?php echo esc_attr( $brand->slug ); ?>">
-								<small class="msf-form-text"><?php esc_html_e( 'The "slug" is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.', 'storesuite' ); ?></small>
+								<input type="text" class="storesuite-form-control" id="product_brand_slug" name="product_brand_slug" placeholder="<?php echo esc_attr__( 'Brand slug', 'storesuite' ); ?>" value="<?php echo esc_attr( $brand->slug ); ?>">
+								<small class="storesuite-form-text"><?php esc_html_e( 'The "slug" is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.', 'storesuite' ); ?></small>
 							</div>
-							<div class="msf-form-group">
+							<div class="storesuite-form-group">
 								<label for="product_parent_brand"><?php esc_html_e( 'Parent Brand', 'storesuite' ); ?></label>
-								<select class="msf-form-control" id="product_parent_brand" name="product_parent_brand">
+								<select class="storesuite-form-control" id="product_parent_brand" name="product_parent_brand">
 									<option value=""><?php esc_html_e( 'Select parent brand', 'storesuite' ); ?></option>
 									<?php
 									$product_brands = get_terms(
@@ -83,11 +83,11 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									?>
 								</select>
 							</div>
-						<div class="msf-form-group">
+						<div class="storesuite-form-group">
 							<label for="product_brand_description"><?php esc_html_e( 'Brand Description', 'storesuite' ); ?></label>
-							<textarea class="msf-form-control" id="product_brand_description" name="product_brand_description" placeholder="<?php echo esc_attr__( 'Product brand description', 'storesuite' ); ?>" rows="3"><?php echo esc_textarea( $brand->description ); ?></textarea>
+							<textarea class="storesuite-form-control" id="product_brand_description" name="product_brand_description" placeholder="<?php echo esc_attr__( 'Product brand description', 'storesuite' ); ?>" rows="3"><?php echo esc_textarea( $brand->description ); ?></textarea>
 						</div>
-						<div class="msf-form-group">
+						<div class="storesuite-form-group">
 							<label for="product_brand_thumbnail_id"><?php esc_html_e( 'Brand Image', 'storesuite' ); ?></label>
 							<input type="hidden" id="product_brand_thumbnail_id" name="product_brand_thumbnail_id" value="<?php echo esc_attr( $thumbnail_id ); ?>">
 							<input type="hidden" id="product_brand_thumbnail_url" name="product_brand_thumbnail_url" value="<?php echo esc_url( $thumbnail_url ); ?>">
@@ -107,11 +107,11 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								</div>
 							</div>
 						</div>
-						<div class="msf-form-submission-group">
+						<div class="storesuite-form-submission-group">
 								<?php wp_nonce_field( '_storesuite_edit_product_brand_', 'storesuite_edit_product_brand_nonce' ); ?>
 								<input type="hidden" name="action" value="storesuite_edit_product_brand">
 								<input type="hidden" name="brand_id" value="<?php echo esc_attr( $brand->term_id ); ?>">
-								<div class="msf-button-group">
+								<div class="storesuite-button-group">
 									<button class="my-storesuite-button" name="save_product_brand" type="submit"><?php esc_html_e( 'Update', 'storesuite' ); ?></button>
 									<a href="<?php echo esc_url( storesuite_get_navigation_url( 'brands' ) ); ?>" class="my-storesuite-button my-storesuite-button-light"><?php esc_html_e( 'Back', 'storesuite' ); ?></a>
 								</div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC product List Page
+ * StoreSuite product List Page
  *
  * @package StoreSuite
  */
@@ -21,12 +21,12 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
-			<div class="msf-table-header-part">
+			<div class="storesuite-table-header-part">
 				<div class="row">
 					<div class="col-md-3">
 						<form action="" method="get">
-							<div class="msf-table-search-input">
-								<div class="msf-table-search-icon">
+							<div class="storesuite-table-search-input">
+								<div class="storesuite-table-search-icon">
 									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
@@ -46,7 +46,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								</a>
 							</div>
 							<div class="col-md-auto">
-								<button type="button" class="my-storesuite-button msf-filter-toggle" id="msf-filter-toggle">
+								<button type="button" class="my-storesuite-button storesuite-filter-toggle" id="storesuite-filter-toggle">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
 										<path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
 									</svg>
@@ -59,7 +59,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			</div>
 			<!-- Off-canvas Filter -->
 			<?php storesuite_get_template_part( 'products/product-filters-offcanvas' ); ?>
-			<div class="msf-table-responsive">
+			<div class="storesuite-table-responsive">
 				<?php
 				$current_page = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 				$search_term  = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change.
@@ -138,7 +138,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									<?php echo wp_kses_post( wc_get_product_category_list( $product_id, ', ', '', '' ) ); ?>
 								</td>
 								<td data-title="<?php esc_attr_e( 'Status', 'storesuite' ); ?>">
-									<span class="msfc-badge msfc-badge-<?php echo esc_attr( storesuite_get_post_status_class( get_post_status( $product_id ) ) ); ?>">
+									<span class="storesuite-badge storesuite-badge-<?php echo esc_attr( storesuite_get_post_status_class( get_post_status( $product_id ) ) ); ?>">
 										<?php echo esc_html( storesuite_get_post_status( get_post_status( $product_id ) ) ); ?>
 									</span>
 								</td>
@@ -159,11 +159,11 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									}
 
 									if ( $product->is_on_backorder() ) {
-										echo '<span class="msfc-badge msfc-badge-warning">' . esc_html__( 'On backorder', 'storesuite' ) . '</span>';
+										echo '<span class="storesuite-badge storesuite-badge-warning">' . esc_html__( 'On backorder', 'storesuite' ) . '</span>';
 									} elseif ( $product->is_in_stock() ) {
-										echo '<span class="msfc-badge msfc-badge-success">' . esc_html__( 'In stock', 'storesuite' ) . esc_html( $stock_count ) . '</span>';
+										echo '<span class="storesuite-badge storesuite-badge-success">' . esc_html__( 'In stock', 'storesuite' ) . esc_html( $stock_count ) . '</span>';
 									} else {
-										echo '<span class="msfc-badge msfc-badge-danger">' . esc_html__( 'Out of stock', 'storesuite' ) . '</span>';
+										echo '<span class="storesuite-badge storesuite-badge-danger">' . esc_html__( 'Out of stock', 'storesuite' ) . '</span>';
 									}
 									?>
 								</td>
@@ -174,13 +174,13 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									<?php storesuite_get_product_type( $product ); ?>
 								</td>
 								<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
-									<div class="msfc-dropdown">
-										<span class="msfc-dropdown-icon">
+									<div class="storesuite-dropdown">
+										<span class="storesuite-dropdown-icon">
 											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
 												<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
 											</svg>
 										</span>
-										<ul class="msfc-dropdown-menu">
+										<ul class="storesuite-dropdown-menu">
 											<li>
 												<a href="<?php echo esc_url( get_permalink() ); ?>" target="_blank" class="dropdown-link"><?php esc_html_e( 'View', 'storesuite' ); ?></a>
 											</li>
@@ -188,7 +188,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 												<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-product' ) . '%s', $product_id ) ); ?>" class="dropdown-link"><?php esc_html_e( 'Edit', 'storesuite' ); ?></a>
 											</li>
 											<li>
-												<button type="button" class="inline-button dropdown-link msfc-delete-product" data-product-id="<?php echo esc_attr( $product_id ); ?>"><?php esc_html_e( 'Delete', 'storesuite' ); ?></button>
+												<button type="button" class="inline-button dropdown-link storesuite-delete-product" data-product-id="<?php echo esc_attr( $product_id ); ?>"><?php esc_html_e( 'Delete', 'storesuite' ); ?></button>
 											</li>
 										</ul>
 									</div>

@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC pagination template
+ * StoreSuite pagination template
  *
  * @package StoreSuite
  */
@@ -28,15 +28,15 @@ if ( $total_pages > 1 ) {
 		)
 	);
 
-	echo '<div class="msfc-pagination-wrap">';
+	echo '<div class="storesuite-pagination-wrap">';
 
-	echo '<div class="msfc-result-text">';
+	echo '<div class="storesuite-result-text">';
 	/* translators: %1$s: Start Item, %2$s: End Item, %3$s: Total Items */
 	printf( esc_html__( 'Showing %1$s to %2$s of %3$s', 'storesuite' ), esc_html( $start_item ), esc_html( $end_item ), esc_html( $total_items ) );
 	echo '</div>';
 
 	if ( ! empty( $page_links ) ) {
-		echo '<ul class="msfc-pagination"><li>';
+		echo '<ul class="storesuite-pagination"><li>';
 		echo wp_kses_post( join( '</li><li>', $page_links ) );
 		echo '</li></ul>';
 	}

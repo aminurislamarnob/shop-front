@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC brand list table row
+ * StoreSuite brand list table row
  *
  * @package StoreSuite
  */
@@ -48,13 +48,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php echo esc_html( $brand->count ); ?>
 	</td>
 	<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
-		<div class="msfc-dropdown">
-			<span class="msfc-dropdown-icon">
+		<div class="storesuite-dropdown">
+			<span class="storesuite-dropdown-icon">
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
 					<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
 				</svg>
 			</span>
-			<ul class="msfc-dropdown-menu">
+			<ul class="storesuite-dropdown-menu">
 				<li>
 					<a href="<?php echo esc_url( get_category_link( $brand->term_id ) ); ?>" class="dropdown-link">
 						<?php echo esc_html__( 'View', 'storesuite' ); ?>
@@ -64,7 +64,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-brand' ) . '%s', $brand->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'storesuite' ); ?></a>
 				</li>
 				<li>
-					<button type="button" class="inline-button dropdown-link msfc-delete-brand" data-brand-id="<?php echo esc_attr( $brand->term_id ); ?>">
+					<button type="button" class="inline-button dropdown-link storesuite-delete-brand" data-brand-id="<?php echo esc_attr( $brand->term_id ); ?>">
 						<?php echo esc_html__( 'Delete', 'storesuite' ); ?>
 					</button>
 				</li>

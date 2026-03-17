@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC order add/edit form
+ * StoreSuite order add/edit form
  *
  * @package StoreSuite
  */
@@ -9,20 +9,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="msfc-dashboard-order-details">
+<div class="storesuite-dashboard-order-details">
 	<form action="" method="post">
 		<div class="row">
 			<!-- Left Column -->
 			<div class="col-md-8">
 				<!-- Products Section -->
-				<div class="msf-card product-serach-for-order-box">
-					<h3 class="msf-card-title"><?php esc_html_e( 'Products', 'storesuite' ); ?></h3>
-					<div class="msf-card-content">
-						<div class="msf-form-group search-group">
+				<div class="storesuite-card product-serach-for-order-box">
+					<h3 class="storesuite-card-title"><?php esc_html_e( 'Products', 'storesuite' ); ?></h3>
+					<div class="storesuite-card-content">
+						<div class="storesuite-form-group search-group">
 							<select class="wc-product-search" id="storesuite_product_search" name="item_id" data-allow_clear="true" data-display_stock="true" data-exclude_type="variable" data-placeholder="<?php echo esc_attr__( 'Search for a product&hellip;', 'storesuite' ); ?>"></select>
 						</div>
 						<div id="search-order-items" class="products-table">
-							<table class="msf-table msf-mb-20">
+							<table class="storesuite-table storesuite-mb-20">
 								<thead>
 									<tr>
 										<th><?php esc_html_e( 'Product', 'storesuite' ); ?></th>
@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 				</div>
 
-				<div id="woocommerce-order-items" class="msf-card msfc-order-items-box">
+				<div id="woocommerce-order-items" class="storesuite-card storesuite-order-items-box">
 					<div class="inside">
 						<?php
 						if ( $order->get_item_count() > 0 ) {
@@ -51,33 +51,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="order-fee-and-shipping-box<?php echo $order->get_item_count() > 0 ? ' active' : ''; ?>">
 					<div class="row">
 						<div class="col-md-6">
-							<div class="msf-card">
-								<h3 class="msf-card-title"><?php esc_html_e( 'Discounts & Fees', 'storesuite' ); ?></h3>
-								<div class="msf-card-content">
-									<div class="msf-form-group">
+							<div class="storesuite-card">
+								<h3 class="storesuite-card-title"><?php esc_html_e( 'Discounts & Fees', 'storesuite' ); ?></h3>
+								<div class="storesuite-card-content">
+									<div class="storesuite-form-group">
 										<div class="coupon-group">
-											<input type="text" class="msf-form-control" id="coupon_code" placeholder="<?php echo esc_attr__( 'e.g. SUMMER20', 'storesuite' ); ?>">
-											<button type="button" class="apply-btn msfc-apply-coupon"><?php esc_html_e( 'Apply Coupon', 'storesuite' ); ?></button>
+											<input type="text" class="storesuite-form-control" id="coupon_code" placeholder="<?php echo esc_attr__( 'e.g. SUMMER20', 'storesuite' ); ?>">
+											<button type="button" class="apply-btn storesuite-apply-coupon"><?php esc_html_e( 'Apply Coupon', 'storesuite' ); ?></button>
 										</div>
 									</div>
-									<div class="msf-form-group">
+									<div class="storesuite-form-group">
 										<div class="coupon-group">
-											<input type="text" class="msf-form-control" id="add_fee" placeholder="<?php echo esc_attr__( 'Enter a fixed amount or percentage', 'storesuite' ); ?>">
-											<button type="button" class="apply-btn msfc-add-fee"><?php esc_html_e( 'Add Fee', 'storesuite' ); ?></button>
+											<input type="text" class="storesuite-form-control" id="add_fee" placeholder="<?php echo esc_attr__( 'Enter a fixed amount or percentage', 'storesuite' ); ?>">
+											<button type="button" class="apply-btn storesuite-add-fee"><?php esc_html_e( 'Add Fee', 'storesuite' ); ?></button>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-6">
-							<div class="msf-card">
-								<h3 class="msf-card-title"><?php esc_html_e( 'Shipping', 'storesuite' ); ?></h3>
-								<div class="msf-card-content">
-									<div class="msf-form-group">
+							<div class="storesuite-card">
+								<h3 class="storesuite-card-title"><?php esc_html_e( 'Shipping', 'storesuite' ); ?></h3>
+								<div class="storesuite-card-content">
+									<div class="storesuite-form-group">
 										<div class="coupon-group">
-											<input type="text" class="shipping_method_title msf-form-control" placeholder="<?php esc_attr_e( 'Shipping name', 'storesuite' ); ?>" name="storesuite_shipping_method_title" value="<?php echo esc_attr__( 'Shipping', 'storesuite' ); ?>" />
-											<input type="text" name="storesuite_shipping_cost" placeholder="0" class="msf-form-control" />
-											<select class="shipping_method msf-form-control" name="storesuite_shipping_method">
+											<input type="text" class="shipping_method_title storesuite-form-control" placeholder="<?php esc_attr_e( 'Shipping name', 'storesuite' ); ?>" name="storesuite_shipping_method_title" value="<?php echo esc_attr__( 'Shipping', 'storesuite' ); ?>" />
+											<input type="text" name="storesuite_shipping_cost" placeholder="0" class="storesuite-form-control" />
+											<select class="shipping_method storesuite-form-control" name="storesuite_shipping_method">
 												<optgroup label="<?php esc_attr_e( 'Shipping method', 'storesuite' ); ?>">
 													<option value=""><?php esc_html_e( 'N/A', 'storesuite' ); ?></option>
 													<?php
@@ -92,7 +92,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 													?>
 												</optgroup>
 											</select>
-											<button type="button" class="apply-btn msfc-add-shipping"><?php esc_html_e( 'Add Shipping', 'storesuite' ); ?></button>
+											<button type="button" class="apply-btn storesuite-add-shipping"><?php esc_html_e( 'Add Shipping', 'storesuite' ); ?></button>
 										</div>
 									</div>
 								</div>
@@ -104,10 +104,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<!-- Billing & Shipping Address Section -->
 				<div class="row">
 					<div class="col-md-6">
-						<div class="msf-card customer-address-box <?php echo 'edit' === $context ? 'show-address' : 'hide-address'; ?>">
-							<h3 class="msf-card-title">
+						<div class="storesuite-card customer-address-box <?php echo 'edit' === $context ? 'show-address' : 'hide-address'; ?>">
+							<h3 class="storesuite-card-title">
 								<?php esc_html_e( 'Billing Address', 'storesuite' ); ?>
-								<button class="edit-msf-order-address edit-msf-order-billing-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
+								<button class="edit-storesuite-order-address edit-storesuite-order-billing-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
 							</h3>
 							<div class="customer-billing-address">
 								<ul>
@@ -153,58 +153,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 									</li>
 								</ul>
 							</div>
-							<div class="msf-card-content msf-billing-address-fields">
+							<div class="storesuite-card-content storesuite-billing-address-fields">
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_first_name"><?php esc_html_e( 'First Name', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_first_name" name="_billing_first_name" value="<?php echo esc_attr( $order->get_billing_first_name() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_billing_first_name" name="_billing_first_name" value="<?php echo esc_attr( $order->get_billing_first_name() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_last_name"><?php esc_html_e( 'Last Name', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_last_name" name="_billing_last_name" value="<?php echo esc_attr( $order->get_billing_last_name() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_billing_last_name" name="_billing_last_name" value="<?php echo esc_attr( $order->get_billing_last_name() ); ?>">
 										</div>
 									</div>
 								</div>
-								<div class="msf-form-group">
+								<div class="storesuite-form-group">
 									<label for="_billing_company"><?php esc_html_e( 'Company', 'storesuite' ); ?></label>
-									<input type="text" class="msf-form-control" id="_billing_company" name="_billing_company" value="<?php echo esc_attr( $order->get_billing_company() ); ?>">
+									<input type="text" class="storesuite-form-control" id="_billing_company" name="_billing_company" value="<?php echo esc_attr( $order->get_billing_company() ); ?>">
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_address_1"><?php esc_html_e( 'Address Line 1', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_address_1" name="_billing_address_1" value="<?php echo esc_attr( $order->get_billing_address_1() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_billing_address_1" name="_billing_address_1" value="<?php echo esc_attr( $order->get_billing_address_1() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_address_2"><?php esc_html_e( 'Address Line 2', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_address_2" name="_billing_address_2" value="<?php echo esc_attr( $order->get_billing_address_2() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_billing_address_2" name="_billing_address_2" value="<?php echo esc_attr( $order->get_billing_address_2() ); ?>">
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_city"><?php esc_html_e( 'City', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_city" name="_billing_city" value="<?php echo esc_attr( $order->get_billing_city() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_billing_city" name="_billing_city" value="<?php echo esc_attr( $order->get_billing_city() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_postcode"><?php esc_html_e( 'Postcode / ZIP', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_postcode" name="_billing_postcode" value="<?php echo esc_attr( $order->get_billing_postcode() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_billing_postcode" name="_billing_postcode" value="<?php echo esc_attr( $order->get_billing_postcode() ); ?>">
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_country"><?php esc_html_e( 'Country / Region', 'storesuite' ); ?></label>
-											<select class="msf-form-control js_field-country" id="_billing_country" name="_billing_country">
+											<select class="storesuite-form-control js_field-country" id="_billing_country" name="_billing_country">
 												<option value=""><?php esc_html_e( 'Select a country...', 'storesuite' ); ?></option>
 												<?php
 													$countries                = WC()->countries->get_countries();
@@ -223,7 +223,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_state"><?php esc_html_e( 'State / County', 'storesuite' ); ?></label>
 											<?php
 											$billing_state = $order ? $order->get_billing_state() : '';
@@ -231,7 +231,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 											if ( ! empty( $states ) ) {
 												?>
-												<select class="msf-form-control js_field-state" id="_billing_state" name="_billing_state">
+												<select class="storesuite-form-control js_field-state" id="_billing_state" name="_billing_state">
 													<option value=""><?php esc_html_e( 'Select a state...', 'storesuite' ); ?></option>
 													<?php
 													foreach ( $states as $code => $name ) {
@@ -249,7 +249,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 												?>
 												<input 
 													type="text" 
-													class="msf-form-control js_field-state" 
+													class="storesuite-form-control js_field-state" 
 													id="_billing_state" 
 													name="_billing_state" 
 													value="<?php echo esc_attr( $billing_state ); ?>"
@@ -263,23 +263,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_email"><?php esc_html_e( 'Email Address', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_email" name="_billing_email" value="<?php echo esc_attr( $order->get_billing_email() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_billing_email" name="_billing_email" value="<?php echo esc_attr( $order->get_billing_email() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_billing_phone"><?php esc_html_e( 'Phone', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_billing_phone" name="_billing_phone" value="<?php echo esc_attr( $order->get_billing_phone() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_billing_phone" name="_billing_phone" value="<?php echo esc_attr( $order->get_billing_phone() ); ?>">
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_payment_method"><?php esc_html_e( 'Payment Method', 'storesuite' ); ?></label>
-											<select name="_payment_method" id="_payment_method" class=" msf-form-control">
+											<select name="_payment_method" id="_payment_method" class=" storesuite-form-control">
 												<option value=""><?php esc_html_e( 'N/A', 'storesuite' ); ?></option>
 												<?php
 												if ( WC()->payment_gateways() ) {
@@ -309,9 +309,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_transaction_id"><?php esc_html_e( 'Transaction ID', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_transaction_id" name="_transaction_id" value="<?php echo esc_attr( $order->get_transaction_id() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_transaction_id" name="_transaction_id" value="<?php echo esc_attr( $order->get_transaction_id() ); ?>">
 										</div>
 									</div>
 								</div>
@@ -319,10 +319,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 					</div>
 					<div class="col-md-6">
-						<div class="msf-card customer-address-box <?php echo 'edit' === $context ? 'show-address' : 'hide-address'; ?>">
-							<h3 class="msf-card-title">
+						<div class="storesuite-card customer-address-box <?php echo 'edit' === $context ? 'show-address' : 'hide-address'; ?>">
+							<h3 class="storesuite-card-title">
 								<?php esc_html_e( 'Shipping Address', 'storesuite' ); ?>
-								<button class="edit-msf-order-address edit-msf-order-shipping-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
+								<button class="edit-storesuite-order-address edit-storesuite-order-shipping-address"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="m19,0H5C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h14c2.757,0,5-2.243,5-5V5c0-2.757-2.243-5-5-5Zm3,19c0,1.654-1.346,3-3,3H5c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h14c1.654,0,3,1.346,3,3v14ZM13.879,6.379l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.828v1.586c0,.553.448,1,1,1h1.586c1.068,0,2.073-.416,2.828-1.172l6.707-6.707c1.17-1.17,1.17-3.072,0-4.242-1.134-1.133-3.11-1.133-4.243,0Zm-3.879,9.535c-.373.372-.888.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l4.25-4.25,1.414,1.414-4.25,4.25Zm6.707-6.707l-1.043,1.043-1.414-1.414,1.043-1.043c.377-.379,1.036-.379,1.414,0,.39.39.39,1.024,0,1.414Z"/></svg></button>
 							</h3>
 							<div class="customer-shipping-address">
 								<ul>
@@ -368,58 +368,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 									</li>
 								</ul>
 							</div>
-							<div class="msf-card-content msf-shipping-address-fields">
+							<div class="storesuite-card-content storesuite-shipping-address-fields">
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_shipping_first_name"><?php esc_html_e( 'First Name', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_first_name" name="_shipping_first_name" value="<?php echo esc_attr( $order->get_shipping_first_name() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_shipping_first_name" name="_shipping_first_name" value="<?php echo esc_attr( $order->get_shipping_first_name() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_shipping_last_name"><?php esc_html_e( 'Last Name', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_last_name" name="_shipping_last_name" value="<?php echo esc_attr( $order->get_shipping_last_name() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_shipping_last_name" name="_shipping_last_name" value="<?php echo esc_attr( $order->get_shipping_last_name() ); ?>">
 										</div>
 									</div>
 								</div>
-								<div class="msf-form-group">
+								<div class="storesuite-form-group">
 									<label for="_shipping_company"><?php esc_html_e( 'Company', 'storesuite' ); ?></label>
-									<input type="text" class="msf-form-control" id="_shipping_company" name="_shipping_company" value="<?php echo esc_attr( $order->get_shipping_company() ); ?>">
+									<input type="text" class="storesuite-form-control" id="_shipping_company" name="_shipping_company" value="<?php echo esc_attr( $order->get_shipping_company() ); ?>">
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_shipping_address_1"><?php esc_html_e( 'Address Line 1', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_address_1" name="_shipping_address_1" value="<?php echo esc_attr( $order->get_shipping_address_1() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_shipping_address_1" name="_shipping_address_1" value="<?php echo esc_attr( $order->get_shipping_address_1() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_shipping_address_2"><?php esc_html_e( 'Address Line 2', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_address_2" name="_shipping_address_2" value="<?php echo esc_attr( $order->get_shipping_address_2() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_shipping_address_2" name="_shipping_address_2" value="<?php echo esc_attr( $order->get_shipping_address_2() ); ?>">
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_shipping_city"><?php esc_html_e( 'City', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_city" name="_shipping_city" value="<?php echo esc_attr( $order->get_shipping_city() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_shipping_city" name="_shipping_city" value="<?php echo esc_attr( $order->get_shipping_city() ); ?>">
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_shipping_postcode"><?php esc_html_e( 'Postcode / ZIP', 'storesuite' ); ?></label>
-											<input type="text" class="msf-form-control" id="_shipping_postcode" name="_shipping_postcode" value="<?php echo esc_attr( $order->get_shipping_postcode() ); ?>">
+											<input type="text" class="storesuite-form-control" id="_shipping_postcode" name="_shipping_postcode" value="<?php echo esc_attr( $order->get_shipping_postcode() ); ?>">
 										</div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_shipping_country"><?php esc_html_e( 'Country / Region', 'storesuite' ); ?></label>
-											<select class="msf-form-control js_field-country" id="_shipping_country" name="_shipping_country">
+											<select class="storesuite-form-control js_field-country" id="_shipping_country" name="_shipping_country">
 											<option value=""><?php esc_html_e( 'Select a country...', 'storesuite' ); ?></option>
 												<?php
 													$selected_shipping_country = $order ? $order->get_shipping_country() : '';
@@ -437,7 +437,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 										</div>
 									</div>
 									<div class="col-md-6">
-										<div class="msf-form-group">
+										<div class="storesuite-form-group">
 											<label for="_shipping_state"><?php esc_html_e( 'State / County', 'storesuite' ); ?></label>
 											<?php
 											$shipping_state  = $order ? $order->get_shipping_state() : '';
@@ -445,7 +445,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 											if ( ! empty( $shipping_states ) ) {
 												?>
-												<select class="msf-form-control js_field-state" id="_shipping_state" name="_shipping_state">
+												<select class="storesuite-form-control js_field-state" id="_shipping_state" name="_shipping_state">
 													<option value=""><?php esc_html_e( 'Select a state...', 'storesuite' ); ?></option>
 													<?php
 													foreach ( $shipping_states as $code => $name ) {
@@ -463,7 +463,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 												?>
 												<input 
 													type="text" 
-													class="msf-form-control js_field-state" 
+													class="storesuite-form-control js_field-state" 
 													id="_shipping_state" 
 													name="_shipping_state" 
 													value="<?php echo esc_attr( $shipping_state ); ?>"
@@ -475,16 +475,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 										</div>
 									</div>
 								</div>
-								<div class="msf-form-group">
+								<div class="storesuite-form-group">
 									<label for="_shipping_phone"><?php esc_html_e( 'Phone', 'storesuite' ); ?></label>
-									<input type="text" class="msf-form-control" id="_shipping_phone" name="_shipping_phone" value="<?php echo esc_attr( $order->get_shipping_phone() ); ?>">
+									<input type="text" class="storesuite-form-control" id="_shipping_phone" name="_shipping_phone" value="<?php echo esc_attr( $order->get_shipping_phone() ); ?>">
 								</div>
 								<?php
 								if ( apply_filters( 'woocommerce_enable_order_notes_field', 'yes' === get_option( 'woocommerce_enable_order_comments', 'yes' ) ) ) {
 									?>
-								<div class="msf-form-group">
+								<div class="storesuite-form-group">
 									<label for="customer_note"><?php esc_html_e( 'Customer Provided Note', 'storesuite' ); ?></label>
-									<textarea rows="3" cols="40" class="msf-form-control" name="customer_note" tabindex="6" id="customer_note" placeholder="<?php esc_attr_e( 'Customer notes about the order', 'storesuite' ); ?>"><?php echo wp_kses( $order->get_customer_note(), array( 'br' => array() ) ); ?></textarea>
+									<textarea rows="3" cols="40" class="storesuite-form-control" name="customer_note" tabindex="6" id="customer_note" placeholder="<?php esc_attr_e( 'Customer notes about the order', 'storesuite' ); ?>"><?php echo wp_kses( $order->get_customer_note(), array( 'br' => array() ) ); ?></textarea>
 								</div>
 								<?php } ?>
 							</div>
@@ -496,10 +496,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- Right Column -->
 			<div class="col-md-4">
 				<!-- General Section -->
-				<div class="msf-card">
-					<h3 class="msf-card-title"><?php esc_html_e( 'General', 'storesuite' ); ?></h3>
-					<div class="msf-card-content">
-						<div class="msf-form-group search-group">
+				<div class="storesuite-card">
+					<h3 class="storesuite-card-title"><?php esc_html_e( 'General', 'storesuite' ); ?></h3>
+					<div class="storesuite-card-content">
+						<div class="storesuite-form-group search-group">
 							<?php
 							$user_id     = $order->get_customer_id();
 							$user_string = '';
@@ -521,23 +521,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<option value="<?php echo $user_id ? esc_attr( $user_id ) : ''; ?>"><?php echo $user_id ? esc_html( htmlspecialchars( wp_kses_post( $user_string ) ) ) : esc_html__( 'Guest', 'storesuite' ); ?></option>
 							</select>
 						</div>
-						<div class="msf-form-group">
+						<div class="storesuite-form-group">
 							<label for="date_created"><?php esc_html_e( 'Date Created', 'storesuite' ); ?></label>
 							<div class="date-time-group">
 								<?php
 								$order_date_created_localised = ! is_null( $order->get_date_created() ) ? $order->get_date_created()->getOffsetTimestamp() : '';
 								?>
-								<input type="date" class="date-picker msf-form-control date-input" name="order_date" maxlength="10" value="<?php echo esc_attr( date_i18n( 'Y-m-d', $order_date_created_localised ) ); ?>" pattern="<?php echo esc_attr( apply_filters( 'woocommerce_date_input_html_pattern', '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])' ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment ?>" />@
+								<input type="date" class="date-picker storesuite-form-control date-input" name="order_date" maxlength="10" value="<?php echo esc_attr( date_i18n( 'Y-m-d', $order_date_created_localised ) ); ?>" pattern="<?php echo esc_attr( apply_filters( 'woocommerce_date_input_html_pattern', '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])' ) ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment ?>" />@
 								&lrm;
-								<input type="number" class="hour msf-form-control time-input" placeholder="<?php esc_attr_e( 'h', 'storesuite' ); ?>" name="order_date_hour" min="0" max="23" step="1" value="<?php echo esc_attr( date_i18n( 'H', $order_date_created_localised ) ); ?>" pattern="([01]?[0-9]{1}|2[0-3]{1})" />:
-								<input type="number" class="minute msf-form-control time-input" placeholder="<?php esc_attr_e( 'm', 'storesuite' ); ?>" name="order_date_minute" min="0" max="59" step="1" value="<?php echo esc_attr( date_i18n( 'i', $order_date_created_localised ) ); ?>" pattern="[0-5]{1}[0-9]{1}" />
+								<input type="number" class="hour storesuite-form-control time-input" placeholder="<?php esc_attr_e( 'h', 'storesuite' ); ?>" name="order_date_hour" min="0" max="23" step="1" value="<?php echo esc_attr( date_i18n( 'H', $order_date_created_localised ) ); ?>" pattern="([01]?[0-9]{1}|2[0-3]{1})" />:
+								<input type="number" class="minute storesuite-form-control time-input" placeholder="<?php esc_attr_e( 'm', 'storesuite' ); ?>" name="order_date_minute" min="0" max="59" step="1" value="<?php echo esc_attr( date_i18n( 'i', $order_date_created_localised ) ); ?>" pattern="[0-5]{1}[0-9]{1}" />
 								<input type="hidden" name="order_date_second" value="<?php echo esc_attr( date_i18n( 's', $order_date_created_localised ) ); ?>" />
 							</div>
 						</div>
 						
-						<div class="msf-form-group">
+						<div class="storesuite-form-group">
 							<label for="order_status"><?php esc_html_e( 'Status', 'storesuite' ); ?></label>
-							<select class="msf-form-control" id="order_status" name="order_status">
+							<select class="storesuite-form-control" id="order_status" name="order_status">
 								<?php
 									$statuses = wc_get_order_statuses();
 								foreach ( $statuses as $status => $status_name ) {
@@ -546,13 +546,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 								?>
 							</select>
 						</div>
-						<div class="msf-form-group">
+						<div class="storesuite-form-group">
 							<?php
 							$order_id      = $order->get_id();
 							$order_actions = PluginizeLab\StoreSuite\Order\OrderManager::get_available_order_actions_for_order( $order );
 							?>
 							<label for="order_action"><?php esc_html_e( 'Order Actions', 'storesuite' ); ?></label>
-							<select class="msf-form-control" id="order_action" name="order_action">
+							<select class="storesuite-form-control" id="order_action" name="order_action">
 								<option value=""><?php esc_html_e( 'Choose an action...', 'storesuite' ); ?></option>
 								<?php foreach ( $order_actions as $order_action => $order_action_title ) { ?>
 									<option value="<?php echo esc_attr( $order_action ); ?>"><?php echo esc_html( $order_action_title ); ?></option>
@@ -577,9 +577,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 
 				<!-- Order Notes Section -->
-				<div id="new_order_notes" class="msf-card">
-					<h3 class="msf-card-title"><?php esc_html_e( 'Order notes', 'storesuite' ); ?></h3>
-					<div class="msf-card-content">
+				<div id="new_order_notes" class="storesuite-card">
+					<h3 class="storesuite-card-title"><?php esc_html_e( 'Order notes', 'storesuite' ); ?></h3>
+					<div class="storesuite-card-content">
 						<!-- Existing Notes -->
 						<ul class="existing-notes order_notes">
 							<?php
@@ -634,13 +634,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<div class="add-note-header">
 								<h4 class="add-note-title"><?php esc_html_e( 'Add Note', 'storesuite' ); ?></h4>
 							</div>
-							<div class="msf-form-group">
-								<textarea id="add_order_note" class="msf-form-control note-textarea" placeholder="<?php echo esc_attr__( 'Enter your note here...', 'storesuite' ); ?>" rows="4"></textarea>
+							<div class="storesuite-form-group">
+								<textarea id="add_order_note" class="storesuite-form-control note-textarea" placeholder="<?php echo esc_attr__( 'Enter your note here...', 'storesuite' ); ?>" rows="4"></textarea>
 								<small><?php esc_html_e( 'Add a note for your reference, or add a customer note (the user will be notified).', 'storesuite' ); ?></small>
 							</div>
 							<div class="note-options">
-								<div class="msf-form-group">
-									<select class="msf-form-control" id="order_note_type">
+								<div class="storesuite-form-group">
+									<select class="storesuite-form-control" id="order_note_type">
 										<option><?php esc_html_e( 'Internal note', 'storesuite' ); ?></option>
 										<option value="customer"><?php esc_html_e( 'Note to customer', 'storesuite' ); ?></option>
 									</select>

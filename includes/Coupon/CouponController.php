@@ -93,7 +93,10 @@ class CouponController {
 			wp_send_json_error( array( 'error' => __( 'Coupon code already exists. Please choose a different code.', 'storesuite' ) ) );
 		}
 
-		$response = ( new CouponManager() )->create_coupon( $_POST );
+		// Build sanitized data array.
+		$data = $this->sanitize_coupon_data( $_POST );
+
+		$response = ( new CouponManager() )->create_coupon( $data );
 
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_error( array( 'error' => $response->get_error_message() ) );
@@ -148,7 +151,10 @@ class CouponController {
 			}
 		}
 
-		$response = ( new CouponManager() )->update_coupon( $coupon_id, $_POST );
+		// Build sanitized data array.
+		$data = $this->sanitize_coupon_data( $_POST );
+
+		$response = ( new CouponManager() )->update_coupon( $coupon_id, $data );
 
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_error( array( 'error' => $response->get_error_message() ) );
@@ -199,5 +205,87 @@ class CouponController {
 		}
 
 		wp_send_json_success( array( 'message' => __( 'Coupon successfully deleted', 'storesuite' ) ) );
+	}
+
+	/**
+	 * Sanitize coupon data from $_POST.
+	 *
+	 * @param array $post_data Raw POST data.
+	 * @return array Sanitized coupon data.
+	 */
+	private function sanitize_coupon_data( $post_data ) {
+		$data = array();
+
+		// Text fields.
+		if ( isset( $post_data['coupon_code'] ) ) {
+			$data['coupon_code'] = sanitize_text_field( wp_unslash( $post_data['coupon_code'] ) );
+		}
+		if ( isset( $post_data['discount_type'] ) ) {
+			$data['discount_type'] = sanitize_text_field( wp_unslash( $post_data['discount_type'] ) );
+		}
+		if ( isset( $post_data['description'] ) ) {
+			$data['description'] = sanitize_textarea_field( wp_unslash( $post_data['description'] ) );
+		}
+		if ( isset( $post_data['expiry_date'] ) ) {
+			$data['expiry_date'] = sanitize_text_field( wp_unslash( $post_data['expiry_date'] ) );
+		}
+		if ( isset( $post_data['coupon_status'] ) ) {
+			$data['coupon_status'] = sanitize_key( wp_unslash( $post_data['coupon_status'] ) );
+		}
+		if ( isset( $post_data['coupon_visibility'] ) ) {
+			$data['coupon_visibility'] = sanitize_key( wp_unslash( $post_data['coupon_visibility'] ) );
+		}
+		if ( isset( $post_data['customer_email'] ) ) {
+			$data['customer_email'] = sanitize_text_field( wp_unslash( $post_data['customer_email'] ) );
+		}
+
+		// Decimal/price fields.
+		if ( isset( $post_data['coupon_amount'] ) ) {
+			$data['coupon_amount'] = wc_format_decimal( wp_unslash( $post_data['coupon_amount'] ) );
+		}
+		if ( isset( $post_data['minimum_amount'] ) ) {
+			$data['minimum_amount'] = wc_format_decimal( wp_unslash( $post_data['minimum_amount'] ) );
+		}
+		if ( isset( $post_data['maximum_amount'] ) ) {
+			$data['maximum_amount'] = wc_format_decimal( wp_unslash( $post_data['maximum_amount'] ) );
+		}
+
+		// Integer fields.
+		if ( isset( $post_data['usage_limit'] ) ) {
+			$data['usage_limit'] = absint( $post_data['usage_limit'] );
+		}
+		if ( isset( $post_data['usage_limit_per_user'] ) ) {
+			$data['usage_limit_per_user'] = absint( $post_data['usage_limit_per_user'] );
+		}
+		if ( isset( $post_data['limit_usage_to_x_items'] ) ) {
+			$data['limit_usage_to_x_items'] = absint( $post_data['limit_usage_to_x_items'] );
+		}
+
+		// Checkbox/boolean fields (presence indicates true).
+		if ( isset( $post_data['individual_use'] ) ) {
+			$data['individual_use'] = true;
+		}
+		if ( isset( $post_data['free_shipping'] ) ) {
+			$data['free_shipping'] = true;
+		}
+		if ( isset( $post_data['exclude_sale_items'] ) ) {
+			$data['exclude_sale_items'] = true;
+		}
+
+		// Array of IDs.
+		if ( isset( $post_data['product_ids'] ) ) {
+			$data['product_ids'] = array_map( 'absint', (array) $post_data['product_ids'] );
+		}
+		if ( isset( $post_data['exclude_product_ids'] ) ) {
+			$data['exclude_product_ids'] = array_map( 'absint', (array) $post_data['exclude_product_ids'] );
+		}
+		if ( isset( $post_data['product_categories'] ) ) {
+			$data['product_categories'] = array_map( 'absint', (array) $post_data['product_categories'] );
+		}
+		if ( isset( $post_data['exclude_product_categories'] ) ) {
+			$data['exclude_product_categories'] = array_map( 'absint', (array) $post_data['exclude_product_categories'] );
+		}
+
+		return $data;
 	}
 }

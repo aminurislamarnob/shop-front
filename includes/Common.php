@@ -33,14 +33,14 @@ class Common {
 	}
 
 	/**
-	 * Add body class for MSF dashboard page.
+	 * Add body class for StoreSuite dashboard page.
 	 *
 	 * @param  array $classes Array of body classes.
 	 * @return array
 	 */
 	public function storesuite_add_body_class( $classes ) {
 		if ( storesuite_is_dashboard_page() ) {
-			$classes[] = 'msf-main-dashboard';
+			$classes[] = 'storesuite-main-dashboard';
 		}
 
 		return $classes;

@@ -19,8 +19,8 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 // phpcs:enable
 ?>
 
-<div class="msf-product-filters">
-	<form method="get" class="msf-filters-form">
+<div class="storesuite-product-filters">
+	<form method="get" class="storesuite-filters-form">
 		<?php if ( ! empty( $current_search ) ) : ?>
 			<input type="hidden" name="search_by" value="<?php echo esc_attr( $current_search ); ?>">
 		<?php endif; ?>
@@ -28,8 +28,8 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 		<div class="row justify-content-end">
 			<!-- Filter by Category -->
 			<div class="col-md-auto">
-				<div class="msf-form-group">
-			<select name="product_cat" class="msf-form-control">
+				<div class="storesuite-form-group">
+			<select name="product_cat" class="storesuite-form-control">
 			<option value=""><?php esc_html_e( 'Filter by category', 'storesuite' ); ?></option>
 			<?php
 			$categories = get_terms(
@@ -58,8 +58,8 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 
 			<!-- Filter by Product Type -->
 			<div class="col-md-auto">
-				<div class="msf-form-group">
-			<select name="product_type" class="msf-form-control">
+				<div class="storesuite-form-group">
+			<select name="product_type" class="storesuite-form-control">
 			<option value=""><?php esc_html_e( 'Filter by product type', 'storesuite' ); ?></option>
 			<?php
 			$product_types = wc_get_product_types();
@@ -78,8 +78,8 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 
 			<!-- Filter by Stock Status -->
 			<div class="col-md-auto">
-				<div class="msf-form-group">
-			<select name="stock_status" class="msf-form-control">
+				<div class="storesuite-form-group">
+			<select name="stock_status" class="storesuite-form-control">
 			<option value=""><?php esc_html_e( 'Filter by stock status', 'storesuite' ); ?></option>
 			<?php
 			$stock_statuses = wc_get_product_stock_status_options();
@@ -98,8 +98,8 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 
 			<!-- Filter by Brand -->
 			<div class="col-md-auto">
-				<div class="msf-form-group">
-			<select name="product_brand" class="msf-form-control">
+				<div class="storesuite-form-group">
+			<select name="product_brand" class="storesuite-form-control">
 			<option value=""><?php esc_html_e( 'Filter by brand', 'storesuite' ); ?></option>
 			<?php
 			$brands = get_terms(

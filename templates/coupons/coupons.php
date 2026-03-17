@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC coupon List Page
+ * StoreSuite coupon List Page
  *
  * @package StoreSuite
  */
@@ -18,12 +18,12 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
-			<div class="msf-table-header-part">
+			<div class="storesuite-table-header-part">
 				<div class="row">
 					<div class="col-md-6">
 						<form action="">
-							<div class="msf-table-search-input">
-								<div class="msf-table-search-icon">
+							<div class="storesuite-table-search-input">
+								<div class="storesuite-table-search-icon">
 									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
@@ -42,7 +42,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 					</div>
 				</div>
 			</div>
-			<div class="msf-table-responsive">
+			<div class="storesuite-table-responsive">
 				<?php
 				$coupon_statuses = apply_filters( 'storesuite_coupon_listing_post_statuses', array( 'publish', 'draft', 'pending', 'private' ) );
 
@@ -153,18 +153,18 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									?>
 								</td>
 								<td data-title="<?php esc_attr_e( 'Status', 'storesuite' ); ?>">
-									<span class="msfc-badge msfc-badge-<?php echo esc_attr( storesuite_get_post_status_class( get_post_status( $coupon_id ) ) ); ?>">
+									<span class="storesuite-badge storesuite-badge-<?php echo esc_attr( storesuite_get_post_status_class( get_post_status( $coupon_id ) ) ); ?>">
 										<?php echo esc_html( storesuite_get_post_status( get_post_status( $coupon_id ) ) ); ?>
 									</span>
 								</td>
 								<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
-									<div class="msfc-dropdown">
-										<span class="msfc-dropdown-icon">
+									<div class="storesuite-dropdown">
+										<span class="storesuite-dropdown-icon">
 											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
 												<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
 											</svg>
 										</span>
-										<ul class="msfc-dropdown-menu">
+										<ul class="storesuite-dropdown-menu">
 											<li>
 												<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-coupon' ) . '%s', $coupon_id ) ); ?>" class="dropdown-link"><?php esc_html_e( 'Edit', 'storesuite' ); ?></a>
 											</li>

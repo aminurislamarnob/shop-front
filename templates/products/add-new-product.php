@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC product add page
+ * StoreSuite product add page
  *
  * @package StoreSuite
  */

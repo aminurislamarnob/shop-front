@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<body <?php body_class(); ?>>
 	<?php
 	/**
-	 * Template Name: MSF Dashboard Template
+	 * Template Name: StoreSuite Dashboard Template
 	 */
 	while ( have_posts() ) :
 		the_post();
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		wp_footer();
 
 		/**
-		 * Fires after msf dashboard finished loading.
+		 * Fires after storesuite dashboard finished loading.
 		 *
 		 * @hooked storesuite_dashboard_after_footer
 		 */

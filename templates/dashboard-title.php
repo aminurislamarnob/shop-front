@@ -9,15 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 ?>
-<div class="msf-dashboard-title-wrapper">
-	<div class="msf-dashboard-title">
-		<h3 class="msf-page-main-title">
+<div class="storesuite-dashboard-title-wrapper">
+	<div class="storesuite-dashboard-title">
+		<h3 class="storesuite-page-main-title">
 			<?php echo esc_html( $page_title ); ?>
 		</h3>
 	</div>
 
 	<?php if ( ! empty( $parent_endpoint_title ) && ! empty( $parent_endpoint_url ) ) : ?>
-		<div class="msf-dashboard-braedcrumb">
+		<div class="storesuite-dashboard-braedcrumb">
 			<ul>
 				<li>
 					<a href="<?php echo esc_url( storesuite_get_navigation_url() ); ?>"><?php echo esc_html__( 'Dashboard', 'storesuite' ); ?></a>

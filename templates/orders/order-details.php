@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC order details page
+ * StoreSuite order details page
  *
  * @package StoreSuite
  */
@@ -49,12 +49,12 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
-			<div class="msf-table-header-part">
+			<div class="storesuite-table-header-part">
 				<div class="row">
 					<div class="col-md-6">
 						<form action="">
-							<div class="msf-table-search-input">
-								<div class="msf-table-search-icon">
+							<div class="storesuite-table-search-input">
+								<div class="storesuite-table-search-icon">
 									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
@@ -79,14 +79,14 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 					</div>
 				</div>
 			</div>
-			<div class="msfc-dashboard-order-details">
+			<div class="storesuite-dashboard-order-details">
 				<div class="row">
 					<div class="col-md-9">
-						<div class="msf-card">
+						<div class="storesuite-card">
 							<?php do_action( 'storesuite_before_order_items_table', $order ); ?>
 	
 							<div id="woocommerce-order-items">
-								<table class="msf-table order-items">
+								<table class="storesuite-table order-items">
 									<thead>
 										<tr>
 											<th class="item" colspan="2"><?php esc_html_e( 'Item', 'storesuite' ); ?></th>

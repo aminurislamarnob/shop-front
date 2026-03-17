@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC order creation page.
+ * StoreSuite order creation page.
  * ***/
 
 if ( ! defined( 'ABSPATH' ) ) {

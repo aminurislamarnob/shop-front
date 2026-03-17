@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC order List Page
+ * StoreSuite order List Page
  *
  * @package StoreSuite
  */
@@ -22,11 +22,11 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
-			<div class="msf-table-header-part">
+			<div class="storesuite-table-header-part">
 				<div class="row">
 					<div class="col-md-auto">
-						<div class="msf-form-group d-flex align-items-center msf-bulk-order-actions">
-							<select name="action" id="bulk-action-selector-top" class="msf-form-control" form="msf-order-bulk-actions">
+						<div class="storesuite-form-group d-flex align-items-center storesuite-bulk-order-actions">
+							<select name="action" id="bulk-action-selector-top" class="storesuite-form-control" form="storesuite-order-bulk-actions">
 								<option value="-1"><?php esc_html_e( 'Bulk actions', 'storesuite' ); ?></option>
 								<option value="mark_processing"><?php esc_html_e( 'Change status to processing', 'storesuite' ); ?></option>
 								<option value="mark_on-hold"><?php esc_html_e( 'Change status to on-hold', 'storesuite' ); ?></option>
@@ -34,20 +34,20 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								<option value="mark_cancelled"><?php esc_html_e( 'Change status to cancelled', 'storesuite' ); ?></option>
 								<option value="trash"><?php esc_html_e( 'Move to Trash', 'storesuite' ); ?></option>
 							</select>
-							<button type="submit" id="doaction" class="my-storesuite-button" form="msf-order-bulk-actions"><?php esc_html_e( 'Apply', 'storesuite' ); ?></button>
+							<button type="submit" id="doaction" class="my-storesuite-button" form="storesuite-order-bulk-actions"><?php esc_html_e( 'Apply', 'storesuite' ); ?></button>
 						</div>
 					</div>
 					<div class="col-md-auto">
-						<form action="" method="get" class="msf-search-form msf-order-search-form">
-							<div class="msf-table-search-input msf-form-group">
-								<div class="msf-table-search-icon">
+						<form action="" method="get" class="storesuite-search-form storesuite-order-search-form">
+							<div class="storesuite-table-search-input storesuite-form-group">
+								<div class="storesuite-table-search-icon">
 									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
 								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Order', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change. ?>" />
 							</div>
-							<div class="msf-form-group">
+							<div class="storesuite-form-group">
 								<?php
 								$options = array(
 									'order_id'       => __( 'Order ID', 'storesuite' ),
@@ -70,15 +70,15 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									set_user_setting( 'wc-search-filter-hpos-admin', $selected );
 								}
 								?>
-								<select name="search-filter" id="order-search-filter" class="msf-form-control">
+								<select name="search-filter" id="order-search-filter" class="storesuite-form-control">
 									<?php foreach ( $options as $value => $label ) { ?>
 										<option value="<?php echo esc_attr( wp_unslash( sanitize_text_field( $value ) ) ); ?>" <?php selected( $value, sanitize_text_field( wp_unslash( $selected ) ) ); ?>><?php echo esc_html( $label ); ?></option>
 									<?php } ?>
 								</select>
 							</div>
-							<div class="msf-form-group">
+							<div class="storesuite-form-group">
 								<button type="submit" class="my-storesuite-button">
-									<div class="msf-table-search-icon">
+									<div class="storesuite-table-search-icon">
 										<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 											<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 										</svg>
@@ -99,7 +99,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								</a>
 							</div>
 							<div class="col-md-auto">
-								<button type="button" class="my-storesuite-button msf-filter-toggle" id="msf-order-filter-toggle">
+								<button type="button" class="my-storesuite-button storesuite-filter-toggle" id="storesuite-order-filter-toggle">
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
 										<path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
 									</svg>
@@ -112,9 +112,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			</div>
 			<!-- Off-canvas Order Filter -->
 			<?php storesuite_get_template_part( 'orders/order-filters-offcanvas' ); ?>
-			<form id="msf-order-bulk-actions" method="post">
+			<form id="storesuite-order-bulk-actions" method="post">
 				<?php wp_nonce_field( 'storesuite_order_bulk_action', 'storesuite_bulk_action_nonce' ); ?>
-				<div class="msf-table-responsive">
+				<div class="storesuite-table-responsive">
 				<table class="my-storesuite-tbl my-storesuite-product-list-table">
 					<thead>
 						<tr>
@@ -186,7 +186,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										<?php $orders_obj->get_order_number_column_value( $order ); ?>
 									</td>
 									<td data-title="<?php echo esc_attr__( 'Status', 'storesuite' ); ?>">
-										<span class="msfc-badge msfc-badge-<?php echo esc_attr( storesuite_get_order_status_class( $order->get_status() ) ); ?>">
+										<span class="storesuite-badge storesuite-badge-<?php echo esc_attr( storesuite_get_order_status_class( $order->get_status() ) ); ?>">
 											<?php echo esc_html( wc_get_order_status_name( $order->get_status() ) ); ?>
 										</span>
 									</td>
@@ -212,13 +212,13 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										<?php echo wp_kses_post( $orders_obj->get_order_date_column_value( $order ) ); ?>
 									</td>
 									<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
-										<div class="msfc-dropdown">
-											<span class="msfc-dropdown-icon">
+										<div class="storesuite-dropdown">
+											<span class="storesuite-dropdown-icon">
 												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
 													<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
 												</svg>
 											</span>
-											<ul class="msfc-dropdown-menu">
+											<ul class="storesuite-dropdown-menu">
 												<li>
 													<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'order-details' ) . '%s', $order->get_id() ) ); ?>" class="dropdown-link"><?php esc_html_e( 'View', 'storesuite' ); ?></a>
 												</li>

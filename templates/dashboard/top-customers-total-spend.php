@@ -15,13 +15,13 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="col-md-6">
-	<div class="msf-card msf-card-with-header msf-dashboard-top-customers">
-		<h2 class="msf-card-title">
+	<div class="storesuite-card storesuite-card-with-header storesuite-dashboard-top-customers">
+		<h2 class="storesuite-card-title">
 			<?php echo esc_html__( 'Top customers - Total spend', 'storesuite' ); ?>
 		</h2>
 		<div>
-			<div class="msf-table-responsive">
-				<table class="my-storesuite-tbl msf-dashboard-leaderboard-table">
+			<div class="storesuite-table-responsive">
+				<table class="my-storesuite-tbl storesuite-dashboard-leaderboard-table">
 					<thead>
 						<tr>
 							<th><?php echo esc_html__( 'Customer name', 'storesuite' ); ?></th>

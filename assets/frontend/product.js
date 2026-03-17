@@ -49,10 +49,10 @@
 			var self = this;
 
 			// Clear all previous errors
-			$form.find( '.msf-field-error' ).remove();
+			$form.find( '.storesuite-field-error' ).remove();
 			$form
-				.find( '.msf-form-control' )
-				.removeClass( 'msf-field-invalid' );
+				.find( '.storesuite-form-control' )
+				.removeClass( 'storesuite-field-invalid' );
 
 			// Validate each field
 			$.each( fields, function ( index, field ) {
@@ -89,11 +89,11 @@
 		 */
 		markFieldAsInvalid: function ( $field, message ) {
 			// Add invalid class to field
-			$field.addClass( 'msf-field-invalid' );
+			$field.addClass( 'storesuite-field-invalid' );
 
 			// Create error message element
 			var $errorMsg = $(
-				'<span class="msf-field-error">' + message + '</span>'
+				'<span class="storesuite-field-error">' + message + '</span>'
 			);
 
 			// Insert error message after the field
@@ -101,8 +101,8 @@
 
 			// Remove error on field change
 			$field.one( 'input change', function () {
-				$( this ).removeClass( 'msf-field-invalid' );
-				$( this ).siblings( '.msf-field-error' ).remove();
+				$( this ).removeClass( 'storesuite-field-invalid' );
+				$( this ).siblings( '.storesuite-field-error' ).remove();
 			} );
 		},
 		/**
@@ -111,142 +111,155 @@
 		handleProductSubmit: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '#msfc-add-product', function ( e ) {
-				e.preventDefault();
+			$( document ).on(
+				'submit',
+				'#storesuite-add-product',
+				function ( e ) {
+					e.preventDefault();
 
-				var $form = $( this );
+					var $form = $( this );
 
-				// Define required fields for validation
-				var requiredFields = [
-					{
-						selector: '#product_title',
-						message: MSF_Form_Handler.i18n.product_title_required,
-					},
-					{
-						selector: '#post_type',
-						message: MSF_Form_Handler.i18n.product_type_required,
-					},
-					{
-						selector: '#post_status',
-						message: MSF_Form_Handler.i18n.product_status_required,
-					},
-				];
+					// Define required fields for validation
+					var requiredFields = [
+						{
+							selector: '#product_title',
+							message:
+								storeSuiteFormHandler.i18n
+									.product_title_required,
+						},
+						{
+							selector: '#post_type',
+							message:
+								storeSuiteFormHandler.i18n
+									.product_type_required,
+						},
+						{
+							selector: '#post_status',
+							message:
+								storeSuiteFormHandler.i18n
+									.product_status_required,
+						},
+					];
 
-				// Validate required fields
-				if ( ! self.validateRequiredFields( $form, requiredFields ) ) {
-					return;
-				}
-
-				// Force TinyMCE editor content to update the textarea
-				if ( typeof tinyMCE !== 'undefined' ) {
-					var editor = tinyMCE.get( 'product_description' );
-					if ( editor ) {
-						editor.save();
+					// Validate required fields
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
 					}
-				}
 
-				var formData = new FormData( this );
+					// Force TinyMCE editor content to update the textarea
+					if ( typeof tinyMCE !== 'undefined' ) {
+						var editor = tinyMCE.get( 'product_description' );
+						if ( editor ) {
+							editor.save();
+						}
+					}
 
-				var $submitBtn = $form.find( 'button[type="submit"]' );
-				$submitBtn.prop( 'disabled', true );
+					var formData = new FormData( this );
 
-				// Show loader
-				window.StoreSuite.msfcLoader.block(
-					$( '.my-storesuite-wrapper' )
-				);
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
 
-				$.ajax( {
-					url: MSF_Form_Handler.ajax_url,
-					type: 'POST',
-					data: formData,
-					processData: false,
-					contentType: false,
-					success: function ( response ) {
-						Swal.close();
-						if ( response.success ) {
-							Swal.fire( {
-								icon: 'success',
-								title: MSF_Form_Handler.i18n.success_title,
-								text: response.data.message,
-								confirmButtonText:
-									MSF_Form_Handler.i18n.ok_button,
-							} );
+					// Show loader
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
 
-							// Reset form fields only if adding (not editing)
-							if ( response.data.context === 'add' ) {
-								$form[ 0 ].reset();
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+							if ( response.success ) {
+								Swal.fire( {
+									icon: 'success',
+									title: storeSuiteFormHandler.i18n
+										.success_title,
+									text: response.data.message,
+									confirmButtonText:
+										storeSuiteFormHandler.i18n.ok_button,
+								} );
 
-								// Clear TinyMCE editor
-								if ( typeof tinyMCE !== 'undefined' ) {
-									var editor = tinyMCE.get(
-										'product_description'
+								// Reset form fields only if adding (not editing)
+								if ( response.data.context === 'add' ) {
+									$form[ 0 ].reset();
+
+									// Clear TinyMCE editor
+									if ( typeof tinyMCE !== 'undefined' ) {
+										var editor = tinyMCE.get(
+											'product_description'
+										);
+										if ( editor ) {
+											editor.setContent( '' );
+										}
+									}
+
+									// Clear select2 fields if present
+									$form
+										.find( '.storesuite-select2' )
+										.val( null )
+										.trigger( 'change' );
+								}
+
+								// Update permalink and slug field if editing product
+								if (
+									response.data.context === 'edit' &&
+									response.data.permalink &&
+									response.data.slug
+								) {
+									var $permalinkLink = $(
+										'label[for="product_slug"] small a'
 									);
-									if ( editor ) {
-										editor.setContent( '' );
+									if ( $permalinkLink.length ) {
+										$permalinkLink.attr(
+											'href',
+											response.data.permalink
+										);
+										$permalinkLink.text(
+											response.data.permalink
+										);
+									}
+
+									// Update slug field value
+									var $slugField = $( '#product_slug' );
+									if ( $slugField.length ) {
+										$slugField.val( response.data.slug );
 									}
 								}
-
-								// Clear select2 fields if present
-								$form
-									.find( '.msf-select2' )
-									.val( null )
-									.trigger( 'change' );
-							}
-
-							// Update permalink and slug field if editing product
-							if (
-								response.data.context === 'edit' &&
-								response.data.permalink &&
-								response.data.slug
-							) {
-								var $permalinkLink = $(
-									'label[for="product_slug"] small a'
+							} else {
+								self.showError(
+									response.data.error || response.data
 								);
-								if ( $permalinkLink.length ) {
-									$permalinkLink.attr(
-										'href',
-										response.data.permalink
-									);
-									$permalinkLink.text(
-										response.data.permalink
-									);
-								}
-
-								// Update slug field value
-								var $slugField = $( '#product_slug' );
-								if ( $slugField.length ) {
-									$slugField.val( response.data.slug );
-								}
 							}
-						} else {
-							self.showError(
-								response.data.error || response.data
+						},
+						error: function ( xhr, status, error ) {
+							Swal.close();
+							self.showError();
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
 							);
-						}
-					},
-					error: function ( xhr, status, error ) {
-						Swal.close();
-						self.showError();
-					},
-					complete: function () {
-						$submitBtn.prop( 'disabled', false );
-						window.StoreSuite.msfcLoader.unblock(
-							$( '.my-storesuite-wrapper' )
-						);
-					},
-				} );
-			} );
+						},
+					} );
+				}
+			);
 		},
 		showError: function ( message ) {
 			Swal.fire( {
 				icon: 'error',
-				title: MSF_Form_Handler.i18n.error_title,
-				text: message || MSF_Form_Handler.i18n.unexpected_error,
-				confirmButtonText: MSF_Form_Handler.i18n.ok_button,
+				title: storeSuiteFormHandler.i18n.error_title,
+				text: message || storeSuiteFormHandler.i18n.unexpected_error,
+				confirmButtonText: storeSuiteFormHandler.i18n.ok_button,
 			} );
 		},
 		initSelect2: function () {
-			$( '.msf-select2' )
+			$( '.storesuite-select2' )
 				.filter( ':not(.enhanced)' )
 				.each( function () {
 					var select2_args = {
@@ -427,87 +440,110 @@
 		handleProductDelete: function () {
 			var self = this;
 
-			$( document ).on( 'click', '.msfc-delete-product', function ( e ) {
-				e.preventDefault();
+			$( document ).on(
+				'click',
+				'.storesuite-delete-product',
+				function ( e ) {
+					e.preventDefault();
 
-				var productId = $( this ).data( 'product-id' );
+					var productId = $( this ).data( 'product-id' );
 
-				if ( ! productId || typeof Swal === 'undefined' || typeof MSF_Form_Handler === 'undefined' ) {
-					return;
-				}
-
-				var i18n = MSF_Form_Handler.i18n || {};
-				var confirmTitle = i18n.product_delete_confirm_title || i18n.are_you_sure || 'Are you sure?';
-				var confirmText = i18n.product_delete_warning || 'Do you want to delete this product? It will be moved to trash.';
-				var confirmButton = i18n.yes_delete || 'Yes, delete it!';
-				var cancelButton = i18n.cancel_button || 'Cancel';
-				var deletingText = i18n.deleting || 'Deleting...';
-				var successTitle = i18n.success_title || 'Success!';
-				var errorTitle = i18n.error_title || 'Error!';
-
-				Swal.fire( {
-					title: confirmTitle,
-					text: confirmText,
-					icon: 'warning',
-					showCancelButton: true,
-					confirmButtonText: confirmButton,
-					cancelButtonText: cancelButton,
-				} ).then( function ( result ) {
-					if ( ! result.isConfirmed ) {
+					if (
+						! productId ||
+						typeof Swal === 'undefined' ||
+						typeof storeSuiteFormHandler === 'undefined'
+					) {
 						return;
 					}
 
+					var i18n = storeSuiteFormHandler.i18n || {};
+					var confirmTitle =
+						i18n.product_delete_confirm_title || i18n.are_you_sure;
+					var confirmText = i18n.product_delete_warning;
+					var confirmButton = i18n.yes_delete;
+					var cancelButton = i18n.cancel_button;
+					var deletingText = i18n.deleting;
+					var successTitle = i18n.success_title;
+					var errorTitle = i18n.error_title;
+
 					Swal.fire( {
-						title: deletingText,
-						text: MSF_Form_Handler.i18n.please_wait || 'Please wait...',
-						allowOutsideClick: false,
-						didOpen: function () {
-							Swal.showLoading();
-						},
-					} );
+						title: confirmTitle,
+						text: confirmText,
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonText: confirmButton,
+						cancelButtonText: cancelButton,
+					} ).then( function ( result ) {
+						if ( ! result.isConfirmed ) {
+							return;
+						}
 
-					var formData = new FormData();
-					formData.append( 'id', productId );
-					formData.append( 'action', 'storesuite_delete_product' );
-					formData.append( 'storesuite_delete_product_nonce', MSF_Form_Handler.storesuite_woo_delete_nonce_ );
+						Swal.fire( {
+							title: deletingText,
+							text: storeSuiteFormHandler.i18n.please_wait,
+							allowOutsideClick: false,
+							didOpen: function () {
+								Swal.showLoading();
+							},
+						} );
 
-					$.ajax( {
-						url: MSF_Form_Handler.ajax_url,
-						type: 'POST',
-						data: formData,
-						processData: false,
-						contentType: false,
-						success: function ( response ) {
-							Swal.close();
+						var formData = new FormData();
+						formData.append( 'id', productId );
+						formData.append(
+							'action',
+							'storesuite_delete_product'
+						);
+						formData.append(
+							'storesuite_delete_product_nonce',
+							storeSuiteFormHandler.storesuite_woo_delete_nonce_
+						);
 
-							if ( response.success ) {
-								Swal.fire( {
-									icon: 'success',
-									title: successTitle,
-									text: response.data.message || '',
-								} );
-								$( '#product-row-' + productId ).fadeOut( 300, function () {
-									$( this ).remove();
-								} );
-							} else {
+						$.ajax( {
+							url: storeSuiteFormHandler.ajax_url,
+							type: 'POST',
+							data: formData,
+							processData: false,
+							contentType: false,
+							success: function ( response ) {
+								Swal.close();
+
+								if ( response.success ) {
+									Swal.fire( {
+										icon: 'success',
+										title: successTitle,
+										text: response.data.message || '',
+									} );
+									$( '#product-row-' + productId ).fadeOut(
+										300,
+										function () {
+											$( this ).remove();
+										}
+									);
+								} else {
+									Swal.fire( {
+										icon: 'error',
+										title: errorTitle,
+										text:
+											response.data && response.data.error
+												? response.data.error
+												: storeSuiteFormHandler.i18n
+														.unexpected_error,
+									} );
+								}
+							},
+							error: function () {
+								Swal.close();
 								Swal.fire( {
 									icon: 'error',
 									title: errorTitle,
-									text: response.data && response.data.error ? response.data.error : ( MSF_Form_Handler.i18n.unexpected_error || 'An unexpected error occurred.' ),
+									text: storeSuiteFormHandler.i18n
+										.unexpected_error,
 								} );
-							}
-						},
-						error: function () {
-							Swal.close();
-							Swal.fire( {
-								icon: 'error',
-								title: errorTitle,
-								text: MSF_Form_Handler.i18n.unexpected_error || 'An unexpected error occurred. Please try again.',
-							} );
-						},
+							},
+						} );
 					} );
-				} );
-			} );
+				}
+			);
 		},
 	};
 	StoreFrontProduct.init();

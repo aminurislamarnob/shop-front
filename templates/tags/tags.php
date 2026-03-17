@@ -1,6 +1,6 @@
 <?php
 /**
- * MSFC tag List Page
+ * StoreSuite tag List Page
  *
  * @package StoreSuite
  */
@@ -21,12 +21,12 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
-			<div class="msf-table-header-part">
+			<div class="storesuite-table-header-part">
 				<div class="row">
 					<div class="col-md-6">
 					<form action="" method="get">
-						<div class="msf-table-search-input">
-							<div class="msf-table-search-icon">
+						<div class="storesuite-table-search-input">
+							<div class="storesuite-table-search-icon">
 								<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 									<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 								</svg>
@@ -52,7 +52,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			$product_tags  = new Tags();
 			$tags_data     = $product_tags->get_paginated_tags( $tags_per_page, $current_page, $search_term );
 			?>
-			<div class="msf-table-responsive">
+			<div class="storesuite-table-responsive">
 				<table class="my-storesuite-tbl my-storesuite-product-list-table">
 					<thead>
 						<tr>
@@ -84,13 +84,13 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<td><?php echo esc_html( $product_tag->slug ); ?></td>
 							<td><?php echo esc_html( $product_tag->count ); ?></td>
 							<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
-								<div class="msfc-dropdown">
-									<span class="msfc-dropdown-icon">
+								<div class="storesuite-dropdown">
+									<span class="storesuite-dropdown-icon">
 										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
 											<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
 										</svg>
 									</span>
-									<ul class="msfc-dropdown-menu">
+									<ul class="storesuite-dropdown-menu">
 										<li>
 											<a href="<?php echo esc_url( get_category_link( $product_tag->term_id ) ); ?>" class="dropdown-link">
 												<?php echo esc_html__( 'View', 'storesuite' ); ?>
@@ -100,7 +100,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 											<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-tag' ) . '%s', $product_tag->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'storesuite' ); ?></a>
 										</li>
 										<li>
-											<button type="button" class="inline-button dropdown-link msfc-delete-tag" data-tag-id="<?php echo esc_attr( $product_tag->term_id ); ?>">
+											<button type="button" class="inline-button dropdown-link storesuite-delete-tag" data-tag-id="<?php echo esc_attr( $product_tag->term_id ); ?>">
 												<?php echo esc_html__( 'Delete', 'storesuite' ); ?>
 											</button>
 										</li>
