@@ -1,0 +1,63 @@
+name: Build and Release Plugin
+
+on:
+    push:
+        tags:
+            - '*'
+
+jobs:
+    buildAndRelease:
+        name: Build Plugin
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup PHP 8.1
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.1'
+                  coverage: none
+                  tools: composer:v2
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
+
+            - name: Install dependencies and build
+              run: |
+                  composer install --no-dev --optimize-autoloader
+                  npm install
+                  npm run build
+
+            - name: Create plugin zip
+              run: |
+                  rsync -rc --exclude-from=.distignore ./ storesuite/ --delete --delete-excluded
+                  zip -r storesuite.zip storesuite/
+                  rm -rf storesuite
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: storesuite
+                  path: storesuite.zip
+                  retention-days: 30
+
+            - name: Create GitHub release
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: storesuite.zip
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            # TODO: Uncomment when ready to deploy to WordPress.org
+            # - name: WordPress Plugin Deploy
+            #   id: deploy
+            #   uses: 10up/action-wordpress-plugin-deploy@stable
+            #   with:
+            #       generate-zip: true
+            #   env:
+            #       SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+            #       SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+            #       SLUG: storesuite
