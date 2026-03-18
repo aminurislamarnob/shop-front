@@ -60,6 +60,35 @@ StoreSuite adds a frontend store management dashboard for WooCommerce. Give stor
 
 After installing or reactivating StoreSuite, go to **Settings → Permalinks** and click **Save Changes** so dashboard URLs work correctly.
 
+== Screenshots ==
+
+1. StoreSuite General Settings
+2. StoreSuite Color Settings
+3. StoreSuite Paginations Settings
+4. Frontend Dashboard
+5. Products List
+6. Products Filter
+7. Add New Product
+8. Edit Product
+9. Orders List
+10. Orders Filter
+11. Orders Details View
+12. Edit Order
+13. Add New Order
+14. Product Categories List
+15. Add New Product Category
+16. Edit Product Category
+17. Product Brands List
+18. Add New Product Brand
+19. Edit Product Brand
+20. Product Tags List
+21. Add New Product Tag
+22. Edit Product Tag
+23. Coupons List
+24. Add New Coupon
+25. Edit Coupon
+26. Account Settings
+
 == Frequently Asked Questions ==
 
 = Do I need WooCommerce? =
