@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use WC_Meta_Box_Product_Data;
+
 /**
  * Plugin product controller class
  */
@@ -330,6 +332,59 @@ class ProductController {
 			$data['crosssell_ids'] = array_map( 'absint', (array) $post_data['crosssell_ids'] );
 		}
 
+		$attributes = $this->prepare_product_attributes_from_post( $post_data );
+		if ( ! empty( $attributes ) ) {
+			$data['attributes'] = $attributes;
+		}
+
 		return $data;
+	}
+
+	/**
+	 * Build WooCommerce product attributes from add/edit form payload.
+	 *
+	 * @param array $post_data Raw POST data.
+	 *
+	 * @return array
+	 */
+	private function prepare_product_attributes_from_post( $post_data ) {
+		if ( empty( $post_data['attribute_names'] ) || ! is_array( $post_data['attribute_names'] ) ) {
+			return array();
+		}
+
+		$attribute_names  = stripslashes_deep( (array) $post_data['attribute_names'] );
+		$attribute_values = isset( $post_data['attribute_values'] ) ? stripslashes_deep( (array) $post_data['attribute_values'] ) : array();
+
+		// Convert custom attributes to "A | B | C" format expected by WooCommerce.
+		foreach ( $attribute_names as $index => $name ) {
+			if ( empty( $name ) || ! isset( $attribute_values[ $index ] ) ) {
+				continue;
+			}
+
+			$is_taxonomy = 0 === strpos( (string) $name, 'pa_' );
+			if ( $is_taxonomy || ! is_array( $attribute_values[ $index ] ) ) {
+				continue;
+			}
+
+			$clean_values = array();
+			foreach ( $attribute_values[ $index ] as $value ) {
+				$value = wc_clean( wp_unslash( $value ) );
+				if ( '' !== $value ) {
+					$clean_values[] = $value;
+				}
+			}
+
+			$attribute_values[ $index ] = implode( ' | ', $clean_values );
+		}
+
+		$attribute_data = array(
+			'attribute_names'      => $attribute_names,
+			'attribute_values'     => $attribute_values,
+			'attribute_visibility' => isset( $post_data['attribute_visibility'] ) ? stripslashes_deep( (array) $post_data['attribute_visibility'] ) : array(),
+			'attribute_variation'  => isset( $post_data['attribute_variation'] ) ? stripslashes_deep( (array) $post_data['attribute_variation'] ) : array(),
+			'attribute_position'   => isset( $post_data['attribute_position'] ) ? stripslashes_deep( (array) $post_data['attribute_position'] ) : array(),
+		);
+
+		return WC_Meta_Box_Product_Data::prepare_attributes( $attribute_data );
 	}
 }

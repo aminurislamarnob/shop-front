@@ -6,7 +6,10 @@ use WC_Product_Attribute;
 use WC_Meta_Box_Product_Data;
 use Automattic\WooCommerce\Enums\ProductType;
 use Exception;
+use WC_Data_Store;
 use WC_Product_Factory;
+use WC_Product_Variable;
+use WC_Product_Variation;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,6 +25,12 @@ class VariationAjax {
 	public function __construct() {
 		add_action( 'wp_ajax_storesuite_add_attribute', array( $this, 'storesuite_ajax_add_attribute' ), 10 );
 		add_action( 'wp_ajax_storesuite_save_attributes', array( $this, 'storesuite_ajax_save_attributes' ), 10 );
+		add_action( 'wp_ajax_storesuite_load_variations', array( $this, 'storesuite_ajax_load_variations' ), 10 );
+		add_action( 'wp_ajax_storesuite_add_variation', array( $this, 'storesuite_ajax_add_variation' ), 10 );
+		add_action( 'wp_ajax_storesuite_save_variations', array( $this, 'storesuite_ajax_save_variations' ), 10 );
+		add_action( 'wp_ajax_storesuite_remove_variation', array( $this, 'storesuite_ajax_remove_variation' ), 10 );
+		add_action( 'wp_ajax_storesuite_generate_variations', array( $this, 'storesuite_ajax_generate_variations' ), 10 );
+		add_action( 'wp_ajax_storesuite_bulk_edit_variations', array( $this, 'storesuite_ajax_bulk_edit_variations' ), 10 );
 	}
 
     /**
@@ -34,24 +43,34 @@ class VariationAjax {
             wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'storesuite' ) ) );
         }
 
-        $taxonomy     = isset( $_POST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) ) : '';
+		$taxonomy     = isset( $_POST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) ) : '';
         $index        = isset( $_POST['i'] ) ? absint( $_POST['i'] ) : 0;
         $product_id   = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
         $product_type = isset( $_POST['product_type'] ) ? wc_clean( wp_unslash( $_POST['product_type'] ) ) : 'simple';
+
+		// Keep taxonomy attributes in WooCommerce format (pa_*) and resolve ID reliably.
+		if ( '' !== $taxonomy && 0 !== strpos( $taxonomy, 'pa_' ) && taxonomy_exists( wc_attribute_taxonomy_name( $taxonomy ) ) ) {
+			$taxonomy = wc_attribute_taxonomy_name( $taxonomy );
+		}
+		$taxonomy_id = wc_attribute_taxonomy_id_by_name( $taxonomy );
+		if ( 0 === $taxonomy_id && 0 === strpos( $taxonomy, 'pa_' ) ) {
+			$taxonomy_id = wc_attribute_taxonomy_id_by_name( substr( $taxonomy, 3 ) );
+		}
     
         // Build an attribute object or array compatible with your template.
         $attribute = new WC_Product_Attribute();
-        $attribute->set_id( wc_attribute_taxonomy_id_by_name( $taxonomy ) );
-        $attribute->set_name( $taxonomy );
-        $attribute->set_visible( true );
-        $attribute->set_variation( 'variable' === $product_type );
+		$is_variable_product = ( ProductType::VARIABLE === $product_type || 'variable' === $product_type );
+		$attribute->set_id( $taxonomy_id );
+		$attribute->set_name( $taxonomy );
+		$attribute->set_visible( true );
+		$attribute->set_variation( $is_variable_product ? 1 : 0 );
 
         /* phpcs:disable WooCommerce.Commenting.CommentHooks.MissingHookComment */
 		$attribute->set_visible( apply_filters( 'woocommerce_attribute_default_visibility', 1 ) );
 		$attribute->set_variation(
 			apply_filters(
 				'woocommerce_attribute_default_is_variation',
-				ProductType::VARIABLE === $product_type ? 1 : 0,
+				$is_variable_product ? 1 : 0,
 				$product_type
 			)
 		);
@@ -184,5 +203,348 @@ class VariationAjax {
 				'message' => __( 'Attributes successfully saved.', 'storesuite' ),
 			)
 		);
+	}
+
+	/**
+	 * Load variations list by page.
+	 *
+	 * @return void
+	 */
+	public function storesuite_ajax_load_variations() {
+		if ( ! check_ajax_referer( 'storesuite-variation-nonce', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		$product = $this->get_variable_product_from_request();
+		if ( ! $product ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		$page     = isset( $_POST['page'] ) ? max( 1, absint( wp_unslash( $_POST['page'] ) ) ) : 1;
+		$per_page = isset( $_POST['per_page'] ) ? max( 1, absint( wp_unslash( $_POST['per_page'] ) ) ) : 15;
+		$children = $product->get_children();
+		$total    = count( $children );
+		$offset   = ( $page - 1 ) * $per_page;
+		$page_ids = array_slice( $children, $offset, $per_page );
+
+		ob_start();
+		$loop = $offset;
+		foreach ( $page_ids as $variation_id ) {
+			$variation = wc_get_product( $variation_id );
+			if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
+				continue;
+			}
+			storesuite_get_template_part(
+				'products/product-variation-row',
+				'',
+				array(
+					'variation'    => $variation,
+					'variation_id' => $variation_id,
+					'loop'         => $loop,
+					'parent'       => $product,
+				)
+			);
+			++$loop;
+		}
+
+		wp_send_json_success(
+			array(
+				'html'        => ob_get_clean(),
+				'total'       => $total,
+				'total_pages' => (int) ceil( $total / $per_page ),
+				'page'        => $page,
+			)
+		);
+	}
+
+	/**
+	 * Add empty variation row.
+	 *
+	 * @return void
+	 */
+	public function storesuite_ajax_add_variation() {
+		if ( ! check_ajax_referer( 'storesuite-variation-nonce', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to add variations.', 'storesuite' ) ) );
+		}
+
+		$product = $this->get_variable_product_from_request();
+		if ( ! $product ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		$variation = new WC_Product_Variation();
+		$variation->set_parent_id( $product->get_id() );
+		$variation->set_status( 'publish' );
+		$variation_id = $variation->save();
+		$loop         = isset( $_POST['loop'] ) ? absint( wp_unslash( $_POST['loop'] ) ) : 0;
+
+		ob_start();
+		storesuite_get_template_part(
+			'products/product-variation-row',
+			'',
+			array(
+				'variation'    => wc_get_product( $variation_id ),
+				'variation_id' => $variation_id,
+				'loop'         => $loop,
+				'parent'       => $product,
+			)
+		);
+
+		wp_send_json_success(
+			array(
+				'html'         => ob_get_clean(),
+				'variation_id' => $variation_id,
+			)
+		);
+	}
+
+	/**
+	 * Save variation rows.
+	 *
+	 * @return void
+	 */
+	public function storesuite_ajax_save_variations() {
+		if ( ! check_ajax_referer( 'storesuite-variation-nonce', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to save variations.', 'storesuite' ) ) );
+		}
+
+		$product = $this->get_variable_product_from_request();
+		if ( ! $product ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		$variation_ids = isset( $_POST['variable_post_id'] ) ? array_map( 'absint', (array) wp_unslash( $_POST['variable_post_id'] ) ) : array();
+		if ( empty( $variation_ids ) ) {
+			wp_send_json_error( array( 'message' => __( 'No variations to save.', 'storesuite' ) ) );
+		}
+
+		$parent_attributes = $product->get_attributes( 'edit' );
+
+		foreach ( $variation_ids as $index => $variation_id ) {
+			$variation = wc_get_product( $variation_id );
+			if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
+				continue;
+			}
+
+			wp_update_post(
+				array(
+					'ID'          => $variation_id,
+					'post_status' => isset( $_POST['variable_enabled'][ $index ] ) ? 'publish' : 'private',
+				)
+			);
+
+			$variation->set_sku( isset( $_POST['variable_sku'][ $index ] ) ? wc_clean( wp_unslash( $_POST['variable_sku'][ $index ] ) ) : '' );
+			$variation->set_regular_price( isset( $_POST['variable_regular_price'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_regular_price'][ $index ] ) ) : '' );
+			$variation->set_sale_price( isset( $_POST['variable_sale_price'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_sale_price'][ $index ] ) ) : '' );
+
+			$manage_stock = isset( $_POST['variable_manage_stock'][ $index ] );
+			$variation->set_manage_stock( $manage_stock );
+			if ( $manage_stock && isset( $_POST['variable_stock'][ $index ] ) ) {
+				$variation->set_stock_quantity( wc_stock_amount( wp_unslash( $_POST['variable_stock'][ $index ] ) ) );
+			}
+			$variation->set_stock_status( isset( $_POST['variable_stock_status'][ $index ] ) ? wc_clean( wp_unslash( $_POST['variable_stock_status'][ $index ] ) ) : 'instock' );
+			$variation->set_menu_order( isset( $_POST['variation_menu_order'][ $index ] ) ? absint( wp_unslash( $_POST['variation_menu_order'][ $index ] ) ) : $index );
+
+			$variation_attrs = array();
+			foreach ( $parent_attributes as $attribute ) {
+				if ( ! $attribute->get_variation() ) {
+					continue;
+				}
+				$attribute_name = sanitize_title( $attribute->get_name() );
+				$field_key      = 'attribute_' . $attribute_name;
+				if ( isset( $_POST[ $field_key ][ $index ] ) ) {
+					$variation_attrs[ $attribute_name ] = wc_clean( wp_unslash( $_POST[ $field_key ][ $index ] ) );
+				}
+			}
+			$variation->set_attributes( $variation_attrs );
+			$variation->save();
+		}
+
+		WC_Product_Variable::sync( $product->get_id() );
+
+		wp_send_json_success(
+			array(
+				'message' => __( 'Variations saved.', 'storesuite' ),
+			)
+		);
+	}
+
+	/**
+	 * Remove single variation.
+	 *
+	 * @return void
+	 */
+	public function storesuite_ajax_remove_variation() {
+		if ( ! check_ajax_referer( 'storesuite-variation-nonce', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to remove variations.', 'storesuite' ) ) );
+		}
+
+		$variation_id = isset( $_POST['variation_id'] ) ? absint( wp_unslash( $_POST['variation_id'] ) ) : 0;
+		$variation    = wc_get_product( $variation_id );
+		if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variation.', 'storesuite' ) ) );
+		}
+
+		$parent_id = $variation->get_parent_id();
+		$variation->delete( true );
+		WC_Product_Variable::sync( $parent_id );
+
+		wp_send_json_success(
+			array(
+				'message' => __( 'Variation removed.', 'storesuite' ),
+			)
+		);
+	}
+
+	/**
+	 * Generate variation combinations.
+	 *
+	 * @return void
+	 */
+	public function storesuite_ajax_generate_variations() {
+		if ( ! check_ajax_referer( 'storesuite-variation-nonce', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to generate variations.', 'storesuite' ) ) );
+		}
+
+		$product = $this->get_variable_product_from_request();
+		if ( ! $product ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		$variation_attributes = array();
+		foreach ( $product->get_attributes( 'edit' ) as $attribute ) {
+			if ( ! $attribute->get_variation() ) {
+				continue;
+			}
+
+			$attribute_name = sanitize_title( $attribute->get_name() );
+			$options        = $attribute->is_taxonomy() ? wp_list_pluck( $attribute->get_terms(), 'slug' ) : $attribute->get_options();
+			$options        = array_values( array_filter( $options ) );
+			if ( ! empty( $options ) ) {
+				$variation_attributes[ $attribute_name ] = $options;
+			}
+		}
+
+		if ( empty( $variation_attributes ) ) {
+			wp_send_json_error( array( 'message' => __( 'No variation attributes found.', 'storesuite' ) ) );
+		}
+
+		$combinations = array( array() );
+		foreach ( $variation_attributes as $attribute_name => $options ) {
+			$new_combinations = array();
+			foreach ( $combinations as $combination ) {
+				foreach ( $options as $option ) {
+					$new_combinations[] = array_merge( $combination, array( $attribute_name => $option ) );
+				}
+			}
+			$combinations = $new_combinations;
+		}
+
+		$max_per_run  = 50;
+		$created      = 0;
+		$data_store   = WC_Data_Store::load( 'product' );
+
+		foreach ( $combinations as $combination ) {
+			if ( $created >= $max_per_run ) {
+				break;
+			}
+
+			$match_attributes = array();
+			foreach ( $combination as $key => $value ) {
+				$match_attributes[ 'attribute_' . $key ] = $value;
+			}
+
+			$existing = $data_store->find_matching_product_variation( $product, $match_attributes );
+			if ( $existing ) {
+				continue;
+			}
+
+			$variation = new WC_Product_Variation();
+			$variation->set_parent_id( $product->get_id() );
+			$variation->set_attributes( $combination );
+			$variation->set_status( 'publish' );
+			$variation->save();
+			++$created;
+		}
+
+		WC_Product_Variable::sync( $product->get_id() );
+
+		wp_send_json_success(
+			array(
+				/* translators: %d: created variations count */
+				'message' => sprintf( esc_html__( '%d variations created.', 'storesuite' ), absint( $created ) ),
+				'created' => $created,
+			)
+		);
+	}
+
+	/**
+	 * Bulk variation actions.
+	 *
+	 * @return void
+	 */
+	public function storesuite_ajax_bulk_edit_variations() {
+		if ( ! check_ajax_referer( 'storesuite-variation-nonce', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to update variations.', 'storesuite' ) ) );
+		}
+
+		$product = $this->get_variable_product_from_request();
+		if ( ! $product ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		$bulk_action = isset( $_POST['bulk_action'] ) ? wc_clean( wp_unslash( $_POST['bulk_action'] ) ) : '';
+		if ( 'delete_all' !== $bulk_action ) {
+			wp_send_json_error( array( 'message' => __( 'Unsupported bulk action.', 'storesuite' ) ) );
+		}
+
+		foreach ( $product->get_children() as $variation_id ) {
+			$variation = wc_get_product( $variation_id );
+			if ( $variation ) {
+				$variation->delete( true );
+			}
+		}
+		WC_Product_Variable::sync( $product->get_id() );
+
+		wp_send_json_success(
+			array(
+				'message' => __( 'All variations deleted.', 'storesuite' ),
+			)
+		);
+	}
+
+	/**
+	 * Get variable product from request.
+	 *
+	 * @return WC_Product_Variable|false
+	 */
+	private function get_variable_product_from_request() {
+		$product_id = isset( $_POST['product_id'] ) ? absint( wp_unslash( $_POST['product_id'] ) ) : 0;
+		$product    = wc_get_product( $product_id );
+		if ( ! $product || ! $product->is_type( 'variable' ) ) {
+			return false;
+		}
+
+		return $product;
 	}
 }

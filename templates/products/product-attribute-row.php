@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( is_object( $attribute ) && method_exists( $attribute, 'get_name' ) ) {
     $attr_name       = $attribute->get_name();
     $attr_label      = wc_attribute_label( $attr_name );
-    $is_taxonomy     = $attribute->is_taxonomy();
+    $is_taxonomy     = $attribute->is_taxonomy() || ( is_string( $attr_name ) && 0 === strpos( $attr_name, 'pa_' ) );
     $is_visible      = $attribute->get_visible();
     $is_variation    = $attribute->get_variation();
     $position        = $attribute->get_position();
@@ -24,7 +24,7 @@ if ( is_object( $attribute ) && method_exists( $attribute, 'get_name' ) ) {
     // fallback for array-based attribute
     $attr_name       = $attribute['name'] ?? '';
     $attr_label      = wc_attribute_label( $attr_name );
-    $is_taxonomy     = ! empty( $attribute['is_taxonomy'] );
+    $is_taxonomy     = ! empty( $attribute['is_taxonomy'] ) || ( is_string( $attr_name ) && 0 === strpos( $attr_name, 'pa_' ) );
     $is_visible      = ! empty( $attribute['is_visible'] );
     $is_variation    = ! empty( $attribute['is_variation'] );
     $position        = $attribute['position'] ?? 0;
@@ -60,12 +60,12 @@ if ( is_object( $attribute ) && method_exists( $attribute, 'get_name' ) ) {
                     <input type="hidden" name="attribute_is_taxonomy[<?php echo esc_attr( $i ); ?>]" value="<?php echo esc_attr( $is_taxonomy ? 1 : 0 ); ?>">
                 </div>
                 <div class="storesuite-form-group storesuite-form-switch">
-                    <input id="attribute_visibility[<?php echo esc_attr( $i ); ?>]" type="checkbox" name="attribute_visibility[<?php echo esc_attr( $i ); ?>]" value="1" <?php checked( $is_visible ); ?>>
-                    <label for="attribute_visibility[<?php echo esc_attr( $i ); ?>]"><?php esc_html_e( 'Visible on the product page', 'storesuite' ); ?></label>
+                    <input id="storesuite-attribute-visibility-<?php echo esc_attr( $i ); ?>" type="checkbox" name="attribute_visibility[<?php echo esc_attr( $i ); ?>]" value="1" <?php checked( $is_visible ); ?>>
+                    <label for="storesuite-attribute-visibility-<?php echo esc_attr( $i ); ?>"><?php esc_html_e( 'Visible on the product page', 'storesuite' ); ?></label>
                 </div>
                 <div class="storesuite-form-group storesuite-form-switch">
-                    <input id="attribute_variation[<?php echo esc_attr( $i ); ?>]" type="checkbox" name="attribute_variation[<?php echo esc_attr( $i ); ?>]" value="1" <?php checked( $is_variation ); ?>>
-                    <label for="attribute_variation[<?php echo esc_attr( $i ); ?>]"><?php esc_html_e( 'Used for variations', 'storesuite' ); ?></label>
+                    <input id="storesuite-attribute-variation-<?php echo esc_attr( $i ); ?>" type="checkbox" name="attribute_variation[<?php echo esc_attr( $i ); ?>]" value="1" <?php checked( $is_variation ); ?>>
+                    <label for="storesuite-attribute-variation-<?php echo esc_attr( $i ); ?>"><?php esc_html_e( 'Used for variations', 'storesuite' ); ?></label>
                 </div>
             </div>
 

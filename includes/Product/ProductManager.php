@@ -95,6 +95,10 @@ class ProductManager {
 			$post_data['gallery_image_ids'] = ! empty( $data['product_image_gallery'] ) ? wc_clean( $data['product_image_gallery'] ) : '';
 		}
 
+		if ( isset( $data['attributes'] ) && is_array( $data['attributes'] ) ) {
+			$post_data['attributes'] = $data['attributes'];
+		}
+
 		$post_data['tags'] = isset( $data['product_tags'] ) ? array_map( 'absint', (array) $data['product_tags'] ) : array();
 
 		if ( isset( $data['regular_price'] ) ) {
@@ -201,6 +205,13 @@ class ProductManager {
 		}
 
 		$product = $this->create_product( $post_data );
+
+		// Guarded fallback: ensure attributes persist for variable products when provided.
+		// This does not affect simple products without attribute payload.
+		if ( $product && ! empty( $post_data['attributes'] ) && is_array( $post_data['attributes'] ) ) {
+			$product->set_attributes( $post_data['attributes'] );
+			$product->save();
+		}
 
 		if ( ! $is_updating ) {
 			do_action( 'storesuite_new_product_added', $product->get_id(), $data );
