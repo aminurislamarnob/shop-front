@@ -328,10 +328,18 @@ class VariationAjax {
 
 		$parent_attributes = $product->get_attributes( 'edit' );
 
+		$submitted_combinations = array();
+
 		foreach ( $variation_ids as $index => $variation_id ) {
 			$variation = wc_get_product( $variation_id );
 			if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
 				continue;
+			}
+			if ( (int) $variation->get_parent_id() !== (int) $product->get_id() ) {
+				wp_send_json_error( array( 'message' => __( 'Variation parent mismatch.', 'storesuite' ) ) );
+			}
+			if ( ! current_user_can( 'edit_post', $variation_id ) ) {
+				wp_send_json_error( array( 'message' => __( 'You are not allowed to edit one or more variations.', 'storesuite' ) ) );
 			}
 
 			wp_update_post(
@@ -342,8 +350,21 @@ class VariationAjax {
 			);
 
 			$variation->set_sku( isset( $_POST['variable_sku'][ $index ] ) ? wc_clean( wp_unslash( $_POST['variable_sku'][ $index ] ) ) : '' );
-			$variation->set_regular_price( isset( $_POST['variable_regular_price'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_regular_price'][ $index ] ) ) : '' );
-			$variation->set_sale_price( isset( $_POST['variable_sale_price'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_sale_price'][ $index ] ) ) : '' );
+
+			$regular_price = isset( $_POST['variable_regular_price'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_regular_price'][ $index ] ) ) : '';
+			$sale_price    = isset( $_POST['variable_sale_price'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_sale_price'][ $index ] ) ) : '';
+
+			if ( '' !== $sale_price && '' !== $regular_price && (float) $sale_price > (float) $regular_price ) {
+				wp_send_json_error(
+					array(
+						/* translators: %d: variation id */
+						'message' => sprintf( esc_html__( 'Sale price cannot be greater than regular price for variation #%d.', 'storesuite' ), absint( $variation_id ) ),
+					)
+				);
+			}
+
+			$variation->set_regular_price( $regular_price );
+			$variation->set_sale_price( $sale_price );
 
 			$manage_stock = isset( $_POST['variable_manage_stock'][ $index ] );
 			$variation->set_manage_stock( $manage_stock );
@@ -364,6 +385,17 @@ class VariationAjax {
 					$variation_attrs[ $attribute_name ] = wc_clean( wp_unslash( $_POST[ $field_key ][ $index ] ) );
 				}
 			}
+
+			$combination_hash = $this->get_variation_combination_hash( $variation_attrs );
+			if ( isset( $submitted_combinations[ $combination_hash ] ) ) {
+				wp_send_json_error( array( 'message' => __( 'Duplicate variation combinations are not allowed.', 'storesuite' ) ) );
+			}
+			$submitted_combinations[ $combination_hash ] = true;
+
+			if ( ! $this->is_variation_combination_unique( $product, $variation_attrs, $variation_id ) ) {
+				wp_send_json_error( array( 'message' => __( 'A variation with the same attribute combination already exists.', 'storesuite' ) ) );
+			}
+
 			$variation->set_attributes( $variation_attrs );
 			$variation->save();
 		}
@@ -398,6 +430,9 @@ class VariationAjax {
 		}
 
 		$parent_id = $variation->get_parent_id();
+		if ( ! current_user_can( 'edit_post', $variation_id ) || ! current_user_can( 'edit_post', $parent_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to remove this variation.', 'storesuite' ) ) );
+		}
 		$variation->delete( true );
 		WC_Product_Variable::sync( $parent_id );
 
@@ -456,7 +491,7 @@ class VariationAjax {
 			$combinations = $new_combinations;
 		}
 
-		$max_per_run  = 50;
+		$max_per_run  = max( 1, (int) apply_filters( 'storesuite_max_variations_per_run', 50 ) );
 		$created      = 0;
 		$data_store   = WC_Data_Store::load( 'product' );
 
@@ -541,10 +576,52 @@ class VariationAjax {
 	private function get_variable_product_from_request() {
 		$product_id = isset( $_POST['product_id'] ) ? absint( wp_unslash( $_POST['product_id'] ) ) : 0;
 		$product    = wc_get_product( $product_id );
-		if ( ! $product || ! $product->is_type( 'variable' ) ) {
+		if ( ! $product || ! $product->is_type( 'variable' ) || ! current_user_can( 'edit_post', $product_id ) ) {
 			return false;
 		}
 
 		return $product;
+	}
+
+	/**
+	 * Build stable hash for a variation attribute combination.
+	 *
+	 * @param array $variation_attrs Variation attributes.
+	 *
+	 * @return string
+	 */
+	private function get_variation_combination_hash( $variation_attrs ) {
+		$normalized = array();
+		foreach ( $variation_attrs as $key => $value ) {
+			$normalized[ sanitize_title( $key ) ] = '' === $value ? '' : sanitize_title( $value );
+		}
+		ksort( $normalized );
+
+		return wp_json_encode( $normalized );
+	}
+
+	/**
+	 * Check if variation combination is unique across stored variations.
+	 *
+	 * @param WC_Product_Variable $product      Parent variable product.
+	 * @param array               $attributes   Variation attributes.
+	 * @param int                 $variation_id Current variation id being edited.
+	 *
+	 * @return bool
+	 */
+	private function is_variation_combination_unique( $product, $attributes, $variation_id = 0 ) {
+		if ( empty( $attributes ) ) {
+			return true;
+		}
+
+		$data_store       = WC_Data_Store::load( 'product' );
+		$match_attributes = array();
+		foreach ( $attributes as $key => $value ) {
+			$match_attributes[ 'attribute_' . sanitize_title( $key ) ] = $value;
+		}
+
+		$existing_id = $data_store->find_matching_product_variation( $product, $match_attributes );
+
+		return empty( $existing_id ) || (int) $existing_id === (int) $variation_id;
 	}
 }

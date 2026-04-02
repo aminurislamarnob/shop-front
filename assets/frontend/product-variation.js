@@ -141,6 +141,9 @@
 	};
 
 	var StoreSuiteVariations = {
+		currentPage: 1,
+		totalPages: 1,
+
 		init: function() {
 			if ( ! $( '#storesuite-variations-container' ).length || ! StoreSuiteVariation.product_id ) {
 				return;
@@ -157,6 +160,7 @@
 			$( document ).on( 'click', '.storesuite-remove-variation', this.removeVariation.bind( this ) );
 			$( document ).on( 'change input', '#storesuite-variations-container :input', this.markVariationDirty );
 			$( document ).on( 'change', '.variable_manage_stock', this.toggleManageStock );
+			$( document ).on( 'click', '.storesuite-variation-page-link', this.changePage.bind( this ) );
 		},
 
 		loadVariations: function( page ) {
@@ -175,8 +179,13 @@
 			).done(
 				function( response ) {
 					if ( response.success ) {
+						StoreSuiteVariations.currentPage = response.data.page || 1;
+						StoreSuiteVariations.totalPages = response.data.total_pages || 1;
 						$( '#storesuite-variations-container' ).html( response.data.html );
 						$( '.storesuite-variation-count' ).text( response.data.total ? response.data.total + ' variations' : '' );
+						StoreSuiteVariations.renderPagination();
+					} else if ( response && response.data && response.data.message ) {
+						Swal.fire( { icon: 'error', text: response.data.message } );
 					}
 				}
 			).always(
@@ -221,6 +230,9 @@
 				function( response ) {
 					if ( response.success ) {
 						$( '#storesuite-variations-container' ).append( response.data.html );
+						StoreSuiteVariations.updateCountByDelta( 1 );
+					} else if ( response && response.data && response.data.message ) {
+						Swal.fire( { icon: 'error', text: response.data.message } );
 					}
 				}
 			).always(
@@ -274,6 +286,8 @@
 						$dirtyRows.removeClass( 'variation-needs-update' );
 						$( '#storesuite-save-variations-btn' ).prop( 'disabled', true );
 						Swal.fire( { icon: 'success', text: response.data.message, timer: 1500, showConfirmButton: false } );
+					} else if ( response && response.data && response.data.message ) {
+						Swal.fire( { icon: 'error', text: response.data.message } );
 					}
 				}
 			).always(
@@ -287,6 +301,9 @@
 			e.preventDefault();
 			var variationId = $( e.currentTarget ).data( 'variation-id' );
 			var $row = $( e.currentTarget ).closest( '.storesuite-variation-row' );
+			if ( ! window.confirm( StoreSuiteVariation.i18n.confirm_remove ) ) {
+				return;
+			}
 
 			$.post(
 				StoreSuiteVariation.ajax_url,
@@ -299,6 +316,9 @@
 				function( response ) {
 					if ( response.success ) {
 						$row.remove();
+						StoreSuiteVariations.updateCountByDelta( -1 );
+					} else if ( response && response.data && response.data.message ) {
+						Swal.fire( { icon: 'error', text: response.data.message } );
 					}
 				}
 			);
@@ -317,12 +337,18 @@
 					if ( response.success ) {
 						Swal.fire( { icon: 'success', text: response.data.message, timer: 1500, showConfirmButton: false } );
 						StoreSuiteVariations.reload();
+					} else if ( response && response.data && response.data.message ) {
+						Swal.fire( { icon: 'error', text: response.data.message } );
 					}
 				}
 			);
 		},
 
 		bulkDeleteAll: function() {
+			if ( ! window.confirm( StoreSuiteVariation.i18n.confirm_delete_all ) ) {
+				return;
+			}
+
 			$.post(
 				StoreSuiteVariation.ajax_url,
 				{
@@ -335,6 +361,8 @@
 				function( response ) {
 					if ( response.success ) {
 						StoreSuiteVariations.reload();
+					} else if ( response && response.data && response.data.message ) {
+						Swal.fire( { icon: 'error', text: response.data.message } );
 					}
 				}
 			);
@@ -357,6 +385,46 @@
 			} else {
 				$row.find( '.show_if_variation_manage_stock' ).slideUp( 'fast' );
 			}
+		},
+
+		changePage: function( e ) {
+			e.preventDefault();
+			var page = parseInt( $( e.currentTarget ).data( 'page' ), 10 );
+			if ( ! page || page < 1 || page === this.currentPage ) {
+				return;
+			}
+			this.loadVariations( page );
+		},
+
+		renderPagination: function() {
+			var $pagination = $( '#storesuite-variations-pagination' );
+			if ( ! $pagination.length ) {
+				return;
+			}
+
+			if ( this.totalPages <= 1 ) {
+				$pagination.empty();
+				return;
+			}
+
+			var html = '';
+			for ( var i = 1; i <= this.totalPages; i++ ) {
+				var activeClass = i === this.currentPage ? ' is-active' : '';
+				html += '<a href="#" class="storesuite-variation-page-link' + activeClass + '" data-page="' + i + '" style="display:inline-block;padding:4px 8px;margin-right:6px;border:1px solid #ddd;border-radius:4px;">' + i + '</a>';
+			}
+			$pagination.html( html );
+		},
+
+		updateCountByDelta: function( delta ) {
+			var $count = $( '.storesuite-variation-count' );
+			var text = $.trim( $count.text() );
+			var match = text.match( /^(\d+)/ );
+			if ( ! match ) {
+				return;
+			}
+
+			var next = Math.max( 0, parseInt( match[1], 10 ) + delta );
+			$count.text( next ? next + ' variations' : '' );
 		}
 	};
 

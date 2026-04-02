@@ -65,6 +65,7 @@ if ( $product && $product->is_type( 'variable' ) ) {
 				data-per-page="<?php echo esc_attr( $per_page ); ?>"
 				data-page="1">
 			</div>
+			<div id="storesuite-variations-pagination" class="storesuite-mt-12"></div>
 		<?php endif; ?>
 	</div>
 </div>
