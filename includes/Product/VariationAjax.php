@@ -363,6 +363,16 @@ class VariationAjax {
 				);
 			}
 
+			$is_enabled = isset( $_POST['variable_enabled'][ $index ] );
+			if ( $is_enabled && '' === $regular_price && '' === $sale_price ) {
+				wp_send_json_error(
+					array(
+						/* translators: %d: variation id */
+						'message' => sprintf( esc_html__( 'Please set a price for enabled variation #%d.', 'storesuite' ), absint( $variation_id ) ),
+					)
+				);
+			}
+
 			$variation->set_regular_price( $regular_price );
 			$variation->set_sale_price( $sale_price );
 
