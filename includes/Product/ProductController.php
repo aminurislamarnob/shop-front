@@ -337,6 +337,11 @@ class ProductController {
 			$data['attributes'] = $attributes;
 		}
 
+		$default_attributes = $this->prepare_default_attributes_from_post( $post_data );
+		if ( ! empty( $default_attributes ) ) {
+			$data['default_attributes'] = $default_attributes;
+		}
+
 		return $data;
 	}
 
@@ -386,5 +391,64 @@ class ProductController {
 		);
 
 		return WC_Meta_Box_Product_Data::prepare_attributes( $attribute_data );
+	}
+
+	/**
+	 * Build default attributes payload for variable products.
+	 *
+	 * @param array $post_data Raw POST data.
+	 *
+	 * @return array
+	 */
+	private function prepare_default_attributes_from_post( $post_data ) {
+		if ( empty( $post_data['attribute_names'] ) || ! is_array( $post_data['attribute_names'] ) ) {
+			return array();
+		}
+
+		$attribute_names     = stripslashes_deep( (array) $post_data['attribute_names'] );
+		$attribute_variation = isset( $post_data['attribute_variation'] ) ? stripslashes_deep( (array) $post_data['attribute_variation'] ) : array();
+		$default_values      = isset( $post_data['default_attribute'] ) ? stripslashes_deep( (array) $post_data['default_attribute'] ) : array();
+		$defaults            = array();
+
+		foreach ( $attribute_names as $index => $attribute_name ) {
+			$attribute_name = wc_clean( wp_unslash( $attribute_name ) );
+			if ( '' === $attribute_name ) {
+				continue;
+			}
+
+			// Default attributes only apply to "used for variations".
+			if ( ! isset( $attribute_variation[ $index ] ) ) {
+				continue;
+			}
+
+			if ( ! isset( $default_values[ $index ] ) || '' === $default_values[ $index ] ) {
+				continue;
+			}
+
+			$default_option = wc_clean( wp_unslash( $default_values[ $index ] ) );
+			if ( '' === $default_option ) {
+				continue;
+			}
+
+			if ( 0 === strpos( $attribute_name, 'pa_' ) ) {
+				$attribute_id = wc_attribute_taxonomy_id_by_name( $attribute_name );
+				if ( ! $attribute_id ) {
+					$attribute_id = wc_attribute_taxonomy_id_by_name( substr( $attribute_name, 3 ) );
+				}
+
+				$defaults[] = array(
+					'id'     => absint( $attribute_id ),
+					'name'   => $attribute_name,
+					'option' => $default_option,
+				);
+			} else {
+				$defaults[] = array(
+					'name'   => $attribute_name,
+					'option' => $default_option,
+				);
+			}
+		}
+
+		return $defaults;
 	}
 }

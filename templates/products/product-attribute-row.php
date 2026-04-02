@@ -30,6 +30,9 @@ if ( is_object( $attribute ) && method_exists( $attribute, 'get_name' ) ) {
     $position        = $attribute['position'] ?? 0;
     $attr_options    = $attribute['options'] ?? array();
 }
+
+$default_attributes = ( $product && is_object( $product ) && method_exists( $product, 'get_default_attributes' ) ) ? (array) $product->get_default_attributes() : array();
+$default_value      = isset( $default_attributes[ $attr_name ] ) ? (string) $default_attributes[ $attr_name ] : '';
 ?>
 
 <div class="storesuite-attribute-row storesuite-card storesuite-mb-12" data-index="<?php echo esc_attr( $i ); ?>" data-taxonomy="<?php echo esc_attr( $is_taxonomy ? $attr_name : '' ); ?>">
@@ -66,6 +69,37 @@ if ( is_object( $attribute ) && method_exists( $attribute, 'get_name' ) ) {
                 <div class="storesuite-form-group storesuite-form-switch">
                     <input id="storesuite-attribute-variation-<?php echo esc_attr( $i ); ?>" type="checkbox" name="attribute_variation[<?php echo esc_attr( $i ); ?>]" value="1" <?php checked( $is_variation ); ?>>
                     <label for="storesuite-attribute-variation-<?php echo esc_attr( $i ); ?>"><?php esc_html_e( 'Used for variations', 'storesuite' ); ?></label>
+                </div>
+
+                <div class="storesuite-form-group">
+                    <label><?php esc_html_e( 'Default value', 'storesuite' ); ?></label>
+                    <select class="storesuite-form-control" name="default_attribute[<?php echo esc_attr( $i ); ?>]">
+                        <option value=""><?php esc_html_e( 'No default value', 'storesuite' ); ?></option>
+                        <?php if ( $is_taxonomy ) : ?>
+                            <?php
+                            $default_terms = get_terms(
+                                array(
+                                    'taxonomy'   => $attr_name,
+                                    'orderby'    => 'name',
+                                    'hide_empty' => false,
+                                )
+                            );
+                            ?>
+                            <?php if ( ! is_wp_error( $default_terms ) ) : ?>
+                                <?php foreach ( $default_terms as $term ) : ?>
+                                    <option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $default_value, $term->slug ); ?>>
+                                        <?php echo esc_html( $term->name ); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        <?php else : ?>
+                            <?php foreach ( (array) $attr_options as $option ) : ?>
+                                <option value="<?php echo esc_attr( $option ); ?>" <?php selected( $default_value, (string) $option ); ?>>
+                                    <?php echo esc_html( $option ); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
                 </div>
             </div>
 
