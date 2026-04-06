@@ -1,16 +1,18 @@
-=== StoreSuite ===
+=== StoreSuite - A frontend dashboard to manage your WooCommerce store ===
 Contributors: aminurislam01
 Tags: woocommerce, store management, shop manager, store suite, front-end shop manager
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.0.0-beta3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Manage your WooCommerce store easily from a front-end dashboard.
 
 == Description ==
+
+**⚠️ This is a beta release intended for testing purposes only. Do not use it on production sites. A production release will be available soon.**
 
 StoreSuite adds a frontend store management dashboard for WooCommerce. Give store managers one place to run the day-to-day: products, categories, tags, brands, coupons, orders, and key metrics—without switching between multiple admin screens.
 
@@ -57,6 +59,35 @@ StoreSuite adds a frontend store management dashboard for WooCommerce. Give stor
 = Permalinks =
 
 After installing or reactivating StoreSuite, go to **Settings → Permalinks** and click **Save Changes** so dashboard URLs work correctly.
+
+== Screenshots ==
+
+1. StoreSuite General Settings
+2. StoreSuite Color Settings
+3. StoreSuite Paginations Settings
+4. Frontend Dashboard
+5. Products List
+6. Products Filter
+7. Add New Product
+8. Edit Product
+9. Orders List
+10. Orders Filter
+11. Orders Details View
+12. Edit Order
+13. Add New Order
+14. Product Categories List
+15. Add New Product Category
+16. Edit Product Category
+17. Product Brands List
+18. Add New Product Brand
+19. Edit Product Brand
+20. Product Tags List
+21. Add New Product Tag
+22. Edit Product Tag
+23. Coupons List
+24. Add New Coupon
+25. Edit Coupon
+26. Account Settings
 
 == Frequently Asked Questions ==
 

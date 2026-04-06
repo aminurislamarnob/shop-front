@@ -7,9 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * MyStoreSuite class
+ * StoreSuite class
  *
- * @class MyStoreSuite The class that holds the entire MyStoreSuite plugin
+ * @class StoreSuite The class that holds the entire StoreSuite plugin
  */
 final class StoreSuite {
 
@@ -18,7 +18,7 @@ final class StoreSuite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.0';
+	public $version = '1.0.0-beta3';
 
 	/**
 	 * Instance of self

@@ -473,17 +473,13 @@
 
 					var i18n = storeSuiteFormHandler.i18n || {};
 					var confirmTitle =
-						i18n.product_delete_confirm_title ||
-						i18n.are_you_sure ||
-						'Are you sure?';
-					var confirmText =
-						i18n.product_delete_warning ||
-						'Do you want to delete this product? It will be moved to trash.';
-					var confirmButton = i18n.yes_delete || 'Yes, delete it!';
-					var cancelButton = i18n.cancel_button || 'Cancel';
-					var deletingText = i18n.deleting || 'Deleting...';
-					var successTitle = i18n.success_title || 'Success!';
-					var errorTitle = i18n.error_title || 'Error!';
+						i18n.product_delete_confirm_title || i18n.are_you_sure;
+					var confirmText = i18n.product_delete_warning;
+					var confirmButton = i18n.yes_delete;
+					var cancelButton = i18n.cancel_button;
+					var deletingText = i18n.deleting;
+					var successTitle = i18n.success_title;
+					var errorTitle = i18n.error_title;
 
 					Swal.fire( {
 						title: confirmTitle,
@@ -499,9 +495,7 @@
 
 						Swal.fire( {
 							title: deletingText,
-							text:
-								storeSuiteFormHandler.i18n.please_wait ||
-								'Please wait...',
+							text: storeSuiteFormHandler.i18n.please_wait,
 							allowOutsideClick: false,
 							didOpen: function () {
 								Swal.showLoading();
@@ -548,8 +542,7 @@
 											response.data && response.data.error
 												? response.data.error
 												: storeSuiteFormHandler.i18n
-														.unexpected_error ||
-												  'An unexpected error occurred.',
+														.unexpected_error,
 									} );
 								}
 							},
@@ -558,10 +551,8 @@
 								Swal.fire( {
 									icon: 'error',
 									title: errorTitle,
-									text:
-										storeSuiteFormHandler.i18n
-											.unexpected_error ||
-										'An unexpected error occurred. Please try again.',
+									text: storeSuiteFormHandler.i18n
+										.unexpected_error,
 								} );
 							},
 						} );
