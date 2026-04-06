@@ -9,6 +9,7 @@
         init: function() {
             $(document).on('click', '.storesuite-toggle-variation', this.toggleVariation);
             $(document).on('click', '.storesuite-variation-pagination a[data-page]', this.onPaginationClick.bind(this));
+            $(document).on('click', '#storesuite-do-variation-action', this.onToolbarAction.bind(this));
 
             // Auto-load variations on edit page.
             if ( StoreSuiteVariation.product_id > 0 && $('#post_type').val() === 'variable' ) {
@@ -91,6 +92,63 @@
             }
 
             $pagination.html( html );
+        },
+
+        onToolbarAction: function( e ) {
+            e.preventDefault();
+            var action = $('#storesuite-variation-actions').val();
+
+            switch ( action ) {
+                case 'generate_variations':
+                    this.generateAll();
+                    break;
+                default:
+                    break;
+            }
+        },
+
+        generateAll: function() {
+            var self = this;
+
+            Swal.fire({
+                title: StoreSuiteVariation.i18n.confirm_generate || 'Generate variations?',
+                text: StoreSuiteVariation.i18n.confirm_generate_text || 'This will create variations for all attribute combinations.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: StoreSuiteVariation.i18n.ok_button || 'OK',
+            }).then( function( result ) {
+                if ( ! result.isConfirmed ) {
+                    return;
+                }
+
+                window.StoreSuite.storeSuiteLoader.block( $( '.my-storesuite-wrapper' ) );
+
+                $.ajax({
+                    url:  StoreSuiteVariation.ajax_url,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action:     'storesuite_generate_variations',
+                        security:   StoreSuiteVariation.nonce,
+                        product_id: StoreSuiteVariation.product_id,
+                    },
+                    success: function( response ) {
+                        if ( response && response.success ) {
+                            Swal.fire({ icon: 'success', text: response.data.message, timer: 3000, showConfirmButton: false });
+                            self.page = 1;
+                            self.reload();
+                        } else {
+                            Swal.fire({ icon: 'error', text: response.data.message || 'Error generating variations.' });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({ icon: 'error', text: 'An unexpected error occurred.' });
+                    },
+                    complete: function() {
+                        window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
+                    },
+                });
+            });
         },
 
         toggleVariation: function( e ) {

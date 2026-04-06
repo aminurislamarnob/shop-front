@@ -453,8 +453,11 @@ class Assets {
 					'generated'          => __( 'variations created.', 'storesuite' ),
 					'no_attributes'      => __( 'Add variation attributes first.', 'storesuite' ),
 					'saved'              => __( 'Changes saved.', 'storesuite' ),
-					'loading_variations' => __( 'Loading variations…', 'storesuite' ),
-					'no_variations'      => __( 'No variations found.', 'storesuite' ),
+					'loading_variations'     => __( 'Loading variations…', 'storesuite' ),
+					'no_variations'          => __( 'No variations found.', 'storesuite' ),
+					'confirm_generate'       => __( 'Generate variations?', 'storesuite' ),
+					'confirm_generate_text'  => __( 'This will create variations for all attribute combinations.', 'storesuite' ),
+					'ok_button'              => __( 'OK', 'storesuite' ),
 				),
 			) );
 		}
