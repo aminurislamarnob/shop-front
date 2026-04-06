@@ -441,18 +441,20 @@ class Assets {
 
 			wp_enqueue_script( 'storesuite_variation_script' );
 			wp_localize_script( 'storesuite_variation_script', 'StoreSuiteVariation', array(
-				'ajax_url'   => admin_url( 'admin-ajax.php' ),
-				'nonce'      => wp_create_nonce( 'storesuite-variation-nonce' ),
-				'add_attribute_nonce'	=> wp_create_nonce( 'add-attribute' ),
-				'save_attributes_nonce'	=> wp_create_nonce( 'save-attributes' ),
-				'product_id' => absint( get_query_var( 'edit-product' ) ),
-				'per_page'   => 15,
-				'i18n'       => array(
-					'confirm_remove'   => __( 'Remove this variation?', 'storesuite' ),
-					'confirm_delete_all' => __( 'Delete All variations? This cannot be undone.', 'storesuite' ),
-					'generated'        => __( 'variations created.', 'storesuite' ),
-					'no_attributes'    => __( 'Add variation attributes first.', 'storesuite' ),
-					'saved'            => __( 'Changes saved.', 'storesuite' ),
+				'ajax_url'              => admin_url( 'admin-ajax.php' ),
+				'nonce'                 => wp_create_nonce( 'storesuite-variation-nonce' ),
+				'add_attribute_nonce'   => wp_create_nonce( 'add-attribute' ),
+				'save_attributes_nonce' => wp_create_nonce( 'save-attributes' ),
+				'product_id'            => absint( get_query_var( 'edit-product' ) ),
+				'per_page'              => 15,
+				'i18n'                  => array(
+					'confirm_remove'     => __( 'Remove this variation?', 'storesuite' ),
+					'confirm_delete_all' => __( 'Delete all variations? This cannot be undone.', 'storesuite' ),
+					'generated'          => __( 'variations created.', 'storesuite' ),
+					'no_attributes'      => __( 'Add variation attributes first.', 'storesuite' ),
+					'saved'              => __( 'Changes saved.', 'storesuite' ),
+					'loading_variations' => __( 'Loading variations…', 'storesuite' ),
+					'no_variations'      => __( 'No variations found.', 'storesuite' ),
 				),
 			) );
 		}

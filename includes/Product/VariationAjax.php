@@ -22,6 +22,7 @@ class VariationAjax {
 	public function __construct() {
 		add_action( 'wp_ajax_storesuite_add_attribute', array( $this, 'storesuite_ajax_add_attribute' ), 10 );
 		add_action( 'wp_ajax_storesuite_save_attributes', array( $this, 'storesuite_ajax_save_attributes' ), 10 );
+		add_action( 'wp_ajax_storesuite_load_variations', array( $this, 'load_variations' ), 10 );
 	}
 
     /**
@@ -83,6 +84,66 @@ class VariationAjax {
             )
         );
     }
+
+	/**
+	 * Load product variations via AJAX with pagination.
+	 *
+	 * @return void
+	 */
+	public function load_variations() {
+		if ( ! check_ajax_referer( 'storesuite-variation-nonce', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) || ! isset( $_POST['product_id'] ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'storesuite' ) ) );
+		}
+
+		$product_id = absint( wp_unslash( $_POST['product_id'] ) );
+		$page       = isset( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
+		$per_page   = isset( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 15;
+		$product    = wc_get_product( $product_id );
+
+		if ( ! $product || ! $product->is_type( 'variable' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		$children    = $product->get_children();
+		$total       = count( $children );
+		$total_pages = max( 1, (int) ceil( $total / $per_page ) );
+		$page        = min( $page, $total_pages );
+		$offset      = ( $page - 1 ) * $per_page;
+		$page_ids    = array_slice( $children, $offset, $per_page );
+
+		ob_start();
+		foreach ( $page_ids as $loop => $child_id ) {
+			$variation = wc_get_product( $child_id );
+			if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
+				continue;
+			}
+
+			storesuite_get_template_part(
+				'products/product-variation-row',
+				'',
+				array(
+					'variation'    => $variation,
+					'variation_id' => $child_id,
+					'loop'         => $offset + $loop,
+					'parent'       => $product,
+				)
+			);
+		}
+		$html = ob_get_clean();
+
+		wp_send_json_success(
+			array(
+				'html'        => $html,
+				'total'       => $total,
+				'total_pages' => $total_pages,
+				'page'        => $page,
+			)
+		);
+	}
 
 	/**
 	 * Save product attributes via AJAX (mirrors WC_AJAX::save_attributes logic).
