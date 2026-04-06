@@ -349,7 +349,9 @@ class VariationAjax {
 				)
 			);
 
-			$variation->set_sku( isset( $_POST['variable_sku'][ $index ] ) ? wc_clean( wp_unslash( $_POST['variable_sku'][ $index ] ) ) : '' );
+			if ( wc_product_sku_enabled() ) {
+				$variation->set_sku( isset( $_POST['variable_sku'][ $index ] ) ? wc_clean( wp_unslash( $_POST['variable_sku'][ $index ] ) ) : '' );
+			}
 
 			$regular_price = isset( $_POST['variable_regular_price'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_regular_price'][ $index ] ) ) : '';
 			$sale_price    = isset( $_POST['variable_sale_price'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_sale_price'][ $index ] ) ) : '';
@@ -376,13 +378,59 @@ class VariationAjax {
 			$variation->set_regular_price( $regular_price );
 			$variation->set_sale_price( $sale_price );
 
-			$manage_stock = isset( $_POST['variable_manage_stock'][ $index ] );
-			$variation->set_manage_stock( $manage_stock );
-			if ( $manage_stock && isset( $_POST['variable_stock'][ $index ] ) ) {
-				$variation->set_stock_quantity( wc_stock_amount( wp_unslash( $_POST['variable_stock'][ $index ] ) ) );
+			$date_on_sale_from = '';
+			if ( isset( $_POST['variable_sale_price_dates_from'][ $index ] ) ) {
+				$raw_from = wc_clean( wp_unslash( $_POST['variable_sale_price_dates_from'][ $index ] ) );
+				if ( '' !== $raw_from ) {
+					$ts = strtotime( $raw_from );
+					if ( $ts ) {
+						$date_on_sale_from = date( 'Y-m-d 00:00:00', $ts );
+					}
+				}
+			}
+			$date_on_sale_to = '';
+			if ( isset( $_POST['variable_sale_price_dates_to'][ $index ] ) ) {
+				$raw_to = wc_clean( wp_unslash( $_POST['variable_sale_price_dates_to'][ $index ] ) );
+				if ( '' !== $raw_to ) {
+					$ts_to = strtotime( $raw_to );
+					if ( $ts_to ) {
+						$date_on_sale_to = date( 'Y-m-d 23:59:59', $ts_to );
+					}
+				}
+			}
+			$variation->set_date_on_sale_from( $date_on_sale_from ? $date_on_sale_from : null );
+			$variation->set_date_on_sale_to( $date_on_sale_to ? $date_on_sale_to : null );
+
+			$image_id = isset( $_POST['upload_image_id'][ $index ] ) ? absint( wp_unslash( $_POST['upload_image_id'][ $index ] ) ) : 0;
+			$variation->set_image_id( $image_id );
+
+			$variation->set_global_unique_id( isset( $_POST['variable_global_unique_id'][ $index ] ) ? wc_clean( wp_unslash( $_POST['variable_global_unique_id'][ $index ] ) ) : '' );
+			$variation->set_downloadable( isset( $_POST['variable_is_downloadable'][ $index ] ) );
+			$variation->set_virtual( isset( $_POST['variable_is_virtual'][ $index ] ) );
+
+			$manage_stock_globally = 'yes' === get_option( 'woocommerce_manage_stock' );
+			if ( $manage_stock_globally ) {
+				$manage_stock = isset( $_POST['variable_manage_stock'][ $index ] );
+				$variation->set_manage_stock( $manage_stock );
+				if ( $manage_stock && isset( $_POST['variable_stock'][ $index ] ) ) {
+					$variation->set_stock_quantity( wc_stock_amount( wp_unslash( $_POST['variable_stock'][ $index ] ) ) );
+				}
+				if ( $manage_stock && isset( $_POST['variable_backorders'][ $index ] ) ) {
+					$variation->set_backorders( wc_clean( wp_unslash( $_POST['variable_backorders'][ $index ] ) ) );
+				}
+				if ( $manage_stock && isset( $_POST['variable_low_stock_amount'][ $index ] ) && '' !== $_POST['variable_low_stock_amount'][ $index ] ) {
+					$variation->set_low_stock_amount( wc_stock_amount( wp_unslash( $_POST['variable_low_stock_amount'][ $index ] ) ) );
+				} elseif ( $manage_stock ) {
+					$variation->set_low_stock_amount( '' );
+				}
 			}
 			$variation->set_stock_status( isset( $_POST['variable_stock_status'][ $index ] ) ? wc_clean( wp_unslash( $_POST['variable_stock_status'][ $index ] ) ) : 'instock' );
 			$variation->set_menu_order( isset( $_POST['variation_menu_order'][ $index ] ) ? absint( wp_unslash( $_POST['variation_menu_order'][ $index ] ) ) : $index );
+
+			$variation->set_weight( isset( $_POST['variable_weight'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_weight'][ $index ] ) ) : '' );
+			$variation->set_length( isset( $_POST['variable_length'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_length'][ $index ] ) ) : '' );
+			$variation->set_width( isset( $_POST['variable_width'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_width'][ $index ] ) ) : '' );
+			$variation->set_height( isset( $_POST['variable_height'][ $index ] ) ? wc_format_decimal( wp_unslash( $_POST['variable_height'][ $index ] ) ) : '' );
 
 			$variation_attrs = array();
 			foreach ( $parent_attributes as $attribute ) {

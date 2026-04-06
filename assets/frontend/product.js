@@ -13,6 +13,10 @@
 		},
 		bindEvents: function () {
 			var self = this;
+			$( document ).on( 'storesuite_variation_dom_updated', function () {
+				self.salePriceDatesPicker();
+				self.initSalePriceSchedule();
+			} );
 			$( document ).on( 'change', '#_manage_stock', function () {
 				self.toggleStockFields();
 			} );
@@ -21,12 +25,12 @@
 			} );
 			$( document.body ).on(
 				'keyup',
-				'input[type=text][name*=_global_unique_id]',
+				'input[type=text][name*=_global_unique_id], input[type=text][name*="variable_global_unique_id"]',
 				this.validateGlobalUniqueIdOnKeyUp
 			);
 			$( document.body ).on(
 				'change',
-				'input[type=text][name*=_global_unique_id]',
+				'input[type=text][name*=_global_unique_id], input[type=text][name*="variable_global_unique_id"]',
 				this.validateGlobalUniqueIdOnChange
 			);
 			$( document ).on(
@@ -378,10 +382,10 @@
 		},
 		salePriceDatesPicker: function () {
 			var self = this;
-			$( '.sale_price_dates_fields' ).each( function () {
-				$( this )
-					.find( 'input' )
-					.datepicker( {
+			$( '.storesuite-sale-schedule-scope .sale_price_dates_fields input' )
+				.filter( ':not(.hasDatepicker)' )
+				.each( function () {
+					$( this ).datepicker( {
 						defaultDate: '',
 						dateFormat: 'yy-mm-dd',
 						numberOfMonths: 1,
@@ -390,12 +394,8 @@
 							self.datePickerSelect( $( this ) );
 						},
 					} );
-				$( this )
-					.find( 'input' )
-					.each( function () {
-						self.datePickerSelect( $( this ) );
-					} );
-			} );
+					self.datePickerSelect( $( this ) );
+				} );
 		},
 		datePickerSelect: function ( datepicker ) {
 			var option = $( datepicker ).next().is( '.hasDatepicker' )
@@ -411,40 +411,43 @@
 			$( datepicker ).trigger( 'change' );
 		},
 		initSalePriceSchedule: function () {
-			$( '.sale_price_dates_fields' ).each( function () {
+			$( '.storesuite-sale-schedule-scope' ).each( function () {
+				var $scope = $( this );
 				var sale_schedule_set = false;
 
-				$( this )
-					.find( 'input' )
-					.each( function () {
-						if ( '' !== $( this ).val() ) {
-							sale_schedule_set = true;
-						}
-					} );
+				$scope.find( '.sale_price_dates_fields input' ).each( function () {
+					if ( '' !== $( this ).val() ) {
+						sale_schedule_set = true;
+					}
+				} );
 
 				if ( sale_schedule_set ) {
-					$( '.sale_schedule' ).hide();
-					$( '.cancel_sale_schedule' ).show();
-					$( '.sale_price_dates_fields' ).slideDown();
+					$scope.find( '.sale_schedule' ).hide();
+					$scope.find( '.cancel_sale_schedule' ).show();
+					$scope.find( '.sale_price_dates_fields' ).show();
 				} else {
-					$( '.sale_schedule' ).show();
-					$( '.cancel_sale_schedule' ).hide();
-					$( '.sale_price_dates_fields' ).slideUp();
+					$scope.find( '.sale_schedule' ).show();
+					$scope.find( '.cancel_sale_schedule' ).hide();
+					$scope.find( '.sale_price_dates_fields' ).hide();
 				}
 			} );
 		},
-		openSaleSchedule: function () {
-			$( this ).hide();
-			$( '.cancel_sale_schedule' ).show();
-			$( '.sale_price_dates_fields' ).slideDown();
+		openSaleSchedule: function ( e ) {
+			e.preventDefault();
+			var $scope = $( this ).closest( '.storesuite-sale-schedule-scope' );
+			$scope.find( '.sale_schedule' ).hide();
+			$scope.find( '.cancel_sale_schedule' ).show();
+			$scope.find( '.sale_price_dates_fields' ).slideDown();
 
 			return false;
 		},
-		cancelSaleSchedule: function () {
-			$( this ).hide();
-			$( '.sale_schedule' ).show();
-			$( '.sale_price_dates_fields' ).slideUp();
-			$( '.sale_price_dates_fields' ).find( 'input' ).val( '' );
+		cancelSaleSchedule: function ( e ) {
+			e.preventDefault();
+			var $scope = $( this ).closest( '.storesuite-sale-schedule-scope' );
+			$scope.find( '.cancel_sale_schedule' ).hide();
+			$scope.find( '.sale_schedule' ).show();
+			$scope.find( '.sale_price_dates_fields' ).slideUp();
+			$scope.find( '.sale_price_dates_fields' ).find( 'input' ).val( '' );
 
 			return false;
 		},

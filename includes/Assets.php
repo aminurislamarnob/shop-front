@@ -105,7 +105,7 @@ class Assets {
 		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
-		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_script', 'storesuite_product_script', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable', 'jquery-ui-datepicker', 'wp-media' ), STORESUITE_PLUGIN_VERSION, true );
 	}
 
 	/**
@@ -127,6 +127,22 @@ class Assets {
 
 		wp_register_style( 'storesuite_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 		wp_register_style( 'storesuite_jquery-ui-style', WC()->plugin_url() . '/assets/css/jquery-ui/jquery-ui.min.css', array(), STORESUITE_PLUGIN_VERSION );
+	}
+
+	/**
+	 * Resolve edit-product ID for dashboard scripts (matches product-form.php / $query_vars['edit-product']).
+	 *
+	 * get_query_var( 'edit-product' ) can be empty when scripts enqueue; $GLOBALS['wp']->query_vars is reliable.
+	 *
+	 * @return int
+	 */
+	private static function get_storesuite_edit_product_id() {
+		global $wp;
+		if ( isset( $wp->query_vars['edit-product'] ) && '' !== $wp->query_vars['edit-product'] ) {
+			return absint( $wp->query_vars['edit-product'] );
+		}
+
+		return absint( get_query_var( 'edit-product', 0 ) );
 	}
 
 	/**
@@ -439,13 +455,14 @@ class Assets {
 				$product_script_data
 			);
 
+			wp_enqueue_media();
 			wp_enqueue_script( 'storesuite_variation_script' );
 			wp_localize_script( 'storesuite_variation_script', 'StoreSuiteVariation', array(
 				'ajax_url'   => admin_url( 'admin-ajax.php' ),
 				'nonce'      => wp_create_nonce( 'storesuite-variation-nonce' ),
 				'add_attribute_nonce'	=> wp_create_nonce( 'add-attribute' ),
 				'save_attributes_nonce'	=> wp_create_nonce( 'save-attributes' ),
-				'product_id' => absint( get_query_var( 'edit-product' ) ),
+				'product_id' => self::get_storesuite_edit_product_id(),
 				'per_page'   => 15,
 				'i18n'       => array(
 					'confirm_remove'   => __( 'Remove this variation?', 'storesuite' ),
