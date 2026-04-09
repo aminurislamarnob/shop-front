@@ -2893,6 +2893,18 @@ button.remove_order_item_meta.button:hover {
   border: 1px solid #e0e0e0;
 }
 
+.storesuite-remove-variation-image {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #d63638;
+  text-decoration: none;
+}
+
+.storesuite-remove-variation-image:hover {
+  text-decoration: underline;
+}
+
 .storesuite-variation-row.variation-needs-update {
   border-left: 4px solid #2271b1;
 }

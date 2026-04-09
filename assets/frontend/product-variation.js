@@ -22,6 +22,10 @@
             // Toggle stock qty field when manage stock checkbox changes.
             $(document).on('change', '.variable_manage_stock', this.onManageStockChange);
 
+            // Variation image upload and remove.
+            $(document).on('click', '.storesuite-variation-image-upload img', this.onImageUploadClick);
+            $(document).on('click', '.storesuite-remove-variation-image', this.onRemoveImageClick);
+
             // Auto-load variations on edit page.
             if ( StoreSuiteVariation.product_id > 0 && $('#post_type').val() === 'variable' ) {
                 this.reload();
@@ -417,6 +421,61 @@
             } else {
                 $row.find('.show_if_variation_manage_stock').hide();
             }
+        },
+
+        /**
+         * Open WordPress media library to choose a variation image.
+         */
+        onImageUploadClick: function( e ) {
+            e.preventDefault();
+            var $upload = $( this ).closest( '.storesuite-variation-image-upload' );
+            var $row    = $upload.closest( '.storesuite-variation-row' );
+            var i18n    = StoreSuiteVariation.i18n;
+
+            var frame = wp.media({
+                title:    i18n.choose_variation_image || 'Choose variation image',
+                button:   { text: i18n.set_image || 'Set image' },
+                multiple: false,
+                library:  { type: 'image' },
+            });
+
+            frame.on( 'select', function() {
+                var attachment = frame.state().get( 'selection' ).first().toJSON();
+                var thumbUrl   = ( attachment.sizes && attachment.sizes.thumbnail )
+                    ? attachment.sizes.thumbnail.url
+                    : attachment.url;
+
+                $upload.find( 'img' ).attr( 'src', thumbUrl );
+                $upload.find( 'input[type="hidden"]' ).val( attachment.id ).trigger( 'change' );
+                $upload.find( '.storesuite-remove-variation-image' ).show();
+
+                // Mark row as modified.
+                if ( ! $row.hasClass( 'variation-needs-update' ) ) {
+                    $row.addClass( 'variation-needs-update' );
+                }
+                $( '#storesuite-save-variations-btn' ).prop( 'disabled', false );
+            });
+
+            frame.open();
+        },
+
+        /**
+         * Remove the variation image and reset to placeholder.
+         */
+        onRemoveImageClick: function( e ) {
+            e.preventDefault();
+            var $upload = $( this ).closest( '.storesuite-variation-image-upload' );
+            var $row    = $upload.closest( '.storesuite-variation-row' );
+
+            $upload.find( 'img' ).attr( 'src', StoreSuiteVariation.placeholder_img );
+            $upload.find( 'input[type="hidden"]' ).val( 0 ).trigger( 'change' );
+            $( this ).hide();
+
+            // Mark row as modified.
+            if ( ! $row.hasClass( 'variation-needs-update' ) ) {
+                $row.addClass( 'variation-needs-update' );
+            }
+            $( '#storesuite-save-variations-btn' ).prop( 'disabled', false );
         },
 
         /**
