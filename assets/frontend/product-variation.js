@@ -11,6 +11,7 @@
             $(document).on('click', '.storesuite-variation-pagination a[data-page]', this.onPaginationClick.bind(this));
             $(document).on('click', '#storesuite-do-variation-action', this.onToolbarAction.bind(this));
             $(document).on('click', '#storesuite-save-variations-btn', this.saveVariations.bind(this));
+            $(document).on('click', '.storesuite-remove-variation', this.onRemoveVariationClick.bind(this));
 
             // Mark rows as needing update on any input change.
             $(document).on('change input', '#storesuite-variations-container :input', this.onVariationFieldChange);
@@ -109,6 +110,9 @@
             var action = $('#storesuite-variation-actions').val();
 
             switch ( action ) {
+                case 'add_variation':
+                    this.addVariation();
+                    break;
                 case 'generate_variations':
                     this.generateAll();
                     break;
@@ -158,6 +162,102 @@
                         window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
                     },
                 });
+            });
+        },
+
+        /**
+         * Add a single blank variation via AJAX.
+         */
+        addVariation: function() {
+            var self = this;
+
+            window.StoreSuite.storeSuiteLoader.block( $( '.my-storesuite-wrapper' ) );
+
+            $.ajax({
+                url:  StoreSuiteVariation.ajax_url,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action:     'storesuite_add_variation',
+                    security:   StoreSuiteVariation.add_variation_nonce,
+                    product_id: StoreSuiteVariation.product_id,
+                },
+                success: function( response ) {
+                    if ( response && response.success ) {
+                        var $container = $( '#storesuite-variations-container' );
+                        $container.prepend( response.data.html );
+                        Swal.fire({ icon: 'success', text: response.data.message, timer: 1500, showConfirmButton: false });
+                    } else {
+                        Swal.fire({ icon: 'error', text: ( response.data && response.data.message ) || 'Error adding variation.' });
+                    }
+                },
+                error: function() {
+                    Swal.fire({ icon: 'error', text: 'An unexpected error occurred.' });
+                },
+                complete: function() {
+                    window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
+                },
+            });
+        },
+
+        /**
+         * Handle remove variation button click with SweetAlert2 confirmation.
+         */
+        onRemoveVariationClick: function( e ) {
+            e.preventDefault();
+            var self         = this;
+            var $btn         = $( e.currentTarget );
+            var variationId  = $btn.data( 'variation-id' );
+            var $row         = $btn.closest( '.storesuite-variation-row' );
+
+            Swal.fire({
+                title: StoreSuiteVariation.i18n.confirm_remove || 'Remove this variation?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: StoreSuiteVariation.i18n.ok_button || 'OK',
+            }).then( function( result ) {
+                if ( ! result.isConfirmed ) {
+                    return;
+                }
+
+                self.removeVariation( variationId, $row );
+            });
+        },
+
+        /**
+         * Delete a variation via AJAX and remove the row from the DOM.
+         */
+        removeVariation: function( variationId, $row ) {
+            window.StoreSuite.storeSuiteLoader.block( $( '.my-storesuite-wrapper' ) );
+
+            var self = this;
+
+            $.ajax({
+                url:  StoreSuiteVariation.ajax_url,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action:       'storesuite_remove_variation',
+                    security:     StoreSuiteVariation.remove_variation_nonce,
+                    variation_id: variationId,
+                },
+                success: function( response ) {
+                    if ( response && response.success ) {
+                        $row.slideUp( 200, function() {
+                            $row.remove();
+                            // Reload to refresh pagination and totals.
+                            self.reload();
+                        });
+                    } else {
+                        Swal.fire({ icon: 'error', text: ( response.data && response.data.message ) || 'Error removing variation.' });
+                    }
+                },
+                error: function() {
+                    Swal.fire({ icon: 'error', text: 'An unexpected error occurred.' });
+                },
+                complete: function() {
+                    window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
+                },
             });
         },
 

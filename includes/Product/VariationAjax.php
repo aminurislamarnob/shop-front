@@ -27,6 +27,8 @@ class VariationAjax {
 		add_action( 'wp_ajax_storesuite_load_variations', array( $this, 'load_variations' ), 10 );
 		add_action( 'wp_ajax_storesuite_generate_variations', array( $this, 'generate_variations' ), 10 );
 		add_action( 'wp_ajax_storesuite_save_variations', array( $this, 'save_variations' ), 10 );
+		add_action( 'wp_ajax_storesuite_add_variation', array( $this, 'add_variation' ), 10 );
+		add_action( 'wp_ajax_storesuite_remove_variation', array( $this, 'remove_variation' ), 10 );
 	}
 
     /**
@@ -276,6 +278,99 @@ class VariationAjax {
 				'created' => $created,
 				'total'   => $total_possible,
 				'message' => $message,
+			)
+		);
+	}
+
+	/**
+	 * Add a single blank variation via AJAX.
+	 *
+	 * Creates an empty WC_Product_Variation under the given parent product,
+	 * renders the variation row template, and returns the HTML.
+	 *
+	 * @return void
+	 */
+	public function add_variation() {
+		if ( ! check_ajax_referer( 'add-variation', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) || ! isset( $_POST['product_id'] ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'storesuite' ) ) );
+		}
+
+		$product_id = absint( wp_unslash( $_POST['product_id'] ) );
+		$product    = wc_get_product( $product_id );
+
+		if ( ! $product || ! $product->is_type( 'variable' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		$variation = new WC_Product_Variation();
+		$variation->set_parent_id( $product_id );
+		$variation->set_status( 'publish' );
+		$variation->save();
+
+		$variation_id = $variation->get_id();
+
+		// Determine loop index: total children count (the new one is already included).
+		$loop = count( $product->get_children() ) - 1;
+
+		ob_start();
+		storesuite_get_template_part(
+			'products/product-variation-row',
+			'',
+			array(
+				'variation'    => $variation,
+				'variation_id' => $variation_id,
+				'loop'         => $loop,
+				'parent'       => $product,
+			)
+		);
+		$html = ob_get_clean();
+
+		wp_send_json_success(
+			array(
+				'html'         => $html,
+				'variation_id' => $variation_id,
+				'message'      => __( 'Variation added.', 'storesuite' ),
+			)
+		);
+	}
+
+	/**
+	 * Remove a single variation via AJAX.
+	 *
+	 * Validates the variation exists and is of type 'variation',
+	 * permanently deletes it, and syncs the parent product.
+	 *
+	 * @return void
+	 */
+	public function remove_variation() {
+		if ( ! check_ajax_referer( 'remove-variation', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) || ! isset( $_POST['variation_id'] ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'storesuite' ) ) );
+		}
+
+		$variation_id = absint( wp_unslash( $_POST['variation_id'] ) );
+		$variation    = wc_get_product( $variation_id );
+
+		if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variation.', 'storesuite' ) ) );
+		}
+
+		$parent_id = $variation->get_parent_id();
+		$variation->delete( true );
+
+		// Sync parent product data (price range, stock, etc.).
+		WC_Product_Variable::sync( $parent_id );
+
+		wp_send_json_success(
+			array(
+				'message' => __( 'Variation deleted.', 'storesuite' ),
 			)
 		);
 	}
