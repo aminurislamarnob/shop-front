@@ -116,6 +116,13 @@
                 case 'generate_variations':
                     this.generateAll();
                     break;
+                case 'variable_regular_price':
+                case 'variable_sale_price':
+                case 'variable_stock_status':
+                case 'toggle_enabled':
+                case 'delete_all':
+                    this.bulkAction( action );
+                    break;
                 default:
                     break;
             }
@@ -162,6 +169,122 @@
                         window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
                     },
                 });
+            });
+        },
+
+        /**
+         * Prompt user for bulk action value and execute.
+         */
+        bulkAction: function( action ) {
+            var self = this;
+            var i18n = StoreSuiteVariation.i18n;
+
+            switch ( action ) {
+                case 'variable_regular_price':
+                case 'variable_sale_price':
+                    var title = action === 'variable_regular_price'
+                        ? ( i18n.set_regular_price || 'Set regular price for all variations' )
+                        : ( i18n.set_sale_price || 'Set sale price for all variations' );
+
+                    Swal.fire({
+                        title: title,
+                        input: 'text',
+                        inputLabel: i18n.enter_price || 'Enter price',
+                        showCancelButton: true,
+                        confirmButtonText: i18n.ok_button || 'OK',
+                        inputValidator: function( val ) {
+                            if ( ! val || isNaN( parseFloat( val ) ) ) {
+                                return i18n.enter_price || 'Enter a valid price.';
+                            }
+                        },
+                    }).then( function( result ) {
+                        if ( result.isConfirmed ) {
+                            self.executeBulkAction( action, result.value );
+                        }
+                    });
+                    break;
+
+                case 'variable_stock_status':
+                    Swal.fire({
+                        title: i18n.select_stock_status || 'Select stock status for all variations',
+                        input: 'select',
+                        inputOptions: {
+                            instock:     i18n.in_stock || 'In stock',
+                            outofstock:  i18n.out_of_stock || 'Out of stock',
+                            onbackorder: i18n.on_backorder || 'On backorder',
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: i18n.ok_button || 'OK',
+                    }).then( function( result ) {
+                        if ( result.isConfirmed ) {
+                            self.executeBulkAction( action, result.value );
+                        }
+                    });
+                    break;
+
+                case 'toggle_enabled':
+                    Swal.fire({
+                        title: i18n.confirm_toggle_enabled || 'Toggle enabled/disabled status for all variations?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: i18n.ok_button || 'OK',
+                    }).then( function( result ) {
+                        if ( result.isConfirmed ) {
+                            self.executeBulkAction( action, '' );
+                        }
+                    });
+                    break;
+
+                case 'delete_all':
+                    Swal.fire({
+                        title: i18n.confirm_delete_all || 'Delete all variations? This cannot be undone.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d63638',
+                        confirmButtonText: i18n.ok_button || 'OK',
+                    }).then( function( result ) {
+                        if ( result.isConfirmed ) {
+                            self.executeBulkAction( action, '' );
+                        }
+                    });
+                    break;
+            }
+        },
+
+        /**
+         * Send bulk action AJAX request and reload variations.
+         */
+        executeBulkAction: function( action, value ) {
+            var self = this;
+
+            window.StoreSuite.storeSuiteLoader.block( $( '.my-storesuite-wrapper' ) );
+
+            $.ajax({
+                url:  StoreSuiteVariation.ajax_url,
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action:      'storesuite_bulk_edit_variations',
+                    security:    StoreSuiteVariation.bulk_edit_nonce,
+                    product_id:  StoreSuiteVariation.product_id,
+                    bulk_action: action,
+                    value:       value,
+                },
+                success: function( response ) {
+                    if ( response && response.success ) {
+                        Swal.fire({ icon: 'success', text: response.data.message, timer: 2000, showConfirmButton: false });
+                        self.page = 1;
+                        self.reload();
+                    } else {
+                        Swal.fire({ icon: 'error', text: ( response.data && response.data.message ) || 'Error performing bulk action.' });
+                    }
+                },
+                error: function() {
+                    Swal.fire({ icon: 'error', text: 'An unexpected error occurred.' });
+                },
+                complete: function() {
+                    window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
+                },
             });
         },
 

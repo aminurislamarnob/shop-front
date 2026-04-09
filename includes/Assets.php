@@ -448,6 +448,7 @@ class Assets {
 				'save_variations_nonce'  => wp_create_nonce( 'save-variations' ),
 				'add_variation_nonce'    => wp_create_nonce( 'add-variation' ),
 				'remove_variation_nonce' => wp_create_nonce( 'remove-variation' ),
+				'bulk_edit_nonce'        => wp_create_nonce( 'bulk-edit-variations' ),
 				'product_id'            => absint( get_query_var( 'edit-product' ) ),
 				'per_page'              => 15,
 				'i18n'                  => array(
@@ -461,6 +462,14 @@ class Assets {
 					'confirm_generate'       => __( 'Generate variations?', 'storesuite' ),
 					'confirm_generate_text'  => __( 'This will create variations for all attribute combinations.', 'storesuite' ),
 					'ok_button'              => __( 'OK', 'storesuite' ),
+					'enter_price'            => __( 'Enter price', 'storesuite' ),
+					'set_regular_price'      => __( 'Set regular price for all variations', 'storesuite' ),
+					'set_sale_price'         => __( 'Set sale price for all variations', 'storesuite' ),
+					'select_stock_status'    => __( 'Select stock status for all variations', 'storesuite' ),
+					'confirm_toggle_enabled' => __( 'Toggle enabled/disabled status for all variations?', 'storesuite' ),
+					'in_stock'               => __( 'In stock', 'storesuite' ),
+					'out_of_stock'           => __( 'Out of stock', 'storesuite' ),
+					'on_backorder'           => __( 'On backorder', 'storesuite' ),
 				),
 			) );
 		}
