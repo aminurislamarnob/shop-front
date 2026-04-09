@@ -2893,6 +2893,10 @@ button.remove_order_item_meta.button:hover {
   border: 1px solid #e0e0e0;
 }
 
+.storesuite-variation-row.variation-needs-update {
+  border-left: 4px solid #2271b1;
+}
+
 /* Variation pagination */
 .storesuite-variation-pagination {
   margin-top: 12px;

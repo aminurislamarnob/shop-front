@@ -10,6 +10,16 @@
             $(document).on('click', '.storesuite-toggle-variation', this.toggleVariation);
             $(document).on('click', '.storesuite-variation-pagination a[data-page]', this.onPaginationClick.bind(this));
             $(document).on('click', '#storesuite-do-variation-action', this.onToolbarAction.bind(this));
+            $(document).on('click', '#storesuite-save-variations-btn', this.saveVariations.bind(this));
+
+            // Mark rows as needing update on any input change.
+            $(document).on('change input', '#storesuite-variations-container :input', this.onVariationFieldChange);
+
+            // Toggle shipping fields when virtual checkbox changes.
+            $(document).on('change', '.variable_is_virtual', this.onVirtualChange);
+
+            // Toggle stock qty field when manage stock checkbox changes.
+            $(document).on('change', '.variable_manage_stock', this.onManageStockChange);
 
             // Auto-load variations on edit page.
             if ( StoreSuiteVariation.product_id > 0 && $('#post_type').val() === 'variable' ) {
@@ -148,6 +158,108 @@
                         window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
                     },
                 });
+            });
+        },
+
+        /**
+         * Mark a variation row as needing an update and enable the save button.
+         */
+        onVariationFieldChange: function() {
+            var $row = $(this).closest('.storesuite-variation-row');
+            if ( ! $row.hasClass('variation-needs-update') ) {
+                $row.addClass('variation-needs-update');
+            }
+            $('#storesuite-save-variations-btn').prop('disabled', false);
+        },
+
+        /**
+         * Toggle shipping fields visibility when virtual checkbox changes.
+         */
+        onVirtualChange: function() {
+            var $row = $(this).closest('.storesuite-variation-row');
+            if ( $(this).is(':checked') ) {
+                $row.find('.hide_if_variation_virtual').hide();
+            } else {
+                $row.find('.hide_if_variation_virtual').show();
+            }
+        },
+
+        /**
+         * Toggle stock qty field visibility when manage stock checkbox changes.
+         */
+        onManageStockChange: function() {
+            var $row = $(this).closest('.storesuite-variation-row');
+            if ( $(this).is(':checked') ) {
+                $row.find('.show_if_variation_manage_stock').show();
+            } else {
+                $row.find('.show_if_variation_manage_stock').hide();
+            }
+        },
+
+        /**
+         * Save only the variation rows that have been modified.
+         */
+        saveVariations: function() {
+            var self      = this;
+            var $dirty    = $('#storesuite-variations-container .variation-needs-update');
+
+            if ( ! $dirty.length ) {
+                return;
+            }
+
+            window.StoreSuite.storeSuiteLoader.block( $( '.my-storesuite-wrapper' ) );
+
+            var formData = new FormData();
+            formData.append( 'action', 'storesuite_save_variations' );
+            formData.append( 'security', StoreSuiteVariation.save_variations_nonce );
+            formData.append( 'product_id', StoreSuiteVariation.product_id );
+
+            // Collect inputs only from dirty rows.
+            $dirty.each( function() {
+                $( this ).find( ':input' ).each( function() {
+                    var $input = $( this );
+                    var name   = $input.attr( 'name' );
+
+                    if ( ! name ) {
+                        return;
+                    }
+
+                    if ( $input.is( ':checkbox' ) ) {
+                        if ( $input.is( ':checked' ) ) {
+                            formData.append( name, $input.val() );
+                        }
+                    } else if ( $input.is( 'select[multiple]' ) ) {
+                        var values = $input.val() || [];
+                        values.forEach( function( v ) {
+                            formData.append( name, v );
+                        });
+                    } else {
+                        formData.append( name, $input.val() );
+                    }
+                });
+            });
+
+            $.ajax({
+                url:  StoreSuiteVariation.ajax_url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function( response ) {
+                    if ( response && response.success ) {
+                        Swal.fire({ icon: 'success', text: response.data.message, timer: 2000, showConfirmButton: false });
+                        $dirty.removeClass( 'variation-needs-update' );
+                        $( '#storesuite-save-variations-btn' ).prop( 'disabled', true );
+                    } else {
+                        Swal.fire({ icon: 'error', text: ( response.data && response.data.message ) || 'Error saving variations.' });
+                    }
+                },
+                error: function() {
+                    Swal.fire({ icon: 'error', text: 'An unexpected error occurred.' });
+                },
+                complete: function() {
+                    window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
+                },
             });
         },
 
