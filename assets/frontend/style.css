@@ -2909,6 +2909,41 @@ button.remove_order_item_meta.button:hover {
   border-left: 4px solid #2271b1;
 }
 
+/* Drag reorder */
+#storesuite-variations-container .storesuite-variation-header {
+  cursor: grab;
+}
+
+#storesuite-variations-container .ui-sortable-helper .storesuite-variation-header {
+  cursor: grabbing;
+}
+
+#storesuite-variations-container .ui-sortable-helper {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.storesuite-sortable-placeholder {
+  border: 2px dashed #2271b1;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  min-height: 56px;
+  background: #f0f6fc;
+}
+
+/* Default attributes */
+.storesuite-default-attributes {
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 16px;
+}
+
+.storesuite-default-attributes-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
 /* Variation pagination */
 .storesuite-variation-pagination {
   margin-top: 12px;
