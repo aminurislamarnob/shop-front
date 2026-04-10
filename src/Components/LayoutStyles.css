@@ -247,3 +247,40 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
     margin-bottom: 20px;
 }
+
+.storesuite-sidebar-image-control__label {
+    font-weight: 600;
+    font-size: 13px;
+    margin: 0 0 4px;
+}
+
+.storesuite-sidebar-image-control__help {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: #646970;
+    line-height: 1.5;
+}
+
+.storesuite-sidebar-image-control__preview {
+    margin-bottom: 12px;
+}
+
+.storesuite-sidebar-image-control__preview img {
+    display: block;
+    max-width: 200px;
+    max-height: 120px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 4px;
+    background: #fff;
+}
+
+.storesuite-sidebar-image-control__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
