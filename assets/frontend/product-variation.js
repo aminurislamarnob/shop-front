@@ -26,6 +26,9 @@
             $(document).on('click', '.storesuite-variation-image-upload img', this.onImageUploadClick);
             $(document).on('click', '.storesuite-remove-variation-image', this.onRemoveImageClick);
 
+            // Default attributes save.
+            $(document).on('click', '#storesuite-save-default-attrs-btn', this.saveDefaultAttributes.bind(this));
+
             // Auto-load variations on edit page.
             if ( StoreSuiteVariation.product_id > 0 && $('#post_type').val() === 'variable' ) {
                 this.reload();
@@ -72,6 +75,7 @@
                         $container.attr('data-total', data.total).attr('data-page', data.page);
                         $container.html( data.html || '<p class="storesuite-text-muted">' + StoreSuiteVariation.i18n.no_variations + '</p>' );
                         self.buildPagination( data.total, StoreSuiteVariation.per_page, data.page, data.total_pages );
+                        self.initSortable();
                     }
                 },
                 complete: function() {
@@ -377,6 +381,75 @@
                         });
                     } else {
                         Swal.fire({ icon: 'error', text: ( response.data && response.data.message ) || 'Error removing variation.' });
+                    }
+                },
+                error: function() {
+                    Swal.fire({ icon: 'error', text: 'An unexpected error occurred.' });
+                },
+                complete: function() {
+                    window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
+                },
+            });
+        },
+
+        /**
+         * Initialize jQuery UI Sortable on the variations container for drag reordering.
+         */
+        initSortable: function() {
+            var $container = $( '#storesuite-variations-container' );
+            if ( ! $container.length || ! $.fn.sortable ) {
+                return;
+            }
+
+            $container.sortable({
+                items:       '.storesuite-variation-row',
+                handle:      '.storesuite-variation-header',
+                cursor:      'move',
+                placeholder: 'storesuite-sortable-placeholder',
+                opacity:     0.65,
+                stop: function() {
+                    // Update menu_order hidden inputs based on new DOM order.
+                    $container.find( '.storesuite-variation-row' ).each( function( index ) {
+                        $( this ).find( 'input[name^="variable_menu_order"]' ).val( index );
+                        if ( ! $( this ).hasClass( 'variation-needs-update' ) ) {
+                            $( this ).addClass( 'variation-needs-update' );
+                        }
+                    });
+                    $( '#storesuite-save-variations-btn' ).prop( 'disabled', false );
+                },
+            });
+        },
+
+        /**
+         * Save default attributes via AJAX.
+         */
+        saveDefaultAttributes: function() {
+            window.StoreSuite.storeSuiteLoader.block( $( '.my-storesuite-wrapper' ) );
+
+            var data = {
+                action:     'storesuite_save_default_attributes',
+                security:   StoreSuiteVariation.default_attributes_nonce,
+                product_id: StoreSuiteVariation.product_id,
+            };
+
+            // Collect all default attribute selects.
+            $( '.storesuite-default-attribute-select' ).each( function() {
+                var name = $( this ).attr( 'name' );
+                if ( name ) {
+                    data[ name ] = $( this ).val();
+                }
+            });
+
+            $.ajax({
+                url:  StoreSuiteVariation.ajax_url,
+                type: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function( response ) {
+                    if ( response && response.success ) {
+                        Swal.fire({ icon: 'success', text: response.data.message, timer: 1500, showConfirmButton: false });
+                    } else {
+                        Swal.fire({ icon: 'error', text: ( response.data && response.data.message ) || 'Error saving defaults.' });
                     }
                 },
                 error: function() {

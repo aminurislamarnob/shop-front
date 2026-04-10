@@ -30,6 +30,7 @@ class VariationAjax {
 		add_action( 'wp_ajax_storesuite_add_variation', array( $this, 'add_variation' ), 10 );
 		add_action( 'wp_ajax_storesuite_remove_variation', array( $this, 'remove_variation' ), 10 );
 		add_action( 'wp_ajax_storesuite_bulk_edit_variations', array( $this, 'bulk_edit_variations' ), 10 );
+		add_action( 'wp_ajax_storesuite_save_default_attributes', array( $this, 'save_default_attributes' ), 10 );
 	}
 
     /**
@@ -627,6 +628,59 @@ class VariationAjax {
 					__( '%d variation(s) updated.', 'storesuite' ),
 					$updated
 				),
+			)
+		);
+	}
+
+	/**
+	 * Save default attributes for a variable product.
+	 *
+	 * Reads default_attribute_<key> fields from POST, builds the defaults
+	 * array, and persists via $product->set_default_attributes().
+	 *
+	 * @return void
+	 */
+	public function save_default_attributes() {
+		if ( ! check_ajax_referer( 'save-default-attributes', 'security', false ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_products' ) || ! isset( $_POST['product_id'] ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid request.', 'storesuite' ) ) );
+		}
+
+		$product_id = absint( wp_unslash( $_POST['product_id'] ) );
+		$product    = wc_get_product( $product_id );
+
+		if ( ! $product || ! $product->is_type( 'variable' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		$defaults   = array();
+		$attributes = $product->get_attributes( 'edit' );
+
+		foreach ( $attributes as $attribute ) {
+			if ( ! $attribute->get_variation() ) {
+				continue;
+			}
+
+			$attr_key = sanitize_title( $attribute->get_name() );
+			$post_key = 'default_attribute_' . $attr_key;
+
+			if ( isset( $_POST[ $post_key ] ) ) {
+				$value = wc_clean( wp_unslash( $_POST[ $post_key ] ) );
+				if ( '' !== $value ) {
+					$defaults[ $attr_key ] = $value;
+				}
+			}
+		}
+
+		$product->set_default_attributes( $defaults );
+		$product->save();
+
+		wp_send_json_success(
+			array(
+				'message' => __( 'Default attributes saved.', 'storesuite' ),
 			)
 		);
 	}

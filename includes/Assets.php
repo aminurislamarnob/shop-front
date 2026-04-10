@@ -449,6 +449,7 @@ class Assets {
 				'add_variation_nonce'    => wp_create_nonce( 'add-variation' ),
 				'remove_variation_nonce' => wp_create_nonce( 'remove-variation' ),
 				'bulk_edit_nonce'        => wp_create_nonce( 'bulk-edit-variations' ),
+				'default_attributes_nonce' => wp_create_nonce( 'save-default-attributes' ),
 				'product_id'            => absint( get_query_var( 'edit-product' ) ),
 				'per_page'              => 15,
 				'placeholder_img'       => wc_placeholder_img_src( 'thumbnail' ),
@@ -474,6 +475,7 @@ class Assets {
 					'choose_variation_image' => __( 'Choose variation image', 'storesuite' ),
 					'set_image'              => __( 'Set image', 'storesuite' ),
 					'remove_image'           => __( 'Remove image', 'storesuite' ),
+					'defaults_saved'         => __( 'Default attributes saved.', 'storesuite' ),
 				),
 			) );
 		}
