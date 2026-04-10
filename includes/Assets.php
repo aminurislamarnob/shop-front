@@ -449,8 +449,10 @@ class Assets {
 				'add_variation_nonce'    => wp_create_nonce( 'add-variation' ),
 				'remove_variation_nonce' => wp_create_nonce( 'remove-variation' ),
 				'bulk_edit_nonce'        => wp_create_nonce( 'bulk-edit-variations' ),
+				'default_attributes_nonce' => wp_create_nonce( 'save-default-attributes' ),
 				'product_id'            => absint( get_query_var( 'edit-product' ) ),
 				'per_page'              => 15,
+				'placeholder_img'       => wc_placeholder_img_src( 'thumbnail' ),
 				'i18n'                  => array(
 					'confirm_remove'     => __( 'Remove this variation?', 'storesuite' ),
 					'confirm_delete_all' => __( 'Delete all variations? This cannot be undone.', 'storesuite' ),
@@ -470,6 +472,10 @@ class Assets {
 					'in_stock'               => __( 'In stock', 'storesuite' ),
 					'out_of_stock'           => __( 'Out of stock', 'storesuite' ),
 					'on_backorder'           => __( 'On backorder', 'storesuite' ),
+					'choose_variation_image' => __( 'Choose variation image', 'storesuite' ),
+					'set_image'              => __( 'Set image', 'storesuite' ),
+					'remove_image'           => __( 'Remove image', 'storesuite' ),
+					'defaults_saved'         => __( 'Default attributes saved.', 'storesuite' ),
 				),
 			) );
 		}

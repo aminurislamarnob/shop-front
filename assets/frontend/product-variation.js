@@ -22,6 +22,13 @@
             // Toggle stock qty field when manage stock checkbox changes.
             $(document).on('change', '.variable_manage_stock', this.onManageStockChange);
 
+            // Variation image upload and remove.
+            $(document).on('click', '.storesuite-variation-image-upload img', this.onImageUploadClick);
+            $(document).on('click', '.storesuite-remove-variation-image', this.onRemoveImageClick);
+
+            // Default attributes save.
+            $(document).on('click', '#storesuite-save-default-attrs-btn', this.saveDefaultAttributes.bind(this));
+
             // Auto-load variations on edit page.
             if ( StoreSuiteVariation.product_id > 0 && $('#post_type').val() === 'variable' ) {
                 this.reload();
@@ -68,6 +75,7 @@
                         $container.attr('data-total', data.total).attr('data-page', data.page);
                         $container.html( data.html || '<p class="storesuite-text-muted">' + StoreSuiteVariation.i18n.no_variations + '</p>' );
                         self.buildPagination( data.total, StoreSuiteVariation.per_page, data.page, data.total_pages );
+                        self.initSortable();
                     }
                 },
                 complete: function() {
@@ -385,6 +393,75 @@
         },
 
         /**
+         * Initialize jQuery UI Sortable on the variations container for drag reordering.
+         */
+        initSortable: function() {
+            var $container = $( '#storesuite-variations-container' );
+            if ( ! $container.length || ! $.fn.sortable ) {
+                return;
+            }
+
+            $container.sortable({
+                items:       '.storesuite-variation-row',
+                handle:      '.storesuite-variation-header',
+                cursor:      'move',
+                placeholder: 'storesuite-sortable-placeholder',
+                opacity:     0.65,
+                stop: function() {
+                    // Update menu_order hidden inputs based on new DOM order.
+                    $container.find( '.storesuite-variation-row' ).each( function( index ) {
+                        $( this ).find( 'input[name^="variable_menu_order"]' ).val( index );
+                        if ( ! $( this ).hasClass( 'variation-needs-update' ) ) {
+                            $( this ).addClass( 'variation-needs-update' );
+                        }
+                    });
+                    $( '#storesuite-save-variations-btn' ).prop( 'disabled', false );
+                },
+            });
+        },
+
+        /**
+         * Save default attributes via AJAX.
+         */
+        saveDefaultAttributes: function() {
+            window.StoreSuite.storeSuiteLoader.block( $( '.my-storesuite-wrapper' ) );
+
+            var data = {
+                action:     'storesuite_save_default_attributes',
+                security:   StoreSuiteVariation.default_attributes_nonce,
+                product_id: StoreSuiteVariation.product_id,
+            };
+
+            // Collect all default attribute selects.
+            $( '.storesuite-default-attribute-select' ).each( function() {
+                var name = $( this ).attr( 'name' );
+                if ( name ) {
+                    data[ name ] = $( this ).val();
+                }
+            });
+
+            $.ajax({
+                url:  StoreSuiteVariation.ajax_url,
+                type: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function( response ) {
+                    if ( response && response.success ) {
+                        Swal.fire({ icon: 'success', text: response.data.message, timer: 1500, showConfirmButton: false });
+                    } else {
+                        Swal.fire({ icon: 'error', text: ( response.data && response.data.message ) || 'Error saving defaults.' });
+                    }
+                },
+                error: function() {
+                    Swal.fire({ icon: 'error', text: 'An unexpected error occurred.' });
+                },
+                complete: function() {
+                    window.StoreSuite.storeSuiteLoader.unblock( $( '.my-storesuite-wrapper' ) );
+                },
+            });
+        },
+
+        /**
          * Mark a variation row as needing an update and enable the save button.
          */
         onVariationFieldChange: function() {
@@ -417,6 +494,61 @@
             } else {
                 $row.find('.show_if_variation_manage_stock').hide();
             }
+        },
+
+        /**
+         * Open WordPress media library to choose a variation image.
+         */
+        onImageUploadClick: function( e ) {
+            e.preventDefault();
+            var $upload = $( this ).closest( '.storesuite-variation-image-upload' );
+            var $row    = $upload.closest( '.storesuite-variation-row' );
+            var i18n    = StoreSuiteVariation.i18n;
+
+            var frame = wp.media({
+                title:    i18n.choose_variation_image || 'Choose variation image',
+                button:   { text: i18n.set_image || 'Set image' },
+                multiple: false,
+                library:  { type: 'image' },
+            });
+
+            frame.on( 'select', function() {
+                var attachment = frame.state().get( 'selection' ).first().toJSON();
+                var thumbUrl   = ( attachment.sizes && attachment.sizes.thumbnail )
+                    ? attachment.sizes.thumbnail.url
+                    : attachment.url;
+
+                $upload.find( 'img' ).attr( 'src', thumbUrl );
+                $upload.find( 'input[type="hidden"]' ).val( attachment.id ).trigger( 'change' );
+                $upload.find( '.storesuite-remove-variation-image' ).show();
+
+                // Mark row as modified.
+                if ( ! $row.hasClass( 'variation-needs-update' ) ) {
+                    $row.addClass( 'variation-needs-update' );
+                }
+                $( '#storesuite-save-variations-btn' ).prop( 'disabled', false );
+            });
+
+            frame.open();
+        },
+
+        /**
+         * Remove the variation image and reset to placeholder.
+         */
+        onRemoveImageClick: function( e ) {
+            e.preventDefault();
+            var $upload = $( this ).closest( '.storesuite-variation-image-upload' );
+            var $row    = $upload.closest( '.storesuite-variation-row' );
+
+            $upload.find( 'img' ).attr( 'src', StoreSuiteVariation.placeholder_img );
+            $upload.find( 'input[type="hidden"]' ).val( 0 ).trigger( 'change' );
+            $( this ).hide();
+
+            // Mark row as modified.
+            if ( ! $row.hasClass( 'variation-needs-update' ) ) {
+                $row.addClass( 'variation-needs-update' );
+            }
+            $( '#storesuite-save-variations-btn' ).prop( 'disabled', false );
         },
 
         /**

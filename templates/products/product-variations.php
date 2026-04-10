@@ -70,6 +70,59 @@ if ( $product && $product->is_type( 'variable' ) ) {
 				</div>
 			</div>
 
+			<!-- Default attributes -->
+			<?php
+			$default_attributes = $product ? $product->get_default_attributes() : array();
+			?>
+			<div class="storesuite-default-attributes storesuite-mb-12">
+				<h4 class="storesuite-default-attributes-title"><?php esc_html_e( 'Default Form Values', 'storesuite' ); ?></h4>
+				<div class="row">
+					<?php foreach ( $variation_attributes as $attribute ) :
+						$attr_name   = $attribute->get_name();
+						$attr_key    = sanitize_title( $attr_name );
+						$attr_label  = wc_attribute_label( $attr_name );
+						$current_val = isset( $default_attributes[ $attr_key ] ) ? $default_attributes[ $attr_key ] : '';
+
+						if ( $attribute->is_taxonomy() ) {
+							$terms = get_terms( array(
+								'taxonomy'   => $attr_name,
+								'orderby'    => 'name',
+								'hide_empty' => false,
+							) );
+						} else {
+							$terms = $attribute->get_options();
+						}
+					?>
+						<div class="col-md-4">
+							<div class="storesuite-form-group">
+								<label><?php echo esc_html( $attr_label ); ?></label>
+								<select name="default_attribute_<?php echo esc_attr( $attr_key ); ?>" class="storesuite-form-control storesuite-default-attribute-select">
+									<option value=""><?php esc_html_e( 'No default', 'storesuite' ); ?></option>
+									<?php if ( $attribute->is_taxonomy() && ! is_wp_error( $terms ) ) : ?>
+										<?php foreach ( $terms as $term ) : ?>
+											<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $current_val, $term->slug ); ?>>
+												<?php echo esc_html( $term->name ); ?>
+											</option>
+										<?php endforeach; ?>
+									<?php elseif ( ! $attribute->is_taxonomy() ) : ?>
+										<?php foreach ( $terms as $option ) : ?>
+											<option value="<?php echo esc_attr( $option ); ?>" <?php selected( $current_val, $option ); ?>>
+												<?php echo esc_html( $option ); ?>
+											</option>
+										<?php endforeach; ?>
+									<?php endif; ?>
+								</select>
+							</div>
+						</div>
+					<?php endforeach; ?>
+					<div class="col-md-12">
+						<button type="button" id="storesuite-save-default-attrs-btn" class="my-storesuite-button my-storesuite-button-sm my-storesuite-button-light">
+							<?php esc_html_e( 'Save defaults', 'storesuite' ); ?>
+						</button>
+					</div>
+				</div>
+			</div>
+
 			<!-- Variations container (loaded via AJAX) -->
 			<div id="storesuite-variations-container"
 				data-product-id="<?php echo esc_attr( $product_id ); ?>"
