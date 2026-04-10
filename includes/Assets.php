@@ -135,12 +135,23 @@ class Assets {
 	public function enqueue_admin_scripts() {
 		$page = get_current_screen();
 		if ( 'woocommerce_page_storesuite' === $page->id ) {
+			wp_enqueue_media();
+
 			$asset_file = include STORESUITE_DIR . '/assets/build/admin/script.asset.php';
+
+			$admin_script_dependencies = array_values(
+				array_unique(
+					array_merge(
+						$asset_file['dependencies'],
+						array( 'media-editor' )
+					)
+				)
+			);
 
 			wp_enqueue_script(
 				'storesuite-admin-page',
 				STORESUITE_PLUGIN_ASSET . '/build/admin/script.js',
-				$asset_file['dependencies'],
+				$admin_script_dependencies,
 				$asset_file['version'],
 				true
 			);

@@ -94,6 +94,24 @@ class SettingsController extends WP_REST_Controller {
 			$storesuite_settings['storesuite_prevent_admin_access'] = sanitize_text_field( $val );
 		}
 
+		if ( $request->has_param( 'storesuite_dashboard_sidebar_logo_id' ) ) {
+			$logo_id = absint( $request->get_param( 'storesuite_dashboard_sidebar_logo_id' ) );
+			if ( $logo_id > 0 && wp_attachment_is_image( $logo_id ) ) {
+				$storesuite_settings['storesuite_dashboard_sidebar_logo_id'] = $logo_id;
+			} else {
+				unset( $storesuite_settings['storesuite_dashboard_sidebar_logo_id'] );
+			}
+		}
+
+		if ( $request->has_param( 'storesuite_dashboard_sidebar_icon_id' ) ) {
+			$icon_id = absint( $request->get_param( 'storesuite_dashboard_sidebar_icon_id' ) );
+			if ( $icon_id > 0 && wp_attachment_is_image( $icon_id ) ) {
+				$storesuite_settings['storesuite_dashboard_sidebar_icon_id'] = $icon_id;
+			} else {
+				unset( $storesuite_settings['storesuite_dashboard_sidebar_icon_id'] );
+			}
+		}
+
 		$perf_keys = array(
 			'storesuite_show_perf_revenue_total_sales',
 			'storesuite_show_perf_revenue_gross_sales',
@@ -222,6 +240,16 @@ class SettingsController extends WP_REST_Controller {
 					'description' => __( 'Prevent vendors from accessing wp-admin. If HPOS is enabled, admin access is blocked regardless.', 'storesuite' ),
 					'type'        => 'string',
 					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_dashboard_sidebar_logo_id'     => array(
+					'description' => __( 'Attachment ID for the dashboard sidebar logo image.', 'storesuite' ),
+					'type'        => 'integer',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_dashboard_sidebar_icon_id'     => array(
+					'description' => __( 'Attachment ID for the dashboard sidebar icon (shown when the sidebar is collapsed).', 'storesuite' ),
+					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'storesuite_show_perf_revenue_total_sales' => array(

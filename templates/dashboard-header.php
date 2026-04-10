@@ -12,8 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 <header class="storesuite-dashboard-header">
 	<div class="row align-items-center">
 		<div class="col-md-6">
-			<span class="storesuite-sidebar-trigger">
-				<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M24,3c0,.55-.45,1-1,1H1c-.55,0-1-.45-1-1s.45-1,1-1H23c.55,0,1,.45,1,1ZM7,20H1c-.55,0-1,.45-1,1s.45,1,1,1H7c.55,0,1-.45,1-1s-.45-1-1-1ZM15,11H1c-.55,0-1,.45-1,1s.45,1,1,1H15c.55,0,1-.45,1-1s-.45-1-1-1Z"/></svg>
+			<span
+				class="storesuite-sidebar-trigger"
+				role="button"
+				tabindex="0"
+				aria-expanded="true"
+				aria-controls="storesuite-dashboard-sidebar"
+				aria-label="<?php esc_attr_e( 'Toggle navigation menu', 'storesuite' ); ?>"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M24,3c0,.55-.45,1-1,1H1c-.55,0-1-.45-1-1s.45-1,1-1H23c.55,0,1,.45,1,1ZM7,20H1c-.55,0-1,.45-1,1s.45,1,1,1H7c.55,0,1-.45,1-1s-.45-1-1-1ZM15,11H1c-.55,0-1,.45-1,1s.45,1,1,1H15c.55,0,1-.45,1-1s-.45-1-1-1Z"/></svg>
 			</span>
 		</div>
 		<div class="col-md-6">

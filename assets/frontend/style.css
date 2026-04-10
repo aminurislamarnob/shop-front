@@ -1,4 +1,17 @@
 /*Common CSS*/
+.screen-reader-text {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  word-wrap: normal !important;
+}
+
 :root{
   --body-font-size: 14px;
   --storesuite-primary-bg: #2d5bdb;
@@ -15,6 +28,8 @@
   --storesuite-sidebar-menu-text: rgb(71 85 105);
   --storesuite-sidebar-active-text: #213fd4;
   --storesuite-sidebar-active-background: #213fd4;
+  --storesuite-sidebar-width-expanded: 290px;
+  --storesuite-sidebar-width-collapsed: 72px;
 }
 /* Apply border-box to all elements and pseudo-elements */
 *,
@@ -1434,9 +1449,13 @@ ul.my-storesuite-metas {
 }
 
 /*Dash Navigation*/
+.my-storesuite-container {
+  --storesuite-sidebar-current-width: var(--storesuite-sidebar-width-expanded);
+}
+
 .my-storesuite-sidebar {
   position: fixed;
-  width: 290px;
+  width: var(--storesuite-sidebar-current-width);
   top: 0;
   bottom: 0;
   left: 0;
@@ -1448,6 +1467,9 @@ ul.my-storesuite-metas {
   padding: 10px;
   font-size: 14px;
   border-right: 1px solid var(--storesuite-border-color);
+  transition: width 0.28s ease, padding 0.28s ease;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .storesuite-sidebar-site-title {
   font-weight: 600;
@@ -1462,6 +1484,26 @@ ul.my-storesuite-metas {
   display: flex;
   align-items: center;
   padding-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.storesuite-sidebar-logo-image {
+  max-width: 100%;
+  max-height: 30px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.storesuite-sidebar-icon-image {
+  display: none;
+  width: 30px;
+  height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+  object-fit: contain;
 }
 
 ul.storesuite-dashboard-menu {
@@ -1491,11 +1533,8 @@ ul.storesuite-dashboard-menu a {
   line-height: 1;
   font-size: 14px;
   color: var(--storesuite-sidebar-menu-text);
-  transition: .3s;
-  -webkit-transition: .3s;
-  -moz-transition: .3s;
-  -ms-transition: .3s;
-  -o-transition: .3s;
+  transition: background 0.3s, color 0.3s, border-radius 0.3s;
+  position: relative;
 }
 ul.storesuite-dashboard-menu a.active, ul.storesuite-dashboard-menu a:hover {
   background: color-mix( in srgb, var(--storesuite-sidebar-active-background) 10%, transparent );
@@ -1508,8 +1547,206 @@ ul.storesuite-dashboard-menu a.active svg, ul.storesuite-dashboard-menu a:hover 
 
 /*Dash content*/
 .my-storesuite-wrapper {
-  width: calc(100% - 290px);
-  margin-left: 290px;
+  width: calc(100% - var(--storesuite-sidebar-current-width));
+  margin-left: var(--storesuite-sidebar-current-width);
+  transition: width 0.28s ease, margin-left 0.28s ease;
+}
+
+/* Collapsed sidebar: icons only + hover flyout labels */
+.my-storesuite-container.storesuite-sidebar-collapsed {
+  --storesuite-sidebar-current-width: var(--storesuite-sidebar-width-collapsed);
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed .my-storesuite-sidebar {
+  overflow: visible;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-logo {
+  position: relative;
+  justify-content: center;
+  padding-left: 4px;
+  padding-right: 4px;
+  min-height: 44px;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-site-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-logo-image {
+  display: none;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-icon-image {
+  display: block;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed
+  .storesuite-sidebar-logo:not(:has(.storesuite-sidebar-icon-image))
+  .storesuite-sidebar-logo-image {
+  display: block;
+  max-width: 36px;
+  max-height: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu a {
+  justify-content: center;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu a > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li {
+  position: relative;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li > a[data-storesuite-tooltip]::after {
+  content: attr(data-storesuite-tooltip);
+  position: absolute;
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-6px);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: #f8fafc;
+  background: var(--storesuite-primary-bg);
+  border-radius: 6px;
+  box-shadow: 0 12px 40px -8px rgba(15, 23, 42, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 10000;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li > a[data-storesuite-tooltip]:hover::after,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li > a[data-storesuite-tooltip]:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu .submenu {
+  position: absolute;
+  left: calc(100% + 6px);
+  top: 0;
+  min-width: 200px;
+  padding: 8px 0;
+  background: var(--storesuite-sidebar-bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--storesuite-border-color);
+  box-shadow: 0 12px 40px -8px rgba(15, 23, 42, 0.12);
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li:hover > .submenu,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li:focus-within > .submenu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu .submenu a > span {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  clip: auto;
+  overflow: visible;
+  white-space: normal;
+}
+
+@media (max-width: 782px) {
+  .my-storesuite-container.storesuite-sidebar-collapsed {
+    --storesuite-sidebar-current-width: var(--storesuite-sidebar-width-expanded);
+  }
+
+  .my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-site-title {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    clip: auto;
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu a > span {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    clip: auto;
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu a {
+    justify-content: flex-start;
+  }
+
+  .my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-logo-image {
+    display: block;
+    max-width: 100%;
+    max-height: 30px;
+  }
+
+  .my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-icon-image {
+    display: none;
+  }
+
+  .my-storesuite-container.storesuite-sidebar-collapsed
+    .storesuite-sidebar-logo:not(:has(.storesuite-sidebar-icon-image))
+    .storesuite-sidebar-logo-image {
+    max-width: 100%;
+    max-height: 30px;
+  }
+
+  .my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li > a[data-storesuite-tooltip]::after {
+    content: none;
+    display: none;
+  }
+
+  .my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu .submenu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    min-width: 0;
+  }
 }
 .my-storesuite-page-content {
   padding: 24px;

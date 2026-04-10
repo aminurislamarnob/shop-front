@@ -10,6 +10,7 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
+import DashboardSidebarImageControl from './DashboardSidebarImageControl';
 
 const PERFORMANCE_BOX_KEYS = [
 	{ key: 'revenue_total_sales', label: __( 'Total sales', 'storesuite' ) },
@@ -65,6 +66,8 @@ const GeneralSettings = () => {
 	const [ preventAdminAccess, setPreventAdminAccess ] = useState( false );
 	const [ performanceBoxes, setPerformanceBoxes ] = useState( {} );
 	const [ dashboardWidgets, setDashboardWidgets ] = useState( {} );
+	const [ sidebarLogoId, setSidebarLogoId ] = useState( 0 );
+	const [ sidebarIconId, setSidebarIconId ] = useState( 0 );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
 	const [ error, setError ] = useState( '' );
@@ -88,6 +91,19 @@ const GeneralSettings = () => {
 							response.storesuite_prevent_admin_access === true
 					);
 				}
+
+				setSidebarLogoId(
+					parseInt(
+						response.storesuite_dashboard_sidebar_logo_id,
+						10
+					) || 0
+				);
+				setSidebarIconId(
+					parseInt(
+						response.storesuite_dashboard_sidebar_icon_id,
+						10
+					) || 0
+				);
 
 				// Performance boxes.
 				const perf = {};
@@ -127,12 +143,12 @@ const GeneralSettings = () => {
 		setIsLoading( true );
 		const fetchPages = async () => {
 			try {
-				const pages = await apiFetch( {
+				const wpPages = await apiFetch( {
 					path: '/wp/v2/pages?per_page=100&page=1',
 				} );
 
 				// Map the pages to the options format required by SelectControl
-				const options = pages.map( ( page ) => ( {
+				const options = wpPages.map( ( page ) => ( {
 					label: page.title.rendered,
 					value: page.id,
 				} ) );
@@ -166,6 +182,8 @@ const GeneralSettings = () => {
 				storesuite_prevent_admin_access: preventAdminAccess
 					? 'yes'
 					: 'no',
+				storesuite_dashboard_sidebar_logo_id: sidebarLogoId,
+				storesuite_dashboard_sidebar_icon_id: sidebarIconId,
 			};
 
 			// Performance boxes.
@@ -197,6 +215,15 @@ const GeneralSettings = () => {
 				);
 			}
 
+			setSidebarLogoId(
+				parseInt( response.storesuite_dashboard_sidebar_logo_id, 10 ) ||
+					0
+			);
+			setSidebarIconId(
+				parseInt( response.storesuite_dashboard_sidebar_icon_id, 10 ) ||
+					0
+			);
+
 			// Performance boxes.
 			const perf = {};
 			PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
@@ -222,8 +249,8 @@ const GeneralSettings = () => {
 			setMessage( __( 'Settings saved successfully!', 'storesuite' ) );
 			setError( '' );
 			setIsLoading( false );
-		} catch ( error ) {
-			setError( error.message );
+		} catch ( submitError ) {
+			setError( submitError.message );
 			setMessage( '' );
 			setIsLoading( false );
 		}
@@ -273,7 +300,10 @@ const GeneralSettings = () => {
 					<CardBody>
 						<div className="storesuite-settings-group">
 							<SelectControl
-								label="Select Dashboard Page"
+								label={ __(
+									'Select Dashboard Page',
+									'storesuite'
+								) }
 								value={ dashboardPage }
 								options={ pages }
 								onChange={ ( page ) =>
@@ -281,6 +311,30 @@ const GeneralSettings = () => {
 								}
 							/>
 						</div>
+						<DashboardSidebarImageControl
+							label={ __(
+								'Dashboard sidebar logo',
+								'storesuite'
+							) }
+							help={ __(
+								'Shown in the expanded sidebar. If set, the site title is visually hidden but kept for screen readers.',
+								'storesuite'
+							) }
+							attachmentId={ sidebarLogoId }
+							onChange={ setSidebarLogoId }
+						/>
+						<DashboardSidebarImageControl
+							label={ __(
+								'Dashboard sidebar icon',
+								'storesuite'
+							) }
+							help={ __(
+								'Shown in the collapsed (icon-only) sidebar. If empty, the logo is used when collapsed when a logo is set.',
+								'storesuite'
+							) }
+							attachmentId={ sidebarIconId }
+							onChange={ setSidebarIconId }
+						/>
 						<div className="storesuite-settings-group admin-area-access">
 							<ToggleControl
 								label={ __(
