@@ -4,7 +4,7 @@ Tags: woocommerce, store management, shop manager, store suite, front-end shop m
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 1.0.0-beta3
+Stable tag: 1.0.0-beta4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,11 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.0.0-beta4 =
+* Collapsible dashboard sidebar: header control toggles expanded vs icon-only rail; menu labels on hover/focus; preference stored in the browser; full sidebar layout on smaller viewports.
+* General settings: optional sidebar logo (expanded) and sidebar icon (collapsed), chosen from the media library; outputs in the dashboard sidebar with updated styling.
+* Accessibility: navigation landmark on the sidebar, toggle semantics (role, aria-expanded, aria-controls), and screen-reader-friendly site title when a custom logo is shown.
 
 = 1.0.0 =
 * Initial release.
