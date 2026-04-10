@@ -488,6 +488,17 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 				);
 				?>
 
+				<?php
+				storesuite_get_template_part(
+					'products/product-variations',
+					'',
+					array(
+						'product'    => $product,
+						'product_id' => $product_id,
+					)
+				);
+				?>
+
 				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Others', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
