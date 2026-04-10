@@ -37,7 +37,7 @@ class DashboardMenu {
 				}
 
 				echo '<li>';
-				echo '<a href="' . esc_url( $menu['url'] ) . '"' . esc_attr( $active_class ) . ' target="' . esc_attr( $menu['target'] ) . '">';
+				echo '<a href="' . esc_url( $menu['url'] ) . '"' . esc_attr( $active_class ) . ' target="' . esc_attr( $menu['target'] ) . '" data-storesuite-tooltip="' . esc_attr( $menu['title'] ) . '">';
 				echo wp_kses(
 					$menu['icon'],
 					array(
@@ -65,7 +65,7 @@ class DashboardMenu {
 						// Check if the current user has permission to view this submenu item.
 						if ( current_user_can( $submenu['permission'] ) ) {
 							echo '<li>';
-							echo '<a href="' . esc_url( $submenu['url'] ) . '">';
+							echo '<a href="' . esc_url( $submenu['url'] ) . '" data-storesuite-tooltip="' . esc_attr( $submenu['title'] ) . '">';
 							echo wp_kses(
 								$submenu['icon'],
 								array(

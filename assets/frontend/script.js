@@ -38,6 +38,7 @@
 			this.bindEvents();
 		},
 		bindEvents: function () {
+			this.handleSidebarCollapseToggle();
 			this.handleDropdown(); //Handle
 			this.closeDropdownOutside(); // Close dropdown when clicking outside
 			this.uploadProductImage(); // Upload product image
@@ -129,6 +130,90 @@
 
 			// Initialize display/value on load.
 			storeSuiteUpdateDashboardRange( start, end );
+		},
+		handleSidebarCollapseToggle: function () {
+			var collapsedPreferenceStorageKey = 'storesuite_sidebar_collapsed';
+			var minViewportWidthForCollapsedSidebar = 783;
+			var $dashboardContainer = $( '.my-storesuite-container' );
+			var $sidebarCollapseToggle = $( '.storesuite-sidebar-trigger' );
+
+			if (
+				! $dashboardContainer.length ||
+				! $sidebarCollapseToggle.length
+			) {
+				return;
+			}
+
+			function isViewportWideEnoughForCollapsedSidebar() {
+				return window.innerWidth >= minViewportWidthForCollapsedSidebar;
+			}
+
+			function applySidebarCollapsedState( isCollapsed ) {
+				$dashboardContainer.toggleClass(
+					'storesuite-sidebar-collapsed',
+					isCollapsed
+				);
+				$sidebarCollapseToggle.attr(
+					'aria-expanded',
+					isCollapsed ? 'false' : 'true'
+				);
+			}
+
+			function persistCollapsedPreference( isCollapsed ) {
+				try {
+					if ( isCollapsed ) {
+						localStorage.setItem(
+							collapsedPreferenceStorageKey,
+							'1'
+						);
+					} else {
+						localStorage.removeItem(
+							collapsedPreferenceStorageKey
+						);
+					}
+				} catch ( storageError ) {}
+			}
+
+			function readCollapsedPreferenceFromStorage() {
+				try {
+					return (
+						localStorage.getItem(
+							collapsedPreferenceStorageKey
+						) === '1'
+					);
+				} catch ( storageError ) {
+					return false;
+				}
+			}
+
+			function syncSidebarCollapsedState() {
+				if ( ! isViewportWideEnoughForCollapsedSidebar() ) {
+					applySidebarCollapsedState( false );
+					return;
+				}
+				applySidebarCollapsedState(
+					readCollapsedPreferenceFromStorage()
+				);
+			}
+
+			function handleSidebarToggleInteraction( event ) {
+				if ( ! isViewportWideEnoughForCollapsedSidebar() ) {
+					return;
+				}
+				event.preventDefault();
+				var shouldBeCollapsed = ! $dashboardContainer.hasClass(
+					'storesuite-sidebar-collapsed'
+				);
+				applySidebarCollapsedState( shouldBeCollapsed );
+				persistCollapsedPreference( shouldBeCollapsed );
+			}
+
+			syncSidebarCollapsedState();
+			$( window ).on( 'resize', syncSidebarCollapsedState );
+			$sidebarCollapseToggle.on(
+				'click',
+				handleSidebarToggleInteraction
+			);
 		},
 		handleBulkActionCheckbox: function () {
 			$( '#cb-select-all-orders' ).on( 'click', function () {
