@@ -126,6 +126,7 @@ $variation_attrs   = $variation->get_attributes();
 						<div class="storesuite-variation-image-upload" data-loop="<?php echo esc_attr( $loop ); ?>">
 							<img src="<?php echo esc_url( $variation_thumb ); ?>" width="60" height="60" alt="">
 							<input type="hidden" name="variable_image_id[<?php echo esc_attr( $loop ); ?>]" value="<?php echo esc_attr( $variation->get_image_id() ); ?>">
+							<a href="#" class="storesuite-remove-variation-image" <?php echo $variation->get_image_id() ? '' : 'style="display:none;"'; ?>><?php esc_html_e( 'Remove image', 'storesuite' ); ?></a>
 						</div>
 					</div>
 				</div>
