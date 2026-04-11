@@ -75,7 +75,7 @@ Include **`prefers-reduced-motion: reduce`** when defining transitions (see exis
 
 - **Helper**: `assets/frontend/script.js` — object `storeSuiteModal`, exposed as `window.StoreSuite.storeSuiteModal`.
 - **Consumer**: `assets/frontend/product.js` — `initProductBulkEditModal` calls `initOverlay` with `fade: true` and product-specific `closeSelector`; `openProductBulkModal` fills fields then `modal.open( $modal )`.
-- **Template**: `templates/products/product-bulk-edit-modal.php`.
+- **Templates**: `templates/products/product-bulk-edit-modal.php` loads WooCommerce-style fields via `storesuite_get_template_part( 'products/html-bulk-edit-product', '', array( 'shipping_class' => $shipping_class ) )` — see `templates/products/html-bulk-edit-product.php` (vendored from WC).
 
 ## Checklist for new modals
 

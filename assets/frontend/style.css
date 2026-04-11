@@ -655,6 +655,12 @@ nav.my-storesuite-left-navigation ul li:last-child a:hover, nav.my-storesuite-le
 .storesuite-table-header-part {
   margin-bottom: 15px;
 }
+
+.my-storesuite-wrapper .storesuite-form-group.storesuite-bulk-product-actions {
+  margin-bottom: 0;
+  gap: 5px;
+}
+
 .storesuite-table-search-input input:focus, .storesuite-table-search-input input:focus-within {
   box-shadow: none;
   outline: none;
@@ -3385,19 +3391,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
   width: 50%;
 }
 
-.storesuite-filter-reset {
-  background-color: #f1f5f9;
-  color: var(--storesuite-text-black);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-  border-color: #f1f5f9;
-}
-
-.storesuite-filter-reset:hover {
-  background-color: var(--storesuite-primary-bg);
-  border-color: var(--storesuite-primary-bg);
-}
 .storesuite-filter-toggle svg{
   width: 14px;
   height: 14px;
@@ -3497,7 +3490,7 @@ form.storesuite-search-form.storesuite-order-search-form .my-storesuite-button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 100060;
   border-radius: inherit;
   opacity: 0;
   visibility: hidden;
@@ -3647,12 +3640,41 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   font-weight: 600;
 }
 
-.storesuite-product-bulk-modal-close {
+.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost {
   flex-shrink: 0;
-  min-width: 2.5rem;
-  padding: 0.25rem 0.5rem;
-  font-size: 1.5rem;
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  padding: 0;
+  font-size: 0;
   line-height: 1;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  color: rgb(244, 63, 94);
+  background-color: rgba(244, 63, 94, 0.25);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  transition:
+    color 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
+  color: #fff;
+  background-color: rgb(244, 63, 94);
+  border-color: rgb(244, 63, 94);
+}
+
+.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  flex-shrink: 0;
+  fill: currentColor;
 }
 
 .storesuite-product-bulk-edit-form {
@@ -3669,14 +3691,43 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 }
 
 .storesuite-product-bulk-edit-core .storesuite-form-group,
-.storesuite-product-bulk-edit-scroll .inline-edit-group,
-.storesuite-product-bulk-edit-scroll label {
+.storesuite-product-bulk-edit-scroll .storesuite-product-bulk-wc-fields .storesuite-form-group {
   margin-bottom: 0.75rem;
 }
 
-.storesuite-product-bulk-edit-scroll .inline-edit-col-right h4 {
+.storesuite-product-bulk-edit-scroll .storesuite-product-bulk-edit-core > .row,
+.storesuite-product-bulk-edit-scroll .storesuite-product-bulk-wc-fields > .row {
+  margin-bottom: 0.5rem;
+}
+
+.storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-section-heading {
   margin: 1rem 0 0.5rem;
   font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.storesuite-product-bulk-edit-scroll .storesuite-product-bulk-edit-core .storesuite-form-group > .storesuite-form-label,
+.storesuite-product-bulk-edit-scroll .storesuite-product-bulk-wc-fields .storesuite-form-group > .storesuite-form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #495057;
+  font-size: 14px;
+}
+
+.storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-dimensions-row {
+  margin-top: 0.25rem;
+}
+
+.storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-dimensions-row .storesuite-form-control {
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-dimensions-row .storesuite-form-control {
+    margin-bottom: 0;
+  }
 }
 
 .storesuite-product-bulk-modal-footer {
@@ -3696,6 +3747,26 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 .storesuite-button-secondary {
   background: #f3f4f6;
   border: 1px solid #d1d5db;
+}
+
+/* Slate neutral + primary on hover — filter offcanvas Reset, product bulk Cancel, etc. */
+.my-storesuite-button.storesuite-button-neutral-panel {
+  background-color: #f1f5f9;
+  color: var(--storesuite-text-black);
+  cursor: pointer;
+  text-align: center;
+  border-color: #f1f5f9;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.my-storesuite-button.storesuite-button-neutral-panel:hover,
+.my-storesuite-button.storesuite-button-neutral-panel:focus-visible {
+  background-color: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+  color: var(--storesuite-button-text-hover-color);
 }
 
 .storesuite-bulk-edit-feedback {

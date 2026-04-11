@@ -101,7 +101,7 @@ class Assets {
 
 		// Order scripts.
 		wp_register_script( 'storesuite_order_script', $frontend_order_script, array( 'storesuite_selectWoo' ), STORESUITE_PLUGIN_VERSION, true );
-		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_script', 'storesuite_selectWoo', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_script', 'storesuite_form_handler_script', 'storesuite_selectWoo', 'jquery-ui-datepicker', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 	}
@@ -426,9 +426,12 @@ class Assets {
 
 			if ( function_exists( 'storesuite_is_page' ) && storesuite_is_page( 'products' ) ) {
 				$product_script_data['bulk_edit'] = array(
-					'select_products_title'   => __( 'Select products', 'storesuite' ),
-					'select_products_message' => __( 'Choose at least one product to bulk edit.', 'storesuite' ),
-					'ok_button'                 => __( 'OK', 'storesuite' ),
+					'ajax_action'             => 'storesuite_bulk_edit_products',
+					'nonce'                   => wp_create_nonce( 'storesuite_bulk_edit_products' ),
+					'select_products_title'    => __( 'Select products', 'storesuite' ),
+					'select_products_message'  => __( 'Choose at least one product to bulk edit.', 'storesuite' ),
+					'success_title'           => __( 'Bulk update complete', 'storesuite' ),
+					'ok_button'               => __( 'OK', 'storesuite' ),
 				);
 			}
 

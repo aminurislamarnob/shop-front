@@ -8,6 +8,7 @@
 			this.toggleStockFields();
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
+			this.handleProductBulkEditSubmit();
 			this.handleProductDelete();
 			this.initProductBulkEditModal();
 		},
@@ -251,6 +252,113 @@
 				}
 			);
 		},
+
+		/**
+		 * Bulk edit products (modal): AJAX submit aligned with handleProductSubmit.
+		 */
+		handleProductBulkEditSubmit: function () {
+			var self = this;
+
+			$( document ).on(
+				'submit',
+				'#storesuite-product-bulk-edit-form',
+				function ( e ) {
+					e.preventDefault();
+
+					var $form = $( this );
+					var $modal = $( '#storesuite-product-bulk-edit-modal' );
+					var modal =
+						window.StoreSuite &&
+						window.StoreSuite.storeSuiteModal;
+					var bulk =
+						typeof StoreSuite_Product !== 'undefined'
+							? StoreSuite_Product.bulk_edit || {}
+							: {};
+
+					if ( ! $modal.length || ! bulk.nonce || ! bulk.ajax_action ) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					formData.append( 'action', bulk.ajax_action );
+					formData.append( 'security', bulk.nonce );
+
+					var $submitBtn = $form.find( '.storesuite-bulk-edit-submit' );
+					$submitBtn.prop( 'disabled', true );
+
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+							if ( response.success ) {
+								if ( modal && $modal.length ) {
+									modal.close( $modal );
+								}
+								Swal.fire( {
+									icon: 'success',
+									title:
+										bulk.success_title ||
+										storeSuiteFormHandler.i18n
+											.success_title,
+									text:
+										response.data &&
+										response.data.message
+											? response.data.message
+											: '',
+									confirmButtonText:
+										storeSuiteFormHandler.i18n.ok_button,
+								} ).then( function () {
+									window.location.reload();
+								} );
+							} else {
+								var failMsg;
+								if ( response.data ) {
+									failMsg =
+										response.data.message ||
+										response.data.error;
+									if (
+										! failMsg &&
+										typeof response.data === 'string'
+									) {
+										failMsg = response.data;
+									}
+								}
+								self.showError( failMsg );
+							}
+						},
+						error: function ( xhr ) {
+							Swal.close();
+							var msg;
+							if (
+								xhr &&
+								xhr.responseJSON &&
+								xhr.responseJSON.data
+							) {
+								msg =
+									xhr.responseJSON.data.message ||
+									xhr.responseJSON.data.error;
+							}
+							self.showError( msg );
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
+				}
+			);
+		},
+
 		showError: function ( message ) {
 			Swal.fire( {
 				icon: 'error',
