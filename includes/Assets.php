@@ -424,6 +424,14 @@ class Assets {
 				),
 			);
 
+			if ( function_exists( 'storesuite_is_page' ) && storesuite_is_page( 'products' ) ) {
+				$product_script_data['bulk_edit'] = array(
+					'select_products_title'   => __( 'Select products', 'storesuite' ),
+					'select_products_message' => __( 'Choose at least one product to bulk edit.', 'storesuite' ),
+					'ok_button'                 => __( 'OK', 'storesuite' ),
+				);
+			}
+
 			wp_localize_script(
 				'storesuite_product_script',
 				'StoreSuite_Product',

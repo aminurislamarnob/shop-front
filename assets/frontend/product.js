@@ -9,6 +9,7 @@
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
 			this.handleProductDelete();
+			this.initProductBulkEditModal();
 		},
 		bindEvents: function () {
 			var self = this;
@@ -544,6 +545,147 @@
 					} );
 				}
 			);
+		},
+
+		/**
+		 * Products list: bulk Edit opens modal (a11y: focus return, Escape, Tab cycle on overlay).
+		 */
+		initProductBulkEditModal: function () {
+			var self = this;
+			var $modal = $( '#storesuite-product-bulk-edit-modal' );
+
+			if ( ! $modal.length ) {
+				return;
+			}
+
+			$modal.on( 'keydown', function ( e ) {
+				if ( $modal.prop( 'hidden' ) ) {
+					return;
+				}
+
+				if ( e.key === 'Escape' ) {
+					e.preventDefault();
+					self.closeProductBulkModal( $modal );
+					return;
+				}
+
+				if ( e.key !== 'Tab' ) {
+					return;
+				}
+
+				var $focusable = self.getProductBulkModalFocusables( $modal );
+				if ( $focusable.length < 2 ) {
+					return;
+				}
+
+				var first = $focusable[ 0 ];
+				var last = $focusable[ $focusable.length - 1 ];
+
+				if ( e.shiftKey && document.activeElement === first ) {
+					e.preventDefault();
+					last.focus();
+				} else if ( ! e.shiftKey && document.activeElement === last ) {
+					e.preventDefault();
+					first.focus();
+				}
+			} );
+
+			$modal.on( 'click', function ( e ) {
+				if ( e.target === $modal[ 0 ] ) {
+					self.closeProductBulkModal( $modal );
+				}
+			} );
+
+			$modal.on(
+				'click',
+				'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close',
+				function ( e ) {
+					e.preventDefault();
+					self.closeProductBulkModal( $modal );
+				}
+			);
+
+			$( document ).on(
+				'submit',
+				'#storesuite-product-bulk-actions',
+				function ( e ) {
+					if ( $( '#bulk-action-selector-products' ).val() !== 'edit' ) {
+						return;
+					}
+
+					e.preventDefault();
+
+					var ids = $( '#storesuite-product-bulk-actions' )
+						.find( 'input[name="bulk_product_ids[]"]:checked' )
+						.map( function () {
+							return $( this ).val();
+						} )
+						.get();
+
+					if ( ! ids.length ) {
+						if ( typeof Swal === 'undefined' ) {
+							return;
+						}
+						var bulk = StoreSuite_Product.bulk_edit || {};
+						var i18n = StoreSuite_Product.i18n || {};
+						Swal.fire( {
+							icon: 'warning',
+							title:
+								bulk.select_products_title ||
+								i18n.error_title,
+							text:
+								bulk.select_products_message ||
+								i18n.unexpected_error,
+							confirmButtonText:
+								bulk.ok_button || i18n.ok_button,
+						} );
+						return;
+					}
+
+					self.openProductBulkModal( $modal, ids );
+				}
+			);
+		},
+
+		getProductBulkModalFocusables: function ( $modal ) {
+			var sel =
+				'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+			return $modal.find( '[role="dialog"]' ).find( sel ).filter( ':visible' );
+		},
+
+		openProductBulkModal: function ( $modal, postIds ) {
+			var $ids = $( '#storesuite-bulk-edit-post-ids' );
+			var i;
+
+			this._bulkEditPreviousFocus = document.activeElement;
+			$ids.empty();
+
+			for ( i = 0; i < postIds.length; i++ ) {
+				$ids.append(
+					$( '<input>', {
+						type: 'hidden',
+						name: 'post[]',
+						value: postIds[ i ],
+					} )
+				);
+			}
+
+			$modal.prop( 'hidden', false ).attr( 'aria-hidden', 'false' );
+
+			var $first = this.getProductBulkModalFocusables( $modal ).first();
+			if ( $first.length ) {
+				$first.trigger( 'focus' );
+			}
+		},
+
+		closeProductBulkModal: function ( $modal ) {
+			$modal.prop( 'hidden', true ).attr( 'aria-hidden', 'true' );
+
+			var prev = this._bulkEditPreviousFocus;
+			if ( prev && prev.focus ) {
+				prev.focus();
+			}
+			this._bulkEditPreviousFocus = null;
 		},
 	};
 	StoreFrontProduct.init();

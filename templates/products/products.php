@@ -21,10 +21,100 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
+			<?php
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only admin notices from redirect query args.
+			$storesuite_bulk_updated = isset( $_GET['updated'] ) ? absint( $_GET['updated'] ) : 0;
+			$storesuite_bulk_skipped = isset( $_GET['skipped'] ) ? absint( $_GET['skipped'] ) : 0;
+			$storesuite_bulk_locked       = isset( $_GET['locked'] ) ? absint( $_GET['locked'] ) : 0;
+			$storesuite_bulk_trashed      = isset( $_GET['trashed'] ) ? absint( $_GET['trashed'] ) : 0;
+			$storesuite_bulk_trash_locked = isset( $_GET['trash_locked'] ) ? absint( $_GET['trash_locked'] ) : 0;
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+			if ( $storesuite_bulk_updated || $storesuite_bulk_skipped || $storesuite_bulk_locked || $storesuite_bulk_trashed || $storesuite_bulk_trash_locked ) :
+				?>
+			<div class="storesuite-bulk-edit-feedback storesuite-form-group" role="status">
+				<?php if ( $storesuite_bulk_updated > 0 ) : ?>
+					<p class="storesuite-bulk-edit-feedback-line storesuite-text-success">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: %d: number of products updated */
+								_n( '%d product updated.', '%d products updated.', $storesuite_bulk_updated, 'storesuite' ),
+								$storesuite_bulk_updated
+							)
+						);
+						?>
+					</p>
+				<?php endif; ?>
+				<?php if ( $storesuite_bulk_skipped > 0 ) : ?>
+					<p class="storesuite-bulk-edit-feedback-line">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: %d: number of products skipped */
+								_n( '%d product was not updated (permission or invalid data).', '%d products were not updated (permission or invalid data).', $storesuite_bulk_skipped, 'storesuite' ),
+								$storesuite_bulk_skipped
+							)
+						);
+						?>
+					</p>
+				<?php endif; ?>
+				<?php if ( $storesuite_bulk_locked > 0 ) : ?>
+					<p class="storesuite-bulk-edit-feedback-line">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: %d: number of products locked by another user */
+								_n( '%d product not updated, currently being edited by another user.', '%d products not updated, currently being edited by another user.', $storesuite_bulk_locked, 'storesuite' ),
+								$storesuite_bulk_locked
+							)
+						);
+						?>
+					</p>
+				<?php endif; ?>
+				<?php if ( $storesuite_bulk_trashed > 0 ) : ?>
+					<p class="storesuite-bulk-edit-feedback-line storesuite-text-success">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: %d: number of products moved to trash */
+								_n( '%d product moved to trash.', '%d products moved to trash.', $storesuite_bulk_trashed, 'storesuite' ),
+								$storesuite_bulk_trashed
+							)
+						);
+						?>
+					</p>
+				<?php endif; ?>
+				<?php if ( $storesuite_bulk_trash_locked > 0 ) : ?>
+					<p class="storesuite-bulk-edit-feedback-line">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: %d: number of products not trashed because another user holds the edit lock */
+								_n( '%d product was not moved to trash (another user is editing it).', '%d products were not moved to trash (another user is editing them).', $storesuite_bulk_trash_locked, 'storesuite' ),
+								$storesuite_bulk_trash_locked
+							)
+						);
+						?>
+					</p>
+				<?php endif; ?>
+			</div>
+				<?php
+			endif;
+			?>
 			<div class="storesuite-table-header-part">
-				<div class="row">
-					<div class="col-md-3">
-						<form action="" method="get">
+				<div class="row align-items-center">
+					<div class="col-md-auto">
+						<div class="storesuite-form-group d-flex align-items-center storesuite-bulk-product-actions">
+							<select name="action" id="bulk-action-selector-products" class="storesuite-form-control" form="storesuite-product-bulk-actions">
+								<option value="-1"><?php esc_html_e( 'Bulk actions', 'storesuite' ); ?></option>
+								<option value="edit"><?php esc_html_e( 'Edit', 'storesuite' ); ?></option>
+								<option value="trash"><?php esc_html_e( 'Move to Trash', 'storesuite' ); ?></option>
+							</select>
+							<button type="submit" id="storesuite-product-doaction" class="my-storesuite-button" form="storesuite-product-bulk-actions"><?php esc_html_e( 'Apply', 'storesuite' ); ?></button>
+						</div>
+					</div>
+					<div class="col-md">
+						<form action="" method="get" class="storesuite-search-form">
 							<div class="storesuite-table-search-input">
 								<div class="storesuite-table-search-icon">
 									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
@@ -35,7 +125,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-9 text-right">
+					<div class="col-md-auto text-md-end">
 						<div class="row justify-content-end">
 							<div class="col-md-auto">
 								<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-product' ) ); ?>" class="my-storesuite-button">
@@ -59,7 +149,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			</div>
 			<!-- Off-canvas Filter -->
 			<?php storesuite_get_template_part( 'products/product-filters-offcanvas' ); ?>
-			<div class="storesuite-table-responsive">
+			<form id="storesuite-product-bulk-actions" method="post">
+				<?php wp_nonce_field( 'storesuite_product_bulk', 'storesuite_product_bulk_nonce' ); ?>
+				<div class="storesuite-table-responsive">
 				<?php
 				$current_page = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 				$search_term  = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change.
@@ -82,9 +174,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 				<table class="my-storesuite-tbl my-storesuite-product-list-table">
 					<thead>
 						<tr>
-							<th>
+							<th class="check-column">
 								<label class="my-storesuite-checkbox">
-									<input type="checkbox" name="" id="" class="my-storesuite-checkbox-input">
+									<input type="checkbox" id="cb-select-all-products" class="my-storesuite-checkbox-input">
 									<span class="my-storesuite-checkbox-back"></span>
 									<span class="my-storesuite-tick">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
@@ -103,7 +195,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<th><?php esc_html_e( 'Type', 'storesuite' ); ?></th>
 							<th class="text-right"><?php esc_html_e( 'Actions', 'storesuite' ); ?></th>
 						</tr>
-						<tbody>
+					</thead>
+					<tbody>
 						<?php
 						while ( $product_query->have_posts() ) :
 							$product_query->the_post();
@@ -117,9 +210,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							}
 							?>
 							<tr class="single-product-item" id="product-row-<?php echo esc_attr( $product_id ); ?>">
-								<td>
+								<td class="check-column">
 									<label class="my-storesuite-checkbox">
-										<input type="checkbox" name="" id="" class="my-storesuite-checkbox-input">
+										<input type="checkbox" name="bulk_product_ids[]" id="cb-select-<?php echo esc_attr( $product_id ); ?>" value="<?php echo esc_attr( $product_id ); ?>" class="my-storesuite-checkbox-input">
 										<span class="my-storesuite-checkbox-back"></span>
 										<span class="my-storesuite-tick">
 											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
@@ -198,8 +291,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 						endwhile;
 						wp_reset_postdata();
 						?>
-						</tbody>
-					</thead>
+					</tbody>
 				</table>
 					<?php
 					$total_pages = $product_query->max_num_pages;
@@ -229,7 +321,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 					);
 				}
 				?>
-			</div>
+				</div>
+			</form>
+			<?php storesuite_get_template_part( 'products/product-bulk-edit-modal' ); ?>
 		</main>
 		<?php do_action( 'storesuite_dashboard_content_after' ); ?>
 	</div>

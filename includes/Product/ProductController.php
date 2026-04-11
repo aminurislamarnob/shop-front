@@ -21,6 +21,184 @@ class ProductController {
 		add_action( 'wp_ajax_storesuite_add_product_action', array( $this, 'handle_add_product' ) );
 		add_action( 'wp_ajax_storesuite_edit_product_action', array( $this, 'handle_edit_product' ) );
 		add_action( 'wp_ajax_storesuite_delete_product', array( $this, 'handle_delete_product' ) );
+		add_action( 'template_redirect', array( $this, 'handle_product_bulk_actions' ) );
+	}
+
+	/**
+	 * Handle POST bulk actions on the StoreSuite products list (e.g. Move to Trash).
+	 *
+	 * @return void
+	 */
+	public function handle_product_bulk_actions() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( ! isset( $_POST['storesuite_product_bulk_nonce'] ) ) {
+			return;
+		}
+
+		if ( ! storesuite_is_page( 'products' ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_product_bulk_nonce'] ) ), 'storesuite_product_bulk' ) ) {
+			wp_safe_redirect( $this->get_products_bulk_redirect_url() );
+			exit;
+		}
+
+		// Bulk edit (modal "Update") — uses core bulk_edit_posts() + WooCommerce bulk meta save.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above.
+		if ( isset( $_POST['bulk_edit'] ) ) {
+			$this->handle_product_bulk_edit();
+			return;
+		}
+
+		$action = isset( $_POST['action'] ) ? sanitize_text_field( wp_unslash( $_POST['action'] ) ) : '';
+
+		if ( 'trash' !== $action ) {
+			return;
+		}
+
+		if ( empty( $_POST['bulk_product_ids'] ) || ! is_array( $_POST['bulk_product_ids'] ) ) {
+			wp_safe_redirect( $this->get_products_bulk_redirect_url() );
+			exit;
+		}
+
+		$product_ids = array_map( 'absint', wp_unslash( $_POST['bulk_product_ids'] ) );
+		$product_ids = array_values( array_unique( array_filter( $product_ids ) ) );
+
+		if ( empty( $product_ids ) ) {
+			wp_safe_redirect( $this->get_products_bulk_redirect_url() );
+			exit;
+		}
+
+		if ( ! function_exists( 'wp_check_post_lock' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/post.php';
+		}
+
+		$trashed = 0;
+		$locked  = 0;
+
+		foreach ( $product_ids as $post_id ) {
+			if ( 'product' !== get_post_type( $post_id ) ) {
+				continue;
+			}
+
+			if ( ! current_user_can( 'delete_post', $post_id ) ) {
+				continue;
+			}
+
+			if ( wp_check_post_lock( $post_id ) ) {
+				++$locked;
+				continue;
+			}
+
+			$result = wp_trash_post( $post_id );
+			if ( $result ) {
+				++$trashed;
+			}
+		}
+
+		$query_args = array();
+		if ( $trashed > 0 ) {
+			$query_args['trashed'] = $trashed;
+		}
+		if ( $locked > 0 ) {
+			$query_args['trash_locked'] = $locked;
+		}
+
+		wp_safe_redirect( $this->get_products_bulk_redirect_url( $query_args ) );
+		exit;
+	}
+
+	/**
+	 * Run WordPress bulk_edit_posts() for selected products and WooCommerce bulk_edit_save via save_post.
+	 *
+	 * @return void
+	 */
+	private function handle_product_bulk_edit() {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Verified in handle_product_bulk_actions().
+		if ( empty( $_POST['post'] ) || ! is_array( $_POST['post'] ) ) {
+			wp_safe_redirect( $this->get_products_bulk_redirect_url() );
+			exit;
+		}
+
+		$post_type_object = get_post_type_object( 'product' );
+		if ( ! $post_type_object || ! current_user_can( $post_type_object->cap->edit_posts ) ) {
+			wp_safe_redirect( $this->get_products_bulk_redirect_url() );
+			exit;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/post.php';
+
+		if ( ! class_exists( 'WC_Admin_Post_Types', false ) ) {
+			require_once WC()->plugin_path() . '/includes/admin/class-wc-admin-post-types.php';
+		}
+
+		$done = bulk_edit_posts( $_POST );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		if ( ! is_array( $done ) ) {
+			wp_safe_redirect( $this->get_products_bulk_redirect_url() );
+			exit;
+		}
+
+		$query_args = array(
+			'updated' => count( $done['updated'] ),
+			'skipped' => count( $done['skipped'] ),
+			'locked'  => count( $done['locked'] ),
+		);
+
+		wp_safe_redirect( $this->get_products_bulk_redirect_url( $query_args ) );
+		exit;
+	}
+
+	/**
+	 * Build the products list URL for redirects, preserving list context and optional notices.
+	 *
+	 * @param array<string, int|string> $extra_query_args Query args to append (e.g. trashed, locked).
+	 * @return string
+	 */
+	private function get_products_bulk_redirect_url( array $extra_query_args = array() ) {
+		$base = untrailingslashit( storesuite_get_navigation_url( 'products' ) );
+
+		$paged = max( 1, absint( get_query_var( 'paged' ) ) );
+		if ( $paged > 1 ) {
+			$base .= '/page/' . $paged;
+		}
+
+		$base = trailingslashit( $base );
+
+		$preserve = array();
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only query args for redirect.
+		$filter_keys = array(
+			'search_by'    => 'text',
+			'product_cat'  => 'int',
+			'product_type' => 'text',
+			'stock_status' => 'text',
+			'product_brand' => 'int',
+		);
+
+		foreach ( $filter_keys as $key => $type ) {
+			if ( ! isset( $_GET[ $key ] ) ) {
+				continue;
+			}
+
+			$raw = wp_unslash( $_GET[ $key ] );
+			if ( $raw === '' || $raw === null ) {
+				continue;
+			}
+
+			if ( 'int' === $type ) {
+				$preserve[ $key ] = absint( $raw );
+			} else {
+				$preserve[ $key ] = sanitize_text_field( $raw );
+			}
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		$url = add_query_arg( array_merge( $preserve, $extra_query_args ), $base );
+
+		return esc_url_raw( $url );
 	}
 
 	/**

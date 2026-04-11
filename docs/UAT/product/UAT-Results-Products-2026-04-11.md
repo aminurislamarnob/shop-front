@@ -22,7 +22,7 @@
 
 ## Executive summary
 
--   **List bulk select-all (UAT-PL-005):** **Fail** — bulk checkbox wiring in `script.js` targets **orders** (`#cb-select-all-orders`, `bulk_order_ids[]`), not the products table.
+-   **List bulk select-all (UAT-PL-005):** **Pass** (retest) — `handleBulkActionCheckbox` also binds `#cb-select-all-products` to `bulk_product_ids[]` inside `#storesuite-product-bulk-actions` (`assets/frontend/script.js`). Earlier UAT run predated this wiring.
 -   **Title → slug auto (UAT-AP-003):** **Fail / gap** — no client-side blur/slug sync found in `product.js`; slug stayed empty until manually set during disposable create flow.
 -   **Sale price &gt; regular warning (UAT-AP-008, second clause):** **Partial / likely gap** — no matching check in `product.js` (only required-field validation and sale schedule UI).
 -   **Media upload / gallery / change image / delete confirm (UAT-AP-005/006, EP-010, EP-016):** **Blocked** or **Partial** for automation (WP media library, Swal, file picker).
@@ -38,7 +38,7 @@
 | **UAT-PL-002** | **Pass** | Rows expose name/category links, action items **View / Edit / Delete**. Status/stock strings follow **WooCommerce** phrasing (e.g. **In stock** / **Out of stock**, not title case **In Stock**).                                                                                                                               |
 | **UAT-PL-003** | **Pass** | Row actions menu includes **View**, **Edit**, **Delete** (visible in a11y tree as list items).                                                                                                                                                                                                                                  |
 | **UAT-PL-004** | **Pass** | Pagination controls present (`Showing …` pattern in templates); page `2` and **→** navigable; active page behavior observed in session.                                                                                                                                                                                         |
-| **UAT-PL-005** | **Fail** | Header “select all” does not drive product row checkboxes: `handleBulkActionCheckbox` binds `#cb-select-all-orders` and `input[name="bulk_order_ids[]"]` only (`assets/frontend/script.js`). **Repro:** Open products list, toggle header checkbox — row checkboxes do not follow (expected: select/deselect all product rows). |
+| **UAT-PL-005** | **Pass** | Header `#cb-select-all-products` toggles `input[name="bulk_product_ids[]"]` within `#storesuite-product-bulk-actions` (`script.js`). |
 | **UAT-PL-006** | **Pass** | **Add Product** resolves to `/storesuite-dashboard/add-new-product/`.                                                                                                                                                                                                                                                           |
 
 ---
@@ -185,6 +185,24 @@
 
 ---
 
+## Bulk actions engineering QA (`qa-notices-caps`, 2026-04-11)
+
+**Scope:** Capabilities, post locks, variable products vs bulk fields, redirect URL preservation, and loading `WC_Admin_Post_Types` only during the bulk-edit POST handler. **Method:** Static review of StoreSuite + WooCommerce core paths (WP-CLI DB available for smoke checks; no destructive bulk POST executed against shared catalog in this pass).
+
+| Area | Result | Evidence / notes |
+| ---- | ------ | ---------------- |
+| **Capabilities — bulk trash** | **Pass** | `ProductController::handle_product_bulk_actions()` skips non-`product` posts, uses `current_user_can( 'delete_post', $post_id )` per ID, aligns with wp-admin trash behavior. |
+| **Capabilities — bulk edit** | **Pass** | `handle_product_bulk_edit()` requires `current_user_can( $post_type_object->cap->edit_posts )` globally; `bulk_edit_posts()` skips IDs without `current_user_can( 'edit_post', $post_id )` (see `wp-admin/includes/post.php` ~621–624). |
+| **Post locks — bulk edit** | **Pass** | Core `bulk_edit_posts()` pushes locked IDs to `$done['locked']`; redirect passes counts; template surfaces “another user” copy. |
+| **Post locks — bulk trash** | **Pass** (after fix) | Trash path uses `wp_check_post_lock()`; redirect used to share `locked` with bulk-edit semantics — **corrected** to `trash_locked` + dedicated notice strings in `products.php` so trash locks are not mislabeled as “not updated”. |
+| **Variations / variable parents** | **Pass** (parity with Woo admin) | `WC_Admin_Post_Types::bulk_edit_save()` applies bulk **regular/sale price** rules only to types allowed by `woocommerce_bulk_edit_save_price_product_types` (default **Simple** and **External**). **Variable** parents do not receive those price operators; stock status with `_stock_status` set can still propagate to **child variations** when the parent is variable and not managing stock at parent level (`maybe_update_stock_status` → children + `WC_Product_Variable::sync`). Matches WooCommerce bulk-edit design (variation-specific mass edit remains the separate admin/AJAX flow). |
+| **Filters / pagination on redirect** | **Pass** | `get_products_bulk_redirect_url()` merges `search_by`, `product_cat`, `product_type`, `stock_status`, `product_brand` from `$_GET` and rebuilds `/page/{n}` from `get_query_var( 'paged' )`. **Caveat:** like other POST+redirect flows, the current **page number** is taken from the main query at `template_redirect`; if that ever diverged from the list the user saw, pagination could be off — not observed as an issue in template wiring. |
+| **`WC_Admin_Post_Types` load side effects** | **Pass** (request-scoped) | Class is `require_once`’d only inside `handle_product_bulk_edit()` immediately before `bulk_edit_posts()`. Instantiating the class registers admin-oriented hooks (`save_post` → `bulk_and_quick_edit_hook` is the critical one); the handler then **redirects and exits**, so hooks do not linger into a normal dashboard HTML response on that same request. Admin-only callbacks (`current_screen`, `admin_print_scripts`, `edit_form_*`, `admin_notices`) do not run meaningfully on the StoreSuite front dashboard route. **Note:** Including the file registers many filters for the remainder of that single request; duplicate `require` of the same file is prevented by `require_once` + PHP class definition guard at the top of Woo’s file. |
+| **Notices — bulk edit counts** | **Pass** | `updated` / `skipped` / `locked` from `bulk_edit_posts()` return value → query args → `products.php` status block. |
+| **Notices — bulk trash** | **Fail → fixed** | Controller already sent `trashed` (and lock count) but the template **ignored `trashed`** until this QA pass; **implemented** success line for `trashed` and lock line for `trash_locked`. |
+
+---
+
 ## Copy of original checklist (for sign-off)
 
 Use the table above as authoritative results; below is the **verbatim** checklist structure for convenience.
@@ -311,10 +329,9 @@ Use the table above as authoritative results; below is the **verbatim** checklis
 
 ## Suggested follow-ups (engineering)
 
-1. **Products bulk checkbox:** extend `handleBulkActionCheckbox` (or add parallel handler) for products table header id + `input[name="...product..."]` checkboxes used on the products list.
-2. **Slug UX:** implement title→slug on blur for add form (and optionally on edit when slug empty), or update UAT if slug is intentionally manual.
-3. **Client pricing guard:** optional `sale_price > regular_price` warning before AJAX submit.
-4. **Dedicated UAT vendor + disposable products** to run **AP-021–023** and **EP-002–010** without touching shared regression SKUs.
+1. **Slug UX:** implement title→slug on blur for add form (and optionally on edit when slug empty), or update UAT if slug is intentionally manual.
+2. **Client pricing guard:** optional `sale_price > regular_price` warning before AJAX submit.
+3. **Dedicated UAT vendor + disposable products** to run **AP-021–023** and **EP-002–010** without touching shared regression SKUs.
 
 ---
 

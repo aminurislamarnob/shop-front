@@ -223,6 +223,13 @@
 					isChecked
 				);
 			} );
+
+			$( '#cb-select-all-products' ).on( 'change', function () {
+				var checked = $( this ).prop( 'checked' );
+				$( '#storesuite-product-bulk-actions' )
+					.find( 'input[name="bulk_product_ids[]"]' )
+					.prop( 'checked', checked );
+			} );
 		},
 		handleDropdown: function () {
 			$( document ).on(
