@@ -101,7 +101,7 @@ class Assets {
 
 		// Order scripts.
 		wp_register_script( 'storesuite_order_script', $frontend_order_script, array( 'storesuite_selectWoo' ), STORESUITE_PLUGIN_VERSION, true );
-		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_script', 'storesuite_selectWoo', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 	}

@@ -548,62 +548,22 @@
 		},
 
 		/**
-		 * Products list: bulk Edit opens modal (a11y: focus return, Escape, Tab cycle on overlay).
+		 * Products list: bulk Edit opens modal (a11y via StoreSuite.storeSuiteModal).
 		 */
 		initProductBulkEditModal: function () {
 			var self = this;
+			var modal = window.StoreSuite && window.StoreSuite.storeSuiteModal;
 			var $modal = $( '#storesuite-product-bulk-edit-modal' );
 
-			if ( ! $modal.length ) {
+			if ( ! modal || ! $modal.length ) {
 				return;
 			}
 
-			$modal.on( 'keydown', function ( e ) {
-				if ( $modal.prop( 'hidden' ) ) {
-					return;
-				}
-
-				if ( e.key === 'Escape' ) {
-					e.preventDefault();
-					self.closeProductBulkModal( $modal );
-					return;
-				}
-
-				if ( e.key !== 'Tab' ) {
-					return;
-				}
-
-				var $focusable = self.getProductBulkModalFocusables( $modal );
-				if ( $focusable.length < 2 ) {
-					return;
-				}
-
-				var first = $focusable[ 0 ];
-				var last = $focusable[ $focusable.length - 1 ];
-
-				if ( e.shiftKey && document.activeElement === first ) {
-					e.preventDefault();
-					last.focus();
-				} else if ( ! e.shiftKey && document.activeElement === last ) {
-					e.preventDefault();
-					first.focus();
-				}
+			modal.initOverlay( $modal, {
+				fade: true,
+				closeSelector:
+					'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close',
 			} );
-
-			$modal.on( 'click', function ( e ) {
-				if ( e.target === $modal[ 0 ] ) {
-					self.closeProductBulkModal( $modal );
-				}
-			} );
-
-			$modal.on(
-				'click',
-				'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close',
-				function ( e ) {
-					e.preventDefault();
-					self.closeProductBulkModal( $modal );
-				}
-			);
 
 			$( document ).on(
 				'submit',
@@ -647,17 +607,15 @@
 			);
 		},
 
-		getProductBulkModalFocusables: function ( $modal ) {
-			var sel =
-				'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-			return $modal.find( '[role="dialog"]' ).find( sel ).filter( ':visible' );
-		},
-
 		openProductBulkModal: function ( $modal, postIds ) {
+			var modal = window.StoreSuite && window.StoreSuite.storeSuiteModal;
+			if ( ! modal ) {
+				return;
+			}
+
 			var $ids = $( '#storesuite-bulk-edit-post-ids' );
 			var i;
 
-			this._bulkEditPreviousFocus = document.activeElement;
 			$ids.empty();
 
 			for ( i = 0; i < postIds.length; i++ ) {
@@ -670,22 +628,7 @@
 				);
 			}
 
-			$modal.prop( 'hidden', false ).attr( 'aria-hidden', 'false' );
-
-			var $first = this.getProductBulkModalFocusables( $modal ).first();
-			if ( $first.length ) {
-				$first.trigger( 'focus' );
-			}
-		},
-
-		closeProductBulkModal: function ( $modal ) {
-			$modal.prop( 'hidden', true ).attr( 'aria-hidden', 'true' );
-
-			var prev = this._bulkEditPreviousFocus;
-			if ( prev && prev.focus ) {
-				prev.focus();
-			}
-			this._bulkEditPreviousFocus = null;
+			modal.open( $modal );
 		},
 	};
 	StoreFrontProduct.init();

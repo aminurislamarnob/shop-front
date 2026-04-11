@@ -3592,8 +3592,32 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   overflow-y: auto;
 }
 
-.storesuite-product-bulk-modal-overlay[hidden] {
+.storesuite-product-bulk-modal-overlay[hidden]:not(.storesuite-modal-fade) {
   display: none !important;
+}
+
+/* Fade in/out (used with StoreSuite.storeSuiteModal initOverlay { fade: true }) */
+.storesuite-modal-fade {
+  transition: opacity 0.22s ease, visibility 0.22s ease;
+}
+
+.storesuite-product-bulk-modal-overlay.storesuite-modal-fade[hidden] {
+  display: flex !important;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.storesuite-product-bulk-modal-overlay.storesuite-modal-fade:not([hidden]) {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storesuite-modal-fade {
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .storesuite-product-bulk-modal-dialog {
