@@ -29,9 +29,220 @@
 				.removeClass( 'active' );
 		},
 	};
+
+	/**
+	 * Overlay modal helpers: focus return, Escape, Tab cycle, backdrop and close buttons.
+	 * Expects the root overlay to use the hidden attribute when closed.
+	 * Pass initOverlay { fade: true } and matching CSS (see .storesuite-modal-fade) for opacity transitions.
+	 */
+	var storeSuiteModal = {
+		fadeCloseFallbackMs: 350,
+
+		focusableSelector:
+			'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+
+		/**
+		 * @param {jQuery} $overlay      Root overlay element.
+		 * @param {string} dialogSelector Selector for the dialog region (default [role="dialog"]).
+		 * @return {jQuery}
+		 */
+		getFocusables: function ( $overlay, dialogSelector ) {
+			dialogSelector = dialogSelector || '[role="dialog"]';
+			return $overlay
+				.find( dialogSelector )
+				.find( this.focusableSelector )
+				.filter( ':visible' );
+		},
+
+		isOpen: function ( $overlay ) {
+			return ! $overlay.prop( 'hidden' );
+		},
+
+		clearCloseTransition: function ( $overlay ) {
+			var timer = $overlay.data( 'storesuite-modal-close-timer' );
+			if ( timer ) {
+				clearTimeout( timer );
+				$overlay.removeData( 'storesuite-modal-close-timer' );
+			}
+			$overlay.off( 'transitionend.storesuiteModalClose' );
+		},
+
+		/**
+		 * @param {jQuery} $overlay
+		 * @param {object} [options]
+		 * @param {string} [options.dialogSelector]
+		 */
+		open: function ( $overlay, options ) {
+			options = options || {};
+			var dialogSelector = options.dialogSelector || '[role="dialog"]';
+			var self = this;
+			var fade = $overlay.data( 'storesuite-modal-fade' );
+
+			this.clearCloseTransition( $overlay );
+			$overlay.removeData( 'storesuite-modal-closing' );
+
+			$overlay.data( 'storesuite-modal-prev-focus', document.activeElement );
+			$overlay.prop( 'hidden', false ).attr( 'aria-hidden', 'false' );
+
+			var focusFirst = function () {
+				var $first = self
+					.getFocusables( $overlay, dialogSelector )
+					.first();
+				if ( $first.length ) {
+					$first.trigger( 'focus' );
+					return;
+				}
+				var $dialog = $overlay.find( dialogSelector ).first();
+				if ( $dialog.length ) {
+					$dialog.trigger( 'focus' );
+				}
+			};
+
+			if ( fade && $overlay[ 0 ] ) {
+				window.requestAnimationFrame( function () {
+					window.requestAnimationFrame( focusFirst );
+				} );
+			} else {
+				focusFirst();
+			}
+		},
+
+		close: function ( $overlay ) {
+			var fade = $overlay.data( 'storesuite-modal-fade' );
+			var prev = $overlay.data( 'storesuite-modal-prev-focus' );
+			var self = this;
+
+			var restoreAndCleanup = function () {
+				$overlay.removeData( 'storesuite-modal-prev-focus' );
+				$overlay.removeData( 'storesuite-modal-closing' );
+				if ( prev && typeof prev.focus === 'function' ) {
+					prev.focus();
+				}
+			};
+
+			if ( ! fade ) {
+				$overlay.prop( 'hidden', true ).attr( 'aria-hidden', 'true' );
+				restoreAndCleanup();
+				return;
+			}
+
+			if ( $overlay.prop( 'hidden' ) ) {
+				this.clearCloseTransition( $overlay );
+				restoreAndCleanup();
+				return;
+			}
+
+			if ( $overlay.data( 'storesuite-modal-closing' ) ) {
+				return;
+			}
+			$overlay.data( 'storesuite-modal-closing', true );
+
+			var el = $overlay[ 0 ];
+			var finished = false;
+			var done = function () {
+				if ( finished ) {
+					return;
+				}
+				finished = true;
+				self.clearCloseTransition( $overlay );
+				restoreAndCleanup();
+			};
+
+			$overlay.attr( 'aria-hidden', 'true' );
+			$overlay.prop( 'hidden', true );
+
+			$overlay.one( 'transitionend.storesuiteModalClose', function ( e ) {
+				if ( e.target !== el ) {
+					return;
+				}
+				done();
+			} );
+
+			var timer = setTimeout( done, self.fadeCloseFallbackMs );
+			$overlay.data( 'storesuite-modal-close-timer', timer );
+		},
+
+		/**
+		 * One-time bind per overlay: Escape, Tab trap, backdrop click, close/cancel clicks.
+		 *
+		 * @param {jQuery} $overlay
+		 * @param {object} [options]
+		 * @param {string} [options.dialogSelector]
+		 * @param {string} [options.closeSelector] Delegated selector for close controls.
+		 * @param {boolean} [options.fade] Opacity fade (requires .storesuite-modal-fade CSS on overlay).
+		 */
+		initOverlay: function ( $overlay, options ) {
+			options = options || {};
+			var dialogSelector = options.dialogSelector || '[role="dialog"]';
+			var closeSelector =
+				options.closeSelector ||
+				'.storesuite-modal-cancel, .storesuite-modal-close';
+
+			if ( $overlay.data( 'storesuite-modal-a11y-bound' ) ) {
+				return;
+			}
+			$overlay.data( 'storesuite-modal-a11y-bound', true );
+
+			if ( options.fade ) {
+				$overlay.data( 'storesuite-modal-fade', true );
+				$overlay.addClass( 'storesuite-modal-fade' );
+			}
+
+			var self = this;
+
+			$overlay.on( 'keydown.storesuiteModal', function ( e ) {
+				if ( ! self.isOpen( $overlay ) ) {
+					return;
+				}
+
+				if ( e.key === 'Escape' ) {
+					e.preventDefault();
+					self.close( $overlay );
+					return;
+				}
+
+				if ( e.key !== 'Tab' ) {
+					return;
+				}
+
+				var $focusable = self.getFocusables( $overlay, dialogSelector );
+				if ( $focusable.length < 2 ) {
+					return;
+				}
+
+				var first = $focusable[ 0 ];
+				var last = $focusable[ $focusable.length - 1 ];
+
+				if ( e.shiftKey && document.activeElement === first ) {
+					e.preventDefault();
+					last.focus();
+				} else if ( ! e.shiftKey && document.activeElement === last ) {
+					e.preventDefault();
+					first.focus();
+				}
+			} );
+
+			$overlay.on( 'click.storesuiteModal', function ( e ) {
+				if ( e.target === $overlay[ 0 ] ) {
+					self.close( $overlay );
+				}
+			} );
+
+			$overlay.on(
+				'click.storesuiteModal',
+				closeSelector,
+				function ( e ) {
+					e.preventDefault();
+					self.close( $overlay );
+				}
+			);
+		},
+	};
+
 	// Expose for other StoreSuite scripts
 	window.StoreSuite = window.StoreSuite || {};
 	window.StoreSuite.storeSuiteLoader = storeSuiteLoader;
+	window.StoreSuite.storeSuiteModal = storeSuiteModal;
 
 	var StoreFrontCommonConfig = {
 		init: function () {

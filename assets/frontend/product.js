@@ -8,6 +8,7 @@
 			this.toggleStockFields();
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
+			this.handleProductBulkEditSubmit();
 			this.handleProductDelete();
 			this.initProductBulkEditModal();
 		},
@@ -251,6 +252,113 @@
 				}
 			);
 		},
+
+		/**
+		 * Bulk edit products (modal): AJAX submit aligned with handleProductSubmit.
+		 */
+		handleProductBulkEditSubmit: function () {
+			var self = this;
+
+			$( document ).on(
+				'submit',
+				'#storesuite-product-bulk-edit-form',
+				function ( e ) {
+					e.preventDefault();
+
+					var $form = $( this );
+					var $modal = $( '#storesuite-product-bulk-edit-modal' );
+					var modal =
+						window.StoreSuite &&
+						window.StoreSuite.storeSuiteModal;
+					var bulk =
+						typeof StoreSuite_Product !== 'undefined'
+							? StoreSuite_Product.bulk_edit || {}
+							: {};
+
+					if ( ! $modal.length || ! bulk.nonce || ! bulk.ajax_action ) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					formData.append( 'action', bulk.ajax_action );
+					formData.append( 'security', bulk.nonce );
+
+					var $submitBtn = $form.find( '.storesuite-bulk-edit-submit' );
+					$submitBtn.prop( 'disabled', true );
+
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+							if ( response.success ) {
+								if ( modal && $modal.length ) {
+									modal.close( $modal );
+								}
+								Swal.fire( {
+									icon: 'success',
+									title:
+										bulk.success_title ||
+										storeSuiteFormHandler.i18n
+											.success_title,
+									text:
+										response.data &&
+										response.data.message
+											? response.data.message
+											: '',
+									confirmButtonText:
+										storeSuiteFormHandler.i18n.ok_button,
+								} ).then( function () {
+									window.location.reload();
+								} );
+							} else {
+								var failMsg;
+								if ( response.data ) {
+									failMsg =
+										response.data.message ||
+										response.data.error;
+									if (
+										! failMsg &&
+										typeof response.data === 'string'
+									) {
+										failMsg = response.data;
+									}
+								}
+								self.showError( failMsg );
+							}
+						},
+						error: function ( xhr ) {
+							Swal.close();
+							var msg;
+							if (
+								xhr &&
+								xhr.responseJSON &&
+								xhr.responseJSON.data
+							) {
+								msg =
+									xhr.responseJSON.data.message ||
+									xhr.responseJSON.data.error;
+							}
+							self.showError( msg );
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
+				}
+			);
+		},
+
 		showError: function ( message ) {
 			Swal.fire( {
 				icon: 'error',
@@ -548,62 +656,22 @@
 		},
 
 		/**
-		 * Products list: bulk Edit opens modal (a11y: focus return, Escape, Tab cycle on overlay).
+		 * Products list: bulk Edit opens modal (a11y via StoreSuite.storeSuiteModal).
 		 */
 		initProductBulkEditModal: function () {
 			var self = this;
+			var modal = window.StoreSuite && window.StoreSuite.storeSuiteModal;
 			var $modal = $( '#storesuite-product-bulk-edit-modal' );
 
-			if ( ! $modal.length ) {
+			if ( ! modal || ! $modal.length ) {
 				return;
 			}
 
-			$modal.on( 'keydown', function ( e ) {
-				if ( $modal.prop( 'hidden' ) ) {
-					return;
-				}
-
-				if ( e.key === 'Escape' ) {
-					e.preventDefault();
-					self.closeProductBulkModal( $modal );
-					return;
-				}
-
-				if ( e.key !== 'Tab' ) {
-					return;
-				}
-
-				var $focusable = self.getProductBulkModalFocusables( $modal );
-				if ( $focusable.length < 2 ) {
-					return;
-				}
-
-				var first = $focusable[ 0 ];
-				var last = $focusable[ $focusable.length - 1 ];
-
-				if ( e.shiftKey && document.activeElement === first ) {
-					e.preventDefault();
-					last.focus();
-				} else if ( ! e.shiftKey && document.activeElement === last ) {
-					e.preventDefault();
-					first.focus();
-				}
+			modal.initOverlay( $modal, {
+				fade: true,
+				closeSelector:
+					'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close',
 			} );
-
-			$modal.on( 'click', function ( e ) {
-				if ( e.target === $modal[ 0 ] ) {
-					self.closeProductBulkModal( $modal );
-				}
-			} );
-
-			$modal.on(
-				'click',
-				'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close',
-				function ( e ) {
-					e.preventDefault();
-					self.closeProductBulkModal( $modal );
-				}
-			);
 
 			$( document ).on(
 				'submit',
@@ -647,17 +715,15 @@
 			);
 		},
 
-		getProductBulkModalFocusables: function ( $modal ) {
-			var sel =
-				'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-			return $modal.find( '[role="dialog"]' ).find( sel ).filter( ':visible' );
-		},
-
 		openProductBulkModal: function ( $modal, postIds ) {
+			var modal = window.StoreSuite && window.StoreSuite.storeSuiteModal;
+			if ( ! modal ) {
+				return;
+			}
+
 			var $ids = $( '#storesuite-bulk-edit-post-ids' );
 			var i;
 
-			this._bulkEditPreviousFocus = document.activeElement;
 			$ids.empty();
 
 			for ( i = 0; i < postIds.length; i++ ) {
@@ -670,22 +736,7 @@
 				);
 			}
 
-			$modal.prop( 'hidden', false ).attr( 'aria-hidden', 'false' );
-
-			var $first = this.getProductBulkModalFocusables( $modal ).first();
-			if ( $first.length ) {
-				$first.trigger( 'focus' );
-			}
-		},
-
-		closeProductBulkModal: function ( $modal ) {
-			$modal.prop( 'hidden', true ).attr( 'aria-hidden', 'true' );
-
-			var prev = this._bulkEditPreviousFocus;
-			if ( prev && prev.focus ) {
-				prev.focus();
-			}
-			this._bulkEditPreviousFocus = null;
+			modal.open( $modal );
 		},
 	};
 	StoreFrontProduct.init();

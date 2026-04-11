@@ -134,7 +134,7 @@ $current_search   = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslas
 
 			<div class="storesuite-filter-offcanvas-footer">
 				<button type="submit" class="my-storesuite-button"><?php esc_html_e( 'Filter Products', 'storesuite' ); ?></button>
-				<a href="?" class="my-storesuite-button storesuite-filter-reset"><?php esc_html_e( 'Reset', 'storesuite' ); ?></a>
+				<a href="?" class="my-storesuite-button storesuite-button-neutral-panel"><?php esc_html_e( 'Reset', 'storesuite' ); ?></a>
 			</div>
 		</form>
 	</div>
