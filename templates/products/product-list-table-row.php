@@ -1,6 +1,6 @@
 <?php
 /**
- * Single product row for the StoreSuite products list (used on first paint and after inline quick edit save).
+ * Single product row for the StoreSuite products list (used on first paint and after quick edit save).
  *
  * @package StoreSuite
  *

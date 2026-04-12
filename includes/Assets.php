@@ -443,9 +443,12 @@ class Assets {
 					),
 				);
 				$product_script_data['quick_edit'] = array(
-					'ajax_action'   => 'storesuite_product_inline_edit',
-					'nonce'           => wp_create_nonce( 'storesuite_product_inline_edit' ),
-					'success_title'   => __( 'Product updated', 'storesuite' ),
+					'ajax_action'          => 'storesuite_product_inline_edit',
+					'nonce'                => wp_create_nonce( 'storesuite_product_inline_edit' ),
+					'load_form_ajax_action' => 'storesuite_get_product_quick_edit_form',
+					'load_form_nonce'       => wp_create_nonce( 'storesuite_product_quick_edit_form' ),
+					'success_title'        => __( 'Product updated', 'storesuite' ),
+					'loading_text'         => __( 'Loading…', 'storesuite' ),
 				);
 			}
 

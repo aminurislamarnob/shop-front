@@ -171,7 +171,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 
 				if ( $product_query->found_posts > 0 ) {
 					?>
-				<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-inline-editable-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table">
 					<thead>
 						<tr>
 							<th class="check-column">
@@ -213,17 +213,6 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									'product'    => $product,
 								)
 							);
-							if ( current_user_can( 'edit_post', $product_id ) ) {
-								storesuite_get_template_part(
-									'products/product-list-inline-quick-edit-row',
-									'',
-									array(
-										'product_id' => $product_id,
-										'product'    => $product,
-										'product_post' => get_post( $product_id ),
-									)
-								);
-							}
 						endwhile;
 						wp_reset_postdata();
 						?>
@@ -260,6 +249,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 				</div>
 			</form>
 			<?php storesuite_get_template_part( 'products/product-bulk-edit-modal' ); ?>
+			<?php storesuite_get_template_part( 'products/product-quick-edit-modal' ); ?>
 		</main>
 		<?php do_action( 'storesuite_dashboard_content_after' ); ?>
 	</div>

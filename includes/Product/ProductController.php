@@ -29,6 +29,7 @@ class ProductController {
 		add_action( 'wp_ajax_storesuite_delete_product', array( $this, 'handle_delete_product' ) );
 		add_action( 'wp_ajax_storesuite_bulk_edit_products', array( $this, 'handle_bulk_edit_products_ajax' ) );
 		add_action( 'wp_ajax_storesuite_product_inline_edit', array( $this, 'handle_product_inline_edit_ajax' ) );
+		add_action( 'wp_ajax_storesuite_get_product_quick_edit_form', array( $this, 'handle_get_product_quick_edit_form_ajax' ) );
 		add_action( 'template_redirect', array( $this, 'handle_product_bulk_trash_actions' ) );
 	}
 
@@ -194,6 +195,63 @@ class ProductController {
 				$status
 			);
 		}
+	}
+
+	/**
+	 * AJAX: HTML for the product quick edit form (modal body).
+	 *
+	 * @return void
+	 */
+	public function handle_get_product_quick_edit_form_ajax() {
+		check_ajax_referer( 'storesuite_product_quick_edit_form', 'security' );
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- absint after wp_unslash.
+		$product_id = isset( $_POST['product_id'] ) ? absint( wp_unslash( $_POST['product_id'] ) ) : 0;
+		if ( ! $product_id || 'product' !== get_post_type( $product_id ) ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Invalid product.', 'storesuite' ),
+				),
+				400
+			);
+		}
+
+		if ( ! current_user_can( 'edit_post', $product_id ) ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'You are not allowed to edit this product.', 'storesuite' ),
+				),
+				403
+			);
+		}
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Product not found.', 'storesuite' ),
+				),
+				404
+			);
+		}
+
+		ob_start();
+		storesuite_get_template_part(
+			'products/html-product-quick-edit-form',
+			'',
+			array(
+				'product_id'   => $product_id,
+				'product'      => $product,
+				'product_post' => get_post( $product_id ),
+			)
+		);
+		$html = ob_get_clean();
+
+		wp_send_json_success(
+			array(
+				'html' => $html,
+			)
+		);
 	}
 
 	/**

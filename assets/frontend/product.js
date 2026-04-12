@@ -11,7 +11,7 @@
 			this.handleProductBulkEditSubmit();
 			this.handleProductDelete();
 			this.initProductBulkEditModal();
-			this.initProductInlineQuickEditTable();
+			this.initProductQuickEditModal();
 		},
 		bindEvents: function () {
 			var self = this;
@@ -788,32 +788,62 @@
 		},
 
 		/**
-		 * Products list: per-row inline quick edit (hidden sibling tr).
+		 * Products list: quick edit in StoreSuite modal (form HTML from AJAX).
 		 */
-		initProductInlineQuickEditTable: function () {
+		initProductQuickEditModal: function () {
 			var self = this;
+			var modal = window.StoreSuite && window.StoreSuite.storeSuiteModal;
+			var $qeModal = $( '#storesuite-product-quick-edit-modal' );
 			var qe =
 				typeof StoreSuite_Product !== 'undefined' &&
 				StoreSuite_Product.quick_edit
 					? StoreSuite_Product.quick_edit
 					: null;
-			var $table = $( 'table.storesuite-inline-editable-table' );
 
-			if ( ! $table.length || ! qe || ! qe.ajax_action || ! qe.nonce ) {
+			if (
+				! modal ||
+				! $qeModal.length ||
+				! qe ||
+				! qe.ajax_action ||
+				! qe.nonce ||
+				! qe.load_form_ajax_action ||
+				! qe.load_form_nonce
+			) {
 				return;
 			}
 
-			var current_tr = null;
-			var current_tr_pos_y = 0;
-			var edit_form = null;
+			var quickEditProductId = null;
 
-			function scrollInlineEditIntoView() {
-				$( 'html, body' ).scrollTop(
-					Math.max( 0, current_tr_pos_y - 50 )
-				);
+			modal.initOverlay( $qeModal, {
+				fade: true,
+				closeSelector:
+					'.storesuite-product-quick-edit-modal-cancel, .storesuite-product-quick-edit-modal-close',
+			} );
+
+			function getQuickEditBody() {
+				return $qeModal.find( '#storesuite-quick-edit-modal-body' );
 			}
 
-			$table.on(
+			function resetQuickEditModalContent() {
+				var $body = getQuickEditBody();
+				self.destroyInlineQuickEditSelectWoo( $body );
+				$body.empty();
+				quickEditProductId = null;
+			}
+
+			$qeModal.on(
+				'transitionend.storesuiteQuickEditModal',
+				function ( e ) {
+					if ( e.target !== $qeModal[ 0 ] ) {
+						return;
+					}
+					if ( $qeModal.prop( 'hidden' ) ) {
+						resetQuickEditModalContent();
+					}
+				}
+			);
+
+			$( document ).on(
 				'click',
 				'.storesuite-item-inline-edit',
 				function ( e ) {
@@ -823,74 +853,85 @@
 						return;
 					}
 
-					$table
-						.find( 'tr.storesuite-product-list-inline-edit-form' )
-						.each( function () {
-							self.destroyInlineQuickEditSelectWoo(
-								$( this ).find( 'fieldset' )
+					resetQuickEditModalContent();
+					quickEditProductId = String( postId );
+
+					var $body = getQuickEditBody();
+					$body.html(
+						'<p class="storesuite-quick-edit-loading-msg">' +
+							( qe.loading_text || '…' ) +
+							'</p>'
+					);
+					modal.open( $qeModal );
+
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						method: 'POST',
+						dataType: 'json',
+						data: {
+							action: qe.load_form_ajax_action,
+							security: qe.load_form_nonce,
+							product_id: postId,
+						},
+					} )
+						.done( function ( response ) {
+							if (
+								! response.success ||
+								! response.data ||
+								! response.data.html
+							) {
+								var failMsg;
+								if ( response.data ) {
+									failMsg =
+										response.data.message ||
+										response.data.error;
+								}
+								self.showError( failMsg );
+								modal.close( $qeModal );
+								return;
+							}
+							$body.html( response.data.html );
+							self.bindStoresuiteInlineQuickEditToggles(
+								$body
 							);
+							self.initInlineQuickEditSelectWoo( $body );
 						} )
-						.addClass( 'storesuite-hide' );
-
-					current_tr = $( this ).closest( 'tr' );
-					current_tr_pos_y = current_tr.offset().top;
-					current_tr.addClass( 'storesuite-hide' );
-
-					edit_form = current_tr.next(
-						'tr.storesuite-product-list-inline-edit-form'
-					);
-					if ( ! edit_form.length ) {
-						current_tr.removeClass( 'storesuite-hide' );
-						return;
-					}
-
-					edit_form.removeClass( 'storesuite-hide' );
-					self.bindStoresuiteInlineQuickEditToggles( edit_form );
-					self.initInlineQuickEditSelectWoo(
-						edit_form.find( 'fieldset' )
-					);
-					scrollInlineEditIntoView();
+						.fail( function ( xhr ) {
+							var msg;
+							if (
+								xhr &&
+								xhr.responseJSON &&
+								xhr.responseJSON.data
+							) {
+								msg =
+									xhr.responseJSON.data.message ||
+									xhr.responseJSON.data.error;
+							}
+							self.showError( msg );
+							modal.close( $qeModal );
+						} );
 				}
 			);
 
-			$table.on(
+			$qeModal.on(
 				'click',
-				'.storesuite-inline-edit-cancel',
-				function ( e ) {
-					e.preventDefault();
-					if ( ! current_tr || ! current_tr.length ) {
-						return;
-					}
-					var $inline_form = current_tr.next(
-						'tr.storesuite-product-list-inline-edit-form'
-					);
-					self.destroyInlineQuickEditSelectWoo(
-						$inline_form.find( 'fieldset' )
-					);
-					current_tr.removeClass( 'storesuite-hide' );
-					$inline_form.addClass( 'storesuite-hide' );
-					scrollInlineEditIntoView();
-				}
-			);
-
-			$table.on(
-				'click',
-				'.storesuite-inline-edit-update',
+				'.storesuite-product-quick-edit-submit',
 				function ( e ) {
 					e.preventDefault();
 
-					if ( ! edit_form || ! edit_form.length ) {
+					var $body = getQuickEditBody();
+					var $fieldset = $body.find( 'fieldset' ).first();
+					if ( ! quickEditProductId || ! $fieldset.length ) {
 						return;
 					}
 
 					var $btn = $( this );
 					var $wrap = $btn.closest(
-						'.storesuite-inline-edit-update-wrap'
+						'.storesuite-product-quick-edit-update-wrap'
 					);
-					var $fieldset = $btn.closest( 'fieldset' );
 
 					var data = {};
-					edit_form.find( '[data-field-name]' ).each( function () {
+					$qeModal.find( '[data-field-name]' ).each( function () {
 						var $field = $( this );
 						if ( $field.closest( '.storesuite-hide' ).length ) {
 							return;
@@ -912,8 +953,19 @@
 						}
 					} );
 
-					$wrap.addClass( 'storesuite-inline-edit-loading' );
+					var rowId = quickEditProductId;
+
+					$wrap.addClass( 'storesuite-quick-edit-loading' );
 					$fieldset.prop( 'disabled', true );
+
+					if (
+						window.StoreSuite &&
+						window.StoreSuite.storeSuiteLoader
+					) {
+						window.StoreSuite.storeSuiteLoader.block(
+							$( '.my-storesuite-wrapper' )
+						);
+					}
 
 					$.ajax( {
 						url: storeSuiteFormHandler.ajax_url,
@@ -931,15 +983,15 @@
 								response.data &&
 								response.data.row
 							) {
-								scrollInlineEditIntoView();
 								self.destroyInlineQuickEditSelectWoo(
-									edit_form.find( 'fieldset' )
+									$body
 								);
-								edit_form
-									.addClass( 'storesuite-hide' )
-									.prev()
-									.replaceWith( response.data.row );
-								current_tr = edit_form.prev();
+								$body.empty();
+								quickEditProductId = null;
+								modal.close( $qeModal );
+								$( '#product-row-' + rowId ).replaceWith(
+									response.data.row
+								);
 							} else {
 								var failMsg;
 								if ( response.data ) {
@@ -977,9 +1029,17 @@
 						} )
 						.always( function () {
 							$wrap.removeClass(
-								'storesuite-inline-edit-loading'
+								'storesuite-quick-edit-loading'
 							);
 							$fieldset.prop( 'disabled', false );
+							if (
+								window.StoreSuite &&
+								window.StoreSuite.storeSuiteLoader
+							) {
+								window.StoreSuite.storeSuiteLoader.unblock(
+									$( '.my-storesuite-wrapper' )
+								);
+							}
 						} );
 				}
 			);
