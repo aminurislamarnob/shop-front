@@ -263,29 +263,41 @@
 			$( document ).on(
 				'submit',
 				'#storesuite-product-bulk-edit-form',
-				function ( e ) {
-					e.preventDefault();
+				function ( submitEvent ) {
+					submitEvent.preventDefault();
 
-					var $form = $( this );
-					var $modal = $( '#storesuite-product-bulk-edit-modal' );
-					var modal =
+					var $bulkEditForm = $( this );
+					var $bulkEditModal = $( '#storesuite-product-bulk-edit-modal' );
+					var suiteModal =
 						window.StoreSuite &&
 						window.StoreSuite.storeSuiteModal;
-					var bulk =
+					var bulkEditConfig =
 						typeof StoreSuite_Product !== 'undefined'
 							? StoreSuite_Product.bulk_edit || {}
 							: {};
 
-					if ( ! $modal.length || ! bulk.nonce || ! bulk.ajax_action ) {
+					if (
+						! $bulkEditModal.length ||
+						! bulkEditConfig.nonce ||
+						! bulkEditConfig.ajax_action
+					) {
 						return;
 					}
 
-					var formData = new FormData( this );
-					formData.append( 'action', bulk.ajax_action );
-					formData.append( 'security', bulk.nonce );
+					var bulkEditFormData = new FormData( this );
+					bulkEditFormData.append(
+						'action',
+						bulkEditConfig.ajax_action
+					);
+					bulkEditFormData.append(
+						'security',
+						bulkEditConfig.nonce
+					);
 
-					var $submitBtn = $form.find( '.storesuite-bulk-edit-submit' );
-					$submitBtn.prop( 'disabled', true );
+					var $bulkSubmitButton = $bulkEditForm.find(
+						'.storesuite-bulk-edit-submit'
+					);
+					$bulkSubmitButton.prop( 'disabled', true );
 
 					window.StoreSuite.storeSuiteLoader.block(
 						$( '.my-storesuite-wrapper' )
@@ -294,25 +306,25 @@
 					$.ajax( {
 						url: storeSuiteFormHandler.ajax_url,
 						type: 'POST',
-						data: formData,
+						data: bulkEditFormData,
 						processData: false,
 						contentType: false,
-						success: function ( response ) {
+						success: function ( bulkSaveResponse ) {
 							Swal.close();
-							if ( response.success ) {
-								if ( modal && $modal.length ) {
-									modal.close( $modal );
+							if ( bulkSaveResponse.success ) {
+								if ( suiteModal && $bulkEditModal.length ) {
+									suiteModal.close( $bulkEditModal );
 								}
 								Swal.fire( {
 									icon: 'success',
 									title:
-										bulk.success_title ||
+										bulkEditConfig.success_title ||
 										storeSuiteFormHandler.i18n
 											.success_title,
 									text:
-										response.data &&
-										response.data.message
-											? response.data.message
+										bulkSaveResponse.data &&
+										bulkSaveResponse.data.message
+											? bulkSaveResponse.data.message
 											: '',
 									confirmButtonText:
 										storeSuiteFormHandler.i18n.ok_button,
@@ -320,37 +332,39 @@
 									window.location.reload();
 								} );
 							} else {
-								var failMsg;
-								if ( response.data ) {
-									failMsg =
-										response.data.message ||
-										response.data.error;
+								var bulkSaveErrorMessage;
+								if ( bulkSaveResponse.data ) {
+									bulkSaveErrorMessage =
+										bulkSaveResponse.data.message ||
+										bulkSaveResponse.data.error;
 									if (
-										! failMsg &&
-										typeof response.data === 'string'
+										! bulkSaveErrorMessage &&
+										typeof bulkSaveResponse.data ===
+											'string'
 									) {
-										failMsg = response.data;
+										bulkSaveErrorMessage =
+											bulkSaveResponse.data;
 									}
 								}
-								self.showError( failMsg );
+								self.showError( bulkSaveErrorMessage );
 							}
 						},
 						error: function ( xhr ) {
 							Swal.close();
-							var msg;
+							var bulkSaveXhrMessage;
 							if (
 								xhr &&
 								xhr.responseJSON &&
 								xhr.responseJSON.data
 							) {
-								msg =
+								bulkSaveXhrMessage =
 									xhr.responseJSON.data.message ||
 									xhr.responseJSON.data.error;
 							}
-							self.showError( msg );
+							self.showError( bulkSaveXhrMessage );
 						},
 						complete: function () {
-							$submitBtn.prop( 'disabled', false );
+							$bulkSubmitButton.prop( 'disabled', false );
 							window.StoreSuite.storeSuiteLoader.unblock(
 								$( '.my-storesuite-wrapper' )
 							);
@@ -708,14 +722,15 @@
 		 */
 		initProductBulkEditModal: function () {
 			var self = this;
-			var modal = window.StoreSuite && window.StoreSuite.storeSuiteModal;
-			var $modal = $( '#storesuite-product-bulk-edit-modal' );
+			var suiteModal =
+				window.StoreSuite && window.StoreSuite.storeSuiteModal;
+			var $bulkEditModal = $( '#storesuite-product-bulk-edit-modal' );
 
-			if ( ! modal || ! $modal.length ) {
+			if ( ! suiteModal || ! $bulkEditModal.length ) {
 				return;
 			}
 
-			modal.initOverlay( $modal, {
+			suiteModal.initOverlay( $bulkEditModal, {
 				fade: true,
 				closeSelector:
 					'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close',
@@ -724,67 +739,80 @@
 			$( document ).on(
 				'submit',
 				'#storesuite-product-bulk-actions',
-				function ( e ) {
+				function ( submitEvent ) {
 					if ( $( '#bulk-action-selector-products' ).val() !== 'edit' ) {
 						return;
 					}
 
-					e.preventDefault();
+					submitEvent.preventDefault();
 
-					var ids = $( '#storesuite-product-bulk-actions' )
+					var selectedProductIds = $( '#storesuite-product-bulk-actions' )
 						.find( 'input[name="bulk_product_ids[]"]:checked' )
 						.map( function () {
 							return $( this ).val();
 						} )
 						.get();
 
-					if ( ! ids.length ) {
+					if ( ! selectedProductIds.length ) {
 						if ( typeof Swal === 'undefined' ) {
 							return;
 						}
-						var bulk = StoreSuite_Product.bulk_edit || {};
-						var i18n = StoreSuite_Product.i18n || {};
+						var bulkEditConfig =
+							StoreSuite_Product.bulk_edit || {};
+						var commonI18n = StoreSuite_Product.i18n || {};
 						Swal.fire( {
 							icon: 'warning',
 							title:
-								bulk.select_products_title ||
-								i18n.error_title,
+								bulkEditConfig.select_products_title ||
+								commonI18n.error_title,
 							text:
-								bulk.select_products_message ||
-								i18n.unexpected_error,
+								bulkEditConfig.select_products_message ||
+								commonI18n.unexpected_error,
 							confirmButtonText:
-								bulk.ok_button || i18n.ok_button,
+								bulkEditConfig.ok_button ||
+								commonI18n.ok_button,
 						} );
 						return;
 					}
 
-					self.openProductBulkModal( $modal, ids );
+					self.openProductBulkModal(
+						$bulkEditModal,
+						selectedProductIds
+					);
 				}
 			);
 		},
 
-		openProductBulkModal: function ( $modal, postIds ) {
-			var modal = window.StoreSuite && window.StoreSuite.storeSuiteModal;
-			if ( ! modal ) {
+		openProductBulkModal: function (
+			$bulkEditModal,
+			selectedProductIds
+		) {
+			var suiteModal =
+				window.StoreSuite && window.StoreSuite.storeSuiteModal;
+			if ( ! suiteModal ) {
 				return;
 			}
 
-			var $ids = $( '#storesuite-bulk-edit-post-ids' );
-			var i;
+			var $bulkHiddenPostInputs = $( '#storesuite-bulk-edit-post-ids' );
+			var productIndex;
 
-			$ids.empty();
+			$bulkHiddenPostInputs.empty();
 
-			for ( i = 0; i < postIds.length; i++ ) {
-				$ids.append(
+			for (
+				productIndex = 0;
+				productIndex < selectedProductIds.length;
+				productIndex++
+			) {
+				$bulkHiddenPostInputs.append(
 					$( '<input>', {
 						type: 'hidden',
 						name: 'post[]',
-						value: postIds[ i ],
+						value: selectedProductIds[ productIndex ],
 					} )
 				);
 			}
 
-			modal.open( $modal );
+			suiteModal.open( $bulkEditModal );
 		},
 
 		/**
@@ -792,52 +820,55 @@
 		 */
 		initProductQuickEditModal: function () {
 			var self = this;
-			var modal = window.StoreSuite && window.StoreSuite.storeSuiteModal;
-			var $qeModal = $( '#storesuite-product-quick-edit-modal' );
-			var qe =
+			var suiteModal =
+				window.StoreSuite && window.StoreSuite.storeSuiteModal;
+			var $quickEditModal = $( '#storesuite-product-quick-edit-modal' );
+			var quickEditConfig =
 				typeof StoreSuite_Product !== 'undefined' &&
 				StoreSuite_Product.quick_edit
 					? StoreSuite_Product.quick_edit
 					: null;
 
 			if (
-				! modal ||
-				! $qeModal.length ||
-				! qe ||
-				! qe.ajax_action ||
-				! qe.nonce ||
-				! qe.load_form_ajax_action ||
-				! qe.load_form_nonce
+				! suiteModal ||
+				! $quickEditModal.length ||
+				! quickEditConfig ||
+				! quickEditConfig.ajax_action ||
+				! quickEditConfig.nonce ||
+				! quickEditConfig.load_form_ajax_action ||
+				! quickEditConfig.load_form_nonce
 			) {
 				return;
 			}
 
-			var quickEditProductId = null;
+			var activeQuickEditProductId = null;
 
-			modal.initOverlay( $qeModal, {
+			suiteModal.initOverlay( $quickEditModal, {
 				fade: true,
 				closeSelector:
 					'.storesuite-product-quick-edit-modal-cancel, .storesuite-product-quick-edit-modal-close',
 			} );
 
-			function getQuickEditBody() {
-				return $qeModal.find( '#storesuite-quick-edit-modal-body' );
+			function getQuickEditModalBody() {
+				return $quickEditModal.find(
+					'#storesuite-quick-edit-modal-body'
+				);
 			}
 
 			function resetQuickEditModalContent() {
-				var $body = getQuickEditBody();
-				self.destroyInlineQuickEditSelectWoo( $body );
-				$body.empty();
-				quickEditProductId = null;
+				var $modalBody = getQuickEditModalBody();
+				self.destroyInlineQuickEditSelectWoo( $modalBody );
+				$modalBody.empty();
+				activeQuickEditProductId = null;
 			}
 
-			$qeModal.on(
+			$quickEditModal.on(
 				'transitionend.storesuiteQuickEditModal',
-				function ( e ) {
-					if ( e.target !== $qeModal[ 0 ] ) {
+				function ( transitionEvent ) {
+					if ( transitionEvent.target !== $quickEditModal[ 0 ] ) {
 						return;
 					}
-					if ( $qeModal.prop( 'hidden' ) ) {
+					if ( $quickEditModal.prop( 'hidden' ) ) {
 						resetQuickEditModalContent();
 					}
 				}
@@ -846,117 +877,133 @@
 			$( document ).on(
 				'click',
 				'.storesuite-item-inline-edit',
-				function ( e ) {
-					e.preventDefault();
-					var postId = $( this ).data( 'product-id' );
-					if ( ! postId ) {
+				function ( clickEvent ) {
+					clickEvent.preventDefault();
+					var productId = $( this ).data( 'product-id' );
+					if ( ! productId ) {
 						return;
 					}
 
 					resetQuickEditModalContent();
-					quickEditProductId = String( postId );
+					activeQuickEditProductId = String( productId );
 
-					var $body = getQuickEditBody();
-					$body.html(
+					var $modalBody = getQuickEditModalBody();
+					$modalBody.html(
 						'<p class="storesuite-quick-edit-loading-msg">' +
-							( qe.loading_text || '…' ) +
+							( quickEditConfig.loading_text || '…' ) +
 							'</p>'
 					);
-					modal.open( $qeModal );
+					suiteModal.open( $quickEditModal );
 
 					$.ajax( {
 						url: storeSuiteFormHandler.ajax_url,
 						method: 'POST',
 						dataType: 'json',
 						data: {
-							action: qe.load_form_ajax_action,
-							security: qe.load_form_nonce,
-							product_id: postId,
+							action: quickEditConfig.load_form_ajax_action,
+							security: quickEditConfig.load_form_nonce,
+							product_id: productId,
 						},
 					} )
-						.done( function ( response ) {
+						.done( function ( loadFormResponse ) {
 							if (
-								! response.success ||
-								! response.data ||
-								! response.data.html
+								! loadFormResponse.success ||
+								! loadFormResponse.data ||
+								! loadFormResponse.data.html
 							) {
-								var failMsg;
-								if ( response.data ) {
-									failMsg =
-										response.data.message ||
-										response.data.error;
+								var loadFormErrorMessage;
+								if ( loadFormResponse.data ) {
+									loadFormErrorMessage =
+										loadFormResponse.data.message ||
+										loadFormResponse.data.error;
 								}
-								self.showError( failMsg );
-								modal.close( $qeModal );
+								self.showError( loadFormErrorMessage );
+								suiteModal.close( $quickEditModal );
 								return;
 							}
-							$body.html( response.data.html );
+							$modalBody.html( loadFormResponse.data.html );
 							self.bindStoresuiteInlineQuickEditToggles(
-								$body
+								$modalBody
 							);
-							self.initInlineQuickEditSelectWoo( $body );
+							self.initInlineQuickEditSelectWoo( $modalBody );
 						} )
 						.fail( function ( xhr ) {
-							var msg;
+							var loadFormXhrMessage;
 							if (
 								xhr &&
 								xhr.responseJSON &&
 								xhr.responseJSON.data
 							) {
-								msg =
+								loadFormXhrMessage =
 									xhr.responseJSON.data.message ||
 									xhr.responseJSON.data.error;
 							}
-							self.showError( msg );
-							modal.close( $qeModal );
+							self.showError( loadFormXhrMessage );
+							suiteModal.close( $quickEditModal );
 						} );
 				}
 			);
 
-			$qeModal.on(
+			$quickEditModal.on(
 				'click',
 				'.storesuite-product-quick-edit-submit',
-				function ( e ) {
-					e.preventDefault();
+				function ( clickEvent ) {
+					clickEvent.preventDefault();
 
-					var $body = getQuickEditBody();
-					var $fieldset = $body.find( 'fieldset' ).first();
-					if ( ! quickEditProductId || ! $fieldset.length ) {
+					var $modalBody = getQuickEditModalBody();
+					var $quickEditFieldset = $modalBody
+						.find( 'fieldset' )
+						.first();
+					if (
+						! activeQuickEditProductId ||
+						! $quickEditFieldset.length
+					) {
 						return;
 					}
 
-					var $btn = $( this );
-					var $wrap = $btn.closest(
+					var $submitButton = $( this );
+					var $submitButtonWrap = $submitButton.closest(
 						'.storesuite-product-quick-edit-update-wrap'
 					);
 
-					var data = {};
-					$qeModal.find( '[data-field-name]' ).each( function () {
-						var $field = $( this );
-						if ( $field.closest( '.storesuite-hide' ).length ) {
-							return;
-						}
-						var key = $field.data( 'field-name' );
-						if ( $field.attr( 'type' ) === 'checkbox' ) {
-							if ( $field.is( ':checked' ) ) {
-								data[ key ] = true;
+					var quickEditFieldPayload = {};
+					$quickEditModal.find( '[data-field-name]' ).each(
+						function () {
+							var $dataField = $( this );
+							if (
+								$dataField.closest( '.storesuite-hide' )
+									.length
+							) {
+								return;
 							}
-						} else {
-							var val = $field.val();
-							if ( $field.prop( 'multiple' ) ) {
-								data[ key ] =
-									val === null ? [] : val;
+							var fieldName = $dataField.data( 'field-name' );
+							if ( $dataField.attr( 'type' ) === 'checkbox' ) {
+								if ( $dataField.is( ':checked' ) ) {
+									quickEditFieldPayload[ fieldName ] = true;
+								}
 							} else {
-								data[ key ] =
-									val === null ? '' : val;
+								var fieldValue = $dataField.val();
+								if ( $dataField.prop( 'multiple' ) ) {
+									quickEditFieldPayload[ fieldName ] =
+										fieldValue === null
+											? []
+											: fieldValue;
+								} else {
+									quickEditFieldPayload[ fieldName ] =
+										fieldValue === null
+											? ''
+											: fieldValue;
+								}
 							}
 						}
-					} );
+					);
 
-					var rowId = quickEditProductId;
+					var productIdForListRow = activeQuickEditProductId;
 
-					$wrap.addClass( 'storesuite-quick-edit-loading' );
-					$fieldset.prop( 'disabled', true );
+					$submitButtonWrap.addClass(
+						'storesuite-quick-edit-loading'
+					);
+					$quickEditFieldset.prop( 'disabled', true );
 
 					if (
 						window.StoreSuite &&
@@ -972,66 +1019,67 @@
 						method: 'POST',
 						dataType: 'json',
 						data: {
-							action: qe.ajax_action,
-							security: qe.nonce,
-							data: data,
+							action: quickEditConfig.ajax_action,
+							security: quickEditConfig.nonce,
+							data: quickEditFieldPayload,
 						},
 					} )
-						.done( function ( response ) {
+						.done( function ( saveResponse ) {
 							if (
-								response.success &&
-								response.data &&
-								response.data.row
+								saveResponse.success &&
+								saveResponse.data &&
+								saveResponse.data.row
 							) {
 								self.destroyInlineQuickEditSelectWoo(
-									$body
+									$modalBody
 								);
-								$body.empty();
-								quickEditProductId = null;
-								modal.close( $qeModal );
-								$( '#product-row-' + rowId ).replaceWith(
-									response.data.row
+								$modalBody.empty();
+								activeQuickEditProductId = null;
+								suiteModal.close( $quickEditModal );
+								$( '#product-row-' + productIdForListRow ).replaceWith(
+									saveResponse.data.row
 								);
 							} else {
-								var failMsg;
-								if ( response.data ) {
-									failMsg =
-										response.data.message ||
-										response.data.error;
+								var saveErrorMessage;
+								if ( saveResponse.data ) {
+									saveErrorMessage =
+										saveResponse.data.message ||
+										saveResponse.data.error;
 									if (
-										! failMsg &&
-										typeof response.data === 'string'
+										! saveErrorMessage &&
+										typeof saveResponse.data === 'string'
 									) {
-										failMsg = response.data;
+										saveErrorMessage = saveResponse.data;
 									}
 								}
-								self.showError( failMsg );
+								self.showError( saveErrorMessage );
 							}
 						} )
 						.fail( function ( xhr ) {
-							var msg;
+							var saveXhrErrorMessage;
 							if (
 								xhr &&
 								xhr.responseJSON &&
 								xhr.responseJSON.data
 							) {
-								msg =
+								saveXhrErrorMessage =
 									xhr.responseJSON.data.message ||
 									xhr.responseJSON.data.error;
 								if (
-									! msg &&
+									! saveXhrErrorMessage &&
 									typeof xhr.responseJSON.data === 'string'
 								) {
-									msg = xhr.responseJSON.data;
+									saveXhrErrorMessage =
+										xhr.responseJSON.data;
 								}
 							}
-							self.showError( msg );
+							self.showError( saveXhrErrorMessage );
 						} )
 						.always( function () {
-							$wrap.removeClass(
+							$submitButtonWrap.removeClass(
 								'storesuite-quick-edit-loading'
 							);
-							$fieldset.prop( 'disabled', false );
+							$quickEditFieldset.prop( 'disabled', false );
 							if (
 								window.StoreSuite &&
 								window.StoreSuite.storeSuiteLoader
@@ -1045,29 +1093,47 @@
 			);
 		},
 
-		bindStoresuiteInlineQuickEditToggles: function ( $form ) {
-			$form
+		bindStoresuiteInlineQuickEditToggles: function (
+			$quickEditFieldRoot
+		) {
+			$quickEditFieldRoot
 				.off( 'change.storesuiteInlineQe' )
 				.on(
 					'change.storesuiteInlineQe',
 					'input[data-field-toggler]',
 					function () {
-						var name = $( this ).data( 'field-name' );
-						var checked = $( this ).is( ':checked' );
-						$form
-							.find( '[data-field-toggle="' + name + '"]' )
+						var togglerFieldName = $( this ).data(
+							'field-name'
+						);
+						var isTogglerChecked = $( this ).is(
+							':checked'
+						);
+						$quickEditFieldRoot
+							.find(
+								'[data-field-toggle="' +
+									togglerFieldName +
+									'"]'
+							)
 							.each( function () {
-								var $el = $( this );
-								var showOn =
-									$el.attr( 'data-field-show-on' ) ===
-									'true';
-								var match = checked === showOn;
-								$el.toggleClass( 'storesuite-hide', ! match );
+								var $toggleTargetRow = $( this );
+								var showOnAttributeIsTrue =
+									$toggleTargetRow.attr(
+										'data-field-show-on'
+									) === 'true';
+								var shouldShowRow =
+									isTogglerChecked ===
+									showOnAttributeIsTrue;
+								$toggleTargetRow.toggleClass(
+									'storesuite-hide',
+									! shouldShowRow
+								);
 							} );
 					}
 				);
 
-			$form.find( 'input[data-field-toggler]' ).trigger( 'change' );
+			$quickEditFieldRoot
+				.find( 'input[data-field-toggler]' )
+				.trigger( 'change' );
 		},
 	};
 	StoreFrontProduct.init();
