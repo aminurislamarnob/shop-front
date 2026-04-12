@@ -433,6 +433,20 @@ class Assets {
 					'success_title'           => __( 'Bulk update complete', 'storesuite' ),
 					'ok_button'               => __( 'OK', 'storesuite' ),
 				);
+				$product_script_data['woocommerce_admin'] = array(
+					'mon_decimal_point' => wc_get_price_decimal_separator(),
+				);
+				$product_script_data['woocommerce_quick_edit'] = array(
+					'strings' => array(
+						// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- Same label as WooCommerce product list quick edit.
+						'allow_reviews' => __( 'Enable reviews', 'woocommerce' ),
+					),
+				);
+				$product_script_data['quick_edit'] = array(
+					'ajax_action'   => 'storesuite_product_inline_edit',
+					'nonce'           => wp_create_nonce( 'storesuite_product_inline_edit' ),
+					'success_title'   => __( 'Product updated', 'storesuite' ),
+				);
 			}
 
 			wp_localize_script(

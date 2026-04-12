@@ -3785,3 +3785,108 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 .storesuite-text-success {
   color: #047857;
 }
+
+/* Inline product quick edit (sibling table row) */
+.storesuite-hide {
+  display: none !important;
+}
+
+.storesuite-product-inline-edit-fieldset {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border: 0;
+  background: #f8fafc;
+  border-radius: 6px;
+}
+
+.storesuite-inline-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .storesuite-inline-edit-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.storesuite-inline-edit-section-title {
+  display: block;
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--storesuite-text-black);
+}
+
+.storesuite-inline-edit-field-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 8rem) 1fr;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  margin-bottom: 0.65rem;
+}
+
+.storesuite-inline-edit-label {
+  font-size: 0.8125rem;
+  color: var(--storesuite-text-color);
+}
+
+.storesuite-inline-edit-label-block {
+  display: block;
+  margin: 0.75rem 0 0.35rem;
+}
+
+.storesuite-inline-edit-hr {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.storesuite-inline-edit-control .storesuite-form-control {
+  width: 100%;
+}
+
+.storesuite-inline-dimensions-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+}
+
+.storesuite-inline-edit-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.5rem 0 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.storesuite-wc-quick-edit-warning {
+  margin-top: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8125rem;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 4px;
+}
+
+.storesuite-inline-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.storesuite-inline-edit-update-wrap {
+  position: relative;
+}
+
+.storesuite-inline-edit-update-wrap.storesuite-inline-edit-loading {
+  opacity: 0.55;
+  pointer-events: none;
+}

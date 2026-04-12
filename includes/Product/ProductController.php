@@ -22,6 +22,7 @@ class ProductController {
 		add_action( 'wp_ajax_storesuite_edit_product_action', array( $this, 'handle_edit_product' ) );
 		add_action( 'wp_ajax_storesuite_delete_product', array( $this, 'handle_delete_product' ) );
 		add_action( 'wp_ajax_storesuite_bulk_edit_products', array( $this, 'handle_bulk_edit_products_ajax' ) );
+		add_action( 'wp_ajax_storesuite_product_inline_edit', array( $this, 'handle_product_inline_edit_ajax' ) );
 		add_action( 'template_redirect', array( $this, 'handle_product_bulk_actions' ) );
 	}
 
@@ -101,6 +102,232 @@ class ProductController {
 
 		wp_safe_redirect( $this->get_products_bulk_redirect_url( $query_args ) );
 		exit;
+	}
+
+	/**
+	 * AJAX: inline quick edit (`data` map from `[data-field-name]` fields).
+	 *
+	 * @return void
+	 */
+	public function handle_product_inline_edit_ajax() {
+		check_ajax_referer( 'storesuite_product_inline_edit', 'security' );
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Field-level sanitization in ProductQuickEdit::save(); structure is a typed map from dashboard JS.
+		$data = isset( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : null;
+		if ( ! is_array( $data ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Invalid request.', 'storesuite' ),
+				),
+				400
+			);
+		}
+
+		/**
+		 * Filter inline quick edit payload before validation.
+		 *
+		 * @param array $data Associative list keyed by `data-field-name`.
+		 */
+		$data = apply_filters( 'storesuite_update_product_quick_edit_data', $data );
+
+		if ( empty( $data['woocommerce_quick_edit'] ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Invalid quick edit request.', 'storesuite' ),
+				),
+				400
+			);
+		}
+
+		if ( empty( $data['woocommerce_quick_edit_nonce'] ) || ! wp_verify_nonce( sanitize_key( $data['woocommerce_quick_edit_nonce'] ), 'woocommerce_quick_edit_nonce' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Quick edit session expired. Please try again.', 'storesuite' ),
+				),
+				403
+			);
+		}
+
+		$post_id = isset( $data['ID'] ) ? absint( $data['ID'] ) : 0;
+		if ( ! $post_id || 'product' !== get_post_type( $post_id ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Invalid product.', 'storesuite' ),
+				),
+				400
+			);
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'You are not allowed to edit this product.', 'storesuite' ),
+				),
+				403
+			);
+		}
+
+		$chosen_cats = isset( $data['chosen_product_cat'] ) ? array_map( 'absint', (array) $data['chosen_product_cat'] ) : array();
+		$chosen_cats = array_values( array_filter( $chosen_cats ) );
+		if ( empty( $chosen_cats ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Please select a product category.', 'storesuite' ),
+				),
+				422
+			);
+		}
+
+		$request_data = $this->build_quick_edit_request_from_inline_data( $data );
+		$product      = wc_get_product( $post_id );
+		$result       = ProductQuickEdit::save( $post_id, $product, $request_data );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error(
+				array(
+					'message' => $result->get_error_message(),
+				)
+			);
+		}
+
+		$this->apply_inline_quick_edit_post_and_catalog_fields( $post_id, $data, $chosen_cats );
+
+		/**
+		 * After a successful dashboard quick edit save.
+		 *
+		 * @param int   $post_id Product ID.
+		 * @param array $data    Submitted inline field map.
+		 */
+		do_action( 'storesuite_product_quick_edit_updated', $post_id, $data );
+
+		wp_send_json_success(
+			array(
+				'message' => __( 'Product updated.', 'storesuite' ),
+				'row'     => $this->get_product_list_row_html( $post_id ),
+			)
+		);
+	}
+
+	/**
+	 * Map inline editor field names to the shape expected by ProductQuickEdit::save() (WooCommerce quick edit keys).
+	 *
+	 * @param array<string, mixed> $data Raw inline map from `[data-field-name]`.
+	 * @return array<string, mixed>
+	 */
+	private function build_quick_edit_request_from_inline_data( array $data ) {
+		$out = array(
+			'ID'                           => isset( $data['ID'] ) ? absint( $data['ID'] ) : 0,
+			'woocommerce_quick_edit'       => isset( $data['woocommerce_quick_edit'] ) ? $data['woocommerce_quick_edit'] : '',
+			'woocommerce_quick_edit_nonce' => isset( $data['woocommerce_quick_edit_nonce'] ) ? $data['woocommerce_quick_edit_nonce'] : '',
+		);
+
+		$scalar_map = array(
+			'sku'               => '_sku',
+			'weight'            => '_weight',
+			'length'            => '_length',
+			'width'             => '_width',
+			'height'            => '_height',
+			'shipping_class_id' => '_shipping_class',
+		);
+		foreach ( $scalar_map as $src => $dst ) {
+			if ( array_key_exists( $src, $data ) ) {
+				$out[ $dst ] = is_scalar( $data[ $src ] ) ? (string) $data[ $src ] : '';
+			}
+		}
+
+		foreach ( array( '_regular_price', '_sale_price', '_visibility' ) as $wc_key ) {
+			if ( array_key_exists( $wc_key, $data ) ) {
+				$out[ $wc_key ] = $data[ $wc_key ];
+			}
+		}
+
+		if ( ! empty( $data['manage_stock'] ) ) {
+			$out['_manage_stock'] = '1';
+		}
+
+		if ( array_key_exists( 'stock_quantity', $data ) ) {
+			$out['_stock'] = $data['stock_quantity'];
+		}
+		if ( array_key_exists( 'stock_status', $data ) ) {
+			$out['_stock_status'] = $data['stock_status'];
+		}
+		if ( array_key_exists( 'backorders', $data ) ) {
+			$out['_backorders'] = $data['backorders'];
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Persist post fields, reviews, and catalog terms after WooCommerce product meta quick edit.
+	 *
+	 * @param int                  $post_id        Product ID.
+	 * @param array<string, mixed> $data           Raw inline map.
+	 * @param int[]                $chosen_cat_ids Category term IDs.
+	 * @return void
+	 */
+	private function apply_inline_quick_edit_post_and_catalog_fields( $post_id, array $data, array $chosen_cat_ids ) {
+		$post_id = absint( $post_id );
+
+		if ( isset( $data['post_title'] ) ) {
+			wp_update_post(
+				array(
+					'ID'         => $post_id,
+					'post_title' => sanitize_text_field( wp_unslash( (string) $data['post_title'] ) ),
+				)
+			);
+		}
+
+		if ( isset( $data['post_status'] ) ) {
+			$status  = sanitize_key( (string) $data['post_status'] );
+			$allowed = array_keys( apply_filters( 'storesuite_product_quick_edit_allowed_post_statuses', storesuite_get_post_status(), $post_id ) );
+			if ( in_array( $status, $allowed, true ) ) {
+				wp_update_post(
+					array(
+						'ID'          => $post_id,
+						'post_status' => $status,
+					)
+				);
+			}
+		}
+
+		wp_set_object_terms( $post_id, $chosen_cat_ids, 'product_cat', false );
+
+		$tag_ids = isset( $data['product_tag'] ) ? array_map( 'absint', (array) $data['product_tag'] ) : array();
+		$tag_ids = array_values( array_filter( $tag_ids ) );
+		wp_set_object_terms( $post_id, $tag_ids, 'product_tag', false );
+
+		$product = wc_get_product( $post_id );
+		if ( $product ) {
+			$reviews = array_key_exists( 'reviews_allowed', $data ) ? ! empty( $data['reviews_allowed'] ) : false;
+			$product->set_reviews_allowed( $reviews );
+			$product->save();
+		}
+	}
+
+	/**
+	 * HTML for one product table row (AJAX refresh after inline edit).
+	 *
+	 * @param int $post_id Product ID.
+	 * @return string
+	 */
+	private function get_product_list_row_html( $post_id ) {
+		$post_id = absint( $post_id );
+		$product = wc_get_product( $post_id );
+		if ( ! $post_id || ! $product ) {
+			return '';
+		}
+
+		ob_start();
+		storesuite_get_template_part(
+			'products/product-list-table-row',
+			'',
+			array(
+				'product_id' => $post_id,
+				'product'    => $product,
+			)
+		);
+		return ob_get_clean();
 	}
 
 	/**
@@ -260,6 +487,7 @@ class ProductController {
 				continue;
 			}
 
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Assigned through absint/sanitize_text_field below.
 			$raw = wp_unslash( $_GET[ $key ] );
 			if ( $raw === '' || $raw === null ) {
 				continue;
