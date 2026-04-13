@@ -422,35 +422,31 @@ class Assets {
 					'ok_button'        => __( 'OK', 'storesuite' ),
 					'unexpected_error' => __( 'An unexpected error occurred. Please try again.', 'storesuite' ),
 				),
-			);
-
-			if ( function_exists( 'storesuite_is_page' ) && storesuite_is_page( 'products' ) ) {
-				$product_script_data['bulk_edit'] = array(
-					'ajax_action'             => 'storesuite_bulk_edit_products',
+				'bulk_edit'                   => array(
 					'nonce'                   => wp_create_nonce( 'storesuite_bulk_edit_products' ),
-					'select_products_title'    => __( 'Select products', 'storesuite' ),
-					'select_products_message'  => __( 'Choose at least one product to bulk edit.', 'storesuite' ),
+					'trash_nonce'             => wp_create_nonce( 'storesuite_bulk_trash_products' ),
+					'select_products_title'   => __( 'Select products', 'storesuite' ),
+					'select_products_message' => __( 'Choose at least one product to bulk edit.', 'storesuite' ),
 					'success_title'           => __( 'Bulk update complete', 'storesuite' ),
+					'trash_success_title'     => __( 'Bulk trash complete', 'storesuite' ),
 					'ok_button'               => __( 'OK', 'storesuite' ),
-				);
-				$product_script_data['woocommerce_admin'] = array(
+				),
+				'woocommerce_admin'          => array(
 					'mon_decimal_point' => wc_get_price_decimal_separator(),
-				);
-				$product_script_data['woocommerce_quick_edit'] = array(
+				),
+				'woocommerce_quick_edit'     => array(
 					'strings' => array(
 						// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- Same label as WooCommerce product list quick edit.
 						'allow_reviews' => __( 'Enable reviews', 'woocommerce' ),
 					),
-				);
-				$product_script_data['quick_edit'] = array(
-					'ajax_action'          => 'storesuite_product_inline_edit',
-					'nonce'                => wp_create_nonce( 'storesuite_product_inline_edit' ),
-					'load_form_ajax_action' => 'storesuite_get_product_quick_edit_form',
+				),
+				'quick_edit'                 => array(
+					'nonce'                 => wp_create_nonce( 'storesuite_product_quick_edit' ),
 					'load_form_nonce'       => wp_create_nonce( 'storesuite_product_quick_edit_form' ),
-					'success_title'        => __( 'Product updated', 'storesuite' ),
-					'loading_text'         => __( 'Loading…', 'storesuite' ),
-				);
-			}
+					'success_title'         => __( 'Product updated', 'storesuite' ),
+					'loading_text'          => __( 'Loading…', 'storesuite' ),
+				),
+			);
 
 			wp_localize_script(
 				'storesuite_product_script',

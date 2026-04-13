@@ -3826,18 +3826,6 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   border: 0;
 }
 
-.storesuite-quick-edit-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-}
-
-@media (min-width: 768px) {
-  .storesuite-quick-edit-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
 .storesuite-quick-edit-section-title {
   display: block;
   margin: 0 0 0.75rem;
@@ -3858,11 +3846,6 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   color: var(--storesuite-text-color);
 }
 
-.storesuite-quick-edit-label-block {
-  display: block;
-  margin: 0.75rem 0 0.35rem;
-}
-
 .storesuite-quick-edit-hr {
   margin: 1rem 0;
   border: 0;
@@ -3879,13 +3862,16 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   gap: 0.35rem;
 }
 
-.storesuite-quick-edit-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin: 0.5rem 0 0.75rem;
-  font-size: 0.875rem;
-  cursor: pointer;
+.storesuite-quick-edit-switch-row {
+  grid-template-columns: 1fr;
+}
+
+.storesuite-quick-edit-switch-row .storesuite-quick-edit-control {
+  margin-left: 0;
+}
+
+.storesuite-product-quick-edit-fieldset .storesuite-form-group.storesuite-form-switch {
+  margin-bottom: 0.5rem;
 }
 
 .storesuite-wc-quick-edit-warning {

@@ -114,64 +114,53 @@ $inline_options = array(
 ?>
 <div class="storesuite-product-quick-edit-form-root">
 	<fieldset class="storesuite-product-quick-edit-fieldset">
-		<div class="storesuite-quick-edit-grid">
-			<div class="storesuite-quick-edit-column">
-				<div class="storesuite-quick-edit-field-row">
-					<label class="storesuite-quick-edit-label" for="storesuite-qe-title-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Title', 'storesuite' ); ?></label>
-					<div class="storesuite-quick-edit-control">
-						<input type="text" id="storesuite-qe-title-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control" data-field-name="post_title" value="<?php echo esc_attr( $post_title ); ?>">
-					</div>
+		<div class="row">
+			<div class="col-md-6 storesuite-quick-edit-column">
+				<div class="storesuite-form-group">
+					<label class="storesuite-form-label" for="storesuite-qe-title-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Title', 'storesuite' ); ?></label>
+					<input type="text" id="storesuite-qe-title-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control" data-field-name="post_title" value="<?php echo esc_attr( $post_title ); ?>">
 				</div>
 
-				<label class="storesuite-quick-edit-label storesuite-quick-edit-label-block" for="storesuite-qe-cat-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Select Category', 'storesuite' ); ?></label>
-				<select id="storesuite-qe-cat-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control storesuite-inline-quick-edit-select2" multiple="multiple" data-field-name="chosen_product_cat" data-placeholder="<?php esc_attr_e( 'Select category', 'storesuite' ); ?>" data-allow_clear="true">
-					<?php foreach ( $all_categories as $category ) : ?>
-						<?php
-						$cat_selected = in_array( (int) $category->term_id, array_map( 'intval', $assigned_cat_ids ), true );
-						?>
-						<option value="<?php echo esc_attr( (string) $category->term_id ); ?>" <?php selected( $cat_selected, true ); ?>><?php echo esc_html( $category->name ); ?></option>
-					<?php endforeach; ?>
-				</select>
-
-				<label class="storesuite-quick-edit-label storesuite-quick-edit-label-block" for="storesuite-qe-tags-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Tags', 'storesuite' ); ?></label>
-				<select id="storesuite-qe-tags-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control storesuite-inline-quick-edit-select2" multiple="multiple" data-field-name="product_tag" data-placeholder="<?php esc_attr_e( 'Select tags', 'storesuite' ); ?>" data-allow_clear="true">
-					<?php foreach ( $all_tags as $tag_term ) : ?>
-						<?php if ( $tag_term instanceof \WP_Term ) : ?>
-							<option value="<?php echo esc_attr( (string) $tag_term->term_id ); ?>" <?php selected( in_array( (int) $tag_term->term_id, array_map( 'intval', $product_tag_ids ), true ), true ); ?>><?php echo esc_html( $tag_term->name ); ?></option>
-						<?php endif; ?>
-					<?php endforeach; ?>
-				</select>
-
-				<label class="storesuite-quick-edit-checkbox">
-					<input type="checkbox" data-field-name="reviews_allowed" value="1" <?php checked( $reviews_ok, true ); ?>>
-					<?php esc_html_e( 'Enable reviews', 'storesuite' ); ?>
-				</label>
-
-				<div class="storesuite-quick-edit-field-row">
-					<label class="storesuite-quick-edit-label" for="storesuite-qe-status-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Status', 'storesuite' ); ?></label>
-					<div class="storesuite-quick-edit-control">
-						<?php if ( 'pending' === $post_status ) : ?>
-							<span class="storesuite-badge storesuite-badge-warning"><?php esc_html_e( 'Pending review', 'storesuite' ); ?></span>
-							<input type="hidden" data-field-name="post_status" value="pending">
-						<?php else : ?>
-							<select id="storesuite-qe-status-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control" data-field-name="post_status">
-								<?php foreach ( $post_statuses as $slug => $label ) : ?>
-									<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $post_status, $slug ); ?>><?php echo esc_html( $label ); ?></option>
-								<?php endforeach; ?>
-							</select>
-						<?php endif; ?>
-					</div>
+				<div class="storesuite-form-group">
+					<label class="storesuite-form-label" for="storesuite-qe-cat-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Select Category', 'storesuite' ); ?></label>
+					<select id="storesuite-qe-cat-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control storesuite-inline-quick-edit-select2" multiple="multiple" data-field-name="chosen_product_cat" data-placeholder="<?php esc_attr_e( 'Select category', 'storesuite' ); ?>" data-allow_clear="true">
+						<?php foreach ( $all_categories as $category ) : ?>
+							<?php
+							$cat_selected = in_array( (int) $category->term_id, array_map( 'intval', $assigned_cat_ids ), true );
+							?>
+							<option value="<?php echo esc_attr( (string) $category->term_id ); ?>" <?php selected( $cat_selected, true ); ?>><?php echo esc_html( $category->name ); ?></option>
+						<?php endforeach; ?>
+					</select>
 				</div>
 
-				<?php do_action( 'storesuite_quick_edit_before_column_1_ends', $product_id ); ?>
-			</div>
+				<div class="storesuite-form-group">
+					<label class="storesuite-form-label" for="storesuite-qe-tags-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Tags', 'storesuite' ); ?></label>
+					<select id="storesuite-qe-tags-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control storesuite-inline-quick-edit-select2" multiple="multiple" data-field-name="product_tag" data-placeholder="<?php esc_attr_e( 'Select tags', 'storesuite' ); ?>" data-allow_clear="true">
+						<?php foreach ( $all_tags as $tag_term ) : ?>
+							<?php if ( $tag_term instanceof \WP_Term ) : ?>
+								<option value="<?php echo esc_attr( (string) $tag_term->term_id ); ?>" <?php selected( in_array( (int) $tag_term->term_id, array_map( 'intval', $product_tag_ids ), true ), true ); ?>><?php echo esc_html( $tag_term->name ); ?></option>
+							<?php endif; ?>
+						<?php endforeach; ?>
+					</select>
+				</div>
 
-			<div class="storesuite-quick-edit-column">
-				<strong class="storesuite-quick-edit-section-title"><?php esc_html_e( 'Product data', 'storesuite' ); ?></strong>
+				<div class="storesuite-form-group">
+					<label class="storesuite-form-label" for="storesuite-qe-status-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Status', 'storesuite' ); ?></label>
+					<?php if ( 'pending' === $post_status ) : ?>
+						<span class="storesuite-badge storesuite-badge-warning"><?php esc_html_e( 'Pending review', 'storesuite' ); ?></span>
+						<input type="hidden" data-field-name="post_status" value="pending">
+					<?php else : ?>
+						<select id="storesuite-qe-status-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control" data-field-name="post_status">
+							<?php foreach ( $post_statuses as $slug => $label ) : ?>
+								<option value="<?php echo esc_attr( $slug ); ?>" <?php selected( $post_status, $slug ); ?>><?php echo esc_html( $label ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					<?php endif; ?>
+				</div>
 
 				<?php if ( $inline_options['is_sku_enabled'] ) : ?>
-					<div class="storesuite-quick-edit-field-row">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'SKU', 'woocommerce' ); ?></label>
+					<div class="storesuite-form-group">
+						<label class="storesuite-form-label"><?php esc_html_e( 'SKU', 'woocommerce' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<input type="text" class="storesuite-form-control" data-field-name="sku" value="<?php echo esc_attr( (string) $product->get_sku() ); ?>">
 						</div>
@@ -179,23 +168,27 @@ $inline_options = array(
 				<?php endif; ?>
 
 				<?php if ( $show_prices ) : ?>
-					<div class="storesuite-quick-edit-field-row">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'Price', 'woocommerce' ); ?></label>
+					<div class="storesuite-form-group">
+						<label class="storesuite-form-label"><?php esc_html_e( 'Price', 'woocommerce' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<input type="text" class="storesuite-form-control" data-field-name="_regular_price" value="<?php echo esc_attr( $fmt( $product->get_regular_price() ) ); ?>">
 						</div>
 					</div>
-					<div class="storesuite-quick-edit-field-row">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'Sale', 'woocommerce' ); ?></label>
+					<div class="storesuite-form-group">
+						<label class="storesuite-form-label"><?php esc_html_e( 'Sale', 'woocommerce' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<input type="text" class="storesuite-form-control" data-field-name="_sale_price" value="<?php echo esc_attr( $fmt( $product->get_sale_price() ) ); ?>">
 						</div>
 					</div>
 				<?php endif; ?>
 
+				<?php do_action( 'storesuite_quick_edit_before_column_1_ends', $product_id ); ?>
+			</div>
+
+			<div class="col-md-6 storesuite-quick-edit-column">
 				<?php if ( $inline_options['is_weight_enabled'] ) : ?>
-					<div class="storesuite-quick-edit-field-row">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'Weight', 'woocommerce' ); ?></label>
+					<div class="storesuite-form-group">
+						<label class="storesuite-form-label"><?php esc_html_e( 'Weight', 'woocommerce' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<input type="text" class="storesuite-form-control" data-field-name="weight" value="<?php echo esc_attr( (string) $product->get_weight() ); ?>">
 						</div>
@@ -203,8 +196,8 @@ $inline_options = array(
 				<?php endif; ?>
 
 				<?php if ( $inline_options['is_dimensions_enabled'] ) : ?>
-					<div class="storesuite-quick-edit-field-row storesuite-quick-edit-dimensions-row">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'L/W/H', 'woocommerce' ); ?></label>
+					<div class="storesuite-form-group storesuite-quick-edit-dimensions-row">
+						<label class="storesuite-form-label"><?php esc_html_e( 'L/W/H', 'woocommerce' ); ?></label>
 						<div class="storesuite-quick-edit-control storesuite-quick-edit-dimensions-inputs">
 							<input type="text" class="storesuite-form-control" data-field-name="length" value="<?php echo esc_attr( (string) $product->get_length() ); ?>" placeholder="<?php esc_attr_e( 'Length', 'woocommerce' ); ?>">
 							<input type="text" class="storesuite-form-control" data-field-name="width" value="<?php echo esc_attr( (string) $product->get_width() ); ?>" placeholder="<?php esc_attr_e( 'Width', 'woocommerce' ); ?>">
@@ -214,8 +207,8 @@ $inline_options = array(
 				<?php endif; ?>
 
 				<?php if ( $show_shipping_class ) : ?>
-					<div class="storesuite-quick-edit-field-row">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'Shipping class', 'woocommerce' ); ?></label>
+					<div class="storesuite-form-group">
+						<label class="storesuite-form-label"><?php esc_html_e( 'Shipping class', 'woocommerce' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<select class="storesuite-form-control" data-field-name="shipping_class_id">
 								<option value="_no_shipping_class"><?php esc_html_e( 'No shipping class', 'woocommerce' ); ?></option>
@@ -233,8 +226,8 @@ $inline_options = array(
 					</div>
 				<?php endif; ?>
 
-				<div class="storesuite-quick-edit-field-row">
-					<label class="storesuite-quick-edit-label"><?php esc_html_e( 'Visibility', 'woocommerce' ); ?></label>
+				<div class="storesuite-form-group">
+					<label class="storesuite-form-label"><?php esc_html_e( 'Visibility', 'woocommerce' ); ?></label>
 					<div class="storesuite-quick-edit-control">
 						<select class="storesuite-form-control" data-field-name="_visibility">
 							<?php foreach ( $visibilities as $vslug => $vlabel ) : ?>
@@ -244,23 +237,23 @@ $inline_options = array(
 					</div>
 				</div>
 
-				<hr class="storesuite-quick-edit-hr">
-
 				<?php if ( ( ProductType::SIMPLE === $ptype || ProductType::VARIABLE === $ptype ) && $inline_options['can_manage_stock'] ) : ?>
-					<label class="storesuite-quick-edit-checkbox">
-						<input type="checkbox" data-field-name="manage_stock" value="1" data-field-toggler <?php checked( $manage_stock ); ?> <?php disabled( ProductType::GROUPED === $ptype ); ?>>
-						<?php esc_html_e( 'Manage stock?', 'woocommerce' ); ?>
-					</label>
+					<div class="storesuite-form-group storesuite-quick-edit-switch-row">
+						<div class="storesuite-quick-edit-control storesuite-form-group storesuite-form-switch">
+							<input type="checkbox" id="storesuite-qe-manage-stock-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control" data-field-name="manage_stock" value="1" data-field-toggler <?php checked( $manage_stock ); ?> <?php disabled( ProductType::GROUPED === $ptype ); ?>>
+							<label for="storesuite-qe-manage-stock-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Manage stock?', 'woocommerce' ); ?></label>
+						</div>
+					</div>
 
-					<div class="storesuite-quick-edit-field-row storesuite-stock-qty-row<?php echo $manage_stock ? '' : ' storesuite-hide'; ?>" data-field-toggle="manage_stock" data-field-show-on="true">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'Stock quantity', 'storesuite' ); ?></label>
+					<div class="storesuite-form-group storesuite-stock-qty-row<?php echo $manage_stock ? '' : ' storesuite-hide'; ?>" data-field-toggle="manage_stock" data-field-show-on="true">
+						<label class="storesuite-form-label"><?php esc_html_e( 'Stock quantity', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<input type="text" class="storesuite-form-control" data-field-name="stock_quantity" value="<?php echo esc_attr( null !== $product->get_stock_quantity() ? (string) $product->get_stock_quantity() : '' ); ?>">
 						</div>
 					</div>
 
-					<div class="storesuite-quick-edit-field-row storesuite-stock-status-row<?php echo $manage_stock ? ' storesuite-hide' : ''; ?>" data-field-toggle="manage_stock" data-field-show-on="false">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'In stock?', 'woocommerce' ); ?></label>
+					<div class="storesuite-form-group storesuite-stock-status-row<?php echo $manage_stock ? ' storesuite-hide' : ''; ?>" data-field-toggle="manage_stock" data-field-show-on="false">
+						<label class="storesuite-form-label"><?php esc_html_e( 'In stock?', 'woocommerce' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<select class="storesuite-form-control" data-field-name="stock_status">
 								<?php foreach ( $stock_statuses as $skey => $slabel ) : ?>
@@ -270,8 +263,8 @@ $inline_options = array(
 						</div>
 					</div>
 
-					<div class="storesuite-quick-edit-field-row storesuite-backorder-row<?php echo $manage_stock ? '' : ' storesuite-hide'; ?>" data-field-toggle="manage_stock" data-field-show-on="true">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'Backorders?', 'woocommerce' ); ?></label>
+					<div class="storesuite-form-group storesuite-backorder-row<?php echo $manage_stock ? '' : ' storesuite-hide'; ?>" data-field-toggle="manage_stock" data-field-show-on="true">
+						<label class="storesuite-form-label"><?php esc_html_e( 'Backorders?', 'woocommerce' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<select class="storesuite-form-control" data-field-name="backorders">
 								<?php foreach ( $backorder_options as $bkey => $blabel ) : ?>
@@ -281,8 +274,8 @@ $inline_options = array(
 						</div>
 					</div>
 				<?php elseif ( ProductType::GROUPED === $ptype ) : ?>
-					<div class="storesuite-quick-edit-field-row">
-						<label class="storesuite-quick-edit-label"><?php esc_html_e( 'In stock?', 'woocommerce' ); ?></label>
+					<div class="storesuite-form-group">
+						<label class="storesuite-form-label"><?php esc_html_e( 'In stock?', 'woocommerce' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<select class="storesuite-form-control" data-field-name="stock_status">
 								<?php foreach ( $stock_statuses as $skey => $slabel ) : ?>
@@ -292,6 +285,13 @@ $inline_options = array(
 						</div>
 					</div>
 				<?php endif; ?>
+
+					<div class="storesuite-form-group storesuite-quick-edit-switch-row">
+						<div class="storesuite-quick-edit-control storesuite-form-group storesuite-form-switch">
+							<input type="checkbox" id="storesuite-qe-reviews-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control" data-field-name="reviews_allowed" value="1" <?php checked( $reviews_ok, true ); ?>>
+							<label for="storesuite-qe-reviews-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Enable reviews', 'storesuite' ); ?></label>
+						</div>
+					</div>
 
 				<?php do_action( 'storesuite_quick_edit_before_column_2_ends', $product_id, $inline_options ); ?>
 			</div>
