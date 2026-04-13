@@ -94,7 +94,7 @@ class AdminBar {
 
 		$menus = $this->get_storesuite_admin_bar_menus();
 
-		// Added admin menus for dokan in wp admin bar.
+		// Register StoreSuite nodes on the WordPress admin bar.
 		foreach ( $menus as $menu ) {
 			$wp_admin_bar->add_node( $menu );
 		}

@@ -3640,7 +3640,8 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   font-weight: 600;
 }
 
-.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost {
+.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost,
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost {
   flex-shrink: 0;
   box-sizing: border-box;
   width: 30px;
@@ -3662,13 +3663,16 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 }
 
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
-.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
+.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
   color: #fff;
   background-color: rgb(244, 63, 94);
   border-color: rgb(244, 63, 94);
 }
 
-.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg {
+.storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg,
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg {
   display: block;
   width: 20px;
   height: 20px;
@@ -3784,4 +3788,98 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 
 .storesuite-text-success {
   color: #047857;
+}
+
+.storesuite-hide {
+  display: none !important;
+}
+
+/* Product quick edit modal: wider dialog than bulk edit */
+.storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
+  max-width: 920px;
+}
+
+.storesuite-product-quick-edit-modal-scroll {
+  min-height: 4rem;
+}
+
+.storesuite-quick-edit-loading-msg {
+  margin: 0;
+  padding: 1rem 0;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9375rem;
+}
+
+.storesuite-product-quick-edit-update-wrap {
+  position: relative;
+}
+
+.storesuite-product-quick-edit-update-wrap.storesuite-quick-edit-loading {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.storesuite-product-quick-edit-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.storesuite-quick-edit-section-title {
+  display: block;
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--storesuite-text-black);
+}
+
+.storesuite-quick-edit-field-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 8rem) 1fr;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  margin-bottom: 0.65rem;
+}
+
+.storesuite-quick-edit-label {
+  font-size: 0.8125rem;
+  color: var(--storesuite-text-color);
+}
+
+.storesuite-quick-edit-hr {
+  margin: 1rem 0;
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.storesuite-quick-edit-control .storesuite-form-control {
+  width: 100%;
+}
+
+.storesuite-quick-edit-dimensions-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+}
+
+.storesuite-quick-edit-switch-row {
+  grid-template-columns: 1fr;
+}
+
+.storesuite-quick-edit-switch-row .storesuite-quick-edit-control {
+  margin-left: 0;
+}
+
+.storesuite-product-quick-edit-fieldset .storesuite-form-group.storesuite-form-switch {
+  margin-bottom: 0.5rem;
+}
+
+.storesuite-wc-quick-edit-warning {
+  margin-top: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8125rem;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 4px;
 }
