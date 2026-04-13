@@ -309,6 +309,7 @@ class Assets {
 						'account_last_name_required'     => __( 'Last name is required.', 'storesuite' ),
 						'account_display_name_required'  => __( 'Display name is required.', 'storesuite' ),
 						'account_email_required'         => __( 'Email address is required.', 'storesuite' ),
+						'account_password_mismatch'      => __( 'New password and confirm password do not match.', 'storesuite' ),
 					),
 					'coupons_url'                  => storesuite_get_navigation_url( 'coupons' ),
 				)

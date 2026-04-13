@@ -535,6 +535,48 @@ template {
   border: 1px solid var(--storesuite-primary-bg);
 }
 
+.my-storesuite-container .storesuite-password-field {
+  position: relative;
+}
+
+.my-storesuite-container .storesuite-password-field .storesuite-form-control {
+  padding-right: 42px;
+}
+
+.my-storesuite-container .storesuite-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.my-storesuite-container .storesuite-password-toggle:hover,
+.my-storesuite-container .storesuite-password-toggle:focus-visible {
+  color: #334155;
+}
+
+.my-storesuite-container .storesuite-password-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-storesuite-container .storesuite-password-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
 /* Field Validation Styles */
 .my-storesuite-container .storesuite-field-invalid {
   border-color: #dc3545 !important;
