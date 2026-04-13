@@ -16,8 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:disable WordPress.WP.I18n.TextDomainMismatch -- Product data labels mirror WooCommerce strings.
-
 if ( ! isset( $product_post ) || ! $product_post instanceof \WP_Post ) {
 	$product_post = get_post( $product_id );
 }
@@ -88,8 +86,8 @@ $all_categories = get_categories(
 $post_statuses = apply_filters( 'storesuite_product_quick_edit_post_statuses', storesuite_get_post_status(), $product_id );
 
 $stock_statuses = array(
-	'instock'    => __( 'In stock', 'woocommerce' ),
-	'outofstock' => __( 'Out of stock', 'woocommerce' ),
+	'instock'    => __( 'In stock', 'storesuite' ),
+	'outofstock' => __( 'Out of stock', 'storesuite' ),
 );
 
 $backorder_options = wc_get_product_backorder_options();
@@ -97,10 +95,10 @@ $backorder_options = wc_get_product_backorder_options();
 $visibilities = apply_filters(
 	'woocommerce_product_visibility_options',
 	array(
-		CatalogVisibility::VISIBLE => __( 'Catalog &amp; search', 'woocommerce' ),
-		CatalogVisibility::CATALOG => __( 'Catalog', 'woocommerce' ),
-		CatalogVisibility::SEARCH  => __( 'Search', 'woocommerce' ),
-		CatalogVisibility::HIDDEN  => __( 'Hidden', 'woocommerce' ),
+		CatalogVisibility::VISIBLE => __( 'Catalog &amp; search', 'storesuite' ),
+		CatalogVisibility::CATALOG => __( 'Catalog', 'storesuite' ),
+		CatalogVisibility::SEARCH  => __( 'Search', 'storesuite' ),
+		CatalogVisibility::HIDDEN  => __( 'Hidden', 'storesuite' ),
 	)
 );
 
@@ -160,7 +158,7 @@ $inline_options = array(
 
 				<?php if ( $inline_options['is_sku_enabled'] ) : ?>
 					<div class="storesuite-form-group">
-						<label class="storesuite-form-label"><?php esc_html_e( 'SKU', 'woocommerce' ); ?></label>
+						<label class="storesuite-form-label"><?php esc_html_e( 'SKU', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<input type="text" class="storesuite-form-control" data-field-name="sku" value="<?php echo esc_attr( (string) $product->get_sku() ); ?>">
 						</div>
@@ -169,13 +167,13 @@ $inline_options = array(
 
 				<?php if ( $show_prices ) : ?>
 					<div class="storesuite-form-group">
-						<label class="storesuite-form-label"><?php esc_html_e( 'Price', 'woocommerce' ); ?></label>
+						<label class="storesuite-form-label"><?php esc_html_e( 'Price', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<input type="text" class="storesuite-form-control" data-field-name="_regular_price" value="<?php echo esc_attr( $fmt( $product->get_regular_price() ) ); ?>">
 						</div>
 					</div>
 					<div class="storesuite-form-group">
-						<label class="storesuite-form-label"><?php esc_html_e( 'Sale', 'woocommerce' ); ?></label>
+						<label class="storesuite-form-label"><?php esc_html_e( 'Sale', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<input type="text" class="storesuite-form-control" data-field-name="_sale_price" value="<?php echo esc_attr( $fmt( $product->get_sale_price() ) ); ?>">
 						</div>
@@ -188,7 +186,7 @@ $inline_options = array(
 			<div class="col-md-6 storesuite-quick-edit-column">
 				<?php if ( $inline_options['is_weight_enabled'] ) : ?>
 					<div class="storesuite-form-group">
-						<label class="storesuite-form-label"><?php esc_html_e( 'Weight', 'woocommerce' ); ?></label>
+						<label class="storesuite-form-label"><?php esc_html_e( 'Weight', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<input type="text" class="storesuite-form-control" data-field-name="weight" value="<?php echo esc_attr( (string) $product->get_weight() ); ?>">
 						</div>
@@ -197,21 +195,21 @@ $inline_options = array(
 
 				<?php if ( $inline_options['is_dimensions_enabled'] ) : ?>
 					<div class="storesuite-form-group storesuite-quick-edit-dimensions-row">
-						<label class="storesuite-form-label"><?php esc_html_e( 'L/W/H', 'woocommerce' ); ?></label>
+						<label class="storesuite-form-label"><?php esc_html_e( 'L/W/H', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control storesuite-quick-edit-dimensions-inputs">
-							<input type="text" class="storesuite-form-control" data-field-name="length" value="<?php echo esc_attr( (string) $product->get_length() ); ?>" placeholder="<?php esc_attr_e( 'Length', 'woocommerce' ); ?>">
-							<input type="text" class="storesuite-form-control" data-field-name="width" value="<?php echo esc_attr( (string) $product->get_width() ); ?>" placeholder="<?php esc_attr_e( 'Width', 'woocommerce' ); ?>">
-							<input type="text" class="storesuite-form-control" data-field-name="height" value="<?php echo esc_attr( (string) $product->get_height() ); ?>" placeholder="<?php esc_attr_e( 'Height', 'woocommerce' ); ?>">
+							<input type="text" class="storesuite-form-control" data-field-name="length" value="<?php echo esc_attr( (string) $product->get_length() ); ?>" placeholder="<?php esc_attr_e( 'Length', 'storesuite' ); ?>">
+							<input type="text" class="storesuite-form-control" data-field-name="width" value="<?php echo esc_attr( (string) $product->get_width() ); ?>" placeholder="<?php esc_attr_e( 'Width', 'storesuite' ); ?>">
+							<input type="text" class="storesuite-form-control" data-field-name="height" value="<?php echo esc_attr( (string) $product->get_height() ); ?>" placeholder="<?php esc_attr_e( 'Height', 'storesuite' ); ?>">
 						</div>
 					</div>
 				<?php endif; ?>
 
 				<?php if ( $show_shipping_class ) : ?>
 					<div class="storesuite-form-group">
-						<label class="storesuite-form-label"><?php esc_html_e( 'Shipping class', 'woocommerce' ); ?></label>
+						<label class="storesuite-form-label"><?php esc_html_e( 'Shipping class', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<select class="storesuite-form-control" data-field-name="shipping_class_id">
-								<option value="_no_shipping_class"><?php esc_html_e( 'No shipping class', 'woocommerce' ); ?></option>
+								<option value="_no_shipping_class"><?php esc_html_e( 'No shipping class', 'storesuite' ); ?></option>
 								<?php
 								$ship_id = $product->get_shipping_class_id();
 								foreach ( $shipping_class_terms as $shipping_term ) {
@@ -227,7 +225,7 @@ $inline_options = array(
 				<?php endif; ?>
 
 				<div class="storesuite-form-group">
-					<label class="storesuite-form-label"><?php esc_html_e( 'Visibility', 'woocommerce' ); ?></label>
+					<label class="storesuite-form-label"><?php esc_html_e( 'Visibility', 'storesuite' ); ?></label>
 					<div class="storesuite-quick-edit-control">
 						<select class="storesuite-form-control" data-field-name="_visibility">
 							<?php foreach ( $visibilities as $vslug => $vlabel ) : ?>
@@ -241,7 +239,7 @@ $inline_options = array(
 					<div class="storesuite-form-group storesuite-quick-edit-switch-row">
 						<div class="storesuite-quick-edit-control storesuite-form-group storesuite-form-switch">
 							<input type="checkbox" id="storesuite-qe-manage-stock-<?php echo esc_attr( (string) $product_id ); ?>" class="storesuite-form-control" data-field-name="manage_stock" value="1" data-field-toggler <?php checked( $manage_stock ); ?> <?php disabled( ProductType::GROUPED === $ptype ); ?>>
-							<label for="storesuite-qe-manage-stock-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Manage stock?', 'woocommerce' ); ?></label>
+							<label for="storesuite-qe-manage-stock-<?php echo esc_attr( (string) $product_id ); ?>"><?php esc_html_e( 'Manage stock?', 'storesuite' ); ?></label>
 						</div>
 					</div>
 
@@ -253,7 +251,7 @@ $inline_options = array(
 					</div>
 
 					<div class="storesuite-form-group storesuite-stock-status-row<?php echo $manage_stock ? ' storesuite-hide' : ''; ?>" data-field-toggle="manage_stock" data-field-show-on="false">
-						<label class="storesuite-form-label"><?php esc_html_e( 'In stock?', 'woocommerce' ); ?></label>
+						<label class="storesuite-form-label"><?php esc_html_e( 'In stock?', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<select class="storesuite-form-control" data-field-name="stock_status">
 								<?php foreach ( $stock_statuses as $skey => $slabel ) : ?>
@@ -264,7 +262,7 @@ $inline_options = array(
 					</div>
 
 					<div class="storesuite-form-group storesuite-backorder-row<?php echo $manage_stock ? '' : ' storesuite-hide'; ?>" data-field-toggle="manage_stock" data-field-show-on="true">
-						<label class="storesuite-form-label"><?php esc_html_e( 'Backorders?', 'woocommerce' ); ?></label>
+						<label class="storesuite-form-label"><?php esc_html_e( 'Backorders?', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<select class="storesuite-form-control" data-field-name="backorders">
 								<?php foreach ( $backorder_options as $bkey => $blabel ) : ?>
@@ -275,7 +273,7 @@ $inline_options = array(
 					</div>
 				<?php elseif ( ProductType::GROUPED === $ptype ) : ?>
 					<div class="storesuite-form-group">
-						<label class="storesuite-form-label"><?php esc_html_e( 'In stock?', 'woocommerce' ); ?></label>
+						<label class="storesuite-form-label"><?php esc_html_e( 'In stock?', 'storesuite' ); ?></label>
 						<div class="storesuite-quick-edit-control">
 							<select class="storesuite-form-control" data-field-name="stock_status">
 								<?php foreach ( $stock_statuses as $skey => $slabel ) : ?>
@@ -306,4 +304,3 @@ $inline_options = array(
 
 	</fieldset>
 </div>
-<?php // phpcs:enable WordPress.WP.I18n.TextDomainMismatch ?>

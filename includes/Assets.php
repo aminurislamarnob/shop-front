@@ -437,8 +437,7 @@ class Assets {
 				),
 				'woocommerce_quick_edit'     => array(
 					'strings' => array(
-						// phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- Same label as WooCommerce product list quick edit.
-						'allow_reviews' => __( 'Enable reviews', 'woocommerce' ),
+						'allow_reviews' => __( 'Enable reviews', 'storesuite' ),
 					),
 				),
 				'quick_edit'                 => array(
