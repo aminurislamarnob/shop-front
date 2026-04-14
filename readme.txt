@@ -4,7 +4,7 @@ Tags: woocommerce, store management, shop manager, store suite, front-end shop m
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 1.0.0-beta4
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,14 +12,13 @@ Manage your WooCommerce store easily from a front-end dashboard.
 
 == Description ==
 
-**⚠️ This is a beta release intended for testing purposes only. Do not use it on production sites. A production release will be available soon.**
-
 StoreSuite adds a frontend store management dashboard for WooCommerce. Give store managers one place to run the day-to-day: products, categories, tags, brands, coupons, orders, and key metrics—without switching between multiple admin screens.
 
 = Key Features =
 
 * **Manage WooCommerce store easily** – Single dashboard for store operations
 * **Products** – List, add, and edit WooCommerce simple products
+* **Products** – Variable product management (Comming soon)
 * **Categories** – Manage product categories (add, edit, list)
 * **Tags** – Manage product tags (add, edit, list)
 * **Brands** – Manage product brands
@@ -113,17 +112,15 @@ Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order S
 
 == Changelog ==
 
-= 1.0.0-beta4 =
-* Collapsible dashboard sidebar: header control toggles expanded vs icon-only rail; menu labels on hover/focus; preference stored in the browser; full sidebar layout on smaller viewports.
-* General settings: optional sidebar logo (expanded) and sidebar icon (collapsed), chosen from the media library; outputs in the dashboard sidebar with updated styling.
-* Accessibility: navigation landmark on the sidebar, toggle semantics (role, aria-expanded, aria-controls), and screen-reader-friendly site title when a custom logo is shown.
-
 = 1.0.0 =
 * Initial release.
 * Dashboard with store performance KPIs and analytics.
-* Products: list, add, edit.
+* Products management.
 * Categories, tags, and brands management.
 * Coupons management.
-* Orders: list, view, create, edit.
+* Orders: list, view, create, edit feature.
 * Shortcode: [storesuite_dashboard].
 * WooCommerce HPOS compatible.
+* Collapsible dashboard sidebar: header control toggles expanded vs icon-only rail; menu labels on hover/focus; preference stored in the browser; full sidebar layout on smaller viewports.
+* General settings: optional sidebar logo (expanded) and sidebar icon (collapsed), chosen from the media library; outputs in the dashboard sidebar with updated styling.
+* Accessibility: navigation landmark on the sidebar, toggle semantics (role, aria-expanded, aria-controls), and screen-reader-friendly site title when a custom logo is shown.
