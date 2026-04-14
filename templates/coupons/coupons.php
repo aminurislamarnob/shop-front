@@ -28,7 +28,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
-								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Coupon', 'storesuite' ); ?>" />
+								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Coupon', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change. ?>" />
 							</div>
 						</form>
 					</div>
@@ -45,9 +45,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			<div class="storesuite-table-responsive">
 				<?php
 				$coupon_statuses = apply_filters( 'storesuite_coupon_listing_post_statuses', array( 'publish', 'draft', 'pending', 'private' ) );
-
 				$posts_per_page = apply_filters( 'storesuite_coupons_per_page', 10 );
 				$current_page   = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+				$search_by      = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change.
 
 				$query = array(
 					'posts_per_page' => $posts_per_page,
@@ -56,6 +56,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 					'paged'          => $current_page,
 					'orderby'        => 'date',
 					'order'          => 'DESC',
+					's'              => $search_by,
 				);
 
 				$coupon_query = new WP_Query( $query );

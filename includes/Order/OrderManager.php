@@ -54,48 +54,16 @@ class OrderManager {
 		$order_channel = isset( $filters['order_channel'] ) ? $filters['order_channel'] : '';
 		$order_month   = isset( $filters['m'] ) ? $filters['m'] : '';
 
-		// Add search parameter if provided
+		$allowed_search_filters = array( 'order_id', 'customer_email', 'customers', 'products', 'all' );
+		if ( ! in_array( $search_filter, $allowed_search_filters, true ) ) {
+			$search_filter = 'all';
+		}
+
+		// Add search parameter if provided.
 		if ( ! empty( $search_term ) ) {
-			switch ( $search_filter ) {
-				case 'order_id':
-					// Search by order ID
-					$args['s'] = $search_term;
-					break;
-
-				case 'customer_email':
-					// Search by customer email
-					$args['billing_email'] = $search_term;
-					break;
-
-				case 'customers':
-					// Search by customer name (billing first name, last name, or display name)
-					global $wpdb;
-					$args['meta_query'] = array(
-						'relation' => 'OR',
-						array(
-							'key'     => '_billing_first_name',
-							'value'   => $search_term,
-							'compare' => 'LIKE',
-						),
-						array(
-							'key'     => '_billing_last_name',
-							'value'   => $search_term,
-							'compare' => 'LIKE',
-						),
-					);
-					break;
-
-				case 'products':
-					// Search by product name in order items
-					$this->search_orders_by_product( $args, $search_term );
-					break;
-
-				case 'all':
-				default:
-					// Search in all fields (order number, billing name, email, etc.)
-					$args['s'] = $search_term;
-					break;
-			}
+			// Follow WooCommerce HPOS search style: always pass the term and selected search filter.
+			$args['s']             = $search_term;
+			$args['search_filter'] = $search_filter;
 		}
 
 		// Filter by order status
@@ -138,34 +106,6 @@ class OrderManager {
 
 		$orders = wc_get_orders( $args );
 		return $orders;
-	}
-
-	/**
-	 * Search orders by product name.
-	 *
-	 * @param array  $args WC_Order query arguments.
-	 * @param string $search_term Product name to search.
-	 * @return void
-	 */
-	private function search_orders_by_product( &$args, $search_term ) {
-		global $wpdb;
-
-		// Search in WooCommerce order items table (proper way like WooCommerce core)
-		$order_ids = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT DISTINCT order_id FROM {$wpdb->prefix}woocommerce_order_items
-				WHERE order_item_type = 'line_item'
-				AND order_item_name LIKE %s",
-				'%' . $wpdb->esc_like( $search_term ) . '%'
-			)
-		);
-
-		if ( ! empty( $order_ids ) ) {
-			$args['include'] = array_map( 'absint', $order_ids );
-		} else {
-			// Return empty result if no matching products found
-			$args['include'] = array( 0 );
-		}
 	}
 
 	/**

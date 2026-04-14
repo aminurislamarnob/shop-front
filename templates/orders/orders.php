@@ -136,7 +136,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<th><?php echo esc_html__( 'Customer', 'storesuite' ); ?></th>
 							<th><?php echo esc_html__( 'Billing Phone', 'storesuite' ); ?></th>
 							<th><?php echo esc_html__( 'Date', 'storesuite' ); ?></th>
-							<th class="text-right"><?php echo esc_html__( 'Action', 'storesuite' ); ?></th>
+							<th class="text-right"><?php echo esc_html__( 'Actions', 'storesuite' ); ?></th>
 						</tr>
 						<tbody>
 							<?php

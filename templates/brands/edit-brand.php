@@ -112,7 +112,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								<input type="hidden" name="action" value="storesuite_edit_product_brand">
 								<input type="hidden" name="brand_id" value="<?php echo esc_attr( $brand->term_id ); ?>">
 								<div class="storesuite-button-group">
-									<button class="my-storesuite-button" name="save_product_brand" type="submit"><?php esc_html_e( 'Update', 'storesuite' ); ?></button>
+									<button class="my-storesuite-button" name="save_product_brand" type="submit"><?php esc_html_e( 'Save Changes', 'storesuite' ); ?></button>
 									<a href="<?php echo esc_url( storesuite_get_navigation_url( 'brands' ) ); ?>" class="my-storesuite-button my-storesuite-button-light"><?php esc_html_e( 'Back', 'storesuite' ); ?></a>
 								</div>
 							</div>

@@ -80,7 +80,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								<?php wp_nonce_field( '_storesuite_add_product_category_', 'storesuite_add_product_category_nonce' ); ?>
 								<input type="hidden" name="action" value="storesuite_add_product_category">
 								<div class="storesuite-button-group">
-									<button class="my-storesuite-button" name="save_product_category" type="submit"><?php esc_html_e( 'Submit', 'storesuite' ); ?></button>
+									<button class="my-storesuite-button" name="save_product_category" type="submit"><?php esc_html_e( 'Add Category', 'storesuite' ); ?></button>
 									<a href="<?php echo esc_url( storesuite_get_navigation_url( 'categories' ) ); ?>" class="my-storesuite-button my-storesuite-button-light"><?php esc_html_e( 'Back', 'storesuite' ); ?></a>
 								</div>
 							</div>
