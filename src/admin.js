@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
+/**
+ * WordPress dependencies
+ */
+import { createRoot } from '@wordpress/element';
+
+/**
+ * External dependencies
+ */
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import './styles/styles.css';
-import './styles/index.scss'; // Include your custom Sass styles
+
+/**
+ * Internal dependencies
+ */
+import './Components/LayoutStyles.css';
 import Layout from './Components/Layout';
 import ColorsSettings from './Components/ColorsSettings';
 import GeneralSettings from './Components/GeneralSettings';
@@ -21,7 +30,6 @@ const App = () => (
 					path="pagination-settings"
 					element={ <PaginationSettings /> }
 				/>
-				{ /* Add more routes here */ }
 			</Route>
 		</Routes>
 	</Router>
@@ -29,6 +37,9 @@ const App = () => (
 
 document.addEventListener( 'DOMContentLoaded', () => {
 	const container = document.getElementById( 'storesuite-settings' );
-	const root = createRoot( container );
-	root.render( <App /> );
+
+	if ( container ) {
+		const root = createRoot( container );
+		root.render( <App /> );
+	}
 } );

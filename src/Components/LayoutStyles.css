@@ -284,3 +284,8 @@
     gap: 8px;
     align-items: center;
 }
+
+.storesuite-notice {
+    width: 100%;
+    margin-bottom: 16px;
+}
