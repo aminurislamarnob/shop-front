@@ -81,7 +81,10 @@
 			this.clearCloseTransition( $overlay );
 			$overlay.removeData( 'storesuite-modal-closing' );
 
-			$overlay.data( 'storesuite-modal-prev-focus', document.activeElement );
+			$overlay.data(
+				'storesuite-modal-prev-focus',
+				document.activeElement
+			);
 			$overlay.prop( 'hidden', false ).attr( 'aria-hidden', 'false' );
 
 			var focusFirst = function () {

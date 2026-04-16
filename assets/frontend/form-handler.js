@@ -179,7 +179,10 @@
 		 */
 		bindPasswordVisibilityToggle: function () {
 			$( document )
-				.off( 'click.storesuitePasswordToggle', '.storesuite-password-toggle' )
+				.off(
+					'click.storesuitePasswordToggle',
+					'.storesuite-password-toggle'
+				)
 				.on(
 					'click.storesuitePasswordToggle',
 					'.storesuite-password-toggle',
