@@ -1,13 +1,12 @@
 /**
  * WordPress dependencies
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	Button,
 	Card,
 	CardBody,
-	Notice,
 	Spinner,
 	SelectControl,
 	ToggleControl,
@@ -17,8 +16,8 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
+import { useSettings } from '../context/SettingsContext';
 import DashboardSidebarImageControl from './DashboardSidebarImageControl';
-import { GearIcon } from './icons';
 
 const PERFORMANCE_BOX_KEYS = [
 	{ key: 'revenue_total_sales', label: __( 'Total sales', 'storesuite' ) },
@@ -69,93 +68,52 @@ const DASHBOARD_WIDGET_KEYS = [
 const yes = ( v ) => v !== 'no' && v !== false;
 
 const GeneralSettings = () => {
+	const { settings, isSaving, saveSettings } = useSettings();
+
 	const [ pages, setPages ] = useState( [] );
-	const [ dashboardPage, setDashboardPage ] = useState( '' );
-	const [ preventAdminAccess, setPreventAdminAccess ] = useState( false );
-	const [ performanceBoxes, setPerformanceBoxes ] = useState( {} );
-	const [ dashboardWidgets, setDashboardWidgets ] = useState( {} );
-	const [ sidebarLogoId, setSidebarLogoId ] = useState( 0 );
-	const [ sidebarIconId, setSidebarIconId ] = useState( 0 );
-	const [ isLoading, setIsLoading ] = useState( false );
-	const [ message, setMessage ] = useState( '' );
-	const [ error, setError ] = useState( '' );
+	const [ dashboardPage, setDashboardPage ] = useState(
+		() => settings.storesuite_dashboard_page_id ?? ''
+	);
+	const [ preventAdminAccess, setPreventAdminAccess ] = useState(
+		() =>
+			settings.storesuite_prevent_admin_access === 'yes' ||
+			settings.storesuite_prevent_admin_access === true
+	);
+	const [ sidebarLogoId, setSidebarLogoId ] = useState(
+		() =>
+			parseInt( settings.storesuite_dashboard_sidebar_logo_id, 10 ) || 0
+	);
+	const [ sidebarIconId, setSidebarIconId ] = useState(
+		() =>
+			parseInt( settings.storesuite_dashboard_sidebar_icon_id, 10 ) || 0
+	);
+	const [ performanceBoxes, setPerformanceBoxes ] = useState( () => {
+		const perf = {};
+		PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
+			const opt = `storesuite_show_perf_${ key }`;
+			perf[ key ] =
+				settings[ opt ] !== undefined ? yes( settings[ opt ] ) : true;
+		} );
+		return perf;
+	} );
+	const [ dashboardWidgets, setDashboardWidgets ] = useState( () => {
+		const widgets = {};
+		DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
+			const opt = `storesuite_show_widget_${ key }`;
+			widgets[ key ] =
+				settings[ opt ] !== undefined ? yes( settings[ opt ] ) : true;
+		} );
+		return widgets;
+	} );
 
-	// Fetch plugin settings.
+	// Fetch available pages for the dashboard page selector (tab-local).
 	useEffect( () => {
-		setIsLoading( true );
-		const fetchSettings = async () => {
-			try {
-				const response = await apiFetch( {
-					path: '/storesuite/v1/settings',
-				} );
-
-				if ( response.storesuite_dashboard_page_id ) {
-					setDashboardPage( response.storesuite_dashboard_page_id );
-				}
-
-				if ( response.storesuite_prevent_admin_access !== undefined ) {
-					setPreventAdminAccess(
-						response.storesuite_prevent_admin_access === 'yes' ||
-							response.storesuite_prevent_admin_access === true
-					);
-				}
-
-				setSidebarLogoId(
-					parseInt(
-						response.storesuite_dashboard_sidebar_logo_id,
-						10
-					) || 0
-				);
-				setSidebarIconId(
-					parseInt(
-						response.storesuite_dashboard_sidebar_icon_id,
-						10
-					) || 0
-				);
-
-				// Performance boxes.
-				const perf = {};
-				PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
-					const opt = `storesuite_show_perf_${ key }`;
-					perf[ key ] =
-						response[ opt ] !== undefined
-							? yes( response[ opt ] )
-							: true;
-				} );
-				setPerformanceBoxes( perf );
-
-				// Dashboard widgets.
-				const widgets = {};
-				DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
-					const opt = `storesuite_show_widget_${ key }`;
-					widgets[ key ] =
-						response[ opt ] !== undefined
-							? yes( response[ opt ] )
-							: true;
-				} );
-				setDashboardWidgets( widgets );
-
-				setError( null ); // Clear any previous errors
-				setIsLoading( false );
-			} catch ( err ) {
-				setError( err.message );
-				setIsLoading( false );
-			}
-		};
-
-		fetchSettings();
-	}, [] );
-
-	// Fetch 100 pages.
-	useEffect( () => {
-		setIsLoading( true );
 		const fetchPages = async () => {
 			try {
 				const wpPages = await apiFetch( {
 					path: '/wp/v2/pages?per_page=100&page=1',
 				} );
 
-				// Map the pages to the options format required by SelectControl
 				const options = wpPages.map( ( page ) => ( {
 					label: page.title.rendered,
 					value: page.id,
@@ -168,22 +126,17 @@ const GeneralSettings = () => {
 				} );
 
 				setPages( options );
-				setError( null ); // Clear any previous errors
-				setIsLoading( false );
 			} catch ( err ) {
-				setError( err.message );
-				setIsLoading( false );
+				// Page dropdown stays empty on error.
 			}
 		};
 
 		fetchPages();
 	}, [] );
 
-	// Handle submit to save dashboard page
-	const handleSubmit = async ( event ) => {
-		event.preventDefault();
-		setIsLoading( true );
-		try {
+	const handleSubmit = useCallback(
+		async ( event ) => {
+			event.preventDefault();
 			const toYesNo = ( b ) => ( b ? 'yes' : 'no' );
 			const data = {
 				storesuite_dashboard_page_id: dashboardPage,
@@ -194,108 +147,52 @@ const GeneralSettings = () => {
 				storesuite_dashboard_sidebar_icon_id: sidebarIconId,
 			};
 
-			// Performance boxes.
 			PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
 				data[ `storesuite_show_perf_${ key }` ] = toYesNo(
 					performanceBoxes[ key ] !== false
 				);
 			} );
 
-			// Dashboard widgets.
 			DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
 				data[ `storesuite_show_widget_${ key }` ] = toYesNo(
 					dashboardWidgets[ key ] !== false
 				);
 			} );
 
-			const response = await apiFetch( {
-				path: '/storesuite/v1/settings',
-				method: 'POST',
-				data,
-			} );
-
-			setDashboardPage( response.storesuite_dashboard_page_id );
-
-			if ( response.storesuite_prevent_admin_access !== undefined ) {
-				setPreventAdminAccess(
-					response.storesuite_prevent_admin_access === 'yes' ||
-						response.storesuite_prevent_admin_access === true
-				);
-			}
-
-			setSidebarLogoId(
-				parseInt( response.storesuite_dashboard_sidebar_logo_id, 10 ) ||
-					0
-			);
-			setSidebarIconId(
-				parseInt( response.storesuite_dashboard_sidebar_icon_id, 10 ) ||
-					0
-			);
-
-			// Performance boxes.
-			const perf = {};
-			PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
-				const opt = `storesuite_show_perf_${ key }`;
-				perf[ key ] =
-					response[ opt ] !== undefined
-						? yes( response[ opt ] )
-						: true;
-			} );
-			setPerformanceBoxes( perf );
-
-			// Dashboard widgets.
-			const widgets = {};
-			DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
-				const opt = `storesuite_show_widget_${ key }`;
-				widgets[ key ] =
-					response[ opt ] !== undefined
-						? yes( response[ opt ] )
-						: true;
-			} );
-			setDashboardWidgets( widgets );
-
-			setMessage( __( 'Settings saved successfully!', 'storesuite' ) );
-			setError( '' );
-			setIsLoading( false );
-		} catch ( submitError ) {
-			setError( submitError.message );
-			setMessage( '' );
-			setIsLoading( false );
-		}
-	};
+			await saveSettings( data );
+		},
+		[
+			dashboardPage,
+			preventAdminAccess,
+			sidebarLogoId,
+			sidebarIconId,
+			performanceBoxes,
+			dashboardWidgets,
+			saveSettings,
+		]
+	);
 
 	return (
-		<div>
-			<div className="settings-header">
-				<div className="settings-header-icon">
-					<GearIcon />
-				</div>
-				<h2>{ __( 'General Settings', 'storesuite' ) }</h2>
-			</div>
-			{ message && (
-				<Notice
-					className="storesuite-notice"
-					status="success"
-					isDismissible
-					onDismiss={ () => setMessage( '' ) }
-				>
-					{ message }
-				</Notice>
-			) }
-			{ error && (
-				<Notice
-					className="storesuite-notice"
-					status="error"
-					isDismissible
-					onDismiss={ () => setError( '' ) }
-				>
-					{ error }
-				</Notice>
-			) }
-
+		<div
+			className="storesuite-section storesuite-section--narrow"
+			id="storesuite-general-settings"
+		>
 			<form onSubmit={ handleSubmit }>
+				<Card className="storesuite-form-header-card">
+					<CardBody className="storesuite-form-section-header">
+						<h3 className="storesuite-section-title">
+							{ __( 'General Settings', 'storesuite' ) }
+						</h3>
+						<p className="storesuite-section-description">
+							{ __(
+								'Configure your dashboard page, sidebar branding, and admin area access.',
+								'storesuite'
+							) }
+						</p>
+					</CardBody>
+				</Card>
 				<Card>
-					<CardBody>
+					<CardBody className="storesuite-form-section-body">
 						<div className="storesuite-settings-group">
 							<SelectControl
 								label={ __(
@@ -350,7 +247,10 @@ const GeneralSettings = () => {
 						<div className="storesuite-settings-group">
 							<div className="storesuite-settings-sec-header">
 								<h3 className="storesuite-section-title">
-									{ __( 'Performance boxes', 'storesuite' ) }
+									{ __(
+										'Performance boxes',
+										'storesuite'
+									) }
 								</h3>
 								<p className="storesuite-section-description">
 									{ __(
@@ -378,7 +278,10 @@ const GeneralSettings = () => {
 						<div className="storesuite-settings-group">
 							<div className="storesuite-settings-sec-header">
 								<h3 className="storesuite-section-title">
-									{ __( 'Dashboard widgets', 'storesuite' ) }
+									{ __(
+										'Dashboard widgets',
+										'storesuite'
+									) }
 								</h3>
 								<p className="storesuite-section-description">
 									{ __(
@@ -406,9 +309,10 @@ const GeneralSettings = () => {
 						<Button
 							variant="primary"
 							type="submit"
-							disabled={ isLoading }
+							isBusy={ isSaving }
+							disabled={ isSaving }
 						>
-							{ isLoading && <Spinner /> }
+							{ isSaving && <Spinner /> }
 							{ __( 'Save Changes', 'storesuite' ) }
 						</Button>
 					</CardBody>

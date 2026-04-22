@@ -1,22 +1,20 @@
 /**
  * WordPress dependencies
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	Button,
 	Card,
 	CardBody,
-	Notice,
 	TextControl,
 	Spinner,
 } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
-import { CollectionIcon } from './icons';
+import { useSettings } from '../context/SettingsContext';
 
 const PAGINATION_FIELDS = [
 	{
@@ -58,136 +56,79 @@ const PAGINATION_FIELDS = [
 ];
 
 const PaginationSettings = () => {
+	const { settings, isSaving, saveSettings } = useSettings();
+
 	const [ pagination, setPagination ] = useState( () =>
 		Object.fromEntries(
-			PAGINATION_FIELDS.map( ( { key } ) => [ key, '' ] )
+			PAGINATION_FIELDS.map( ( { key, apiKey } ) => [
+				key,
+				settings[ apiKey ] !== undefined
+					? String( settings[ apiKey ] )
+					: '',
+			] )
 		)
 	);
-	const [ isLoading, setIsLoading ] = useState( false );
-	const [ message, setMessage ] = useState( '' );
-	const [ error, setError ] = useState( '' );
 
-	// Fetch plugin settings.
-	useEffect( () => {
-		setIsLoading( true );
-		const fetchSettings = async () => {
-			try {
-				const response = await apiFetch( {
-					path: '/storesuite/v1/settings',
-				} );
-
-				// Pagination fields.
-				const paginationData = {};
-				PAGINATION_FIELDS.forEach( ( { key, apiKey } ) => {
-					paginationData[ key ] =
-						response[ apiKey ] !== undefined
-							? String( response[ apiKey ] )
-							: '';
-				} );
-				setPagination( paginationData );
-
-				setError( null );
-				setIsLoading( false );
-			} catch ( err ) {
-				setError( err.message );
-				setIsLoading( false );
-			}
-		};
-
-		fetchSettings();
-	}, [] );
-
-	// Handle submit to save pagination settings.
-	const handleSubmit = async ( event ) => {
-		event.preventDefault();
-		setIsLoading( true );
-		try {
+	const handleSubmit = useCallback(
+		async ( event ) => {
+			event.preventDefault();
 			const data = {};
 			PAGINATION_FIELDS.forEach( ( { key, apiKey } ) => {
 				data[ apiKey ] = pagination[ key ] ?? '';
 			} );
-
-			const response = await apiFetch( {
-				path: '/storesuite/v1/settings',
-				method: 'POST',
-				data,
-			} );
-
-			// Pagination fields.
-			const paginationData = {};
-			PAGINATION_FIELDS.forEach( ( { key, apiKey } ) => {
-				paginationData[ key ] =
-					response[ apiKey ] !== undefined
-						? String( response[ apiKey ] )
-						: '';
-			} );
-			setPagination( paginationData );
-
-			setMessage( __( 'Settings saved successfully!', 'storesuite' ) );
-			setError( '' );
-			setIsLoading( false );
-		} catch ( submitError ) {
-			setError( submitError.message );
-			setMessage( '' );
-			setIsLoading( false );
-		}
-	};
+			await saveSettings( data );
+		},
+		[ pagination, saveSettings ]
+	);
 
 	return (
-		<div>
-			<div className="settings-header">
-				<div className="settings-header-icon">
-					<CollectionIcon />
-				</div>
-				<h2>{ __( 'Pagination Settings', 'storesuite' ) }</h2>
-			</div>
-			{ message && (
-				<Notice
-					className="storesuite-notice"
-					status="success"
-					isDismissible
-					onDismiss={ () => setMessage( '' ) }
-				>
-					{ message }
-				</Notice>
-			) }
-			{ error && (
-				<Notice
-					className="storesuite-notice"
-					status="error"
-					isDismissible
-					onDismiss={ () => setError( '' ) }
-				>
-					{ error }
-				</Notice>
-			) }
+		<div
+			className="storesuite-section storesuite-section--medium"
+			id="storesuite-pagination-settings"
+		>
 			<form onSubmit={ handleSubmit }>
+				<Card className="storesuite-form-header-card">
+					<CardBody className="storesuite-form-section-header">
+						<h3 className="storesuite-section-title">
+							{ __( 'Pagination Settings', 'storesuite' ) }
+						</h3>
+						<p className="storesuite-section-description">
+							{ __(
+								'Set the number of items displayed per page on each list view.',
+								'storesuite'
+							) }
+						</p>
+					</CardBody>
+				</Card>
 				<Card>
-					<CardBody>
-						{ PAGINATION_FIELDS.map( ( { key, label, help } ) => (
-							<div
-								key={ key }
-								className="storesuite-settings-group"
-							>
-								<TextControl
-									label={ label }
-									help={ help }
-									value={ pagination[ key ] }
-									onChange={ ( value ) =>
-										setPagination( ( prev ) => ( {
-											...prev,
-											[ key ]: value,
-										} ) )
-									}
-								/>
-							</div>
-						) ) }
+					<CardBody className="storesuite-form-section-body">
+						<div className="storesuite-pagination-grid">
+							{ PAGINATION_FIELDS.map( ( { key, label, help } ) => (
+								<div
+									key={ key }
+									className="storesuite-settings-group"
+								>
+									<TextControl
+										label={ label }
+										help={ help }
+										value={ pagination[ key ] }
+										onChange={ ( value ) =>
+											setPagination( ( prev ) => ( {
+												...prev,
+												[ key ]: value,
+											} ) )
+										}
+									/>
+								</div>
+							) ) }
+						</div>
 						<Button
 							variant="primary"
 							type="submit"
-							disabled={ isLoading }
+							isBusy={ isSaving }
+							disabled={ isSaving }
 						>
-							{ isLoading && <Spinner /> }
+							{ isSaving && <Spinner /> }
 							{ __( 'Save Changes', 'storesuite' ) }
 						</Button>
 					</CardBody>
