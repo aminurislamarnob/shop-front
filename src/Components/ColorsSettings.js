@@ -18,6 +18,142 @@ import {
  * Internal dependencies
  */
 import { useSettings } from '../context/SettingsContext';
+import ColorPreview from './ColorPreview';
+
+const PREDEFINED_PALETTES = [
+	{
+		value: 'default',
+		label: __( 'StoreSuite Default', 'storesuite' ),
+		colorOptions: [ '#ffffff', '#2d5bdb', '#213fd4', '#e0e7ff' ],
+		colors: {
+			buttonText: '#ffffff',
+			buttonBackground: '#2d5bdb',
+			buttonHoverText: '#ffffff',
+			buttonHoverBackground: '#213fd4',
+			textColor: '#475569',
+			titleTextColor: '#334155',
+			liteTextColor: '#828282',
+			iconColor: '#94a3b8',
+			sidebarMenuText: '#334155',
+			sidebarBackground: '#ffffff',
+			sidebarActiveText: '#213fd4',
+			sidebarActiveBackground: '#213fd4',
+			sidebarBorderColor: '#e2e8f0',
+			borderColor: '#e2e8f0',
+			liteBgColor: '#f7f7f7',
+		},
+	},
+	{
+		value: 'purple',
+		label: __( 'Purple', 'storesuite' ),
+		colorOptions: [ '#1e1b4b', '#5539FD', '#635BFF', '#ede9fe' ],
+		colors: {
+			buttonText: '#ffffff',
+			buttonBackground: '#5539FD',
+			buttonHoverText: '#ffffff',
+			buttonHoverBackground: '#635BFF',
+			textColor: '#475569',
+			titleTextColor: '#1e1b4b',
+			liteTextColor: '#828282',
+			iconColor: '#ffffff',
+			sidebarMenuText: '#ffffff',
+			sidebarBackground: '#1e1b4b',
+			sidebarActiveText: '#ffffff',
+			sidebarActiveBackground: '#5539FD',
+			sidebarBorderColor: '#2d2a6e',
+			borderColor: '#e2e8f0',
+			liteBgColor: '#f5f3ff',
+		},
+	},
+	{
+		value: 'ocean',
+		label: __( 'Ocean', 'storesuite' ),
+		colorOptions: [ '#0c4a6e', '#0ea5e9', '#38bdf8', '#e0f2fe' ],
+		colors: {
+			buttonText: '#ffffff',
+			buttonBackground: '#0ea5e9',
+			buttonHoverText: '#ffffff',
+			buttonHoverBackground: '#0284c7',
+			textColor: '#475569',
+			titleTextColor: '#0c4a6e',
+			liteTextColor: '#828282',
+			iconColor: '#ffffff',
+			sidebarMenuText: '#ffffff',
+			sidebarBackground: '#0c4a6e',
+			sidebarActiveText: '#ffffff',
+			sidebarActiveBackground: '#0ea5e9',
+			sidebarBorderColor: '#174e70',
+			borderColor: '#e0f2fe',
+			liteBgColor: '#f0f9ff',
+		},
+	},
+	{
+		value: 'crimson',
+		label: __( 'Crimson', 'storesuite' ),
+		colorOptions: [ '#1c0a0a', '#dc2626', '#ef4444', '#fee2e2' ],
+		colors: {
+			buttonText: '#ffffff',
+			buttonBackground: '#dc2626',
+			buttonHoverText: '#ffffff',
+			buttonHoverBackground: '#b91c1c',
+			textColor: '#475569',
+			titleTextColor: '#1c0a0a',
+			liteTextColor: '#828282',
+			iconColor: '#ffffff',
+			sidebarMenuText: '#ffffff',
+			sidebarBackground: '#1c0a0a',
+			sidebarActiveText: '#ffffff',
+			sidebarActiveBackground: '#dc2626',
+			sidebarBorderColor: '#3d1515',
+			borderColor: '#fee2e2',
+			liteBgColor: '#fff5f5',
+		},
+	},
+	{
+		value: 'forest',
+		label: __( 'Forest', 'storesuite' ),
+		colorOptions: [ '#14532d', '#16a34a', '#22c55e', '#dcfce7' ],
+		colors: {
+			buttonText: '#ffffff',
+			buttonBackground: '#16a34a',
+			buttonHoverText: '#ffffff',
+			buttonHoverBackground: '#15803d',
+			textColor: '#475569',
+			titleTextColor: '#14532d',
+			liteTextColor: '#828282',
+			iconColor: '#ffffff',
+			sidebarMenuText: '#ffffff',
+			sidebarBackground: '#14532d',
+			sidebarActiveText: '#ffffff',
+			sidebarActiveBackground: '#16a34a',
+			sidebarBorderColor: '#1d6b3a',
+			borderColor: '#dcfce7',
+			liteBgColor: '#f0fdf4',
+		},
+	},
+	{
+		value: 'midnight',
+		label: __( 'Midnight', 'storesuite' ),
+		colorOptions: [ '#0f172a', '#6366f1', '#818cf8', '#e0e7ff' ],
+		colors: {
+			buttonText: '#ffffff',
+			buttonBackground: '#6366f1',
+			buttonHoverText: '#ffffff',
+			buttonHoverBackground: '#4f46e5',
+			textColor: '#475569',
+			titleTextColor: '#0f172a',
+			liteTextColor: '#828282',
+			iconColor: '#ffffff',
+			sidebarMenuText: '#ffffff',
+			sidebarBackground: '#0f172a',
+			sidebarActiveText: '#ffffff',
+			sidebarActiveBackground: '#6366f1',
+			sidebarBorderColor: '#1a2540',
+			borderColor: '#e0e7ff',
+			liteBgColor: '#eef2ff',
+		},
+	},
+];
 
 // Defaults match :root CSS variables in Main::add_storesuite_css_variables()
 const COLOR_FIELDS = [
@@ -94,6 +230,12 @@ const COLOR_FIELDS = [
 		defaultValue: '#213fd4',
 	},
 	{
+		key: 'sidebarBorderColor',
+		apiKey: 'storesuite_color_sidebar_border',
+		label: __( 'Sidebar Border Color', 'storesuite' ),
+		defaultValue: '#e2e8f0',
+	},
+	{
 		key: 'borderColor',
 		apiKey: 'storesuite_color_border',
 		label: __( 'Border Color', 'storesuite' ),
@@ -156,10 +298,70 @@ const ColorControl = ( {
 	);
 };
 
+const ModeCard = ( { isActive, onClick, title, description } ) => (
+	<div
+		className={ `storesuite-color-mode-card${ isActive ? ' is-active' : '' }` }
+		onClick={ onClick }
+		role="button"
+		tabIndex={ 0 }
+		onKeyDown={ ( e ) => {
+			if ( e.key === 'Enter' || e.key === ' ' ) {
+				onClick();
+			}
+		} }
+	>
+		<div className="storesuite-color-mode-icon">
+			{ isActive && (
+				<svg
+					viewBox="0 0 20 20"
+					fill="currentColor"
+					aria-hidden="true"
+				>
+					<path
+						fillRule="evenodd"
+						d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+						clipRule="evenodd"
+					/>
+				</svg>
+			) }
+		</div>
+		<div className="storesuite-color-mode-content">
+			<h4 className="storesuite-color-mode-title">{ title }</h4>
+			<p className="storesuite-color-mode-desc">{ description }</p>
+		</div>
+	</div>
+);
+
 const ColorsSettings = () => {
 	const { settings, isSaving, saveSettings } = useSettings();
 
+	const [ paletteMode, setPaletteMode ] = useState(
+		() => settings.storesuite_color_palette_mode ?? 'predefined'
+	);
+
+	const [ selectedPalette, setSelectedPalette ] = useState( () => {
+		const saved = settings.storesuite_color_palette_name;
+		return PREDEFINED_PALETTES.some( ( p ) => p.value === saved )
+			? saved
+			: 'default';
+	} );
+
 	const [ colors, setColors ] = useState( () => {
+		const initMode = settings.storesuite_color_palette_mode ?? 'predefined';
+		if ( initMode === 'predefined' ) {
+			const savedSlug = settings.storesuite_color_palette_name;
+			const paletteName = PREDEFINED_PALETTES.some(
+				( p ) => p.value === savedSlug
+			)
+				? savedSlug
+				: 'default';
+			const palette = PREDEFINED_PALETTES.find(
+				( p ) => p.value === paletteName
+			);
+			if ( palette ) {
+				return { ...palette.colors };
+			}
+		}
 		const colorsData = {};
 		COLOR_FIELDS.forEach( ( { key, apiKey, defaultValue } ) => {
 			const value = settings[ apiKey ];
@@ -171,24 +373,61 @@ const ColorsSettings = () => {
 		return colorsData;
 	} );
 
+	const applyPalette = useCallback( ( slug ) => {
+		const palette = PREDEFINED_PALETTES.find( ( p ) => p.value === slug );
+		if ( palette ) {
+			setColors( { ...palette.colors } );
+		}
+	}, [] );
+
+	const handleModeChange = useCallback(
+		( mode ) => {
+			setPaletteMode( mode );
+			if ( mode === 'predefined' ) {
+				applyPalette( selectedPalette );
+			}
+		},
+		[ selectedPalette, applyPalette ]
+	);
+
+	const handlePaletteSelect = useCallback(
+		( slug ) => {
+			setSelectedPalette( slug );
+			applyPalette( slug );
+		},
+		[ applyPalette ]
+	);
+
+	const handleResetColors = useCallback( () => {
+		const reset = {};
+		COLOR_FIELDS.forEach( ( { key, defaultValue } ) => {
+			reset[ key ] = defaultValue ?? '';
+		} );
+		setColors( reset );
+	}, [] );
+
 	const handleSubmit = useCallback(
 		async ( event ) => {
 			event.preventDefault();
-			const data = {};
+			const data = {
+				storesuite_color_palette_mode: paletteMode,
+				storesuite_color_palette_name:
+					paletteMode === 'predefined' ? selectedPalette : '',
+			};
 			COLOR_FIELDS.forEach( ( { key, apiKey } ) => {
 				data[ apiKey ] = colors[ key ] ?? '';
 			} );
 			await saveSettings( data );
 		},
-		[ colors, saveSettings ]
+		[ paletteMode, selectedPalette, colors, saveSettings ]
 	);
 
 	return (
-		<div className="storesuite-section" id="storesuite-colors-settings">
-			<form
-				onSubmit={ handleSubmit }
-				className="storesuite-colors-form"
-			>
+		<div
+			className="storesuite-section"
+			id="storesuite-colors-settings"
+		>
+			<form onSubmit={ handleSubmit } className="storesuite-colors-form">
 				<Card className="storesuite-form-header-card">
 					<CardBody className="storesuite-form-section-header">
 						<h3 className="storesuite-section-title">
@@ -204,29 +443,148 @@ const ColorsSettings = () => {
 				</Card>
 				<Card>
 					<CardBody className="storesuite-form-section-body">
-						<div className="storesuite-colors-form-wrapper">
-							{ COLOR_FIELDS.map(
-								( { key, label, defaultValue } ) => (
-									<div
-										key={ key }
-										className="storesuite-settings-group"
-									>
-										<ColorControl
-											colorKey={ key }
-											label={ label }
-											value={ colors[ key ] }
-											defaultValue={ defaultValue }
-											onChange={ ( value ) =>
-												setColors( ( prev ) => ( {
-													...prev,
-													[ key ]: value,
-												} ) )
-											}
-										/>
-									</div>
-								)
-							) }
+						{ /* Mode selector */ }
+						<div className="storesuite-color-mode-selector">
+							<ModeCard
+								isActive={ paletteMode === 'predefined' }
+								onClick={ () =>
+									handleModeChange( 'predefined' )
+								}
+								title={ __(
+									'Pre-defined Color Palette',
+									'storesuite'
+								) }
+								description={ __(
+									'Choose from ready-made color palettes to quickly style your dashboard.',
+									'storesuite'
+								) }
+							/>
+							<ModeCard
+								isActive={ paletteMode === 'custom' }
+								onClick={ () => handleModeChange( 'custom' ) }
+								title={ __(
+									'Custom Color Palette',
+									'storesuite'
+								) }
+								description={ __(
+									'Pick individual colors to match your brand identity.',
+									'storesuite'
+								) }
+							/>
 						</div>
+
+						{ /* Two-column layout: left panel + live preview */ }
+						<div className="storesuite-colors-layout">
+							<div className="storesuite-colors-left">
+								{ paletteMode === 'predefined' ? (
+									<div className="storesuite-palette-list">
+										{ PREDEFINED_PALETTES.map(
+											( palette ) => (
+												<div
+													key={ palette.value }
+													className={ `storesuite-palette-item${ selectedPalette === palette.value ? ' is-active' : '' }` }
+													onClick={ () =>
+														handlePaletteSelect(
+															palette.value
+														)
+													}
+												>
+													<div className="storesuite-palette-item__radio">
+														<input
+															id={ `storesuite-palette-${ palette.value }` }
+															type="radio"
+															name="storesuite_color_palette"
+															value={ palette.value }
+															checked={
+																selectedPalette ===
+																palette.value
+															}
+															onChange={ () =>
+																handlePaletteSelect(
+																	palette.value
+																)
+															}
+														/>
+														<label
+															htmlFor={ `storesuite-palette-${ palette.value }` }
+														>
+															{ palette.label }
+														</label>
+													</div>
+													<div className="storesuite-color-swatches">
+														{ palette.colorOptions.map(
+															( hex, i ) => (
+																<div
+																	key={ i }
+																	className="storesuite-color-swatch"
+																	style={ {
+																		backgroundColor:
+																			hex,
+																	} }
+																/>
+															)
+														) }
+													</div>
+												</div>
+											)
+										) }
+									</div>
+								) : (
+									<>
+										<div className="storesuite-custom-color-header">
+											<h4>
+												{ __(
+													'Choose the color:',
+													'storesuite'
+												) }
+											</h4>
+											<button
+												type="button"
+												className="storesuite-reset-btn"
+												onClick={ handleResetColors }
+											>
+												{ __(
+													'Reset all',
+													'storesuite'
+												) }
+											</button>
+										</div>
+										<div className="storesuite-custom-color-list">
+											{ COLOR_FIELDS.map(
+												( {
+													key,
+													label,
+													defaultValue,
+												} ) => (
+													<ColorControl
+														key={ key }
+														colorKey={ key }
+														label={ label }
+														value={ colors[ key ] }
+														defaultValue={
+															defaultValue
+														}
+														onChange={ ( value ) =>
+															setColors(
+																( prev ) => ( {
+																	...prev,
+																	[ key ]: value,
+																} )
+															)
+														}
+													/>
+												)
+											) }
+										</div>
+									</>
+								) }
+							</div>
+
+							<div className="storesuite-colors-right">
+								<ColorPreview colors={ colors } />
+							</div>
+						</div>
+
 						<Button
 							variant="primary"
 							type="submit"

@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Spinner, Card, CardBody, SnackbarList } from '@wordpress/components';
+import { Button, Spinner, Card, CardBody, SnackbarList } from '@wordpress/components';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
@@ -11,7 +11,12 @@ import { store as noticesStore } from '@wordpress/notices';
  * Internal dependencies
  */
 import { useSettings } from '../context/SettingsContext';
-import { Squares2X2Icon } from './icons';
+import {
+	CodeBracketSquareIcon,
+	GearIcon,
+	PaletteIcon,
+	Squares2X2Icon,
+} from './icons';
 import SettingsHeader from './SettingsHeader';
 
 const Layout = () => {
@@ -37,6 +42,26 @@ const Layout = () => {
 					'Configure your frontend dashboard pages, appearance, and pagination.',
 					'storesuite'
 				) }
+				actions={
+					<>
+						<Button
+							variant="secondary"
+							href="https://pluginizelab.com/docs/storesuite/"
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ __( 'Documentation', 'storesuite' ) }
+						</Button>
+						<Button
+							variant="primary"
+							href="https://buymeacoffee.com/aiarnob"
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ __( 'Support Me', 'storesuite' ) }
+						</Button>
+					</>
+				}
 			/>
 
 			<main className="storesuite-main-content storesuite-setting-wrapper">
@@ -54,6 +79,10 @@ const Layout = () => {
 							<div
 								className="storesuite-skeleton-tab"
 								style={ { width: '110px' } }
+							></div>
+							<div
+								className="storesuite-skeleton-tab"
+								style={ { width: '100px' } }
 							></div>
 						</div>
 						<div className="storesuite-section">
@@ -73,7 +102,19 @@ const Layout = () => {
 								to="/"
 								className={ isActive( '/' ) ? 'is-active' : '' }
 							>
+								<GearIcon />
 								{ __( 'General', 'storesuite' ) }
+							</Link>
+							<Link
+								to="/dashboard-settings"
+								className={
+									isActive( '/dashboard-settings' )
+										? 'is-active'
+										: ''
+								}
+							>
+								<Squares2X2Icon />
+								{ __( 'Dashboard', 'storesuite' ) }
 							</Link>
 							<Link
 								to="/appearance-settings"
@@ -83,6 +124,7 @@ const Layout = () => {
 										: ''
 								}
 							>
+								<PaletteIcon />
 								{ __( 'Appearance', 'storesuite' ) }
 							</Link>
 							<Link
@@ -93,6 +135,7 @@ const Layout = () => {
 										: ''
 								}
 							>
+								<CodeBracketSquareIcon />
 								{ __( 'Pagination', 'storesuite' ) }
 							</Link>
 						</div>

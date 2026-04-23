@@ -186,6 +186,7 @@ class SettingsController extends WP_REST_Controller {
 			'storesuite_color_sidebar_background',
 			'storesuite_color_sidebar_active_text',
 			'storesuite_color_sidebar_active_background',
+			'storesuite_color_sidebar_border',
 			'storesuite_color_border',
 			'storesuite_color_lite_bg',
 		);
@@ -193,6 +194,17 @@ class SettingsController extends WP_REST_Controller {
 			if ( $request->has_param( $key ) ) {
 				$storesuite_settings[ $key ] = sanitize_hex_color( $request->get_param( $key ) ) ?: sanitize_text_field( $request->get_param( $key ) );
 			}
+		}
+
+		if ( $request->has_param( 'storesuite_color_palette_mode' ) ) {
+			$mode = $request->get_param( 'storesuite_color_palette_mode' );
+			if ( in_array( $mode, array( 'predefined', 'custom' ), true ) ) {
+				$storesuite_settings['storesuite_color_palette_mode'] = $mode;
+			}
+		}
+
+		if ( $request->has_param( 'storesuite_color_palette_name' ) ) {
+			$storesuite_settings['storesuite_color_palette_name'] = sanitize_text_field( $request->get_param( 'storesuite_color_palette_name' ) );
 		}
 
 		update_option( 'storesuite_settings', $storesuite_settings );
@@ -422,6 +434,11 @@ class SettingsController extends WP_REST_Controller {
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
+				'storesuite_color_sidebar_border' => array(
+					'description' => __( 'Dashboard sidebar border color.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
 				'storesuite_show_widget_top_products_items_sold' => array(
 					'description' => __( 'Show Top products - Items sold widget.', 'storesuite' ),
 					'type'        => 'string',
@@ -444,6 +461,17 @@ class SettingsController extends WP_REST_Controller {
 					'description' => __( 'Show Top coupons - Number of orders widget.', 'storesuite' ),
 					'type'        => 'string',
 					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_palette_mode' => array(
+					'description' => __( 'Color palette mode: predefined or custom.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'predefined', 'custom' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_color_palette_name' => array(
+					'description' => __( 'Active predefined color palette slug.', 'storesuite' ),
+					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
 			),
