@@ -211,6 +211,13 @@ class Main {
 		}
 
 		$css = ':root{ ' . esc_attr( implode( ';', $rules ) ) . ' }';
+
+		if ( storesuite_get_option_by_key( 'storesuite_color_palette_mode' ) === 'predefined' ) {
+			$css .= '.storesuite-table-search-icon svg,'
+				. '.storesuite-dashboard-braedcrumb ul li svg,'
+				. '.storesuite-dropdown svg{fill:#94a3b8}';
+		}
+
 		wp_register_style( 'storesuite-css-variables', false );
 		wp_enqueue_style( 'storesuite-css-variables' );
 		wp_add_inline_style( 'storesuite-css-variables', $css );

@@ -1,7 +1,4 @@
-/**
- * WordPress dependencies
- */
-import { useState, useCallback } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	BaseControl,
@@ -14,9 +11,6 @@ import {
 	Spinner,
 } from '@wordpress/components';
 
-/**
- * Internal dependencies
- */
 import { useSettings } from '../context/SettingsContext';
 import ColorPreview from './ColorPreview';
 
@@ -249,6 +243,30 @@ const COLOR_FIELDS = [
 	},
 ];
 
+const findPalette = ( slug ) =>
+	PREDEFINED_PALETTES.find( ( palette ) => palette.value === slug );
+
+const getInitialColors = ( settings ) => {
+	const mode = settings.storesuite_color_palette_mode ?? 'predefined';
+	if ( mode === 'predefined' ) {
+		const palette =
+			findPalette( settings.storesuite_color_palette_name ) ||
+			PREDEFINED_PALETTES[ 0 ];
+		return { ...palette.colors };
+	}
+	return Object.fromEntries(
+		COLOR_FIELDS.map( ( { key, apiKey, defaultValue } ) => {
+			const storedValue = settings[ apiKey ];
+			return [
+				key,
+				storedValue !== undefined && storedValue !== ''
+					? String( storedValue )
+					: defaultValue ?? '',
+			];
+		} )
+	);
+};
+
 const ColorControl = ( {
 	label,
 	value,
@@ -257,10 +275,9 @@ const ColorControl = ( {
 	onChange,
 } ) => {
 	const displayColor = value || defaultValue;
-	const controlId = `storesuite-color-${ colorKey }`;
 	return (
 		<BaseControl
-			id={ controlId }
+			id={ `storesuite-color-${ colorKey }` }
 			label={ label }
 			className="storesuite-color-control"
 		>
@@ -300,23 +317,21 @@ const ColorControl = ( {
 
 const ModeCard = ( { isActive, onClick, title, description } ) => (
 	<div
-		className={ `storesuite-color-mode-card${ isActive ? ' is-active' : '' }` }
+		className={ `storesuite-color-mode-card${
+			isActive ? ' is-active' : ''
+		}` }
 		onClick={ onClick }
 		role="button"
 		tabIndex={ 0 }
-		onKeyDown={ ( e ) => {
-			if ( e.key === 'Enter' || e.key === ' ' ) {
+		onKeyDown={ ( event ) => {
+			if ( event.key === 'Enter' || event.key === ' ' ) {
 				onClick();
 			}
 		} }
 	>
 		<div className="storesuite-color-mode-icon">
 			{ isActive && (
-				<svg
-					viewBox="0 0 20 20"
-					fill="currentColor"
-					aria-hidden="true"
-				>
+				<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 					<path
 						fillRule="evenodd"
 						d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -336,97 +351,62 @@ const ColorsSettings = () => {
 	const { settings, isSaving, saveSettings } = useSettings();
 
 	const [ paletteMode, setPaletteMode ] = useState(
-		() => settings.storesuite_color_palette_mode ?? 'predefined'
+		settings.storesuite_color_palette_mode ?? 'predefined'
+	);
+	const [ selectedPalette, setSelectedPalette ] = useState(
+		findPalette( settings.storesuite_color_palette_name )
+			? settings.storesuite_color_palette_name
+			: 'default'
+	);
+	const [ colors, setColors ] = useState( () =>
+		getInitialColors( settings )
 	);
 
-	const [ selectedPalette, setSelectedPalette ] = useState( () => {
-		const saved = settings.storesuite_color_palette_name;
-		return PREDEFINED_PALETTES.some( ( p ) => p.value === saved )
-			? saved
-			: 'default';
-	} );
-
-	const [ colors, setColors ] = useState( () => {
-		const initMode = settings.storesuite_color_palette_mode ?? 'predefined';
-		if ( initMode === 'predefined' ) {
-			const savedSlug = settings.storesuite_color_palette_name;
-			const paletteName = PREDEFINED_PALETTES.some(
-				( p ) => p.value === savedSlug
-			)
-				? savedSlug
-				: 'default';
-			const palette = PREDEFINED_PALETTES.find(
-				( p ) => p.value === paletteName
-			);
-			if ( palette ) {
-				return { ...palette.colors };
-			}
-		}
-		const colorsData = {};
-		COLOR_FIELDS.forEach( ( { key, apiKey, defaultValue } ) => {
-			const value = settings[ apiKey ];
-			colorsData[ key ] =
-				value !== undefined && value !== ''
-					? String( value )
-					: defaultValue ?? '';
-		} );
-		return colorsData;
-	} );
-
-	const applyPalette = useCallback( ( slug ) => {
-		const palette = PREDEFINED_PALETTES.find( ( p ) => p.value === slug );
+	const applyPalette = ( slug ) => {
+		const palette = findPalette( slug );
 		if ( palette ) {
 			setColors( { ...palette.colors } );
 		}
-	}, [] );
+	};
 
-	const handleModeChange = useCallback(
-		( mode ) => {
-			setPaletteMode( mode );
-			if ( mode === 'predefined' ) {
-				applyPalette( selectedPalette );
-			}
-		},
-		[ selectedPalette, applyPalette ]
-	);
+	const handleModeChange = ( mode ) => {
+		setPaletteMode( mode );
+		if ( mode === 'predefined' ) {
+			applyPalette( selectedPalette );
+		}
+	};
 
-	const handlePaletteSelect = useCallback(
-		( slug ) => {
-			setSelectedPalette( slug );
-			applyPalette( slug );
-		},
-		[ applyPalette ]
-	);
+	const handlePaletteSelect = ( slug ) => {
+		setSelectedPalette( slug );
+		applyPalette( slug );
+	};
 
-	const handleResetColors = useCallback( () => {
-		const reset = {};
-		COLOR_FIELDS.forEach( ( { key, defaultValue } ) => {
-			reset[ key ] = defaultValue ?? '';
+	const handleResetColors = () => {
+		setColors(
+			Object.fromEntries(
+				COLOR_FIELDS.map( ( { key, defaultValue } ) => [
+					key,
+					defaultValue ?? '',
+				] )
+			)
+		);
+	};
+
+	const handleSubmit = ( event ) => {
+		event.preventDefault();
+		const data = {
+			storesuite_color_palette_mode: paletteMode,
+			storesuite_color_palette_name:
+				paletteMode === 'predefined' ? selectedPalette : '',
+		};
+		COLOR_FIELDS.forEach( ( { key, apiKey } ) => {
+			data[ apiKey ] = colors[ key ] ?? '';
 		} );
-		setColors( reset );
-	}, [] );
-
-	const handleSubmit = useCallback(
-		async ( event ) => {
-			event.preventDefault();
-			const data = {
-				storesuite_color_palette_mode: paletteMode,
-				storesuite_color_palette_name:
-					paletteMode === 'predefined' ? selectedPalette : '',
-			};
-			COLOR_FIELDS.forEach( ( { key, apiKey } ) => {
-				data[ apiKey ] = colors[ key ] ?? '';
-			} );
-			await saveSettings( data );
-		},
-		[ paletteMode, selectedPalette, colors, saveSettings ]
-	);
+		saveSettings( data );
+	};
 
 	return (
-		<div
-			className="storesuite-section"
-			id="storesuite-colors-settings"
-		>
+		<div className="storesuite-section" id="storesuite-colors-settings">
 			<form onSubmit={ handleSubmit } className="storesuite-colors-form">
 				<Card className="storesuite-form-header-card">
 					<CardBody className="storesuite-form-section-header">
@@ -443,7 +423,6 @@ const ColorsSettings = () => {
 				</Card>
 				<Card>
 					<CardBody className="storesuite-form-section-body">
-						{ /* Mode selector */ }
 						<div className="storesuite-color-mode-selector">
 							<ModeCard
 								isActive={ paletteMode === 'predefined' }
@@ -473,7 +452,6 @@ const ColorsSettings = () => {
 							/>
 						</div>
 
-						{ /* Two-column layout: left panel + live preview */ }
 						<div className="storesuite-colors-layout">
 							<div className="storesuite-colors-left">
 								{ paletteMode === 'predefined' ? (
@@ -482,7 +460,12 @@ const ColorsSettings = () => {
 											( palette ) => (
 												<div
 													key={ palette.value }
-													className={ `storesuite-palette-item${ selectedPalette === palette.value ? ' is-active' : '' }` }
+													className={ `storesuite-palette-item${
+														selectedPalette ===
+														palette.value
+															? ' is-active'
+															: ''
+													}` }
 													onClick={ () =>
 														handlePaletteSelect(
 															palette.value
@@ -494,7 +477,9 @@ const ColorsSettings = () => {
 															id={ `storesuite-palette-${ palette.value }` }
 															type="radio"
 															name="storesuite_color_palette"
-															value={ palette.value }
+															value={
+																palette.value
+															}
 															checked={
 																selectedPalette ===
 																palette.value
@@ -505,6 +490,21 @@ const ColorsSettings = () => {
 																)
 															}
 														/>
+														<span
+															className="storesuite-palette-item__indicator"
+															aria-hidden="true"
+														>
+															<svg
+																viewBox="0 0 20 20"
+																fill="currentColor"
+															>
+																<path
+																	fillRule="evenodd"
+																	d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+																	clipRule="evenodd"
+																/>
+															</svg>
+														</span>
 														<label
 															htmlFor={ `storesuite-palette-${ palette.value }` }
 														>
@@ -513,13 +513,18 @@ const ColorsSettings = () => {
 													</div>
 													<div className="storesuite-color-swatches">
 														{ palette.colorOptions.map(
-															( hex, i ) => (
+															(
+																swatchColor,
+																swatchIndex
+															) => (
 																<div
-																	key={ i }
+																	key={
+																		swatchIndex
+																	}
 																	className="storesuite-color-swatch"
 																	style={ {
 																		backgroundColor:
-																			hex,
+																			swatchColor,
 																	} }
 																/>
 															)
@@ -568,7 +573,8 @@ const ColorsSettings = () => {
 															setColors(
 																( prev ) => ( {
 																	...prev,
-																	[ key ]: value,
+																	[ key ]:
+																		value,
 																} )
 															)
 														}

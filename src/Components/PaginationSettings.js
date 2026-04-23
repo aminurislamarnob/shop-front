@@ -1,7 +1,4 @@
-/**
- * WordPress dependencies
- */
-import { useState, useCallback } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	Button,
@@ -11,9 +8,6 @@ import {
 	Spinner,
 } from '@wordpress/components';
 
-/**
- * Internal dependencies
- */
 import { useSettings } from '../context/SettingsContext';
 
 const PAGINATION_FIELDS = [
@@ -21,39 +15,35 @@ const PAGINATION_FIELDS = [
 		key: 'productPerPage',
 		apiKey: 'storesuite_product_per_page',
 		label: __( 'Products per page', 'storesuite' ),
-		help: __( 'Default: 10', 'storesuite' ),
 	},
 	{
 		key: 'orderPerPage',
 		apiKey: 'storesuite_order_per_page',
 		label: __( 'Orders per page', 'storesuite' ),
-		help: __( 'Default: 10', 'storesuite' ),
 	},
 	{
 		key: 'categoryPerPage',
 		apiKey: 'storesuite_category_per_page',
 		label: __( 'Categories per page', 'storesuite' ),
-		help: __( 'Default: 10', 'storesuite' ),
 	},
 	{
 		key: 'tagPerPage',
 		apiKey: 'storesuite_tag_per_page',
 		label: __( 'Tags per page', 'storesuite' ),
-		help: __( 'Default: 10', 'storesuite' ),
 	},
 	{
 		key: 'brandPerPage',
 		apiKey: 'storesuite_brand_per_page',
 		label: __( 'Brands per page', 'storesuite' ),
-		help: __( 'Default: 10', 'storesuite' ),
 	},
 	{
 		key: 'couponPerPage',
 		apiKey: 'storesuite_coupon_per_page',
 		label: __( 'Coupons per page', 'storesuite' ),
-		help: __( 'Default: 10', 'storesuite' ),
 	},
 ];
+
+const HELP = __( 'Default: 10', 'storesuite' );
 
 const PaginationSettings = () => {
 	const { settings, isSaving, saveSettings } = useSettings();
@@ -69,17 +59,14 @@ const PaginationSettings = () => {
 		)
 	);
 
-	const handleSubmit = useCallback(
-		async ( event ) => {
-			event.preventDefault();
-			const data = {};
-			PAGINATION_FIELDS.forEach( ( { key, apiKey } ) => {
-				data[ apiKey ] = pagination[ key ] ?? '';
-			} );
-			await saveSettings( data );
-		},
-		[ pagination, saveSettings ]
-	);
+	const handleSubmit = ( event ) => {
+		event.preventDefault();
+		const data = {};
+		PAGINATION_FIELDS.forEach( ( { key, apiKey } ) => {
+			data[ apiKey ] = pagination[ key ] ?? '';
+		} );
+		saveSettings( data );
+	};
 
 	return (
 		<div
@@ -103,14 +90,14 @@ const PaginationSettings = () => {
 				<Card>
 					<CardBody className="storesuite-form-section-body">
 						<div className="storesuite-pagination-grid">
-							{ PAGINATION_FIELDS.map( ( { key, label, help } ) => (
+							{ PAGINATION_FIELDS.map( ( { key, label } ) => (
 								<div
 									key={ key }
 									className="storesuite-settings-group"
 								>
 									<TextControl
 										label={ label }
-										help={ help }
+										help={ HELP }
 										value={ pagination[ key ] }
 										onChange={ ( value ) =>
 											setPagination( ( prev ) => ( {

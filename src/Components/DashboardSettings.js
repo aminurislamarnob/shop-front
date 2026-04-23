@@ -1,13 +1,13 @@
-/**
- * WordPress dependencies
- */
-import { useState, useCallback } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Button, Card, CardBody, Spinner, ToggleControl } from '@wordpress/components';
+import {
+	Button,
+	Card,
+	CardBody,
+	Spinner,
+	ToggleControl,
+} from '@wordpress/components';
 
-/**
- * Internal dependencies
- */
 import { useSettings } from '../context/SettingsContext';
 
 const PERFORMANCE_BOX_KEYS = [
@@ -56,53 +56,67 @@ const DASHBOARD_WIDGET_KEYS = [
 	},
 ];
 
-const yes = ( v ) => v !== 'no' && v !== false;
+const initToggles = ( keys, settings, prefix ) =>
+	Object.fromEntries(
+		keys.map( ( { key } ) => {
+			const storedValue = settings[ `${ prefix }${ key }` ];
+			return [
+				key,
+				storedValue === undefined
+					? true
+					: storedValue !== 'no' && storedValue !== false,
+			];
+		} )
+	);
+
+const ToggleGroup = ( { title, description, items, state, setState } ) => (
+	<div className="storesuite-settings-group">
+		<div className="storesuite-settings-sec-header">
+			<h3 className="storesuite-section-title">{ title }</h3>
+			<p className="storesuite-section-description">{ description }</p>
+		</div>
+		{ items.map( ( { key, label } ) => (
+			<ToggleControl
+				key={ key }
+				label={ label }
+				checked={ state[ key ] }
+				onChange={ ( checked ) =>
+					setState( ( prev ) => ( { ...prev, [ key ]: checked } ) )
+				}
+			/>
+		) ) }
+	</div>
+);
 
 const DashboardSettings = () => {
 	const { settings, isSaving, saveSettings } = useSettings();
 
-	const [ performanceBoxes, setPerformanceBoxes ] = useState( () => {
-		const perf = {};
-		PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
-			const opt = `storesuite_show_perf_${ key }`;
-			perf[ key ] =
-				settings[ opt ] !== undefined ? yes( settings[ opt ] ) : true;
-		} );
-		return perf;
-	} );
-
-	const [ dashboardWidgets, setDashboardWidgets ] = useState( () => {
-		const widgets = {};
-		DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
-			const opt = `storesuite_show_widget_${ key }`;
-			widgets[ key ] =
-				settings[ opt ] !== undefined ? yes( settings[ opt ] ) : true;
-		} );
-		return widgets;
-	} );
-
-	const handleSubmit = useCallback(
-		async ( event ) => {
-			event.preventDefault();
-			const toYesNo = ( b ) => ( b ? 'yes' : 'no' );
-			const data = {};
-
-			PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
-				data[ `storesuite_show_perf_${ key }` ] = toYesNo(
-					performanceBoxes[ key ] !== false
-				);
-			} );
-
-			DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
-				data[ `storesuite_show_widget_${ key }` ] = toYesNo(
-					dashboardWidgets[ key ] !== false
-				);
-			} );
-
-			await saveSettings( data );
-		},
-		[ performanceBoxes, dashboardWidgets, saveSettings ]
+	const [ performanceBoxes, setPerformanceBoxes ] = useState( () =>
+		initToggles( PERFORMANCE_BOX_KEYS, settings, 'storesuite_show_perf_' )
 	);
+	const [ dashboardWidgets, setDashboardWidgets ] = useState( () =>
+		initToggles(
+			DASHBOARD_WIDGET_KEYS,
+			settings,
+			'storesuite_show_widget_'
+		)
+	);
+
+	const handleSubmit = ( event ) => {
+		event.preventDefault();
+		const data = {};
+		PERFORMANCE_BOX_KEYS.forEach( ( { key } ) => {
+			data[ `storesuite_show_perf_${ key }` ] = performanceBoxes[ key ]
+				? 'yes'
+				: 'no';
+		} );
+		DASHBOARD_WIDGET_KEYS.forEach( ( { key } ) => {
+			data[ `storesuite_show_widget_${ key }` ] = dashboardWidgets[ key ]
+				? 'yes'
+				: 'no';
+		} );
+		saveSettings( data );
+	};
 
 	return (
 		<div
@@ -125,68 +139,26 @@ const DashboardSettings = () => {
 				</Card>
 				<Card>
 					<CardBody className="storesuite-form-section-body">
-						<div className="storesuite-settings-group">
-							<div className="storesuite-settings-sec-header">
-								<h3 className="storesuite-section-title">
-									{ __(
-										'Performance boxes',
-										'storesuite'
-									) }
-								</h3>
-								<p className="storesuite-section-description">
-									{ __(
-										'Show or hide each performance box on the dashboard.',
-										'storesuite'
-									) }
-								</p>
-							</div>
-							{ PERFORMANCE_BOX_KEYS.map( ( { key, label } ) => (
-								<ToggleControl
-									key={ key }
-									label={ label }
-									checked={
-										performanceBoxes[ key ] !== false
-									}
-									onChange={ ( checked ) =>
-										setPerformanceBoxes( ( prev ) => ( {
-											...prev,
-											[ key ]: checked,
-										} ) )
-									}
-								/>
-							) ) }
-						</div>
-						<div className="storesuite-settings-group">
-							<div className="storesuite-settings-sec-header">
-								<h3 className="storesuite-section-title">
-									{ __(
-										'Dashboard widgets',
-										'storesuite'
-									) }
-								</h3>
-								<p className="storesuite-section-description">
-									{ __(
-										'Show or hide each dashboard widget.',
-										'storesuite'
-									) }
-								</p>
-							</div>
-							{ DASHBOARD_WIDGET_KEYS.map( ( { key, label } ) => (
-								<ToggleControl
-									key={ key }
-									label={ label }
-									checked={
-										dashboardWidgets[ key ] !== false
-									}
-									onChange={ ( checked ) =>
-										setDashboardWidgets( ( prev ) => ( {
-											...prev,
-											[ key ]: checked,
-										} ) )
-									}
-								/>
-							) ) }
-						</div>
+						<ToggleGroup
+							title={ __( 'Performance boxes', 'storesuite' ) }
+							description={ __(
+								'Show or hide each performance box on the dashboard.',
+								'storesuite'
+							) }
+							items={ PERFORMANCE_BOX_KEYS }
+							state={ performanceBoxes }
+							setState={ setPerformanceBoxes }
+						/>
+						<ToggleGroup
+							title={ __( 'Dashboard widgets', 'storesuite' ) }
+							description={ __(
+								'Show or hide each dashboard widget.',
+								'storesuite'
+							) }
+							items={ DASHBOARD_WIDGET_KEYS }
+							state={ dashboardWidgets }
+							setState={ setDashboardWidgets }
+						/>
 						<Button
 							variant="primary"
 							type="submit"
