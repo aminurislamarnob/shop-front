@@ -4,7 +4,7 @@ Tags: woocommerce, store management, shop manager, store suite, front-end shop m
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,32 +61,33 @@ After installing or reactivating StoreSuite, go to **Settings → Permalinks** a
 
 == Screenshots ==
 
-1. StoreSuite General Settings
-2. StoreSuite Color Settings
-3. StoreSuite Paginations Settings
-4. Frontend Dashboard
-5. Products List
-6. Products Filter
-7. Add New Product
-8. Edit Product
-9. Orders List
-10. Orders Filter
-11. Orders Details View
-12. Edit Order
-13. Add New Order
-14. Product Categories List
-15. Add New Product Category
-16. Edit Product Category
-17. Product Brands List
-18. Add New Product Brand
-19. Edit Product Brand
-20. Product Tags List
-21. Add New Product Tag
-22. Edit Product Tag
-23. Coupons List
-24. Add New Coupon
-25. Edit Coupon
-26. Account Settings
+1. General Settings
+2. Dashboard Settings
+3. Predefined/Custom Color Palette Settings
+4. Paginations Settings
+5. Frontend Dashboard
+6. Products List
+7. Products Filter
+8. Add New Product
+9. Edit Product
+10. Orders List
+11. Orders Filter
+12. Orders Details View
+13. Edit Order
+14. Add New Order
+15. Product Categories List
+16. Add New Product Category
+17. Edit Product Category
+18. Product Brands List
+19. Add New Product Brand
+20. Edit Product Brand
+21. Product Tags List
+22. Add New Product Tag
+23. Edit Product Tag
+24. Coupons List
+25. Add New Coupon
+26. Edit Coupon
+27. Account Settings
 
 == Frequently Asked Questions ==
 
