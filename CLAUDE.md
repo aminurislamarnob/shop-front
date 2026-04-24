@@ -66,7 +66,19 @@ Note: No PHP or JS test suite exists yet. PHPUnit is configured in `composer.jso
 
 ### Two Separate Frontend Stacks
 
-1. **Admin Settings Page (React):** Entry point `src/admin.js` builds to `assets/build/admin/script.js`. Uses `@wordpress/components`, `@wordpress/api-fetch`, React Router DOM (hash routing). Routes: `/` (GeneralSettings), `/appearance-settings` (ColorsSettings), `/pagination-settings` (PaginationSettings). Styled with Tailwind CSS. Webpack config in `webpack.config.js` extends `@wordpress/scripts`.
+1. **Admin Settings Page (React):** Entry point `src/admin.js` builds to `assets/build/admin/script.js`. Uses `@wordpress/components`, `@wordpress/api-fetch`, `@heroicons/react` for icons, React Router DOM (hash routing). Routes:
+   - `/` → `GeneralSettings` — dashboard page selector, sidebar branding, admin access toggle
+   - `/dashboard-settings` → `DashboardSettings` — performance box and widget visibility toggles
+   - `/appearance-settings` → `ColorsSettings` — predefined palettes and custom color pickers
+   - `/pagination-settings` → `PaginationSettings` — items-per-page controls
+
+   Styled with `@wordpress/components` built-in styles and plain CSS (`LayoutStyles.css`). Webpack config in `webpack.config.js` extends `@wordpress/scripts`.
+
+   **Header:** `SettingsHeader` renders the top bar with title, subtitle, and an `actions` slot. The header currently shows a **Documentation** (secondary) and **Support Me** (primary, links to `https://buymeacoffee.com/aiarnob`) button.
+
+   **Nav tabs:** Defined in `Layout.js` as hash-router `<Link>` elements with heroicons — `GearIcon` (General), `Squares2X2Icon` (Dashboard), `PaletteIcon` (Appearance), `CodeBracketSquareIcon` (Pagination).
+
+   **Icons:** All heroicons are re-exported from `src/Components/icons.js` (24/outline). Add new icons there before importing elsewhere.
 
 2. **Frontend Dashboard (jQuery + vanilla JS):** Located in `assets/frontend/`. Scripts include `script.js` (main), `form-handler.js` (CRUD forms with SweetAlert2), `order.js` (order management with selectWoo), `product.js` (product forms). Templates rendered server-side via PHP. Localized data passed via `wp_localize_script()` under `storeSuiteFormHandler`, `StoreSuite_Order`, `StoreSuite_Product` globals.
 

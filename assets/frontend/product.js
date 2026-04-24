@@ -737,10 +737,8 @@
 							} else {
 								self.showError(
 									bulkTrashResponse.data &&
-										(
-											bulkTrashResponse.data.message ||
-											bulkTrashResponse.data.error
-										)
+										( bulkTrashResponse.data.message ||
+											bulkTrashResponse.data.error )
 								);
 							}
 						},
@@ -811,10 +809,7 @@
 							? StoreSuite_Product.bulk_edit || {}
 							: {};
 
-					if (
-						! $bulkEditModal.length ||
-						! bulkEditConfig.nonce
-					) {
+					if ( ! $bulkEditModal.length || ! bulkEditConfig.nonce ) {
 						return;
 					}
 

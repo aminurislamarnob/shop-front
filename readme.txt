@@ -112,6 +112,11 @@ Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order S
 
 == Changelog ==
 
+= 1.0.2 =
+* Redesign and optimize React admin settings UI.
+* Add predefined/custom color palette system with live preview.
+* Improve dashboard and general settings controls and save flow.
+
 = 1.0.1 =
 * Reorder My Account Dropdown Sub menus.
 
