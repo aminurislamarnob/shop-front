@@ -63,12 +63,7 @@ const Layout = () => {
 				) }
 				actions={
 					<>
-						<Button
-							variant="secondary"
-							href="https://pluginizelab.com/docs/storesuite/"
-							target="_blank"
-							rel="noreferrer"
-						>
+						<Button variant="secondary" disabled>
 							{ __( 'Documentation', 'storesuite' ) }
 						</Button>
 						<Button
