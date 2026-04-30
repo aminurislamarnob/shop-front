@@ -1,5 +1,10 @@
 import { getHistory } from '@woocommerce/navigation';
 
+// Captured once at module load time — before any navigation changes the pathname.
+// This is the frontend dashboard page path (e.g. /my-store/).
+// Mirrors Dokan's dokanConfig.dashboardReportUrl approach.
+const DASHBOARD_BASE = window.location.pathname;
+
 /**
  * Maps an admin.php WooCommerce analytics URL to its frontend equivalent,
  * preserving all query params except `page` and `path` (WP admin internals).
@@ -22,9 +27,8 @@ export function mapToDashboardRoute( url ) {
 			}
 		}
 
-		const base = window.location.pathname;
-		const qs   = newParams.toString();
-		return base + ( qs ? '?' + qs : '' );
+		const qs = newParams.toString();
+		return DASHBOARD_BASE + ( qs ? '?' + qs : '' );
 	} catch {
 		return url;
 	}
