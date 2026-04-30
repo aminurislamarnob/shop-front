@@ -4,7 +4,7 @@ import { Spinner } from '@woocommerce/components';
 import { getNewPath, getQuery } from '@woocommerce/navigation';
 import { useNavigate } from 'react-router-dom';
 import getReports from './get-reports';
-import { DASHBOARD_BASE } from '../../../utils/helper';
+import { DASHBOARD_BASE } from '../../utils/helper';
 
 function ReportNav( { reports, currentReport, onSelectReport } ) {
 	return (
