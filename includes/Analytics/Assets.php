@@ -20,7 +20,13 @@ class Assets {
 		}
 
 		// Bootstrap WC admin scripts on the frontend (suppressing the _doing_it_wrong notice).
+		// WCAdminAssets::register_scripts() internally may trigger PageController which calls
+		// get_current_screen() — a wp-admin-only function. Load the screen API if missing so
+		// the call resolves to null gracefully instead of fatalling.
 		if ( class_exists( '\Automattic\WooCommerce\Internal\Admin\WCAdminAssets' ) ) {
+			if ( ! function_exists( 'get_current_screen' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/screen.php';
+			}
 			add_filter( 'doing_it_wrong_trigger_error', '__return_false' );
 			\Automattic\WooCommerce\Internal\Admin\WCAdminAssets::get_instance()->register_scripts();
 			remove_filter( 'doing_it_wrong_trigger_error', '__return_false' );
