@@ -4,6 +4,7 @@ import { Spinner } from '@woocommerce/components';
 import { getNewPath, getQuery } from '@woocommerce/navigation';
 import { useNavigate } from 'react-router-dom';
 import getReports from './get-reports';
+import { DASHBOARD_BASE } from '../../../utils/helper';
 
 function ReportNav( { reports, currentReport, onSelectReport } ) {
 	return (
@@ -42,7 +43,7 @@ export default function ReportPage( { query, path } ) {
 		setCurrentReport( name );
 		const params = new URLSearchParams( window.location.search );
 		params.set( 'report', name );
-		navigate( '?' + params.toString() );
+		navigate( DASHBOARD_BASE + '?' + params.toString() );
 	};
 
 	const activeReport = reports.find( ( r ) => r.report === currentReport ) || reports[ 0 ];
