@@ -12,7 +12,10 @@ class Assets {
 	}
 
 	public function enqueue_scripts(): void {
-		if ( ! storesuite_is_endpoint_url( 'analytics' ) ) {
+		$is_analytics_page = storesuite_is_endpoint_url( 'analytics' );
+		$is_dashboard_home = storesuite_is_dashboard_page() && ! storesuite_is_endpoint_url();
+
+		if ( ! $is_analytics_page && ! $is_dashboard_home ) {
 			return;
 		}
 

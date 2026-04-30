@@ -233,7 +233,7 @@ final class StoreSuite {
 		$this->container['storesuite_helper']                      = new Helper();
 		$this->container['storesuite_rewrites']                    = new Rewrites();
 		$this->container['storesuite_dashboard_menu']              = new DashboardMenu();
-		$this->container['storesuite_dashboard']                   = new Dashboard();
+		// PHP dashboard widgets replaced by React analytics overview on the dashboard page.
 		$this->container['storesuite_dashboard_header']            = new TemplateParts();
 		$this->container['storesuite_shortcode']                   = new Shortcodes\Shortcodes();
 		$this->container['storesuite_admin_settings']              = new Admin\Settings();

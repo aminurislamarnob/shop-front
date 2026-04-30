@@ -1,4 +1,4 @@
-import { Fragment, Suspense, lazy, useState } from '@wordpress/element';
+import { Fragment, Suspense, lazy, useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Spinner } from '@woocommerce/components';
 import { getQuery, getNewPath } from '@woocommerce/navigation';
@@ -29,8 +29,12 @@ function ReportNav( { reports, currentReport, onSelectReport } ) {
 export default function ReportPage( { query, path } ) {
 	const reports        = getReports();
 	const reportQuery    = query || getQuery();
-	const reportName     = reportQuery.report || ( reports[ 0 ] && reports[ 0 ].report ) || 'revenue';
+	const reportName     = reportQuery.report || ( reports[ 0 ] && reports[ 0 ].report ) || 'overview';
 	const [ currentReport, setCurrentReport ] = useState( reportName );
+
+	useEffect( () => {
+		setCurrentReport( reportName );
+	}, [ reportName ] );
 
 	const activeReport = reports.find( ( r ) => r.report === currentReport ) || reports[ 0 ];
 
