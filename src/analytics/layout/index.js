@@ -23,37 +23,6 @@ import { Controller, usePages } from './controller';
 import { getAdminSetting } from '../utils/admin-settings';
 import { storeSuiteConfig } from '../config';
 
-// Patch getHistory() so any WC admin URL (admin.php?page=wc-admin&...) that gets
-// pushed/replaced is silently rewritten to a frontend-friendly URL before it hits
-// the browser's address bar or React Router's state.
-( () => {
-	const h     = getHistory();
-	const _push    = h.push.bind( h );
-	const _replace = h.replace.bind( h );
-
-	function toFrontendPath( to ) {
-		if ( typeof to !== 'string' || ! to.includes( 'admin.php' ) ) {
-			return to;
-		}
-		const url    = new URL( to, window.location.href );
-		const params = new URLSearchParams( url.search );
-		params.delete( 'page' );
-		params.delete( 'path' );
-		// Keep the active report tab when the caller didn't specify one.
-		if ( ! params.has( 'report' ) ) {
-			const current = new URLSearchParams( window.location.search ).get( 'report' );
-			if ( current ) {
-				params.set( 'report', current );
-			}
-		}
-		const qs = params.toString();
-		return window.location.pathname + ( qs ? '?' + qs : '' );
-	}
-
-	h.push    = ( to, state ) => _push( toFrontendPath( to ), state );
-	h.replace = ( to, state ) => _replace( toFrontendPath( to ), state );
-} )();
-
 const WithReactRouterProps = ( { children } ) => {
 	const location = useLocation();
 	const match    = useMatch( location.pathname );

@@ -3,6 +3,7 @@ import { Component } from '@wordpress/element';
 import { map } from 'lodash';
 import { Date, Link, OrderStatus } from '@woocommerce/components';
 import { formatValue } from '@woocommerce/number';
+import { getNewPath, getPersistedQuery } from '@woocommerce/navigation';
 import { defaultTableDateFormat } from '@woocommerce/date';
 import { CurrencyContext } from '@woocommerce/currency';
 import ReportTable from '../../components/report-table';
@@ -30,7 +31,8 @@ class OrdersReportTable extends Component {
 
 	getRowsContent( tableData ) {
 		const { query } = this.props;
-		const dateFormat = getAdminSetting( 'dateFormat', defaultTableDateFormat );
+		const persistedQuery = getPersistedQuery( query );
+		const dateFormat     = getAdminSetting( 'dateFormat', defaultTableDateFormat );
 		const { render: renderCurrency, getCurrencyConfig } = this.context;
 
 		return map( tableData, ( row ) => {

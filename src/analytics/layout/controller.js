@@ -1,10 +1,19 @@
 import { doAction } from '@wordpress/hooks';
 import { Suspense, lazy, useEffect, useRef, useState } from '@wordpress/element';
-import { isEqual, omit } from 'lodash';
+import { parse, stringify } from 'qs';
+import { find, isEqual, last, omit } from 'lodash';
 import { applyFilters, addAction, removeAction, didFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { getNewPath, getHistory } from '@woocommerce/navigation';
+import {
+	getNewPath,
+	getPersistedQuery,
+	getHistory,
+	getQueryExcludedScreens,
+	getScreenFromPath,
+	isWCAdmin,
+} from '@woocommerce/navigation';
 import { Spinner } from '@woocommerce/components';
+import { getAdminSetting } from '../utils/admin-settings';
 
 const Dashboard = lazy( () =>
 	import( /* webpackChunkName: "ss-analytics-dashboard" */ '../analytics/report' )

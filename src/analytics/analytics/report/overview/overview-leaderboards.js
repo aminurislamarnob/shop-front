@@ -6,6 +6,7 @@ import { withSelect } from '@wordpress/data';
 import { Card, CardBody, CardHeader, SelectControl } from '@wordpress/components';
 import { EllipsisMenu, EmptyTable, MenuItem, MenuTitle, TableCard } from '@woocommerce/components';
 import { getLeaderboard, SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { getPersistedQuery } from '@woocommerce/navigation';
 import PropTypes from 'prop-types';
 
 import { getAdminSetting } from '../../../utils/admin-settings';
@@ -102,7 +103,7 @@ const ConnectedLeaderboardTable = compose(
 		const leaderboardQuery = {
 			id,
 			per_page:        totalRows,
-			persisted_query: {},
+			persisted_query: getPersistedQuery( query ),
 			query,
 			select,
 			defaultDateRange: defaultDateRange || 'period=month&compare=previous_year',

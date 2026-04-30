@@ -3,6 +3,7 @@ import { Component } from '@wordpress/element';
 import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import PropTypes from 'prop-types';
+import { getNewPath } from '@woocommerce/navigation';
 import {
 	SummaryList,
 	SummaryListPlaceholder,
@@ -59,9 +60,7 @@ export class ReportSummary extends Component {
 				if ( order ) {
 					newPath.order = order;
 				}
-				const p = new URLSearchParams( window.location.search );
-				Object.entries( newPath ).forEach( ( [ k, v ] ) => p.set( k, String( v ) ) );
-				const href = window.location.pathname + '?' + p.toString();
+				const href       = getNewPath( newPath );
 				const isSelected = selectedChart.key === key;
 				const { delta, prevValue, value } = this.getValues( key, type );
 
