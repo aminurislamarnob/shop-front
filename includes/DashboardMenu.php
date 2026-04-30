@@ -15,84 +15,95 @@ class DashboardMenu {
 	}
 
 	/**
+	 * Allowed HTML tags for SVG icons in wp_kses.
+	 */
+	private function allowed_icon_tags(): array {
+		return array(
+			'i'        => array( 'class' => array() ),
+			'svg'      => array(
+				'xmlns'            => array(),
+				'width'            => array(),
+				'height'           => array(),
+				'fill'             => array(),
+				'class'            => array(),
+				'viewBox'          => array(),
+				'stroke'           => array(),
+				'stroke-width'     => array(),
+				'stroke-linecap'   => array(),
+				'stroke-linejoin'  => array(),
+			),
+			'path'     => array(
+				'd'         => array(),
+				'fill-rule' => array(),
+			),
+			'polyline' => array( 'points' => array() ),
+		);
+	}
+
+	/**
 	 * Adds dashboard navigation menus to the admin dashboard.
-	 *
-	 * This method retrieves the dashboard menus and the URL of the currently active menu,
-	 * then outputs the HTML for the menu list, including submenus if present.
 	 */
 	public function add_dashboard_navigations() {
-		$menus       = $this->get_dashboard_menus();
-		$current_url = storesuite_get_navigation_url( $this->get_active_menu() );
+		$menus          = $this->get_dashboard_menus();
+		$active_menu    = $this->get_active_menu();
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$current_report = isset( $_GET['report'] ) ? sanitize_key( $_GET['report'] ) : 'overview';
+
+		$chevron = '<svg class="storesuite-menu-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 
 		echo '<ul class="storesuite-dashboard-menu">';
 
 		foreach ( $menus as $key => $menu ) {
-			// Check if the current user has permission to view this menu item.
-			if ( current_user_can( $menu['permission'] ) ) {
-				$active_class = ( $current_url === $menu['url'] ) ? ' class=active' : '';
-
-				// Hide wp dashboard menu item if prevent admin access is enabled.
-				if ( 'wp_dashboard' === $key && storesuite_get_option_by_key( 'storesuite_prevent_admin_access' ) === 'yes' && ! current_user_can( 'administrator' ) ) {
-					continue;
-				}
-
-				echo '<li>';
-				echo '<a href="' . esc_url( $menu['url'] ) . '"' . esc_attr( $active_class ) . ' target="' . esc_attr( $menu['target'] ) . '" data-storesuite-tooltip="' . esc_attr( $menu['title'] ) . '">';
-				echo wp_kses(
-					$menu['icon'],
-					array(
-						'i'    => array( 'class' => array() ),
-						'svg'  => array(
-							'xmlns'   => array(),
-							'width'   => array(),
-							'height'  => array(),
-							'fill'    => array(),
-							'class'   => array(),
-							'viewBox' => array(),
-						),
-						'path' => array(
-							'd'         => array(),
-							'fill-rule' => array(),
-						),
-					)
-				) . '<span>' . esc_html( $menu['title'] ) . '</span>';
-				echo '</a>';
-
-				// Check for and render submenu.
-				if ( isset( $menu['submenu'] ) && is_array( $menu['submenu'] ) ) {
-					echo '<ul class="submenu">';
-					foreach ( $menu['submenu'] as $subkey => $submenu ) {
-						// Check if the current user has permission to view this submenu item.
-						if ( current_user_can( $submenu['permission'] ) ) {
-							echo '<li>';
-							echo '<a href="' . esc_url( $submenu['url'] ) . '" data-storesuite-tooltip="' . esc_attr( $submenu['title'] ) . '">';
-							echo wp_kses(
-								$submenu['icon'],
-								array(
-									'i'    => array( 'class' => array() ),
-									'svg'  => array(
-										'xmlns'   => array(),
-										'width'   => array(),
-										'height'  => array(),
-										'fill'    => array(),
-										'class'   => array(),
-										'viewBox' => array(),
-									),
-									'path' => array(
-										'd'         => array(),
-										'fill-rule' => array(),
-									),
-								)
-							) . '<span>' . esc_html( $submenu['title'] ) . '</span>';
-							echo '</a>';
-							echo '</li>';
-						}
-					}
-					echo '</ul>';
-				}
-
-				echo '</li>';
+			if ( ! current_user_can( $menu['permission'] ) ) {
+				continue;
 			}
+
+			if ( 'wp_dashboard' === $key && storesuite_get_option_by_key( 'storesuite_prevent_admin_access' ) === 'yes' && ! current_user_can( 'administrator' ) ) {
+				continue;
+			}
+
+			$has_submenu = ! empty( $menu['submenu'] ) && is_array( $menu['submenu'] );
+			$is_active   = ( $active_menu === $key );
+
+			$li_classes = array();
+			if ( $has_submenu ) {
+				$li_classes[] = 'has-submenu';
+			}
+			if ( $is_active && $has_submenu ) {
+				$li_classes[] = 'is-open';
+			}
+
+			$li_class_attr = ! empty( $li_classes )
+				? ' class="' . esc_attr( implode( ' ', $li_classes ) ) . '"'
+				: '';
+
+			echo '<li' . $li_class_attr . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+			echo '<a href="' . esc_url( $menu['url'] ) . '" class="' . ( $is_active ? 'active' : '' ) . '" target="' . esc_attr( $menu['target'] ) . '" data-storesuite-tooltip="' . esc_attr( $menu['title'] ) . '">';
+			echo wp_kses( $menu['icon'], $this->allowed_icon_tags() );
+			echo '<span>' . esc_html( $menu['title'] ) . '</span>';
+			if ( $has_submenu ) {
+				echo wp_kses( $chevron, $this->allowed_icon_tags() );
+			}
+			echo '</a>';
+
+			if ( $has_submenu ) {
+				echo '<ul class="submenu">';
+				foreach ( $menu['submenu'] as $subkey => $submenu ) {
+					if ( ! current_user_can( $submenu['permission'] ) ) {
+						continue;
+					}
+					$sub_active = $is_active && ( $current_report === $subkey );
+					echo '<li>';
+					echo '<a href="' . esc_url( $submenu['url'] ) . '" class="' . ( $sub_active ? 'active' : '' ) . '">';
+					echo '<span>' . esc_html( $submenu['title'] ) . '</span>';
+					echo '</a>';
+					echo '</li>';
+				}
+				echo '</ul>';
+			}
+
+			echo '</li>';
 		}
 
 		echo '</ul>';
@@ -113,6 +124,50 @@ class DashboardMenu {
 				'pos'        => 20,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+				'submenu'    => array(
+					'overview'   => array(
+						'title'      => __( 'Overview',    'storesuite' ),
+						'url'        => add_query_arg( 'report', 'overview',    storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'revenue'    => array(
+						'title'      => __( 'Revenue',     'storesuite' ),
+						'url'        => add_query_arg( 'report', 'revenue',     storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'orders'     => array(
+						'title'      => __( 'Orders',      'storesuite' ),
+						'url'        => add_query_arg( 'report', 'orders',      storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'products'   => array(
+						'title'      => __( 'Products',    'storesuite' ),
+						'url'        => add_query_arg( 'report', 'products',    storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'variations' => array(
+						'title'      => __( 'Variations',  'storesuite' ),
+						'url'        => add_query_arg( 'report', 'variations',  storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'categories' => array(
+						'title'      => __( 'Categories',  'storesuite' ),
+						'url'        => add_query_arg( 'report', 'categories',  storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'stock'      => array(
+						'title'      => __( 'Stock',       'storesuite' ),
+						'url'        => add_query_arg( 'report', 'stock',       storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+				),
 			),
 			'dashboard'    => array(
 				'title'      => __( 'Dashboard', 'storesuite' ),

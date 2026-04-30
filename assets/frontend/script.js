@@ -253,6 +253,7 @@
 		},
 		bindEvents: function () {
 			this.handleSidebarCollapseToggle();
+			this.handleSubmenuToggle();
 			this.handleDropdown(); //Handle
 			this.closeDropdownOutside(); // Close dropdown when clicking outside
 			this.uploadProductImage(); // Upload product image
@@ -344,6 +345,25 @@
 
 			// Initialize display/value on load.
 			storeSuiteUpdateDashboardRange( start, end );
+		},
+		handleSubmenuToggle: function () {
+			$( document ).on(
+				'click',
+				'ul.storesuite-dashboard-menu li.has-submenu > a',
+				function ( e ) {
+					// In collapsed sidebar submenus appear as CSS hover flyouts — don't intercept.
+					if ( $( '.my-storesuite-container' ).hasClass( 'storesuite-sidebar-collapsed' ) ) {
+						return;
+					}
+					e.preventDefault();
+					var $li     = $( this ).closest( 'li' );
+					var isOpen  = $li.hasClass( 'is-open' );
+					$( 'ul.storesuite-dashboard-menu li.has-submenu.is-open' ).removeClass( 'is-open' );
+					if ( ! isOpen ) {
+						$li.addClass( 'is-open' );
+					}
+				}
+			);
 		},
 		handleSidebarCollapseToggle: function () {
 			var collapsedPreferenceStorageKey = 'storesuite_sidebar_collapsed';

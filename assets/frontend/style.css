@@ -1597,6 +1597,57 @@ ul.storesuite-dashboard-menu a.active svg, ul.storesuite-dashboard-menu a:hover 
   fill: var(--storesuite-sidebar-active-background);
 }
 
+/* === Submenu dropdown (expanded sidebar) === */
+ul.storesuite-dashboard-menu li.has-submenu > a {
+  justify-content: flex-start;
+}
+ul.storesuite-dashboard-menu .storesuite-menu-arrow {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  transition: transform 0.25s ease;
+  fill: none !important;
+  stroke: currentColor;
+}
+ul.storesuite-dashboard-menu li.has-submenu.is-open > a .storesuite-menu-arrow {
+  transform: rotate(90deg);
+}
+ul.storesuite-dashboard-menu .submenu {
+  display: none;
+  margin: 0;
+  padding: 2px 0 6px 36px;
+  list-style: none;
+}
+ul.storesuite-dashboard-menu li.has-submenu.is-open > .submenu {
+  display: block;
+}
+ul.storesuite-dashboard-menu .submenu li a {
+  display: block;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--storesuite-sidebar-menu-text);
+  border-radius: 5px;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  line-height: 1;
+}
+ul.storesuite-dashboard-menu .submenu li a.active,
+ul.storesuite-dashboard-menu .submenu li a:hover {
+  background: var(--storesuite-sidebar-active-background);
+  color: #fff;
+  font-weight: 500;
+}
+ul.storesuite-dashboard-menu li.has-submenu.is-open > a {
+  color: var(--storesuite-sidebar-active-text);
+  background: color-mix( in srgb, var(--storesuite-sidebar-active-background) 10%, transparent );
+  border-radius: 5px;
+}
+ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu-arrow) {
+  fill: var(--storesuite-sidebar-active-background);
+}
+
 /*Dash content*/
 .my-storesuite-wrapper {
   width: calc(100% - var(--storesuite-sidebar-current-width));
