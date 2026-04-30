@@ -49,7 +49,7 @@ class DashboardMenu {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$current_report = isset( $_GET['report'] ) ? sanitize_key( $_GET['report'] ) : 'overview';
 
-		$chevron = '<svg class="storesuite-menu-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+		$chevron = '<svg class="storesuite-menu-arrow arrow-right" xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24"><path d="M15.4,9.88,10.81,5.29a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.42L14,11.29a1,1,0,0,1,0,1.42L9.4,17.29a1,1,0,0,0,1.41,1.42l4.59-4.59A3,3,0,0,0,15.4,9.88Z"/></svg><svg class="storesuite-menu-arrow arrow-down" xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24"><path d="M18.71,8.21a1,1,0,0,0-1.42,0l-4.58,4.58a1,1,0,0,1-1.42,0L6.71,8.21a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41l4.59,4.59a3,3,0,0,0,4.24,0l4.59-4.59A1,1,0,0,0,18.71,8.21Z"/></svg>';
 
 		echo '<ul class="storesuite-dashboard-menu">';
 
@@ -117,58 +117,6 @@ class DashboardMenu {
 	 */
 	public function get_dashboard_menus(): array {
 		$menus = array(
-			'analytics'    => array(
-				'title'      => __( 'Analytics', 'storesuite' ),
-				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>',
-				'url'        => storesuite_get_navigation_url( 'analytics' ),
-				'pos'        => 20,
-				'permission' => 'manage_woocommerce',
-				'target'     => '_self',
-				'submenu'    => array(
-					'overview'   => array(
-						'title'      => __( 'Overview',    'storesuite' ),
-						'url'        => add_query_arg( 'report', 'overview',    storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'revenue'    => array(
-						'title'      => __( 'Revenue',     'storesuite' ),
-						'url'        => add_query_arg( 'report', 'revenue',     storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'orders'     => array(
-						'title'      => __( 'Orders',      'storesuite' ),
-						'url'        => add_query_arg( 'report', 'orders',      storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'products'   => array(
-						'title'      => __( 'Products',    'storesuite' ),
-						'url'        => add_query_arg( 'report', 'products',    storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'variations' => array(
-						'title'      => __( 'Variations',  'storesuite' ),
-						'url'        => add_query_arg( 'report', 'variations',  storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'categories' => array(
-						'title'      => __( 'Categories',  'storesuite' ),
-						'url'        => add_query_arg( 'report', 'categories',  storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'stock'      => array(
-						'title'      => __( 'Stock',       'storesuite' ),
-						'url'        => add_query_arg( 'report', 'stock',       storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-				),
-			),
 			'dashboard'    => array(
 				'title'      => __( 'Dashboard', 'storesuite' ),
 				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M24,13a11.914,11.914,0,0,1-3.508,8.47,3.037,3.037,0,0,1-4.12.174l-1.026-.887a1,1,0,0,1,1.308-1.514l1.027.888a1.014,1.014,0,0,0,1.395-.075,10.044,10.044,0,0,0-.414-14.513,9.9,9.9,0,0,0-7.823-2.478A9.992,9.992,0,0,0,4.962,20.094a1,1,0,0,0,1.357.038l1.027-.889a1,1,0,0,1,1.308,1.514l-1.026.888a3.016,3.016,0,0,1-4.073-.129A12,12,0,1,1,24,13ZM17.707,8.707a1,1,0,0,0-1.414-1.414l-3.775,3.775a2,2,0,1,0,1.414,1.414Z"/></svg>',
@@ -226,6 +174,58 @@ class DashboardMenu {
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+			),
+			'analytics'    => array(
+				'title'      => __( 'Analytics', 'storesuite' ),
+				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M23,22H5a3,3,0,0,1-3-3V1A1,1,0,0,0,0,1V19a5.006,5.006,0,0,0,5,5H23a1,1,0,0,0,0-2Z"/><path d="M6,20a1,1,0,0,0,1-1V12a1,1,0,0,0-2,0v7A1,1,0,0,0,6,20Z"/><path d="M10,10v9a1,1,0,0,0,2,0V10a1,1,0,0,0-2,0Z"/><path d="M15,13v6a1,1,0,0,0,2,0V13a1,1,0,0,0-2,0Z"/><path d="M20,9V19a1,1,0,0,0,2,0V9a1,1,0,0,0-2,0Z"/><path d="M6,9a1,1,0,0,0,.707-.293l3.586-3.586a1.025,1.025,0,0,1,1.414,0l2.172,2.172a3,3,0,0,0,4.242,0l5.586-5.586A1,1,0,0,0,22.293.293L16.707,5.878a1,1,0,0,1-1.414,0L13.121,3.707a3,3,0,0,0-4.242,0L5.293,7.293A1,1,0,0,0,6,9Z"/></svg>',
+				'url'        => storesuite_get_navigation_url( 'analytics' ),
+				'pos'        => 20,
+				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
+				'submenu'    => array(
+					'overview'   => array(
+						'title'      => __( 'Overview',    'storesuite' ),
+						'url'        => add_query_arg( 'report', 'overview',    storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'revenue'    => array(
+						'title'      => __( 'Revenue',     'storesuite' ),
+						'url'        => add_query_arg( 'report', 'revenue',     storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'orders'     => array(
+						'title'      => __( 'Orders',      'storesuite' ),
+						'url'        => add_query_arg( 'report', 'orders',      storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'products'   => array(
+						'title'      => __( 'Products',    'storesuite' ),
+						'url'        => add_query_arg( 'report', 'products',    storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'variations' => array(
+						'title'      => __( 'Variations',  'storesuite' ),
+						'url'        => add_query_arg( 'report', 'variations',  storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'categories' => array(
+						'title'      => __( 'Categories',  'storesuite' ),
+						'url'        => add_query_arg( 'report', 'categories',  storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+					'stock'      => array(
+						'title'      => __( 'Stock',       'storesuite' ),
+						'url'        => add_query_arg( 'report', 'stock',       storesuite_get_navigation_url( 'analytics' ) ),
+						'icon'       => '',
+						'permission' => 'manage_woocommerce',
+					),
+				),
 			),
 			'edit-account-details' => array(
 				'title'      => __( 'Account', 'storesuite' ),

@@ -1604,14 +1604,18 @@ ul.storesuite-dashboard-menu li.has-submenu > a {
 ul.storesuite-dashboard-menu .storesuite-menu-arrow {
   margin-left: auto;
   flex-shrink: 0;
-  width: 14px;
-  height: 14px;
+  width: 24px;
+  height: 24px;
   transition: transform 0.25s ease;
-  fill: none !important;
-  stroke: currentColor;
 }
-ul.storesuite-dashboard-menu li.has-submenu.is-open > a .storesuite-menu-arrow {
-  transform: rotate(90deg);
+.storesuite-menu-arrow.arrow-down{
+  display: none;
+}
+ul.storesuite-dashboard-menu li.has-submenu.is-open > a .storesuite-menu-arrow.arrow-right {
+  display: none;
+}
+ul.storesuite-dashboard-menu li.has-submenu.is-open > a .storesuite-menu-arrow.arrow-down {
+  display: block;
 }
 ul.storesuite-dashboard-menu .submenu {
   display: none;
@@ -1624,8 +1628,8 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > .submenu {
 }
 ul.storesuite-dashboard-menu .submenu li a {
   display: block;
-  padding: 8px 12px;
-  font-size: 13px;
+  padding: 15px 12px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--storesuite-sidebar-menu-text);
   border-radius: 5px;
