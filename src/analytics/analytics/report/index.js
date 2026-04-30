@@ -2,6 +2,7 @@ import { Fragment, Suspense, lazy, useState, useEffect } from '@wordpress/elemen
 import { __ } from '@wordpress/i18n';
 import { Spinner } from '@woocommerce/components';
 import { getNewPath, getQuery } from '@woocommerce/navigation';
+import { useNavigate } from 'react-router-dom';
 import getReports from './get-reports';
 
 function ReportNav( { reports, currentReport, onSelectReport } ) {
@@ -27,6 +28,7 @@ function ReportNav( { reports, currentReport, onSelectReport } ) {
 }
 
 export default function ReportPage( { query, path } ) {
+	const navigate       = useNavigate();
 	const reports        = getReports();
 	const reportQuery    = query || getQuery();
 	const reportName     = reportQuery.report || ( reports[ 0 ] && reports[ 0 ].report ) || 'overview';
@@ -35,6 +37,13 @@ export default function ReportPage( { query, path } ) {
 	useEffect( () => {
 		setCurrentReport( reportName );
 	}, [ reportName ] );
+
+	const handleSelectReport = ( name ) => {
+		setCurrentReport( name );
+		const params = new URLSearchParams( window.location.search );
+		params.set( 'report', name );
+		navigate( '?' + params.toString() );
+	};
 
 	const activeReport = reports.find( ( r ) => r.report === currentReport ) || reports[ 0 ];
 
@@ -47,7 +56,7 @@ export default function ReportPage( { query, path } ) {
 				<ReportNav
 					reports={ reports }
 					currentReport={ currentReport }
-					onSelectReport={ setCurrentReport }
+					onSelectReport={ handleSelectReport }
 				/>
 			</div>
 			<div className="storesuite-analytics-reports-content">
