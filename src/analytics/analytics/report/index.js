@@ -1,14 +1,8 @@
 import { Fragment, Suspense, lazy, useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Spinner } from '@woocommerce/components';
-import { getQuery } from '@woocommerce/navigation';
+import { getNewPath, getQuery } from '@woocommerce/navigation';
 import getReports from './get-reports';
-
-function reportHref( reportName ) {
-	const params = new URLSearchParams( window.location.search );
-	params.set( 'report', reportName );
-	return window.location.pathname + '?' + params.toString();
-}
 
 function ReportNav( { reports, currentReport, onSelectReport } ) {
 	return (
@@ -17,7 +11,7 @@ function ReportNav( { reports, currentReport, onSelectReport } ) {
 				{ reports.map( ( report ) => (
 					<li key={ report.report } className={ currentReport === report.report ? 'active' : '' }>
 						<a
-							href={ reportHref( report.report ) }
+							href={ getNewPath( { report: report.report } ) }
 							onClick={ ( e ) => {
 								e.preventDefault();
 								onSelectReport( report.report );

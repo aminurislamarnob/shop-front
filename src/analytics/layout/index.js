@@ -22,6 +22,7 @@ import {
 import { Controller, usePages } from './controller';
 import { getAdminSetting } from '../utils/admin-settings';
 import { storeSuiteConfig } from '../config';
+import { redirectIfAdminUrl } from '../utils/helper';
 
 const WithReactRouterProps = ( { children } ) => {
 	const location = useLocation();
@@ -34,7 +35,13 @@ const WithReactRouterProps = ( { children } ) => {
 };
 
 const PageContent = ( { page, match } ) => {
-	const query = getQuery();
+	const location = useLocation();
+	const query    = getQuery();
+
+	useEffect( () => {
+		redirectIfAdminUrl();
+	}, [ location ] );
+
 	return (
 		<SlotFillProvider>
 			<div className="woocommerce-layout storesuite-analytics-layout">
