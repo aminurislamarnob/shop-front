@@ -257,6 +257,15 @@ final class StoreSuite {
 		$this->container['storesuite_coupon_manager']              = new Coupon\CouponManager();
 		$this->container['storesuite_account_controller']          = new Account\AccountController();
 		$this->container['storesuite_handle_paginations']          = new HandlePaginations();
+
+		// Analytics (uses WooCommerce analytics packages — no SQL filtering needed).
+		$this->container['analytics_permissions'] = new Analytics\RestPermissions();
+		$this->container['analytics_controller']  = new Analytics\Controller();
+		$this->container['analytics_assets']      = new Analytics\Assets();
+
+		$this->container['analytics_permissions']->register_hooks();
+		$this->container['analytics_controller']->register_hooks();
+		$this->container['analytics_assets']->register_hooks();
 	}
 
 	/**

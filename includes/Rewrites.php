@@ -41,6 +41,7 @@ class Rewrites {
 		$this->query_vars = apply_filters(
 			'storesuite_query_var_filter',
 			array(
+				'analytics'        => get_option( 'storesuite_myshop_analytics_endpoint', 'analytics' ),
 				'products'         => get_option( 'storesuite_myshop_products_endpoint', 'products' ),
 				'add-new-product'  => get_option( 'storesuite_myshop_new_product_endpoint', 'add-new-product' ),
 				'edit-product'     => get_option( 'storesuite_myshop_edit_product_endpoint', 'edit-product' ),
