@@ -158,7 +158,7 @@ class Assets {
 
 			wp_enqueue_style(
 				'storesuite-admin-styles',
-				STORESUITE_PLUGIN_ASSET . '/build/admin.css',
+				STORESUITE_PLUGIN_ASSET . '/build/admin/script.css',
 				array( 'wp-components' ),
 				$asset_file['version'] ?? null,
 			);
