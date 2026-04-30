@@ -53,7 +53,10 @@ export default function ReportPage( { query, path } ) {
 				<ReportNav
 					reports={ reports }
 					currentReport={ currentReport }
-					onSelectReport={ setCurrentReport }
+					onSelectReport={ ( reportName ) => {
+					setCurrentReport( reportName );
+					window.history.pushState( {}, '', reportHref( reportName ) );
+				} }
 				/>
 			</div>
 			<div className="storesuite-analytics-reports-content">
