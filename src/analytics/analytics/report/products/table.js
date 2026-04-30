@@ -2,7 +2,6 @@ import { __, _n } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { Link } from '@woocommerce/components';
 import { formatValue } from '@woocommerce/number';
-import { getNewPath, getPersistedQuery } from '@woocommerce/navigation';
 import { CurrencyContext } from '@woocommerce/currency';
 import ReportTable from '../../components/report-table';
 
@@ -26,8 +25,6 @@ class ProductsReportTable extends Component {
 	}
 
 	getRowsContent( data = [] ) {
-		const { query }   = this.props;
-		const persistedQuery = getPersistedQuery( query );
 		const { render: renderCurrency, getCurrencyConfig } = this.context;
 		const currency = getCurrencyConfig();
 
@@ -39,10 +36,13 @@ class ProductsReportTable extends Component {
 				{
 					display: (
 						<Link
-							href={ getNewPath( persistedQuery, '/analytics/products', {
-								filter:   'single_product',
-								products: product_id,
-							} ) }
+							href={ ( () => {
+								const p = new URLSearchParams( window.location.search );
+								p.set( 'report', 'products' );
+								p.set( 'filter', 'single_product' );
+								p.set( 'products', product_id );
+								return window.location.pathname + '?' + p.toString();
+							} )() }
 							type="wc-admin"
 						>
 							{ name }

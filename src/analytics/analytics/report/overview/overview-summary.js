@@ -10,7 +10,6 @@ import {
 } from '@woocommerce/components';
 import { calculateDelta, formatValue } from '@woocommerce/number';
 import { REPORTS_STORE_NAME, SETTINGS_STORE_NAME } from '@woocommerce/data';
-import { getNewPath } from '@woocommerce/navigation';
 import { getCurrentDates, appendTimestamp, getDateParamsFromQuery } from '@woocommerce/date';
 import { CurrencyContext } from '@woocommerce/currency';
 import ReportError from '../../components/report-error';
@@ -64,9 +63,12 @@ class OverviewSummary extends Component {
 					const primaryValue   = this.formatVal( primary.value,   format );
 					const secondaryValue = this.formatVal( secondary.value, format );
 					const delta          = calculateDelta( primary.value, secondary.value );
-					const href           = indicator.linkedReport
-						? getNewPath( { report: indicator.linkedReport } )
-						: '';
+					const href           = ( () => {
+						if ( ! indicator.linkedReport ) return '';
+						const p = new URLSearchParams( window.location.search );
+						p.set( 'report', indicator.linkedReport );
+						return window.location.pathname + '?' + p.toString();
+					} )();
 
 					return (
 						<SummaryNumber
