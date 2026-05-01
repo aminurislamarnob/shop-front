@@ -24,6 +24,7 @@ import {
 } from '@woocommerce/data';
 
 import ReportError from '../report-error';
+import DownloadIcon from './download-icon';
 
 const TABLE_FILTER = 'storesuite_analytics_report_table';
 
@@ -199,6 +200,7 @@ const ReportTable = ( {
 							disabled={ isLoading }
 							onClick={ handleDownload }
 						>
+							<DownloadIcon />
 							<span className="woocommerce-table__download-button__label">
 								{ __( 'Download', 'storesuite' ) }
 							</span>
