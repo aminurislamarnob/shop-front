@@ -8,6 +8,7 @@ import { get, noop, partial, uniq } from 'lodash';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { CompareButton, Search, TableCard } from '@woocommerce/components';
+import { downloadCSVFile, generateCSVDataFromTable, generateCSVFileName } from '@woocommerce/csv-export';
 import {
 	getIdsFromQuery,
 	getSearchWords,
@@ -122,6 +123,17 @@ const ReportTable = ( {
 
 	const filteredHeaders = filterShownHeaders( headers, userPrefColumns );
 
+	const title = tableProps.title || '';
+
+	const handleDownload = () => {
+		const csvQuery = { ...query };
+		delete csvQuery.extended_info;
+		downloadCSVFile(
+			generateCSVFileName( title, csvQuery ),
+			generateCSVDataFromTable( filteredHeaders, rows )
+		);
+	};
+
 	return (
 		<Fragment>
 			<div
@@ -158,6 +170,18 @@ const ReportTable = ( {
 							disabled={ ! downloadable }
 						/>
 					),
+					downloadable && (
+						<Button
+							key="download"
+							className="woocommerce-table__download-button"
+							disabled={ isLoading }
+							onClick={ handleDownload }
+						>
+							<span className="woocommerce-table__download-button__label">
+								{ __( 'Download', 'storesuite' ) }
+							</span>
+						</Button>
+					),
 				].filter( Boolean ) }
 				headers={ filteredHeaders }
 				isLoading={ isLoading }
@@ -165,7 +189,6 @@ const ReportTable = ( {
 				onColumnsChange={ onColumnsChange }
 				onSort={ onSort }
 				onPageChange={ onPageChange }
-				downloadable={ downloadable }
 				rows={ rows }
 				rowsPerPage={ parseInt( reportQuery.per_page, 10 ) || QUERY_DEFAULTS.pageSize }
 				summary={ summary }
