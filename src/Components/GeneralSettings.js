@@ -89,6 +89,8 @@ const GeneralSettings = () => {
 								value={ dashboardPage }
 								options={ pages }
 								onChange={ setDashboardPage }
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
 							/>
 						</div>
 						<DashboardSidebarImageControl

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { advancedFilters, charts, filters } from './config';
 import getSelectedChart from '../../../lib/get-selected-chart';
 import CategoriesReportTable from './table';
+import ProductsReportTable from '../products/table';
 import ReportChart from '../../components/report-chart';
 import ReportError from '../../components/report-error';
 import ReportSummary from '../../components/report-summary';
@@ -16,18 +17,21 @@ export default class CategoriesReport extends Component {
 			query.filter === 'compare-categories' &&
 			query.categories &&
 			query.categories.split( ',' ).length > 1;
-
-		const mode = isCompareView ? 'item-comparison' : 'time-comparison';
+		const isSingleCategoryView = query.filter === 'single_category' && !! query.categories;
+		const mode = isCompareView || isSingleCategoryView ? 'item-comparison' : 'time-comparison';
 
 		return {
-			itemsLabel: __( '%d categories', 'storesuite' ),
+			isSingleCategoryView,
+			itemsLabel: isSingleCategoryView
+				? __( '%d products', 'storesuite' )
+				: __( '%d categories', 'storesuite' ),
 			mode,
 		};
 	}
 
 	render() {
 		const { path, query, isError, isRequesting } = this.props;
-		const { mode, itemsLabel } = this.getChartMeta();
+		const { mode, itemsLabel, isSingleCategoryView } = this.getChartMeta();
 
 		if ( isError ) {
 			return <ReportError />;
@@ -35,8 +39,12 @@ export default class CategoriesReport extends Component {
 
 		const chartQuery = { ...query };
 		if ( mode === 'item-comparison' ) {
-			chartQuery.segmentby = 'category';
+			chartQuery.segmentby = isSingleCategoryView ? 'product' : 'category';
 		}
+
+		const limitProperties = isSingleCategoryView
+			? [ 'products', 'categories' ]
+			: [ 'categories' ];
 
 		return (
 			<Fragment>
@@ -50,7 +58,7 @@ export default class CategoriesReport extends Component {
 				<ReportSummary
 					charts={ charts }
 					endpoint="products"
-					limitProperties={ [ 'categories' ] }
+					limitProperties={ limitProperties }
 					isRequesting={ isRequesting }
 					query={ chartQuery }
 					selectedChart={ getSelectedChart( query.chart, charts ) }
@@ -64,19 +72,30 @@ export default class CategoriesReport extends Component {
 					advancedFilters={ advancedFilters }
 					mode={ mode }
 					endpoint="products"
-					limitProperties={ [ 'categories' ] }
+					limitProperties={ limitProperties }
 					path={ path }
 					query={ chartQuery }
 					isRequesting={ isRequesting }
 					itemsLabel={ itemsLabel }
 					selectedChart={ getSelectedChart( chartQuery.chart, charts ) }
 				/>
-				<CategoriesReportTable
-					isRequesting={ isRequesting }
-					query={ query }
-					filters={ filters }
-					advancedFilters={ advancedFilters }
-				/>
+				{ isSingleCategoryView ? (
+					<ProductsReportTable
+						isRequesting={ isRequesting }
+						query={ chartQuery }
+						baseSearchQuery={ { filter: 'single_category' } }
+						hideCompare={ isSingleCategoryView }
+						filters={ filters }
+						advancedFilters={ advancedFilters }
+					/>
+				) : (
+					<CategoriesReportTable
+						isRequesting={ isRequesting }
+						query={ query }
+						filters={ filters }
+						advancedFilters={ advancedFilters }
+					/>
+				) }
 			</Fragment>
 		);
 	}

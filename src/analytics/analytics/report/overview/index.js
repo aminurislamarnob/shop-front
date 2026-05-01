@@ -140,6 +140,8 @@ export default function OverviewReport( { path, query } ) {
 							label: INTERVAL_LABELS[ interval ] || interval,
 						} ) ) }
 						onChange={ handleInterval }
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
 					/>
 
 					<NavigableMenu

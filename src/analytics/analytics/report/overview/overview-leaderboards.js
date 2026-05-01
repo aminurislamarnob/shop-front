@@ -6,10 +6,11 @@ import { withSelect } from '@wordpress/data';
 import { Card, CardBody, CardHeader, SelectControl } from '@wordpress/components';
 import { EllipsisMenu, EmptyTable, MenuItem, MenuTitle, TableCard } from '@woocommerce/components';
 import { getLeaderboard, SETTINGS_STORE_NAME } from '@woocommerce/data';
-import { getPersistedQuery } from '@woocommerce/navigation';
+import { getHistory, getPersistedQuery } from '@woocommerce/navigation';
 import PropTypes from 'prop-types';
 
 import { getAdminSetting } from '../../../utils/admin-settings';
+import { mapToDashboardRoute } from '../../../utils/helper';
 import ReportError from '../../components/report-error';
 
 const HIDDEN_LEADERBOARDS_KEY = 'storesuite_analytics_hidden_leaderboards';
@@ -27,6 +28,29 @@ function lsParsed( key ) {
 	try { return JSON.parse( localStorage.getItem( key ) ) || []; } catch { return []; }
 }
 
+function rewriteLeaderboardLinks( html ) {
+	if ( ! html || ! html.includes( 'admin.php' ) ) {
+		return html;
+	}
+	const div = document.createElement( 'div' );
+	div.innerHTML = html;
+	div.querySelectorAll( 'a[href]' ).forEach( ( a ) => {
+		try {
+			const absolute = new URL( a.getAttribute( 'href' ), window.location.href ).href;
+			a.setAttribute( 'href', mapToDashboardRoute( absolute ) );
+		} catch {}
+	} );
+	return div.innerHTML;
+}
+
+function handleLeaderboardLinkClick( e ) {
+	const anchor = e.target.closest( 'a' );
+	if ( anchor ) {
+		e.preventDefault();
+		getHistory().push( anchor.getAttribute( 'href' ) );
+	}
+}
+
 class LeaderboardTable extends Component {
 	getFormattedHeaders() {
 		return ( this.props.headers || [] ).map( ( header, i ) => ( {
@@ -41,8 +65,13 @@ class LeaderboardTable extends Component {
 	getFormattedRows() {
 		return ( this.props.rows || [] ).map( ( row ) =>
 			row.map( ( column ) => ( {
-				display: <span dangerouslySetInnerHTML={ { __html: column.display } } />,
-				value:   column.value,
+				display: (
+					<span
+						dangerouslySetInnerHTML={ { __html: rewriteLeaderboardLinks( column.display ) } }
+						onClick={ handleLeaderboardLinkClick }
+					/>
+				),
+				value: column.value,
 			} ) )
 		);
 	}
@@ -165,6 +194,8 @@ export default function OverviewLeaderboards( { query } ) {
 									value={ String( rowsPerTable ) }
 									options={ [ 5, 10, 15, 20, 25 ].map( ( n ) => ( { value: String( n ), label: String( n ) } ) ) }
 									onChange={ handleRowsChange }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
 								/>
 							</MenuItem>
 						</Fragment>

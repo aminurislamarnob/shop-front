@@ -47,7 +47,8 @@ class DashboardMenu {
 		$menus          = $this->get_dashboard_menus();
 		$active_menu    = $this->get_active_menu();
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$current_report = isset( $_GET['report'] ) ? sanitize_key( $_GET['report'] ) : 'overview';
+		$current_report   = isset( $_GET['report'] ) ? sanitize_key( $_GET['report'] ) : 'overview';
+		$current_endpoint = pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
 
 		$chevron = '<svg class="storesuite-menu-arrow arrow-right" xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24"><path d="M15.4,9.88,10.81,5.29a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.42L14,11.29a1,1,0,0,1,0,1.42L9.4,17.29a1,1,0,0,0,1.41,1.42l4.59-4.59A3,3,0,0,0,15.4,9.88Z"/></svg><svg class="storesuite-menu-arrow arrow-down" xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24"><path d="M18.71,8.21a1,1,0,0,0-1.42,0l-4.58,4.58a1,1,0,0,1-1.42,0L6.71,8.21a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41l4.59,4.59a3,3,0,0,0,4.24,0l4.59-4.59A1,1,0,0,0,18.71,8.21Z"/></svg>';
 
@@ -93,7 +94,11 @@ class DashboardMenu {
 					if ( ! current_user_can( $submenu['permission'] ) ) {
 						continue;
 					}
-					$sub_active = $is_active && ( $current_report === $subkey );
+					if ( isset( $submenu['endpoint'] ) ) {
+						$sub_active = $is_active && ( $current_endpoint === $submenu['endpoint'] );
+					} else {
+						$sub_active = $is_active && ( $current_report === $subkey );
+					}
 					echo '<li>';
 					echo '<a href="' . esc_url( $submenu['url'] ) . '" class="' . ( $sub_active ? 'active' : '' ) . '">';
 					echo '<span>' . esc_html( $submenu['title'] ) . '</span>';
@@ -132,6 +137,20 @@ class DashboardMenu {
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+				'submenu'    => array(
+					'products'        => array(
+						'title'      => __( 'All Products', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'products' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'products',
+					),
+					'add-new-product' => array(
+						'title'      => __( 'Add New Product', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'add-new-product' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'add-new-product',
+					),
+				),
 			),
 			'orders'       => array(
 				'title'      => __( 'Orders', 'storesuite' ),
@@ -142,6 +161,20 @@ class DashboardMenu {
 				'pos'        => 50,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+				'submenu'    => array(
+					'orders'        => array(
+						'title'      => __( 'All Orders', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'orders' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'orders',
+					),
+					'add-new-order' => array(
+						'title'      => __( 'Add New Order', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'add-new-order' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'add-new-order',
+					),
+				),
 			),
 			'categories'   => array(
 				'title'      => __( 'Categories', 'storesuite' ),
@@ -150,6 +183,20 @@ class DashboardMenu {
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+				'submenu'    => array(
+					'categories'        => array(
+						'title'      => __( 'All Categories', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'categories' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'categories',
+					),
+					'add-new-category'  => array(
+						'title'      => __( 'Add New Category', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'add-new-category' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'add-new-category',
+					),
+				),
 			),
 			'brands'       => array(
 				'title'      => __( 'Brands', 'storesuite' ),
@@ -158,6 +205,20 @@ class DashboardMenu {
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+				'submenu'    => array(
+					'brands'        => array(
+						'title'      => __( 'All Brands', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'brands' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'brands',
+					),
+					'add-new-brand' => array(
+						'title'      => __( 'Add New Brand', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'add-new-brand' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'add-new-brand',
+					),
+				),
 			),
 			'tags'         => array(
 				'title'      => __( 'Tags', 'storesuite' ),
@@ -166,6 +227,20 @@ class DashboardMenu {
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+				'submenu'    => array(
+					'tags'        => array(
+						'title'      => __( 'All Tags', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'tags' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'tags',
+					),
+					'add-new-tag' => array(
+						'title'      => __( 'Add New Tag', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'add-new-tag' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'add-new-tag',
+					),
+				),
 			),
 			'coupons'      => array(
 				'title'      => __( 'Coupons', 'storesuite' ),
@@ -174,6 +249,20 @@ class DashboardMenu {
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+				'submenu'    => array(
+					'coupons'        => array(
+						'title'      => __( 'All Coupons', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'coupons' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'coupons',
+					),
+					'add-new-coupon' => array(
+						'title'      => __( 'Add New Coupon', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'add-new-coupon' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'add-new-coupon',
+					),
+				),
 			),
 			'analytics'    => array(
 				'title'      => __( 'Analytics', 'storesuite' ),
@@ -280,8 +369,25 @@ class DashboardMenu {
 		if ( $active ) {
 			$active_menu = implode( '/', $active );
 
-			if ( $active_menu === 'new-product' ) {
-				$active_menu = 'products';
+			$endpoint_to_parent = array(
+				'add-new-product'  => 'products',
+				'edit-product'     => 'products',
+				'new-product'      => 'products',
+				'add-new-order'    => 'orders',
+				'edit-order'       => 'orders',
+				'order-details'    => 'orders',
+				'add-new-category' => 'categories',
+				'edit-category'    => 'categories',
+				'add-new-brand'    => 'brands',
+				'edit-brand'       => 'brands',
+				'add-new-tag'      => 'tags',
+				'edit-tag'         => 'tags',
+				'add-new-coupon'   => 'coupons',
+				'edit-coupon'      => 'coupons',
+			);
+
+			if ( isset( $endpoint_to_parent[ $active_menu ] ) ) {
+				$active_menu = $endpoint_to_parent[ $active_menu ];
 			}
 
 			if ( get_query_var( 'edit' ) && is_singular( 'product' ) ) {

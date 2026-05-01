@@ -65,7 +65,7 @@ class OverviewSummary extends Component {
 					const secondaryValue = this.formatVal( secondary.value, format );
 					const delta          = calculateDelta( primary.value, secondary.value );
 					const href           = indicator.linkedReport
-						? getNewPath( { report: indicator.linkedReport } )
+						? getNewPath( { report: indicator.linkedReport, chart: indicator.key } )
 						: '';
 
 					return (

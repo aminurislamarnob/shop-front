@@ -25,6 +25,28 @@ export const filters = applyFilters( 'storesuite_analytics_categories_report_fil
 		filters: [
 			{ label: __( 'All categories', 'storesuite' ), value: 'all' },
 			{
+				label:     __( 'Single category', 'storesuite' ),
+				value:     'select_category',
+				chartMode: 'item-comparison',
+				subFilters: [
+					{
+						component: 'Search',
+						value:     'single_category',
+						chartMode: 'item-comparison',
+						path:      [ 'select_category' ],
+						settings: {
+							type:      'categories',
+							param:     'categories',
+							getLabels: getCategoryLabels,
+							labels: {
+								placeholder: __( 'Type to search for a category', 'storesuite' ),
+								button:      __( 'Single Category', 'storesuite' ),
+							},
+						},
+					},
+				],
+			},
+			{
 				label:     __( 'Comparison', 'storesuite' ),
 				value:     'compare-categories',
 				chartMode: 'item-comparison',
