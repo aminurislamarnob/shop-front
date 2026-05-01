@@ -8,7 +8,6 @@ import { get, noop, partial, uniq } from 'lodash';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { CompareButton, Search, TableCard } from '@woocommerce/components';
-import { downloadCSVFile, generateCSVDataFromTable, generateCSVFileName } from '@woocommerce/csv-export';
 import {
 	getIdsFromQuery,
 	getSearchWords,
@@ -27,6 +26,32 @@ import {
 import ReportError from '../report-error';
 
 const TABLE_FILTER = 'storesuite_analytics_report_table';
+
+function toCSV( headers, rows ) {
+	const visible = headers.filter( ( h ) => h.visible !== false );
+	const escape  = ( v ) => `"${ String( v ?? '' ).replace( /"/g, '""' ) }"`;
+	const head    = visible.map( ( h ) => escape( h.label ) ).join( ',' );
+	const body    = rows.map( ( row ) =>
+		visible.map( ( _h, i ) => {
+			const cell = row[ i ];
+			const val  = cell ? ( cell.value !== undefined ? cell.value : '' ) : '';
+			return escape( val );
+		} ).join( ',' )
+	);
+	return [ head, ...body ].join( '\n' );
+}
+
+function triggerDownload( filename, csv ) {
+	const blob = new Blob( [ csv ], { type: 'text/csv;charset=utf-8;' } );
+	const url  = URL.createObjectURL( blob );
+	const a    = document.createElement( 'a' );
+	a.href     = url;
+	a.download = filename;
+	document.body.appendChild( a );
+	a.click();
+	document.body.removeChild( a );
+	URL.revokeObjectURL( url );
+}
 
 const ReportTable = ( {
 	getHeadersContent,
@@ -126,12 +151,9 @@ const ReportTable = ( {
 	const title = tableProps.title || '';
 
 	const handleDownload = () => {
-		const csvQuery = { ...query };
-		delete csvQuery.extended_info;
-		downloadCSVFile(
-			generateCSVFileName( title, csvQuery ),
-			generateCSVDataFromTable( filteredHeaders, rows )
-		);
+		const date     = new Date().toISOString().slice( 0, 10 );
+		const filename = `${ title || 'report' }_${ date }.csv`;
+		triggerDownload( filename, toCSV( filteredHeaders, rows ) );
 	};
 
 	return (
