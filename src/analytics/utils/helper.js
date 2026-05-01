@@ -50,6 +50,6 @@ export function redirectIfAdminUrl() {
 	const href   = window.location.href || '';
 	const mapped = mapToDashboardRoute( href );
 	if ( mapped !== href ) {
-		getHistory().push( mapped );
+		getHistory().replace( mapped );
 	}
 }

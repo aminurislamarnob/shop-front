@@ -9,48 +9,70 @@ import StatsAltIcon from 'gridicons/dist/stats-alt';
 import { EllipsisMenu, MenuItem, MenuTitle } from '@woocommerce/components';
 import { SETTINGS_STORE_NAME } from '@woocommerce/data';
 import { getAllowedIntervalsForQuery } from '@woocommerce/date';
+import { getHistory, getPersistedQuery } from '@woocommerce/navigation';
 import { indicators, filters, advancedFilters } from './config';
+import { storeSuiteConfig } from '../../../config';
 import ReportChart from '../../components/report-chart';
 import ReportFilters from '../../components/report-filters';
 import OverviewSummary from './overview-summary';
 import OverviewLeaderboards from './overview-leaderboards';
 
-const HIDDEN_STATS_KEY   = 'storesuite_analytics_hidden_stats';
-const HIDDEN_CHARTS_KEY  = 'storesuite_analytics_hidden_charts';
+const HIDDEN_STATS_KEY = 'storesuite_analytics_hidden_stats';
+const HIDDEN_CHARTS_KEY = 'storesuite_analytics_hidden_charts';
 const CHART_INTERVAL_KEY = 'storesuite_analytics_chart_interval';
-const CHART_TYPE_KEY     = 'storesuite_analytics_chart_type';
+const CHART_TYPE_KEY = 'storesuite_analytics_chart_type';
 
 function lsGet( key, fallback ) {
-	try { return localStorage.getItem( key ) || fallback; } catch { return fallback; }
+	try {
+		return localStorage.getItem( key ) || fallback;
+	} catch {
+		return fallback;
+	}
 }
 
 function lsSet( key, value ) {
-	try { localStorage.setItem( key, value ); } catch {}
+	try {
+		localStorage.setItem( key, value );
+	} catch {}
 }
 
 function lsParsed( key ) {
-	try { return JSON.parse( localStorage.getItem( key ) ) || []; } catch { return []; }
+	try {
+		return JSON.parse( localStorage.getItem( key ) ) || [];
+	} catch {
+		return [];
+	}
 }
 
 const INTERVAL_LABELS = {
-	hour:    __( 'By hour',    'storesuite' ),
-	day:     __( 'By day',     'storesuite' ),
-	week:    __( 'By week',    'storesuite' ),
-	month:   __( 'By month',   'storesuite' ),
+	hour: __( 'By hour', 'storesuite' ),
+	day: __( 'By day', 'storesuite' ),
+	week: __( 'By week', 'storesuite' ),
+	month: __( 'By month', 'storesuite' ),
 	quarter: __( 'By quarter', 'storesuite' ),
-	year:    __( 'By year',    'storesuite' ),
+	year: __( 'By year', 'storesuite' ),
 };
 
 export default function OverviewReport( { path, query } ) {
-	const [ hiddenStats,   setHiddenStats   ] = useState( () => lsParsed( HIDDEN_STATS_KEY ) );
-	const [ hiddenCharts,  setHiddenCharts  ] = useState( () => lsParsed( HIDDEN_CHARTS_KEY ) );
-	const [ chartInterval, setChartInterval ] = useState( () => lsGet( CHART_INTERVAL_KEY, 'day' ) );
-	const [ chartType,     setChartType     ] = useState( () => lsGet( CHART_TYPE_KEY, 'line' ) );
+	const [ hiddenStats, setHiddenStats ] = useState( () =>
+		lsParsed( HIDDEN_STATS_KEY )
+	);
+	const [ hiddenCharts, setHiddenCharts ] = useState( () =>
+		lsParsed( HIDDEN_CHARTS_KEY )
+	);
+	const [ chartInterval, setChartInterval ] = useState( () =>
+		lsGet( CHART_INTERVAL_KEY, 'day' )
+	);
+	const [ chartType, setChartType ] = useState( () =>
+		lsGet( CHART_TYPE_KEY, 'line' )
+	);
 
-	const defaultDateRange = useSelect( ( select ) =>
-		select( SETTINGS_STORE_NAME )
-			.getSetting( 'wc_admin', 'wcAdminSettings' )
-			?.woocommerce_default_date_range
+	const defaultDateRange = useSelect(
+		( select ) =>
+			select( SETTINGS_STORE_NAME ).getSetting(
+				'wc_admin',
+				'wcAdminSettings'
+			)?.woocommerce_default_date_range
 	);
 
 	const toggleStat = ( stat ) => {
@@ -79,10 +101,17 @@ export default function OverviewReport( { path, query } ) {
 		lsSet( CHART_TYPE_KEY, type );
 	};
 
-	const visibleIndicators = indicators.filter( ( i ) => ! hiddenStats.includes( i.stat ) );
-	const visibleCharts     = indicators.filter( ( i ) => ! hiddenCharts.includes( i.stat ) );
-	const allowedIntervals  = getAllowedIntervalsForQuery( query, defaultDateRange ) || [ 'day', 'week', 'month' ];
-	const chartQuery        = { ...query, chartType, interval: chartInterval };
+	const visibleIndicators = indicators.filter(
+		( i ) => ! hiddenStats.includes( i.stat )
+	);
+	const visibleCharts = indicators.filter(
+		( i ) => ! hiddenCharts.includes( i.stat )
+	);
+	const allowedIntervals = getAllowedIntervalsForQuery(
+		query,
+		defaultDateRange
+	) || [ 'day', 'week', 'month' ];
+	const chartQuery = { ...query, chartType, interval: chartInterval };
 
 	return (
 		<Fragment>
@@ -97,17 +126,26 @@ export default function OverviewReport( { path, query } ) {
 			<div className="storesuite-overview-section-header">
 				<h3>{ __( 'Performance', 'storesuite' ) }</h3>
 				<EllipsisMenu
-					label={ __( 'Choose which analytics to display', 'storesuite' ) }
+					label={ __(
+						'Choose which analytics to display',
+						'storesuite'
+					) }
 					renderContent={ () => (
 						<Fragment>
-							<MenuTitle>{ __( 'Display stats:', 'storesuite' ) }</MenuTitle>
+							<MenuTitle>
+								{ __( 'Display stats:', 'storesuite' ) }
+							</MenuTitle>
 							{ indicators.map( ( indicator ) => (
 								<MenuItem
 									key={ indicator.stat }
-									checked={ ! hiddenStats.includes( indicator.stat ) }
+									checked={
+										! hiddenStats.includes( indicator.stat )
+									}
 									isCheckbox
 									isClickable
-									onInvoke={ () => toggleStat( indicator.stat ) }
+									onInvoke={ () =>
+										toggleStat( indicator.stat )
+									}
 								>
 									{ indicator.label }
 								</MenuItem>
@@ -124,7 +162,10 @@ export default function OverviewReport( { path, query } ) {
 				/>
 			) : (
 				<p className="storesuite-overview-empty-notice">
-					{ __( 'No stats selected. Use the menu above to choose which stats to display.', 'storesuite' ) }
+					{ __(
+						'No stats selected. Use the menu above to choose which stats to display.',
+						'storesuite'
+					) }
 				</p>
 			) }
 
@@ -150,9 +191,13 @@ export default function OverviewReport( { path, query } ) {
 						role="menubar"
 					>
 						<Button
-							className={ clsx( 'woocommerce-chart__type-button', {
-								'woocommerce-chart__type-button-selected': ! chartType || chartType === 'line',
-							} ) }
+							className={ clsx(
+								'woocommerce-chart__type-button',
+								{
+									'woocommerce-chart__type-button-selected':
+										! chartType || chartType === 'line',
+								}
+							) }
 							title={ __( 'Line chart', 'storesuite' ) }
 							aria-checked={ chartType === 'line' }
 							role="menuitemradio"
@@ -162,9 +207,13 @@ export default function OverviewReport( { path, query } ) {
 							<LineGraphIcon />
 						</Button>
 						<Button
-							className={ clsx( 'woocommerce-chart__type-button', {
-								'woocommerce-chart__type-button-selected': chartType === 'bar',
-							} ) }
+							className={ clsx(
+								'woocommerce-chart__type-button',
+								{
+									'woocommerce-chart__type-button-selected':
+										chartType === 'bar',
+								}
+							) }
 							title={ __( 'Bar chart', 'storesuite' ) }
 							aria-checked={ chartType === 'bar' }
 							role="menuitemradio"
@@ -176,17 +225,28 @@ export default function OverviewReport( { path, query } ) {
 					</NavigableMenu>
 
 					<EllipsisMenu
-						label={ __( 'Choose which charts to display', 'storesuite' ) }
+						label={ __(
+							'Choose which charts to display',
+							'storesuite'
+						) }
 						renderContent={ () => (
 							<Fragment>
-								<MenuTitle>{ __( 'Charts', 'storesuite' ) }</MenuTitle>
+								<MenuTitle>
+									{ __( 'Charts', 'storesuite' ) }
+								</MenuTitle>
 								{ indicators.map( ( indicator ) => (
 									<MenuItem
 										key={ indicator.stat }
-										checked={ ! hiddenCharts.includes( indicator.stat ) }
+										checked={
+											! hiddenCharts.includes(
+												indicator.stat
+											)
+										}
 										isCheckbox
 										isClickable
-										onInvoke={ () => toggleChart( indicator.stat ) }
+										onInvoke={ () =>
+											toggleChart( indicator.stat )
+										}
 									>
 										{ indicator.label }
 									</MenuItem>
@@ -201,12 +261,22 @@ export default function OverviewReport( { path, query } ) {
 				<div className="storesuite-overview-charts-grid">
 					{ visibleCharts.map( ( indicator ) => {
 						const chartConfig = {
-							key:   indicator.key,
+							key: indicator.key,
 							label: indicator.label,
-							type:  indicator.type,
+							type: indicator.type,
 						};
 						return (
-							<div key={ indicator.stat } className="storesuite-overview-chart-item">
+							<div
+								key={ indicator.stat }
+								className="storesuite-overview-chart-item"
+								onClick={ () => {
+									const persisted = getPersistedQuery();
+									const params    = new URLSearchParams( { ...persisted, report: indicator.endpoint, chart: indicator.key } );
+									const base      = storeSuiteConfig.reportsPath || window.location.pathname;
+									getHistory().push( base + '?' + params.toString() );
+								} }
+								style={ { cursor: 'pointer' } }
+							>
 								<h4 className="storesuite-overview-chart-title">
 									{ indicator.label }
 								</h4>
@@ -221,7 +291,7 @@ export default function OverviewReport( { path, query } ) {
 									mode="time-comparison"
 									showHeaderControls={ false }
 									legendPosition="bottom"
-									interactiveLegend={ false }
+									interactiveLegend={ true }
 								/>
 							</div>
 						);
@@ -235,6 +305,6 @@ export default function OverviewReport( { path, query } ) {
 }
 
 OverviewReport.propTypes = {
-	path:  PropTypes.string.isRequired,
+	path: PropTypes.string.isRequired,
 	query: PropTypes.object.isRequired,
 };

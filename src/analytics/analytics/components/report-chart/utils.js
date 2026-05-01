@@ -61,20 +61,23 @@ export function buildChartData(
 			secondaryData.data.intervals &&
 			secondaryData.data.intervals[ i ];
 
+		const primaryLabel   = primary.range ? `${ primary.label } (${ primary.range })` : primary.label;
+		const secondaryLabel = secondary && secondary.range ? `${ secondary.label } (${ secondary.range })` : ( secondary ? secondary.label : '' );
+
 		const entry = {
 			date: formatDate( "Y-m-d\\TH:i:s", interval.date_start ),
 			primary: {
-				label: primary.label,
+				label:     primaryLabel,
 				labelDate: interval.date_start,
-				value: get( interval, [ 'subtotals', selectedKey ], 0 ),
+				value:     get( interval, [ 'subtotals', selectedKey ], 0 ),
 			},
 		};
 
 		if ( secondaryInterval ) {
 			entry.secondary = {
-				label: secondary.label,
+				label:     secondaryLabel,
 				labelDate: secondaryInterval.date_start,
-				value: get( secondaryInterval, [ 'subtotals', selectedKey ], 0 ),
+				value:     get( secondaryInterval, [ 'subtotals', selectedKey ], 0 ),
 			};
 		}
 
