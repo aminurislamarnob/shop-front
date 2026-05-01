@@ -15,6 +15,7 @@ class Settings {
 	public function get_settings(): array {
 		$settings = [
 			'stockStatuses'      => wc_get_product_stock_status_options(),
+			'manageStock'        => get_option( 'woocommerce_manage_stock', 'no' ),
 			'isAnalyticsEnabled' => true,
 			'currentUserData'    => $this->get_current_user_data(),
 			'dateFormat'         => get_option( 'date_format', 'F j, Y' ),

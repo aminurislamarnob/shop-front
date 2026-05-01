@@ -165,6 +165,7 @@ const ReportTable = ( {
 				onColumnsChange={ onColumnsChange }
 				onSort={ onSort }
 				onPageChange={ onPageChange }
+				downloadable={ downloadable }
 				rows={ rows }
 				rowsPerPage={ parseInt( reportQuery.per_page, 10 ) || QUERY_DEFAULTS.pageSize }
 				summary={ summary }
