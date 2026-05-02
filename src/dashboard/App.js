@@ -13,10 +13,12 @@ import { EllipsisMenu, MenuItem, MenuTitle } from '@woocommerce/components';
 
 import { getAdminSetting } from './utils/admin-settings';
 import { redirectIfAdminUrl } from './utils/helper';
+import { DASHBOARD_DEFAULT_DATE_RANGE } from './constants';
 import DashboardDateRangePicker from './components/date-range-picker';
 import StorePerformance from './components/store-performance';
 import { indicators } from './components/store-performance/config';
 import DashboardLeaderboards from './components/leaderboards';
+import NetSalesChart from './components/net-sales-chart';
 
 const HIDDEN_STATS_KEY = 'storesuite_dashboard_hidden_stats';
 
@@ -36,8 +38,12 @@ function lsSet( key, value ) {
 
 function DashboardPage() {
 	const location = useLocation();
-	const query = getQuery();
 	const path = location.pathname;
+
+	const defaultQueryParams = Object.fromEntries(
+		new URLSearchParams( DASHBOARD_DEFAULT_DATE_RANGE )
+	);
+	const query = { ...defaultQueryParams, ...getQuery() };
 
 	const [ hiddenStats, setHiddenStats ] = useState( () =>
 		lsParsed( HIDDEN_STATS_KEY )
@@ -96,6 +102,12 @@ function DashboardPage() {
 							) }
 						</p>
 					) }
+
+					<div className="row">
+						<div className="col-12 col-lg-7">
+							<NetSalesChart query={ query } path={ path } />
+						</div>
+					</div>
 
 					<DashboardLeaderboards query={ query } />
 				</div>
