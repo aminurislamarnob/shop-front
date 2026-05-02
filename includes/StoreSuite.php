@@ -233,7 +233,6 @@ final class StoreSuite {
 		$this->container['storesuite_helper']                      = new Helper();
 		$this->container['storesuite_rewrites']                    = new Rewrites();
 		$this->container['storesuite_dashboard_menu']              = new DashboardMenu();
-		// PHP dashboard widgets replaced by React analytics overview on the dashboard page.
 		$this->container['storesuite_dashboard_header']            = new TemplateParts();
 		$this->container['storesuite_shortcode']                   = new Shortcodes\Shortcodes();
 		$this->container['storesuite_admin_settings']              = new Admin\Settings();
@@ -262,10 +261,12 @@ final class StoreSuite {
 		$this->container['analytics_permissions'] = new Analytics\RestPermissions();
 		$this->container['analytics_controller']  = new Analytics\Controller();
 		$this->container['analytics_assets']      = new Analytics\Assets();
+		$this->container['dashboard_assets']      = new Dashboard\Assets();
 
 		$this->container['analytics_permissions']->register_hooks();
 		$this->container['analytics_controller']->register_hooks();
 		$this->container['analytics_assets']->register_hooks();
+		$this->container['dashboard_assets']->register_hooks();
 	}
 
 	/**

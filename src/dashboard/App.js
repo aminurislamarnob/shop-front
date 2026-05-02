@@ -1,0 +1,121 @@
+import { Fragment, useState, useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { compose } from '@wordpress/compose';
+import { identity } from 'lodash';
+import { SlotFillProvider } from '@wordpress/components';
+import {
+	unstable_HistoryRouter as HistoryRouter,
+	useLocation,
+} from 'react-router-dom';
+import { getHistory, getQuery } from '@woocommerce/navigation';
+import { withOptionsHydration } from '@woocommerce/data';
+import { EllipsisMenu, MenuItem, MenuTitle } from '@woocommerce/components';
+
+import { getAdminSetting } from './utils/admin-settings';
+import { redirectIfAdminUrl } from './utils/helper';
+import DashboardDateRangePicker from './components/date-range-picker';
+import StorePerformance from './components/store-performance';
+import { indicators } from './components/store-performance/config';
+import DashboardLeaderboards from './components/leaderboards';
+
+const HIDDEN_STATS_KEY = 'storesuite_dashboard_hidden_stats';
+
+function lsParsed( key ) {
+	try {
+		return JSON.parse( localStorage.getItem( key ) ) || [];
+	} catch {
+		return [];
+	}
+}
+
+function lsSet( key, value ) {
+	try {
+		localStorage.setItem( key, value );
+	} catch {}
+}
+
+function DashboardPage() {
+	const location = useLocation();
+	const query = getQuery();
+	const path = location.pathname;
+
+	const [ hiddenStats, setHiddenStats ] = useState( () =>
+		lsParsed( HIDDEN_STATS_KEY )
+	);
+
+	useEffect( () => {
+		redirectIfAdminUrl();
+	}, [ location ] );
+
+	const toggleStat = ( stat ) => {
+		const next = hiddenStats.includes( stat )
+			? hiddenStats.filter( ( s ) => s !== stat )
+			: [ ...hiddenStats, stat ];
+		setHiddenStats( next );
+		lsSet( HIDDEN_STATS_KEY, JSON.stringify( next ) );
+	};
+
+	const visibleIndicators = indicators.filter(
+		( i ) => ! hiddenStats.includes( i.stat )
+	);
+
+	return (
+		<SlotFillProvider>
+			<div className="woocommerce-layout storesuite-dashboard-layout">
+				<div className="woocommerce-layout__main">
+					<div className="storesuite-dashboard-title-wrapper">
+						<div class="storesuite-dashboard-title">
+							<h3 class="storesuite-page-main-title">
+								{ __( 'Dashboard', 'storesuite' ) }
+							</h3>
+							<p>
+								{ __(
+									"Here's what's happening with your store today.",
+									'storesuite'
+								) }
+							</p>
+						</div>
+						<div className="dashboard-date-range-picker">
+							<DashboardDateRangePicker
+								query={ query }
+								path={ path }
+							/>
+						</div>
+					</div>
+
+					{ visibleIndicators.length > 0 ? (
+						<StorePerformance
+							indicators={ visibleIndicators }
+							query={ query }
+						/>
+					) : (
+						<p className="storesuite-dashboard-empty-notice">
+							{ __(
+								'No stats selected. Use the menu above to choose which stats to display.',
+								'storesuite'
+							) }
+						</p>
+					) }
+
+					<DashboardLeaderboards query={ query } />
+				</div>
+			</div>
+		</SlotFillProvider>
+	);
+}
+
+const _App = () => (
+	<HistoryRouter history={ getHistory() }>
+		<DashboardPage />
+	</HistoryRouter>
+);
+
+export const App = compose(
+	window.wcSettings?.admin
+		? withOptionsHydration( {
+				...getAdminSetting( 'preloadOptions', {} ),
+		  } )
+		: identity
+)( _App );
+
+export default App;

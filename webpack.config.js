@@ -6,12 +6,17 @@ module.exports = {
 	entry: {
 		'admin/script':    './src/admin.js',
 		'analytics/index': './src/analytics/index.js',
+		'dashboard/index': './src/dashboard/index.js',
 	},
 	output: {
 		...defaultConfig.output,
 		path: path.resolve( __dirname, 'assets/build' ),
 		filename: '[name].js',
-		chunkFilename: 'analytics/chunks/[name].js',
+		chunkFilename: ( pathData ) => {
+			const name = pathData.chunk?.name || '';
+			const dir  = name.startsWith( 'ss-dashboard' ) ? 'dashboard' : 'analytics';
+			return `${ dir }/chunks/[name].js`;
+		},
 	},
 	externals: {
 		...defaultConfig.externals,
@@ -31,6 +36,7 @@ module.exports = {
 		alias: {
 			...( defaultConfig.resolve?.alias || {} ),
 			'analytics': path.resolve( __dirname, 'src/analytics' ),
+			'dashboard': path.resolve( __dirname, 'src/dashboard' ),
 		},
 	},
 };
