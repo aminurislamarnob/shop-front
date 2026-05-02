@@ -4,6 +4,14 @@ import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { find } from 'lodash';
 import {
+	BanknotesIcon,
+	ShoppingCartIcon,
+	ReceiptPercentIcon,
+	ArrowUturnLeftIcon,
+	TagIcon,
+	CubeIcon,
+} from '@heroicons/react/24/outline';
+import {
 	SummaryList,
 	SummaryListPlaceholder,
 	SummaryNumber,
@@ -14,6 +22,29 @@ import { getCurrentDates, appendTimestamp, getDateParamsFromQuery } from '@wooco
 import { CurrencyContext } from '@woocommerce/currency';
 import { storeSuiteDashboard } from '../../config';
 import { DASHBOARD_DEFAULT_DATE_RANGE } from '../../constants';
+
+const ICON_MAP = {
+	'banknotes':        BanknotesIcon,
+	'shopping-cart':    ShoppingCartIcon,
+	'receipt-percent':  ReceiptPercentIcon,
+	'arrow-uturn-left': ArrowUturnLeftIcon,
+	'tag':              TagIcon,
+	'cube':             CubeIcon,
+};
+
+function StatLabel( { icon, color, label } ) {
+	const Icon = ICON_MAP[ icon ];
+	return (
+		<span className="storesuite-stat-label">
+			{ Icon && (
+				<span className={ `storesuite-stat-icon storesuite-stat-icon--${ color }` }>
+					<Icon />
+				</span>
+			) }
+			{ label }
+		</span>
+	);
+}
 
 class StorePerformance extends Component {
 	formatVal( value, format ) {
@@ -93,7 +124,13 @@ class StorePerformance extends Component {
 							key={ indicator.stat }
 							delta={ delta }
 							href={ href }
-							label={ indicator.label }
+							label={
+								<StatLabel
+									icon={ indicator.icon }
+									color={ indicator.color }
+									label={ indicator.label }
+								/>
+							}
 							reverseTrend={ indicator.isReverseTrend }
 							prevLabel={ prevLabel }
 							prevValue={ secondaryValue }

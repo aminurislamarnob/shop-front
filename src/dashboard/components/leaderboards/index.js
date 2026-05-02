@@ -15,11 +15,17 @@ import { DASHBOARD_DEFAULT_DATE_RANGE } from '../../constants';
 const LEADERBOARD_ROWS_KEY = 'storesuite_dashboard_leaderboard_rows';
 
 function lsGet( key, fallback ) {
-	try { return localStorage.getItem( key ) || fallback; } catch { return fallback; }
+	try {
+		return localStorage.getItem( key ) || fallback;
+	} catch {
+		return fallback;
+	}
 }
 
 function lsSet( key, value ) {
-	try { localStorage.setItem( key, value ); } catch {}
+	try {
+		localStorage.setItem( key, value );
+	} catch {}
 }
 
 function rewriteLeaderboardLinks( html ) {
@@ -30,7 +36,10 @@ function rewriteLeaderboardLinks( html ) {
 	div.innerHTML = html;
 	div.querySelectorAll( 'a[href]' ).forEach( ( a ) => {
 		try {
-			const absolute = new URL( a.getAttribute( 'href' ), window.location.href ).href;
+			const absolute = new URL(
+				a.getAttribute( 'href' ),
+				window.location.href
+			).href;
 			a.setAttribute( 'href', mapToAnalyticsRoute( absolute ) );
 		} catch {}
 	} );
@@ -48,11 +57,11 @@ function handleLeaderboardLinkClick( e ) {
 class LeaderboardTable extends Component {
 	getFormattedHeaders() {
 		return ( this.props.headers || [] ).map( ( header, i ) => ( {
-			isLeftAligned:   i === 0,
+			isLeftAligned: i === 0,
 			hiddenByDefault: false,
-			isSortable:      false,
-			key:             header.label,
-			label:           header.label,
+			isSortable: false,
+			key: header.label,
+			label: header.label,
 		} ) );
 	}
 
@@ -61,7 +70,9 @@ class LeaderboardTable extends Component {
 			row.map( ( column ) => ( {
 				display: (
 					<span
-						dangerouslySetInnerHTML={ { __html: rewriteLeaderboardLinks( column.display ) } }
+						dangerouslySetInnerHTML={ {
+							__html: rewriteLeaderboardLinks( column.display ),
+						} }
 						onClick={ handleLeaderboardLinkClick }
 					/>
 				),
@@ -78,11 +89,16 @@ class LeaderboardTable extends Component {
 			return (
 				<Card className={ classes }>
 					<CardHeader>
-						<h3 className="storesuite-leaderboard__title">{ title }</h3>
+						<h3 className="storesuite-leaderboard__title">
+							{ title }
+						</h3>
 					</CardHeader>
 					<CardBody>
 						<EmptyTable>
-							{ __( 'There was an error loading this leaderboard.', 'storesuite' ) }
+							{ __(
+								'There was an error loading this leaderboard.',
+								'storesuite'
+							) }
 						</EmptyTable>
 					</CardBody>
 				</Card>
@@ -95,11 +111,16 @@ class LeaderboardTable extends Component {
 			return (
 				<Card className={ classes }>
 					<CardHeader>
-						<h3 className="storesuite-leaderboard__title">{ title }</h3>
+						<h3 className="storesuite-leaderboard__title">
+							{ title }
+						</h3>
 					</CardHeader>
 					<CardBody>
 						<EmptyTable>
-							{ __( 'No data recorded for the selected time period.', 'storesuite' ) }
+							{ __(
+								'No data recorded for the selected time period.',
+								'storesuite'
+							) }
 						</EmptyTable>
 					</CardBody>
 				</Card>
@@ -122,9 +143,9 @@ class LeaderboardTable extends Component {
 }
 
 LeaderboardTable.defaultProps = {
-	headers:      [],
-	rows:         [],
-	isError:      false,
+	headers: [],
+	rows: [],
+	isError: false,
 	isRequesting: false,
 };
 
@@ -134,8 +155,8 @@ const ConnectedLeaderboardTable = compose(
 
 		const leaderboardQuery = {
 			id,
-			per_page:         totalRows,
-			persisted_query:  {},
+			per_page: totalRows,
+			persisted_query: {},
 			query,
 			select,
 			defaultDateRange: DASHBOARD_DEFAULT_DATE_RANGE,
@@ -146,12 +167,16 @@ const ConnectedLeaderboardTable = compose(
 )( LeaderboardTable );
 
 export default function DashboardLeaderboards( { query } ) {
-	const allLeaderboards = getAdminSetting( 'dataEndpoints', { leaderboards: [] } ).leaderboards || [];
-	const [ rowsPerTable, setRowsPerTableState ] = useState(
-		() => parseInt( lsGet( LEADERBOARD_ROWS_KEY, '5' ), 10 )
+	const allLeaderboards =
+		getAdminSetting( 'dataEndpoints', { leaderboards: [] } ).leaderboards ||
+		[];
+	const [ rowsPerTable, setRowsPerTableState ] = useState( () =>
+		parseInt( lsGet( LEADERBOARD_ROWS_KEY, '5' ), 7 )
 	);
 
-	const productsLeaderboard = allLeaderboards.find( ( l ) => l.id === 'products' );
+	const productsLeaderboard = allLeaderboards.find(
+		( l ) => l.id === 'products'
+	);
 
 	if ( ! productsLeaderboard ) {
 		return null;
@@ -159,10 +184,6 @@ export default function DashboardLeaderboards( { query } ) {
 
 	return (
 		<Fragment>
-			<div className="storesuite-dashboard-section-header">
-				<h3>{ __( 'Top Products', 'storesuite' ) }</h3>
-			</div>
-
 			<ConnectedLeaderboardTable
 				id={ productsLeaderboard.id }
 				title={ productsLeaderboard.label }

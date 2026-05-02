@@ -19,6 +19,8 @@ import StorePerformance from './components/store-performance';
 import { indicators } from './components/store-performance/config';
 import DashboardLeaderboards from './components/leaderboards';
 import NetSalesChart from './components/net-sales-chart';
+import RecentOrders from './components/recent-orders';
+import QuickActions from './components/quick-actions';
 
 const HIDDEN_STATS_KEY = 'storesuite_dashboard_hidden_stats';
 
@@ -70,8 +72,8 @@ function DashboardPage() {
 			<div className="woocommerce-layout storesuite-dashboard-layout">
 				<div className="woocommerce-layout__main">
 					<div className="storesuite-dashboard-title-wrapper">
-						<div class="storesuite-dashboard-title">
-							<h3 class="storesuite-page-main-title">
+						<div className="storesuite-dashboard-title">
+							<h3 className="storesuite-page-main-title">
 								{ __( 'Dashboard', 'storesuite' ) }
 							</h3>
 							<p>
@@ -103,13 +105,26 @@ function DashboardPage() {
 						</p>
 					) }
 
-					<div className="row">
-						<div className="col-12 col-lg-7">
-							<NetSalesChart query={ query } path={ path } />
+					<div className="dashboard-graph-section">
+						<div className="row">
+							<div className="col-12 col-lg-7">
+								<NetSalesChart query={ query } path={ path } />
+							</div>
+							<div className="col-12 col-lg-5">
+								<DashboardLeaderboards query={ query } />
+							</div>
 						</div>
 					</div>
-
-					<DashboardLeaderboards query={ query } />
+					<div className="dashboard-graph-section">
+						<div className="row">
+							<div className="col-12 col-lg-7">
+								<RecentOrders />
+							</div>
+							<div className="col-12 col-lg-5">
+								<QuickActions />
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</SlotFillProvider>
