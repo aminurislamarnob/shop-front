@@ -21,37 +21,37 @@ function getActions() {
 			label: __( 'All Products', 'storesuite' ),
 			icon: ArchiveBoxIcon,
 			color: 'purple',
-			href: base + 'products/',
+			href: base + '/products/',
 		},
 		{
 			label: __( 'Add Product', 'storesuite' ),
 			icon: CubeIcon,
 			color: 'green',
-			href: base + 'products/?action=new',
+			href: base + '/add-new-product/',
 		},
 		{
 			label: __( 'View Orders', 'storesuite' ),
 			icon: ClipboardDocumentListIcon,
 			color: 'teal',
-			href: base + 'orders/',
+			href: base + '/orders/',
 		},
 		{
 			label: __( 'Create Order', 'storesuite' ),
 			icon: DocumentPlusIcon,
 			color: 'blue',
-			href: adminUrl + '/admin.php?page=wc-orders&action=new',
+			href: base + '/add-new-order/',
 		},
 		{
 			label: __( 'Coupons', 'storesuite' ),
 			icon: TicketIcon,
 			color: 'orange',
-			href: base + 'coupons/',
+			href: base + '/coupons/',
 		},
 		{
 			label: __( 'Create Coupon', 'storesuite' ),
 			icon: TagIcon,
 			color: 'pink',
-			href: base + 'coupons/?action=new',
+			href: base + '/add-new-coupon/',
 		},
 		{
 			label: __( 'View Reports', 'storesuite' ),
@@ -63,7 +63,7 @@ function getActions() {
 			label: __( 'Account', 'storesuite' ),
 			icon: UserCircleIcon,
 			color: 'gray',
-			href: base + 'edit-account-details/',
+			href: base + '/edit-account-details/',
 		},
 	];
 }
