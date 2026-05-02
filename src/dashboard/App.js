@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from '@wordpress/element';
+import { Fragment, useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { identity } from 'lodash';
@@ -42,10 +42,15 @@ function DashboardPage() {
 	const location = useLocation();
 	const path = location.pathname;
 
-	const defaultQueryParams = Object.fromEntries(
-		new URLSearchParams( DASHBOARD_DEFAULT_DATE_RANGE )
-	);
-	const query = { ...defaultQueryParams, ...getQuery() };
+	// Memoize the merged query so identity is stable across renders. Otherwise
+	// every render produces a new object, propagating new prop identities to
+	// child components and busting `withSelect` resolver caches.
+	const query = useMemo( () => {
+		const defaults = Object.fromEntries(
+			new URLSearchParams( DASHBOARD_DEFAULT_DATE_RANGE )
+		);
+		return { ...defaults, ...getQuery() };
+	}, [ location.search ] );
 
 	const [ hiddenStats, setHiddenStats ] = useState( () =>
 		lsParsed( HIDDEN_STATS_KEY )

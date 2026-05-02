@@ -16,15 +16,7 @@ class Assets {
 			return;
 		}
 
-		// Bootstrap WC admin scripts on the frontend (suppressing the _doing_it_wrong notice).
-		if ( class_exists( '\Automattic\WooCommerce\Internal\Admin\WCAdminAssets' ) ) {
-			if ( ! function_exists( 'get_current_screen' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/screen.php';
-			}
-			add_filter( 'doing_it_wrong_trigger_error', '__return_false' );
-			\Automattic\WooCommerce\Internal\Admin\WCAdminAssets::get_instance()->register_scripts();
-			remove_filter( 'doing_it_wrong_trigger_error', '__return_false' );
-		}
+		\PluginizeLab\StoreSuite\Analytics\WCAdminBootstrap::ensure();
 
 		$asset_file = STORESUITE_DIR . '/assets/build/dashboard/index.asset.php';
 		$asset      = file_exists( $asset_file ) ? include $asset_file : [];
@@ -70,11 +62,14 @@ class Assets {
 				'dashboardPath' => wp_parse_url( $dashboard_url, PHP_URL_PATH ),
 				'analyticsUrl'  => $analytics_url,
 				'reportsPath'   => wp_parse_url( $analytics_url, PHP_URL_PATH ),
+				'canViewOrders' => current_user_can( 'read_private_shop_orders' ),
 			] ),
 			'before'
 		);
 
-		$settings = ( new \PluginizeLab\StoreSuite\Analytics\Settings() )->get_settings();
+		// Dashboard root only consumes the leaderboards endpoint;
+		// performance indicators come from getReportItems() at runtime.
+		$settings = ( new \PluginizeLab\StoreSuite\Analytics\Settings() )->get_settings( [ 'leaderboards' ] );
 		wp_add_inline_script(
 			'storesuite-dashboard',
 			'var storeSuiteDashboardSettings = ' . wp_json_encode( $settings ),

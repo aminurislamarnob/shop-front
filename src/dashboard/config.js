@@ -5,5 +5,6 @@ export const storeSuiteDashboard = {
 	analyticsUrl:  '',
 	reportsPath:   '',
 	assetsPath:    '',
+	canViewOrders: true,
 	...( typeof storeSuiteDashboardConfig !== 'undefined' ? storeSuiteDashboardConfig : {} ),
 };

@@ -264,87 +264,6 @@
 			this.handleFilterOffcanvas(); // Handle filter off-canvas
 			this.handleOrderFilterOffcanvas(); // Handle order filter off-canvas
 			this.handleBulkActionCheckbox(); // Handle bulk action checkbox
-			this.initDashboardDateRangePicker(); // Dashboard date range picker
-		},
-		/**
-		 * Initialize dashboard date range picker with predefined ranges.
-		 */
-		initDashboardDateRangePicker: function () {
-			var $range = $( '#storesuite_dashboard_range' );
-			var $start = $( '#storesuite_dashboard_start' );
-			var $end = $( '#storesuite_dashboard_end' );
-
-			if (
-				! $range.length ||
-				! $.fn.daterangepicker ||
-				! window.moment
-			) {
-				return;
-			}
-
-			var initialStart = $start.val();
-			var initialEnd = $end.val();
-
-			var start = initialStart
-				? moment( initialStart, 'YYYY-MM-DD' )
-				: moment().startOf( 'month' );
-			var end = initialEnd
-				? moment( initialEnd, 'YYYY-MM-DD' )
-				: moment().endOf( 'month' );
-
-			function storeSuiteUpdateDashboardRange( startDate, endDate ) {
-				$start.val( startDate.format( 'YYYY-MM-DD' ) );
-				$end.val( endDate.format( 'YYYY-MM-DD' ) );
-				$range.val(
-					startDate.format( 'YYYY-MM-DD' ) +
-						' - ' +
-						endDate.format( 'YYYY-MM-DD' )
-				);
-			}
-
-			var labels = window.storeSuiteDateRangesI18n || {};
-			var ranges = {};
-
-			ranges[ labels.today || 'Today' ] = [ moment(), moment() ];
-			ranges[ labels.yesterday || 'Yesterday' ] = [
-				moment().subtract( 1, 'days' ),
-				moment().subtract( 1, 'days' ),
-			];
-			ranges[ labels.last7 || 'Last 7 Days' ] = [
-				moment().subtract( 6, 'days' ),
-				moment(),
-			];
-			ranges[ labels.last30 || 'Last 30 Days' ] = [
-				moment().subtract( 29, 'days' ),
-				moment(),
-			];
-			ranges[ labels.this_month || 'This Month' ] = [
-				moment().startOf( 'month' ),
-				moment().endOf( 'month' ),
-			];
-			ranges[ labels.last_month || 'Last Month' ] = [
-				moment().subtract( 1, 'month' ).startOf( 'month' ),
-				moment().subtract( 1, 'month' ).endOf( 'month' ),
-			];
-
-			$range.daterangepicker(
-				{
-					startDate: start,
-					endDate: end,
-					autoUpdateInput: false,
-					locale: {
-						format: 'YYYY-MM-DD',
-						separator: ' - ',
-					},
-					ranges: ranges,
-				},
-				function ( startDate, endDate ) {
-					storeSuiteUpdateDashboardRange( startDate, endDate );
-				}
-			);
-
-			// Initialize display/value on load.
-			storeSuiteUpdateDashboardRange( start, end );
 		},
 		handleSubmenuToggle: function () {
 			$( document ).on(
@@ -352,13 +271,19 @@
 				'ul.storesuite-dashboard-menu li.has-submenu > a',
 				function ( e ) {
 					// In collapsed sidebar submenus appear as CSS hover flyouts — don't intercept.
-					if ( $( '.my-storesuite-container' ).hasClass( 'storesuite-sidebar-collapsed' ) ) {
+					if (
+						$( '.my-storesuite-container' ).hasClass(
+							'storesuite-sidebar-collapsed'
+						)
+					) {
 						return;
 					}
 					e.preventDefault();
-					var $li     = $( this ).closest( 'li' );
-					var isOpen  = $li.hasClass( 'is-open' );
-					$( 'ul.storesuite-dashboard-menu li.has-submenu.is-open' ).removeClass( 'is-open' );
+					var $li = $( this ).closest( 'li' );
+					var isOpen = $li.hasClass( 'is-open' );
+					$(
+						'ul.storesuite-dashboard-menu li.has-submenu.is-open'
+					).removeClass( 'is-open' );
 					if ( ! isOpen ) {
 						$li.addClass( 'is-open' );
 					}

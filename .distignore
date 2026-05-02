@@ -16,6 +16,7 @@
 .gitignore
 /**/.DS_Store
 /**/*.LICENCE.txt
+/**/*.map
 package.json
 package-lock.json
 composer.json

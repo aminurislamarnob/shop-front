@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from '@wordpress/element';
+import { useState, useEffect, useContext, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {
@@ -10,6 +10,7 @@ import { CurrencyContext } from '@woocommerce/currency';
 import { defaultTableDateFormat } from '@woocommerce/date';
 
 import { getAdminSetting } from '../../utils/admin-settings';
+import { storeSuiteDashboard } from '../../config';
 
 const ORDERS_PER_PAGE = 5;
 
@@ -105,14 +106,20 @@ function getRows( orders, renderCurrency ) {
 	} );
 }
 
+// Stable reference — headers don't depend on props/state.
+const HEADERS = getHeaders();
+
 export default function RecentOrders() {
+	const canViewOrders = storeSuiteDashboard.canViewOrders !== false;
 	const [ orders, setOrders ] = useState( [] );
-	const [ isLoading, setLoading ] = useState( true );
-	const [ isError, setError ] = useState( false );
+	const [ isLoading, setLoading ] = useState( canViewOrders );
 
 	const { render: renderCurrency } = useContext( CurrencyContext );
 
 	useEffect( () => {
+		if ( ! canViewOrders ) {
+			return;
+		}
 		apiFetch( {
 			path: `/wc/v3/orders?per_page=${ ORDERS_PER_PAGE }&orderby=date&order=desc`,
 		} )
@@ -121,19 +128,25 @@ export default function RecentOrders() {
 				setLoading( false );
 			} )
 			.catch( () => {
-				setError( true );
 				setLoading( false );
 			} );
-	}, [] );
+	}, [ canViewOrders ] );
 
-	const rows = isError || isLoading ? [] : getRows( orders, renderCurrency );
+	const rows = useMemo(
+		() => ( isLoading ? [] : getRows( orders, renderCurrency ) ),
+		[ orders, isLoading, renderCurrency ]
+	);
+
+	if ( ! canViewOrders ) {
+		return null;
+	}
 
 	return (
 		<div className="storesuite-dashboard-recent-orders">
 			<TableCard
 				className="storesuite-recent-orders-table"
 				title={ __( 'Recent Orders', 'storesuite' ) }
-				headers={ getHeaders() }
+				headers={ HEADERS }
 				rows={ rows }
 				rowsPerPage={ ORDERS_PER_PAGE }
 				totalRows={ rows.length }

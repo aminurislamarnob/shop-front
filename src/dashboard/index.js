@@ -1,6 +1,9 @@
 /* global storeSuiteDashboardConfig */
 
-if ( typeof storeSuiteDashboardConfig !== 'undefined' && storeSuiteDashboardConfig.assetsPath ) {
+if (
+	typeof storeSuiteDashboardConfig !== 'undefined' &&
+	storeSuiteDashboardConfig.assetsPath
+) {
 	// eslint-disable-next-line
 	__webpack_public_path__ = storeSuiteDashboardConfig.assetsPath;
 }

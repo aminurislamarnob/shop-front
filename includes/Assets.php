@@ -89,11 +89,9 @@ class Assets {
 		$frontend_product_script      = STORESUITE_PLUGIN_ASSET . '/frontend/product.js';
 		$frontend_form_handler_script = STORESUITE_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
-		$storesuite_daterangepicker   = STORESUITE_PLUGIN_ASSET . '/frontend/library/daterangepicker.min.js';
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
-		wp_register_script( 'storesuite_daterangepicker', $storesuite_daterangepicker, array( 'jquery', 'moment' ), '3.1.0', true );
-		wp_register_script( 'storesuite_script', $frontend_script, array( 'jquery', 'storesuite_daterangepicker' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_script', $frontend_script, array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
 		wp_register_script( 'storesuite_form_handler_script', $frontend_form_handler_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), filemtime( STORESUITE_DIR . '/assets/frontend/form-handler.js' ), true );
@@ -116,12 +114,10 @@ class Assets {
 		$frontend_style                   = STORESUITE_PLUGIN_ASSET . '/frontend/style.css';
 		$bs_grid_style                    = STORESUITE_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
 		$frontend_sweetalert2_style       = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
-		$storesuite_daterangepicker_style = STORESUITE_PLUGIN_ASSET . '/frontend/library/daterangepicker.css';
 
 		wp_register_style( 'storesuite_admin_style', $admin_style, array(), STORESUITE_PLUGIN_VERSION );
 		wp_register_style( 'storesuite_style', $frontend_style, array(), STORESUITE_PLUGIN_VERSION );
 		wp_register_style( 'storesuite_bs_grid', $bs_grid_style, array(), STORESUITE_PLUGIN_VERSION );
-		wp_register_style( 'storesuite_daterangepicker', $storesuite_daterangepicker_style, array(), '3.1.0' );
 
 		wp_register_style( 'storesuite_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 		wp_register_style( 'storesuite_jquery-ui-style', WC()->plugin_url() . '/assets/css/jquery-ui/jquery-ui.min.css', array(), STORESUITE_PLUGIN_VERSION );
@@ -177,7 +173,6 @@ class Assets {
 			wp_enqueue_style( 'select2' );
 			wp_enqueue_style( 'storesuite_style' );
 			wp_enqueue_style( 'storesuite_bs_grid' );
-			wp_enqueue_style( 'storesuite_daterangepicker' );
 			wp_enqueue_script( 'storesuite_script' );
 			wp_localize_script(
 				'storesuite_script',
