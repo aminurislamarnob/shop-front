@@ -44,6 +44,7 @@
 
 	.woocommerce-summary {
 		margin-bottom: 24px;
+		min-height: 108px;
 	}
 	.woocommerce-summary__item.is-good-trend
 		.woocommerce-summary__item-delta
@@ -392,6 +393,41 @@
 			color: #4b5563;
 		}
 	}
+}
+
+// Skeleton placeholders — reserve layout space before lazy chunks load,
+// preventing CLS while below-fold data fetches complete.
+@keyframes storesuite-shimmer {
+	0%   { background-position: -400px 0; }
+	100% { background-position: 400px 0; }
+}
+
+%storesuite-skeleton-base {
+	border-radius: 6px;
+	background: linear-gradient( 90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75% );
+	background-size: 800px 100%;
+	animation: storesuite-shimmer 1.4s infinite;
+}
+
+.storesuite-stats-skeleton {
+	@extend %storesuite-skeleton-base;
+	height: 108px;
+	margin-bottom: 24px;
+}
+
+.storesuite-chart-skeleton {
+	@extend %storesuite-skeleton-base;
+	height: 364px;
+}
+
+.storesuite-leaderboard-skeleton {
+	@extend %storesuite-skeleton-base;
+	height: 364px;
+}
+
+.storesuite-table-skeleton {
+	@extend %storesuite-skeleton-base;
+	height: 348px;
 }
 
 .storesuite-dashboard-error {

@@ -2,7 +2,6 @@ import {
 	useState,
 	useEffect,
 	useMemo,
-	lazy,
 	Suspense,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -15,7 +14,6 @@ import {
 } from 'react-router-dom';
 import { getHistory, getQuery } from '@woocommerce/navigation';
 import { withOptionsHydration } from '@woocommerce/data';
-import { Spinner } from '@woocommerce/components';
 
 import { getAdminSetting } from './utils/admin-settings';
 import { redirectIfAdminUrl } from './utils/helper';
@@ -68,9 +66,21 @@ function DashboardPage() {
 		lsParsed( HIDDEN_STATS_KEY )
 	);
 
+	// Defer below-fold components until after the first paint so the browser
+	// can render above-fold LCP content (store performance stats) without
+	// competing with chart/leaderboard/orders data fetches.
+	const [ belowFoldReady, setBelowFoldReady ] = useState( false );
+
 	useEffect( () => {
 		redirectIfAdminUrl();
 	}, [ location ] );
+
+	useEffect( () => {
+		const schedule = window.requestIdleCallback || ( ( fn ) => setTimeout( fn, 150 ) );
+		const cancel = window.cancelIdleCallback || clearTimeout;
+		const id = schedule( () => setBelowFoldReady( true ), { timeout: 300 } );
+		return () => cancel( id );
+	}, [] );
 
 	const visibleIndicators = indicators.filter(
 		( i ) => ! hiddenStats.includes( i.stat )
@@ -80,79 +90,86 @@ function DashboardPage() {
 		<SlotFillProvider>
 			<div className="woocommerce-layout storesuite-dashboard-layout">
 				<div className="woocommerce-layout__main">
-					{ DashboardDateRangePicker &&
-						StorePerformance &&
-						NetSalesChart &&
-						DashboardLeaderboards &&
-						RecentOrders &&
-						QuickActions && (
-							<Suspense
-								fallback={
-									<div className="storesuite-dashboard-loading">
-										<Spinner />
-									</div>
-								}
-							>
-								<div className="storesuite-dashboard-title-wrapper">
-									<div className="storesuite-dashboard-title">
-										<h3 className="storesuite-page-main-title">
-											{ __( 'Dashboard', 'storesuite' ) }
-										</h3>
-										<p>
-											{ __(
-												"Here's what's happening with your store today.",
-												'storesuite'
-											) }
-										</p>
-									</div>
-									<div className="dashboard-date-range-picker">
-										<DashboardDateRangePicker
+					<div className="storesuite-dashboard-title-wrapper">
+						<div className="storesuite-dashboard-title">
+							<h3 className="storesuite-page-main-title">
+								{ __( 'Dashboard', 'storesuite' ) }
+							</h3>
+							<p>
+								{ __(
+									"Here's what's happening with your store today.",
+									'storesuite'
+								) }
+							</p>
+						</div>
+						{ DashboardDateRangePicker && (
+							<div className="dashboard-date-range-picker">
+								<Suspense fallback={ null }>
+									<DashboardDateRangePicker
+										query={ query }
+										path={ path }
+									/>
+								</Suspense>
+							</div>
+						) }
+					</div>
+
+					{ StorePerformance && (
+						<Suspense fallback={ <div className="storesuite-stats-skeleton" /> }>
+							{ visibleIndicators.length > 0 ? (
+								<StorePerformance
+									indicators={ visibleIndicators }
+									query={ query }
+								/>
+							) : (
+								<p className="storesuite-dashboard-empty-notice">
+									{ __(
+										'No stats selected. Use the menu above to choose which stats to display.',
+										'storesuite'
+									) }
+								</p>
+							) }
+						</Suspense>
+					) }
+
+					{ belowFoldReady && NetSalesChart && DashboardLeaderboards && (
+						<div className="dashboard-graph-section">
+							<div className="row">
+								<div className="col-12 col-lg-7">
+									<Suspense fallback={ <div className="storesuite-chart-skeleton" /> }>
+										<NetSalesChart
 											query={ query }
 											path={ path }
 										/>
-									</div>
+									</Suspense>
 								</div>
+								<div className="col-12 col-lg-5">
+									<Suspense fallback={ <div className="storesuite-leaderboard-skeleton" /> }>
+										<DashboardLeaderboards
+											query={ query }
+										/>
+									</Suspense>
+								</div>
+							</div>
+						</div>
+					) }
 
-								{ visibleIndicators.length > 0 ? (
-									<StorePerformance
-										indicators={ visibleIndicators }
-										query={ query }
-									/>
-								) : (
-									<p className="storesuite-dashboard-empty-notice">
-										{ __(
-											'No stats selected. Use the menu above to choose which stats to display.',
-											'storesuite'
-										) }
-									</p>
-								) }
-								<div className="dashboard-graph-section">
-									<div className="row">
-										<div className="col-12 col-lg-7">
-											<NetSalesChart
-												query={ query }
-												path={ path }
-											/>
-										</div>
-										<div className="col-12 col-lg-5">
-											<DashboardLeaderboards
-												query={ query }
-											/>
-										</div>
-									</div>
+					{ belowFoldReady && RecentOrders && QuickActions && (
+						<div className="dashboard-graph-section">
+							<div className="row">
+								<div className="col-12 col-lg-7">
+									<Suspense fallback={ <div className="storesuite-table-skeleton" /> }>
+										<RecentOrders />
+									</Suspense>
 								</div>
-								<div className="dashboard-graph-section">
-									<div className="row">
-										<div className="col-12 col-lg-7">
-											<RecentOrders />
-										</div>
-										<div className="col-12 col-lg-5">
-											<QuickActions />
-										</div>
-									</div>
+								<div className="col-12 col-lg-5">
+									<Suspense fallback={ null }>
+										<QuickActions />
+									</Suspense>
 								</div>
-							</Suspense>
-						) }
+							</div>
+						</div>
+					) }
 				</div>
 			</div>
 		</SlotFillProvider>
