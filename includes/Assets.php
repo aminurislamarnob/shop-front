@@ -91,6 +91,7 @@ class Assets {
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_global_script', STORESUITE_PLUGIN_ASSET . '/frontend/global.js', array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_script', $frontend_script, array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
@@ -169,44 +170,97 @@ class Assets {
 	 * @return void
 	 */
 	public function enqueue_front_scripts() {
-		if ( storesuite_is_dashboard_page() ) {
+		if ( ! storesuite_is_dashboard_page() ) {
+			return;
+		}
+
+		// Base shell styles — always needed.
+		wp_enqueue_style( 'storesuite_style' );
+		wp_enqueue_style( 'storesuite_bs_grid' );
+
+		// Sidebar collapse, submenu, and dropdown behaviours run on every
+		// dashboard page including the React root and analytics route.
+		wp_enqueue_script( 'storesuite_global_script' );
+
+		// React-only routes (dashboard root + analytics) render with
+		// @woocommerce/components and don't need the legacy jQuery stack
+		// or wp_enqueue_media(). Enqueueing those here adds ~700KB of
+		// unused media-views/mediaelement/plupload scripts to LCP.
+		$is_dashboard_root = ! storesuite_is_endpoint_url();
+		$is_analytics      = storesuite_is_endpoint_url( 'analytics' );
+		if ( $is_dashboard_root || $is_analytics ) {
+			return;
+		}
+
+		// Per-endpoint flags.
+		$is_products = storesuite_is_endpoint_url( 'products' )
+			|| storesuite_is_endpoint_url( 'add-new-product' )
+			|| storesuite_is_endpoint_url( 'edit-product' );
+		$is_orders = storesuite_is_endpoint_url( 'orders' )
+			|| storesuite_is_endpoint_url( 'add-new-order' )
+			|| storesuite_is_endpoint_url( 'edit-order' )
+			|| storesuite_is_endpoint_url( 'order-details' );
+		$is_coupons = storesuite_is_endpoint_url( 'coupons' )
+			|| storesuite_is_endpoint_url( 'add-new-coupon' )
+			|| storesuite_is_endpoint_url( 'edit-coupon' );
+		$is_categories = storesuite_is_endpoint_url( 'categories' )
+			|| storesuite_is_endpoint_url( 'add-new-category' )
+			|| storesuite_is_endpoint_url( 'edit-category' );
+		$is_tags = storesuite_is_endpoint_url( 'tags' )
+			|| storesuite_is_endpoint_url( 'add-new-tag' )
+			|| storesuite_is_endpoint_url( 'edit-tag' );
+		$is_brands = storesuite_is_endpoint_url( 'brands' )
+			|| storesuite_is_endpoint_url( 'add-new-brand' )
+			|| storesuite_is_endpoint_url( 'edit-brand' );
+		$is_account = storesuite_is_endpoint_url( 'edit-account-details' );
+
+		$needs_media        = $is_products || $is_categories || $is_brands;
+		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_account;
+		$needs_sweetalert   = $needs_form_handler || $is_orders;
+		$needs_select2      = $is_products || $is_orders;
+
+		if ( $needs_select2 ) {
 			wp_enqueue_style( 'select2' );
-			wp_enqueue_style( 'storesuite_style' );
-			wp_enqueue_style( 'storesuite_bs_grid' );
-			wp_enqueue_script( 'storesuite_script' );
-			wp_localize_script(
-				'storesuite_script',
-				'storeSuiteFrontScript',
-				array(
-					'upload_image_text'     => __( 'Upload Image', 'storesuite' ),
-					'remove_image_text'     => __( 'Remove Image', 'storesuite' ),
-					'upload_product_image'  => __( 'Upload Product Image', 'storesuite' ),
-					'insert_image'          => __( 'Insert Image', 'storesuite' ),
-					'product_image'         => __( 'Product Image', 'storesuite' ),
-					'product_gallery_image' => __( 'Product Gallery Image', 'storesuite' ),
-					'upload_category_image' => __( 'Upload Category Image', 'storesuite' ),
-					'category_image'        => __( 'Category Image', 'storesuite' ),
-					'upload_brand_image'    => __( 'Upload Brand Image', 'storesuite' ),
-					'brand_image'           => __( 'Brand Image', 'storesuite' ),
-					'upload_gallery_images' => __( 'Upload Product Gallery Images', 'storesuite' ),
-				)
-			);
+		}
 
-			wp_localize_script(
-				'storesuite_script',
-				'storeSuiteDateRangesI18n',
-				array(
-					'today'      => __( 'Today', 'storesuite' ),
-					'yesterday'  => __( 'Yesterday', 'storesuite' ),
-					'last7'      => __( 'Last 7 Days', 'storesuite' ),
-					'last30'     => __( 'Last 30 Days', 'storesuite' ),
-					'this_month' => __( 'This Month', 'storesuite' ),
-					'last_month' => __( 'Last Month', 'storesuite' ),
-				)
-			);
+		wp_enqueue_script( 'storesuite_script' );
+		wp_localize_script(
+			'storesuite_script',
+			'storeSuiteFrontScript',
+			array(
+				'upload_image_text'     => __( 'Upload Image', 'storesuite' ),
+				'remove_image_text'     => __( 'Remove Image', 'storesuite' ),
+				'upload_product_image'  => __( 'Upload Product Image', 'storesuite' ),
+				'insert_image'          => __( 'Insert Image', 'storesuite' ),
+				'product_image'         => __( 'Product Image', 'storesuite' ),
+				'product_gallery_image' => __( 'Product Gallery Image', 'storesuite' ),
+				'upload_category_image' => __( 'Upload Category Image', 'storesuite' ),
+				'category_image'        => __( 'Category Image', 'storesuite' ),
+				'upload_brand_image'    => __( 'Upload Brand Image', 'storesuite' ),
+				'brand_image'           => __( 'Brand Image', 'storesuite' ),
+				'upload_gallery_images' => __( 'Upload Product Gallery Images', 'storesuite' ),
+			)
+		);
 
+		wp_localize_script(
+			'storesuite_script',
+			'storeSuiteDateRangesI18n',
+			array(
+				'today'      => __( 'Today', 'storesuite' ),
+				'yesterday'  => __( 'Yesterday', 'storesuite' ),
+				'last7'      => __( 'Last 7 Days', 'storesuite' ),
+				'last30'     => __( 'Last 30 Days', 'storesuite' ),
+				'this_month' => __( 'This Month', 'storesuite' ),
+				'last_month' => __( 'Last Month', 'storesuite' ),
+			)
+		);
+
+		if ( $needs_sweetalert ) {
 			wp_enqueue_style( 'storesuite_sweetalert2_style' );
 			wp_enqueue_script( 'storesuite_sweetalert2_script' );
+		}
+
+		if ( $needs_form_handler ) {
 			wp_enqueue_script( 'storesuite_form_handler_script' );
 			wp_localize_script(
 				'storesuite_form_handler_script',
@@ -309,9 +363,13 @@ class Assets {
 					'coupons_url'                  => storesuite_get_navigation_url( 'coupons' ),
 				)
 			);
-			wp_enqueue_media();
+		}
 
-			// Order styles and scripts.
+		if ( $needs_media ) {
+			wp_enqueue_media();
+		}
+
+		if ( $is_orders ) {
 			wp_enqueue_script( 'storesuite_selectWoo' );
 			wp_enqueue_script( 'storesuite_order_script' );
 
@@ -401,12 +459,13 @@ class Assets {
 					'order_success_title'          => __( 'Success!', 'storesuite' ),
 				)
 			);
+		}
 
-			// product styles and scripts.
+		if ( $is_products ) {
 			wp_enqueue_style( 'storesuite_jquery-ui-style' );
+			wp_enqueue_script( 'storesuite_selectWoo' );
 			wp_enqueue_script( 'storesuite_product_script' );
 
-			// Prepare product script data.
 			$product_script_data = array(
 				'i18n_global_unique_id_error' => __( 'Please enter only numbers and hyphens (-).', 'storesuite' ),
 				'ajax_url'                    => admin_url( 'admin-ajax.php' ),
