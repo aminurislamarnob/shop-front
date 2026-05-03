@@ -172,13 +172,22 @@
 
 .dashboard-graph-section {
 	margin-top: 24px;
+
+	// Reserve column height so the chart/leaderboard mounting and data
+	// fetch don't shift surrounding content (kills CLS, stabilises LCP).
+	> .row > [class*='col-'] {
+		min-height: 420px;
+	}
+
 	.storesuite-leaderboard {
 		margin: 0;
 		box-shadow: none;
 		border: none;
 		border-radius: 6px;
+		min-height: 420px;
 	}
 	.storesuite-dashboard-net-sales-chart {
+		min-height: 420px;
 		.woocommerce-chart {
 			box-shadow: none;
 			border: 0px;
