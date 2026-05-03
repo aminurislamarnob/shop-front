@@ -67,9 +67,9 @@ class Assets {
 			'before'
 		);
 
-		// Dashboard root only consumes the leaderboards endpoint;
-		// performance indicators come from getReportItems() at runtime.
-		$settings = ( new \PluginizeLab\StoreSuite\Analytics\Settings() )->get_settings( [ 'leaderboards' ] );
+		// Preload both leaderboards and performance indicators to prevent frontend waterfall
+		// requests and improve Lighthouse scores (LCP and CLS).
+		$settings = ( new \PluginizeLab\StoreSuite\Analytics\Settings() )->get_settings( [ 'leaderboards', 'performanceIndicators' ] );
 		wp_add_inline_script(
 			'storesuite-dashboard',
 			'var storeSuiteDashboardSettings = ' . wp_json_encode( $settings ),
