@@ -34,7 +34,7 @@ class Settings {
 
 		$settings = array_merge( $settings, $this->load_preload_endpoints( $preload_endpoints ) );
 
-		return $settings;
+		return apply_filters( 'storesuite_analytics_settings', $settings, $preload_endpoints );
 	}
 
 	private function get_current_user_data(): array {
@@ -88,13 +88,15 @@ class Settings {
 	 * @return array
 	 */
 	private function load_preload_endpoints( ?array $needed = null ): array {
-		$all_endpoints = apply_filters(
-			'woocommerce_component_settings_preload_endpoints',
-			[
-				'performanceIndicators' => '/wc-analytics/reports/performance-indicators/allowed',
-				'leaderboards'          => '/wc-analytics/leaderboards/allowed',
-			]
-		);
+		$base_endpoints = [
+			'performanceIndicators' => '/wc-analytics/reports/performance-indicators/allowed',
+			'leaderboards'          => '/wc-analytics/leaderboards/allowed',
+		];
+
+		// Apply Woo's filter first for compatibility with existing extensions,
+		// then the StoreSuite-prefixed filter as the supported extension point.
+		$all_endpoints = apply_filters( 'woocommerce_component_settings_preload_endpoints', $base_endpoints );
+		$all_endpoints = apply_filters( 'storesuite_analytics_preload_endpoints', $all_endpoints );
 
 		if ( null === $needed ) {
 			$needed = array_keys( $all_endpoints );
@@ -132,12 +134,43 @@ class Settings {
 	}
 
 	/**
-	 * Per-user, per-WC-version cache key for the REST preload payload.
+	 * Capability-set + WC-version cache key for the REST preload payload.
+	 *
+	 * Keying by the user's effective capabilities (rather than user ID) means
+	 * all manage_woocommerce users share one transient instead of one per
+	 * user — storage stays proportional to distinct role sets, not user count.
+	 * Plugin version is mixed in so a release ships fresh data on update.
 	 *
 	 * @return string
 	 */
 	private function preload_cache_key(): string {
 		$wc_version = defined( 'WC_VERSION' ) ? WC_VERSION : '0';
-		return 'storesuite_analytics_preload_' . get_current_user_id() . '_' . md5( $wc_version );
+		$user       = wp_get_current_user();
+		$caps       = is_object( $user ) && ! empty( $user->allcaps ) ? $user->allcaps : [];
+		ksort( $caps );
+		$caps_hash = md5( wp_json_encode( $caps ) );
+		return 'storesuite_analytics_preload_' . md5( $wc_version . '|' . STORESUITE_PLUGIN_VERSION . '|' . $caps_hash );
+	}
+
+	/**
+	 * Bust cached preload payloads when a user's role changes. Hooked into
+	 * set_user_role / add_user_role / remove_user_role at registration time.
+	 *
+	 * The capability hash composition above means most invalidations happen
+	 * naturally on the next request — but we also delete here so a downgraded
+	 * user cannot read a stale payload that was cached against the old role.
+	 *
+	 * @param int $user_id Affected user ID.
+	 */
+	public static function invalidate_user_cache( $user_id ): void {
+		$user = get_user_by( 'id', $user_id );
+		if ( ! $user ) {
+			return;
+		}
+		$caps = ! empty( $user->allcaps ) ? $user->allcaps : [];
+		ksort( $caps );
+		$wc_version = defined( 'WC_VERSION' ) ? WC_VERSION : '0';
+		$key        = 'storesuite_analytics_preload_' . md5( $wc_version . '|' . STORESUITE_PLUGIN_VERSION . '|' . md5( wp_json_encode( $caps ) ) );
+		delete_transient( $key );
 	}
 }

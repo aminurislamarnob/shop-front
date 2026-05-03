@@ -114,6 +114,18 @@ Use `getSummaryNumbers` for stat cards, `getReportChartData` for charts, `getRep
 
 All indicator and filter arrays pass through `applyFilters( 'storesuite_analytics_*', array )` — extend via WordPress hooks, not by editing the config directly.
 
+## PHP Extension Hooks
+
+| Hook | Type | Purpose |
+|------|------|---------|
+| `storesuite_analytics_settings` | filter | Final settings array inlined into `storeSuiteAnalyticsSettings`. Add custom `dataEndpoints`, `currentUserData` fields, locale info. |
+| `storesuite_analytics_preload_endpoints` | filter | Map of endpoint key → REST path to preload. **Preferred** over Woo's `woocommerce_component_settings_preload_endpoints` (which still applies first for back-compat) so StoreSuite payloads don't leak into the WC admin context. |
+| `storesuite_analytics_preload_options` | filter | List of `wp_options` to hydrate into the `@woocommerce/data` options store. |
+| `storesuite_analytics_menu_items` | filter | Submenu array for the Analytics sidebar entry — add new report links here. |
+| `storesuite_analytics_rest_read_objects` | filter | List of REST object names whose read access is granted to `manage_woocommerce` users on the frontend. |
+| `storesuite_before_analytics_app` / `storesuite_after_analytics_app` | action | Fired around the `#storesuite-analytics-app` mount point — use for SlotFill targets or non-React UI. |
+| `storesuite_before_dashboard_app` / `storesuite_after_dashboard_app` | action | Same, for the dashboard root. |
+
 ## WooCommerce Component Props (Deprecation Fixes)
 
 All `SelectControl` components in this feature must include both:

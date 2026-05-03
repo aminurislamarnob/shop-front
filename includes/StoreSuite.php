@@ -267,6 +267,12 @@ final class StoreSuite {
 		$this->container['analytics_controller']->register_hooks();
 		$this->container['analytics_assets']->register_hooks();
 		$this->container['dashboard_assets']->register_hooks();
+
+		// Bust the analytics preload transient when a user's role changes so a
+		// downgraded user cannot read a payload cached against their old caps.
+		add_action( 'set_user_role', array( Analytics\Settings::class, 'invalidate_user_cache' ), 10, 1 );
+		add_action( 'add_user_role', array( Analytics\Settings::class, 'invalidate_user_cache' ), 10, 1 );
+		add_action( 'remove_user_role', array( Analytics\Settings::class, 'invalidate_user_cache' ), 10, 1 );
 	}
 
 	/**
@@ -375,6 +381,12 @@ final class StoreSuite {
 	 * @return object
 	 */
 	public function get_storesuite_query() {
+		// Reuse the container instance instead of constructing on every call —
+		// init_query_vars() runs filter chains and option lookups that callers
+		// like DashboardMenu invoke many times per request.
+		if ( isset( $this->container['storesuite_rewrites'] ) ) {
+			return $this->container['storesuite_rewrites'];
+		}
 		return new Rewrites();
 	}
 }

@@ -34,7 +34,12 @@ class WCAdminBootstrap {
 		}
 
 		add_filter( 'doing_it_wrong_trigger_error', '__return_false' );
-		\Automattic\WooCommerce\Internal\Admin\WCAdminAssets::get_instance()->register_scripts();
-		remove_filter( 'doing_it_wrong_trigger_error', '__return_false' );
+		try {
+			\Automattic\WooCommerce\Internal\Admin\WCAdminAssets::get_instance()->register_scripts();
+		} finally {
+			// Always restore — otherwise an exception inside register_scripts()
+			// would leave the global silencing filter in place for the request.
+			remove_filter( 'doing_it_wrong_trigger_error', '__return_false' );
+		}
 	}
 }

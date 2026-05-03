@@ -19,7 +19,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
 		<main class="my-storesuite-page-content storesuite-main-dashboard">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
+			<?php do_action( 'storesuite_before_dashboard_app' ); ?>
 			<div id="storesuite-dashboard-app" class="storesuite-dashboard-wrapper"></div>
+			<?php do_action( 'storesuite_after_dashboard_app' ); ?>
 		</main>
 	</div>
 </div>

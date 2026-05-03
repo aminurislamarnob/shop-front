@@ -13,8 +13,18 @@ class Controller {
 
 	public function load_template( array $query_vars ): void {
 		$endpoint = get_option( 'storesuite_myshop_analytics_endpoint', 'analytics' );
-		if ( isset( $query_vars[ $endpoint ] ) ) {
-			storesuite_get_template_part( 'analytics/analytics' );
+		if ( ! isset( $query_vars[ $endpoint ] ) ) {
+			return;
 		}
+
+		// Block non-admins from receiving the analytics React mount or the
+		// inlined preload globals. Anonymous traffic is already redirected by
+		// the upstream dashboard access guard.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_safe_redirect( storesuite_get_navigation_url() );
+			exit;
+		}
+
+		storesuite_get_template_part( 'analytics/analytics' );
 	}
 }

@@ -16,6 +16,11 @@ class Assets {
 			return;
 		}
 
+		// Capability gate: dashboard React app and inline globals are admin-only.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
 		\PluginizeLab\StoreSuite\Analytics\WCAdminBootstrap::ensure();
 
 		$asset_file = STORESUITE_DIR . '/assets/build/dashboard/index.asset.php';
@@ -49,31 +54,89 @@ class Assets {
 
 		wp_enqueue_script( 'storesuite-dashboard' );
 		wp_enqueue_style( 'storesuite-dashboard' );
-		wp_set_script_translations( 'storesuite-dashboard', 'storesuite' );
+		wp_set_script_translations( 'storesuite-dashboard', 'storesuite', STORESUITE_DIR . '/languages' );
 
 		$dashboard_url = storesuite_get_navigation_url();
 		$analytics_url = storesuite_get_navigation_url( 'analytics' );
 
 		wp_add_inline_script(
 			'storesuite-dashboard',
-			'var storeSuiteDashboardConfig = ' . wp_json_encode( [
-				'assetsPath'    => STORESUITE_PLUGIN_ASSET . '/build/',
-				'dashboardUrl'  => $dashboard_url,
-				'dashboardPath' => wp_parse_url( $dashboard_url, PHP_URL_PATH ),
-				'analyticsUrl'  => $analytics_url,
-				'reportsPath'   => wp_parse_url( $analytics_url, PHP_URL_PATH ),
-				'canViewOrders' => current_user_can( 'read_private_shop_orders' ),
-			] ),
+			'var storeSuiteDashboardConfig = ' . wp_json_encode(
+				[
+					'assetsPath'    => STORESUITE_PLUGIN_ASSET . '/build/',
+					'dashboardUrl'  => $dashboard_url,
+					'dashboardPath' => wp_parse_url( $dashboard_url, PHP_URL_PATH ),
+					'analyticsUrl'  => $analytics_url,
+					'reportsPath'   => wp_parse_url( $analytics_url, PHP_URL_PATH ),
+					'canViewOrders' => current_user_can( 'read_private_shop_orders' ),
+				]
+			),
 			'before'
 		);
 
-		// Preload both leaderboards and performance indicators to prevent frontend waterfall
-		// requests and improve Lighthouse scores (LCP and CLS).
-		$settings = ( new \PluginizeLab\StoreSuite\Analytics\Settings() )->get_settings( [ 'leaderboards', 'performanceIndicators' ] );
+		// Skip preloading endpoints whose widgets are disabled in dashboard
+		// settings — saves a REST round-trip and preload payload size.
+		$needed = [];
+		if ( $this->any_perf_widget_enabled() ) {
+			$needed[] = 'performanceIndicators';
+		}
+		if ( $this->any_leaderboard_widget_enabled() ) {
+			$needed[] = 'leaderboards';
+		}
+
+		$settings = ( new \PluginizeLab\StoreSuite\Analytics\Settings() )->get_settings( $needed );
 		wp_add_inline_script(
 			'storesuite-dashboard',
 			'var storeSuiteDashboardSettings = ' . wp_json_encode( $settings ),
 			'before'
 		);
+	}
+
+	/**
+	 * Whether at least one performance-indicator box is enabled in settings.
+	 * When all are disabled there is no need to preload the indicators endpoint.
+	 */
+	private function any_perf_widget_enabled(): bool {
+		$keys = [
+			'storesuite_show_perf_revenue_total_sales',
+			'storesuite_show_perf_revenue_gross_sales',
+			'storesuite_show_perf_revenue_net_revenue',
+			'storesuite_show_perf_orders_orders_count',
+			'storesuite_show_perf_orders_avg_order_value',
+			'storesuite_show_perf_products_items_sold',
+			'storesuite_show_perf_variations_items_sold',
+			'storesuite_show_perf_revenue_refunds',
+			'storesuite_show_perf_coupons_orders_count',
+			'storesuite_show_perf_coupons_amount',
+			'storesuite_show_perf_taxes_total_tax',
+			'storesuite_show_perf_taxes_order_tax',
+			'storesuite_show_perf_taxes_shipping_tax',
+			'storesuite_show_perf_revenue_shipping',
+			'storesuite_show_perf_downloads_download_count',
+		];
+		return $this->any_widget_enabled( $keys );
+	}
+
+	private function any_leaderboard_widget_enabled(): bool {
+		$keys = [
+			'storesuite_show_widget_top_products_items_sold',
+			'storesuite_show_widget_top_categories_items_sold',
+			'storesuite_show_widget_top_customers_total_spend',
+			'storesuite_show_widget_top_coupons_orders_count',
+		];
+		return $this->any_widget_enabled( $keys );
+	}
+
+	/**
+	 * Settings store visibility flags as 'yes'/'no'; default-on when missing.
+	 */
+	private function any_widget_enabled( array $keys ): bool {
+		foreach ( $keys as $key ) {
+			$value = storesuite_get_option_by_key( $key );
+			if ( '' === $value || null === $value || 'yes' === $value ) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

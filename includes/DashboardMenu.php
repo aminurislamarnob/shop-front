@@ -271,49 +271,52 @@ class DashboardMenu {
 				'pos'        => 20,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
-				'submenu'    => array(
-					'overview'   => array(
-						'title'      => __( 'Overview',    'storesuite' ),
-						'url'        => add_query_arg( 'report', 'overview',    storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'revenue'    => array(
-						'title'      => __( 'Revenue',     'storesuite' ),
-						'url'        => add_query_arg( 'report', 'revenue',     storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'orders'     => array(
-						'title'      => __( 'Orders',      'storesuite' ),
-						'url'        => add_query_arg( 'report', 'orders',      storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'products'   => array(
-						'title'      => __( 'Products',    'storesuite' ),
-						'url'        => add_query_arg( 'report', 'products',    storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'variations' => array(
-						'title'      => __( 'Variations',  'storesuite' ),
-						'url'        => add_query_arg( 'report', 'variations',  storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'categories' => array(
-						'title'      => __( 'Categories',  'storesuite' ),
-						'url'        => add_query_arg( 'report', 'categories',  storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
-					'stock'      => array(
-						'title'      => __( 'Stock',       'storesuite' ),
-						'url'        => add_query_arg( 'report', 'stock',       storesuite_get_navigation_url( 'analytics' ) ),
-						'icon'       => '',
-						'permission' => 'manage_woocommerce',
-					),
+				'submenu'    => apply_filters(
+					'storesuite_analytics_menu_items',
+					array(
+						'overview'   => array(
+							'title'      => __( 'Overview', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'overview', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'revenue'    => array(
+							'title'      => __( 'Revenue', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'revenue', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'orders'     => array(
+							'title'      => __( 'Orders', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'orders', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'products'   => array(
+							'title'      => __( 'Products', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'products', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'variations' => array(
+							'title'      => __( 'Variations', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'variations', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'categories' => array(
+							'title'      => __( 'Categories', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'categories', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'stock'      => array(
+							'title'      => __( 'Stock', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'stock', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+					)
 				),
 			),
 			'edit-account-details' => array(

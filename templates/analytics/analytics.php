@@ -21,7 +21,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<?php do_action( 'storesuite_dashboard_content_before' ); ?>
 		<main class="my-storesuite-page-content storesuite-analytics-page">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
+			<?php do_action( 'storesuite_before_analytics_app' ); ?>
 			<div id="storesuite-analytics-app"></div>
+			<?php do_action( 'storesuite_after_analytics_app' ); ?>
 		</main>
 	</div>
 </div>

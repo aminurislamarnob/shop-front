@@ -16,6 +16,12 @@ class Assets {
 			return;
 		}
 
+		// Capability gate: never ship the analytics bundle or preload globals
+		// to users who can't manage WooCommerce.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
 		WCAdminBootstrap::ensure();
 
 		$asset_file = STORESUITE_DIR . '/assets/build/analytics/index.asset.php';
@@ -49,19 +55,21 @@ class Assets {
 
 		wp_enqueue_script( 'storesuite-analytics' );
 		wp_enqueue_style( 'storesuite-analytics' );
-		wp_set_script_translations( 'storesuite-analytics', 'storesuite' );
+		wp_set_script_translations( 'storesuite-analytics', 'storesuite', STORESUITE_DIR . '/languages' );
 
 		$analytics_url = storesuite_get_navigation_url( 'analytics' );
 		$dashboard_url = storesuite_get_navigation_url();
 
 		wp_add_inline_script(
 			'storesuite-analytics',
-			'var storeSuiteAnalyticsConfig = ' . wp_json_encode( [
-				'assetsPath'    => STORESUITE_PLUGIN_ASSET . '/build/',
-				'analyticsUrl'  => $analytics_url,
-				'dashboardPath' => wp_parse_url( $dashboard_url, PHP_URL_PATH ),
-				'reportsPath'   => wp_parse_url( $analytics_url, PHP_URL_PATH ),
-			] ),
+			'var storeSuiteAnalyticsConfig = ' . wp_json_encode(
+				[
+					'assetsPath'    => STORESUITE_PLUGIN_ASSET . '/build/',
+					'analyticsUrl'  => $analytics_url,
+					'dashboardPath' => wp_parse_url( $dashboard_url, PHP_URL_PATH ),
+					'reportsPath'   => wp_parse_url( $analytics_url, PHP_URL_PATH ),
+				]
+			),
 			'before'
 		);
 

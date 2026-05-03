@@ -21,10 +21,34 @@ class RestPermissions {
 	 * @return bool
 	 */
 	public function grant_read_access( $permission, $context, $obj_id, $obj ): bool {
-		if ( ! $permission
-			&& 'read' === $context
-			&& in_array( $obj, [ 'reports', 'settings', 'product_cat' ], true )
-		) {
+		if ( $permission || 'read' !== $context ) {
+			return $permission;
+		}
+
+		// Routes used by /wc-analytics/* and the async-filter dropdowns
+		// (taxes/coupons/customers/products/variations/orders/taxonomy
+		// terms). WooCommerce already gates these on manage_woocommerce
+		// upstream — we widen for shop_managers reaching the frontend
+		// dashboard.
+		$allowed = apply_filters(
+			'storesuite_analytics_rest_read_objects',
+			[
+				'reports',
+				'settings',
+				'product_cat',
+				'product_tag',
+				'product_brand',
+				'taxes',
+				'coupons',
+				'customers',
+				'products',
+				'variations',
+				'orders',
+				'order',
+			]
+		);
+
+		if ( in_array( $obj, $allowed, true ) ) {
 			$permission = current_user_can( 'manage_woocommerce' );
 		}
 		return $permission;
