@@ -22,12 +22,20 @@
 					}
 					e.preventDefault();
 					var $li = $( this ).closest( 'li' );
-					var isOpen = $li.hasClass( 'is-open' );
-					$(
-						'ul.storesuite-dashboard-menu li.has-submenu.is-open'
-					).removeClass( 'is-open' );
-					if ( ! isOpen ) {
+					var $submenu = $li.children( '.submenu' );
+					if ( $li.hasClass( 'is-open' ) ) {
+						$submenu.stop( true, false ).slideUp( 250, function () {
+							$li.removeClass( 'is-open' );
+							$submenu.css( 'display', '' );
+						} );
+					} else {
 						$li.addClass( 'is-open' );
+						$submenu
+							.stop( true, false )
+							.hide()
+							.slideDown( 250, function () {
+								$submenu.css( 'display', '' );
+							} );
 					}
 				}
 			);

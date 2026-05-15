@@ -1620,28 +1620,30 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a .storesuite-menu-arrow.a
 ul.storesuite-dashboard-menu .submenu {
   display: none;
   margin: 0;
-  padding: 2px 0 6px 36px;
+  padding: 2px 0 6px 0;
   list-style: none;
+  overflow: hidden;
 }
 ul.storesuite-dashboard-menu li.has-submenu.is-open > .submenu {
   display: block;
 }
 ul.storesuite-dashboard-menu .submenu li a {
   display: block;
-  padding: 15px 12px;
+  padding: 15px 12px 15px 44px;
   font-size: 14px;
   font-weight: 400;
   color: var(--storesuite-sidebar-menu-text);
-  border-radius: 5px;
-  transition: background 0.2s, color 0.2s;
+  border-radius: 0;
+  border-left: 3px solid transparent;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
   text-decoration: none;
   line-height: 1;
 }
 ul.storesuite-dashboard-menu .submenu li a.active,
 ul.storesuite-dashboard-menu .submenu li a:hover {
-  background: var(--storesuite-sidebar-active-background);
-  color: #fff;
-  font-weight: 500;
+  background: color-mix( in srgb, var(--storesuite-sidebar-active-background) 10%, transparent );
+  color: var(--storesuite-sidebar-active-background);
+  border-left-color: var(--storesuite-sidebar-active-background);
 }
 ul.storesuite-dashboard-menu li.has-submenu.is-open > a {
   color: var(--storesuite-sidebar-active-text);
