@@ -51,7 +51,7 @@ function storesuite_get_template_part( $slug, $name = '', $args = array() ) {
 }
 
 /**
- * storesuite_is_endpoint_url - Check if an endpoint is showing.
+ * Storesuite_is_endpoint_url - Check if an endpoint is showing.
  *
  * @param string|false $endpoint Whether endpoint.
  * @return bool

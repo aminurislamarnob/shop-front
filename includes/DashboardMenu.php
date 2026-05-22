@@ -59,7 +59,7 @@ class DashboardMenu {
 				continue;
 			}
 
-			if ( 'wp_dashboard' === $key && storesuite_get_option_by_key( 'storesuite_prevent_admin_access' ) === 'yes' && ! current_user_can( 'administrator' ) ) {
+			if ( 'wp_dashboard' === $key && storesuite_get_option_by_key( 'storesuite_prevent_admin_access' ) === 'yes' && ! current_user_can( 'manage_options' ) ) {
 				continue;
 			}
 
