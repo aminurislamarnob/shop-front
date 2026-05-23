@@ -67,12 +67,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="col-md-6">
 			<div class="storesuite-form-group">
 				<label for="storesuite-bulk-wc-regular-price" class="storesuite-form-label"><?php esc_html_e( 'Price value', 'storesuite' ); ?></label>
+				<?php /* translators: %s: WooCommerce currency symbol (e.g. $). */ ?>
 				<input type="text" id="storesuite-bulk-wc-regular-price" name="_regular_price" class="storesuite-form-control text regular_price" placeholder="<?php echo esc_attr( sprintf( __( 'Enter price (%s)', 'storesuite' ), get_woocommerce_currency_symbol() ) ); ?>" value="" />
 			</div>
 		</div>
 		<div class="col-md-6">
 			<div class="storesuite-form-group">
 				<label for="storesuite-bulk-wc-sale-price" class="storesuite-form-label"><?php esc_html_e( 'Sale price value', 'storesuite' ); ?></label>
+				<?php /* translators: %s: WooCommerce currency symbol (e.g. $). */ ?>
 				<input type="text" id="storesuite-bulk-wc-sale-price" name="_sale_price" class="storesuite-form-control text sale_price" placeholder="<?php echo esc_attr( sprintf( __( 'Enter sale price (%s)', 'storesuite' ), get_woocommerce_currency_symbol() ) ); ?>" value="" />
 			</div>
 		</div>
@@ -215,12 +217,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="storesuite-form-label"><?php esc_html_e( 'Dimension values', 'storesuite' ); ?></span>
 					<div class="row storesuite-bulk-wc-dimensions-row">
 						<div class="col-md-4">
+							<?php /* translators: %s: Configured WooCommerce dimension unit (e.g. cm, in). */ ?>
 							<input type="text" id="storesuite-bulk-wc-length" name="_length" class="storesuite-form-control text length" placeholder="<?php echo esc_attr( sprintf( __( 'Length (%s)', 'storesuite' ), $dimension_unit_label ) ); ?>" value="" />
 						</div>
 						<div class="col-md-4">
+							<?php /* translators: %s: Configured WooCommerce dimension unit (e.g. cm, in). */ ?>
 							<input type="text" id="storesuite-bulk-wc-width" name="_width" class="storesuite-form-control text width" placeholder="<?php echo esc_attr( sprintf( __( 'Width (%s)', 'storesuite' ), $dimension_unit_label ) ); ?>" value="" />
 						</div>
 						<div class="col-md-4">
+							<?php /* translators: %s: Configured WooCommerce dimension unit (e.g. cm, in). */ ?>
 							<input type="text" id="storesuite-bulk-wc-height" name="_height" class="storesuite-form-control text height" placeholder="<?php echo esc_attr( sprintf( __( 'Height (%s)', 'storesuite' ), $dimension_unit_label ) ); ?>" value="" />
 						</div>
 					</div>
