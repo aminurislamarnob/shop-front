@@ -1642,7 +1642,7 @@ ul.storesuite-dashboard-menu .submenu li a {
 ul.storesuite-dashboard-menu .submenu li a.active,
 ul.storesuite-dashboard-menu .submenu li a:hover {
   background: color-mix( in srgb, var(--storesuite-sidebar-active-background) 10%, transparent );
-  color: var(--storesuite-sidebar-active-background);
+  color: var(--storesuite-sidebar-active-text);
   border-left-color: var(--storesuite-sidebar-active-background);
 }
 ul.storesuite-dashboard-menu li.has-submenu.is-open > a {
@@ -1732,6 +1732,23 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   position: relative;
 }
 
+/* Hide chevron arrows in collapsed sidebar — submenu is exposed as flyout on hover.
+   High-specificity selectors needed to beat the `.is-open > a .arrow-down { display: block }`
+   rule used by the expanded sidebar's accordion state. */
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu > a .storesuite-menu-arrow,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu.is-open > a .storesuite-menu-arrow.arrow-down,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu.is-open > a .storesuite-menu-arrow.arrow-right {
+  display: none;
+}
+
+/* Suppress the parent tooltip on has-submenu items; the flyout shows the
+   submenu items (which are self-labelling) instead. */
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu > a[data-storesuite-tooltip]::after,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu:hover > a[data-storesuite-tooltip]::after {
+  content: none;
+  display: none;
+}
+
 .my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li > a[data-storesuite-tooltip]::after {
   content: attr(data-storesuite-tooltip);
   position: absolute;
@@ -1761,25 +1778,45 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   transform: translateY(-50%) translateX(0);
 }
 
-.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu .submenu {
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu .submenu,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu.is-open > .submenu {
+  display: block;
   position: absolute;
-  left: calc(100% + 6px);
+  left: 100%;
   top: 0;
   min-width: 200px;
-  padding: 8px 0;
+  /* Extra left padding creates an invisible hover bridge so the cursor can
+     traverse from the parent icon to a submenu item without dropping :hover. */
+  padding: 8px 0 8px 8px;
+  margin-left: -8px;
+  overflow: visible;
   background: var(--storesuite-sidebar-bg-color);
   border-radius: 8px;
-  border: 1px solid var(--storesuite-border-color);
+  border: 1px solid var(--storesuite-sidebar-bg-color);
+  background-clip: padding-box;
   box-shadow: 0 12px 40px -8px rgba(15, 23, 42, 0.12);
   z-index: 9999;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.2s ease, visibility 0.2s;
+  /* Delay the hide transition slightly so a brief cursor exit doesn't kill it. */
+  transition: opacity 0.2s ease 0.1s, visibility 0.2s linear 0.1s;
 }
 
 .my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li:hover > .submenu,
-.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li:focus-within > .submenu {
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li:focus-within > .submenu,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu.is-open:hover > .submenu,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu.is-open:focus-within > .submenu {
+  /* On show, drop the delay so the flyout appears instantly. */
+  transition: opacity 0.2s ease, visibility 0.2s linear;
+}
+
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li:hover > .submenu,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li:focus-within > .submenu,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu.is-open:hover > .submenu,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu li.has-submenu.is-open:focus-within > .submenu,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu .submenu:hover,
+.my-storesuite-container.storesuite-sidebar-collapsed ul.storesuite-dashboard-menu .submenu:focus-within {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
