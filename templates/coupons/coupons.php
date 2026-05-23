@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 do_action( 'storesuite_dashboard_wrapper_start' );
 ?>
 <div class="my-storesuite-container">
-	<aside class="my-storesuite-sidebar">
+	<aside id="storesuite-dashboard-sidebar" class="my-storesuite-sidebar" role="navigation" aria-label="<?php esc_attr_e( 'Store dashboard navigation', 'storesuite' ); ?>">
 		<?php do_action( 'storesuite_dashboard_navigation' ); ?>
 	</aside>
 	<div class="my-storesuite-wrapper">
@@ -28,7 +28,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 										<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
 									</svg>
 								</div>
-								<input type="text" name="search" id="search" placeholder="<?php esc_attr_e( 'Search Coupon', 'storesuite' ); ?>" />
+								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Coupon', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change. ?>" />
 							</div>
 						</form>
 					</div>
@@ -45,9 +45,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			<div class="storesuite-table-responsive">
 				<?php
 				$coupon_statuses = apply_filters( 'storesuite_coupon_listing_post_statuses', array( 'publish', 'draft', 'pending', 'private' ) );
-
 				$posts_per_page = apply_filters( 'storesuite_coupons_per_page', 10 );
 				$current_page   = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+				$search_by      = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change.
 
 				$query = array(
 					'posts_per_page' => $posts_per_page,
@@ -56,6 +56,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 					'paged'          => $current_page,
 					'orderby'        => 'date',
 					'order'          => 'DESC',
+					's'              => $search_by,
 				);
 
 				$coupon_query = new WP_Query( $query );
@@ -105,7 +106,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									</label>
 								</td>
 								<td class="tbl-coupon-code" data-title="<?php esc_attr_e( 'Code', 'storesuite' ); ?>">
-									<strong><?php echo esc_html( $coupon->get_code() ); ?></strong>
+									<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-coupon' ) . '%s', $coupon_id ) ); ?>"><?php echo esc_html( $coupon->get_code() ); ?></a>
 								</td>
 								<td data-title="<?php esc_attr_e( 'Type', 'storesuite' ); ?>">
 									<?php echo esc_html( wc_get_coupon_type( $coupon->get_discount_type() ) ); ?>

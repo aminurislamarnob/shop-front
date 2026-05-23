@@ -15,84 +15,100 @@ class DashboardMenu {
 	}
 
 	/**
+	 * Allowed HTML tags for SVG icons in wp_kses.
+	 */
+	private function allowed_icon_tags(): array {
+		return array(
+			'i'        => array( 'class' => array() ),
+			'svg'      => array(
+				'xmlns'            => array(),
+				'width'            => array(),
+				'height'           => array(),
+				'fill'             => array(),
+				'class'            => array(),
+				'viewBox'          => array(),
+				'stroke'           => array(),
+				'stroke-width'     => array(),
+				'stroke-linecap'   => array(),
+				'stroke-linejoin'  => array(),
+			),
+			'path'     => array(
+				'd'         => array(),
+				'fill-rule' => array(),
+			),
+			'polyline' => array( 'points' => array() ),
+		);
+	}
+
+	/**
 	 * Adds dashboard navigation menus to the admin dashboard.
-	 *
-	 * This method retrieves the dashboard menus and the URL of the currently active menu,
-	 * then outputs the HTML for the menu list, including submenus if present.
 	 */
 	public function add_dashboard_navigations() {
-		$menus       = $this->get_dashboard_menus();
-		$current_url = storesuite_get_navigation_url( $this->get_active_menu() );
+		$menus          = $this->get_dashboard_menus();
+		$active_menu    = $this->get_active_menu();
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$current_report   = isset( $_GET['report'] ) ? sanitize_key( $_GET['report'] ) : 'overview';
+		$current_endpoint = pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
+
+		$chevron = '<svg class="storesuite-menu-arrow arrow-right" xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24"><path d="M15.4,9.88,10.81,5.29a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.42L14,11.29a1,1,0,0,1,0,1.42L9.4,17.29a1,1,0,0,0,1.41,1.42l4.59-4.59A3,3,0,0,0,15.4,9.88Z"/></svg><svg class="storesuite-menu-arrow arrow-down" xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24"><path d="M18.71,8.21a1,1,0,0,0-1.42,0l-4.58,4.58a1,1,0,0,1-1.42,0L6.71,8.21a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41l4.59,4.59a3,3,0,0,0,4.24,0l4.59-4.59A1,1,0,0,0,18.71,8.21Z"/></svg>';
 
 		echo '<ul class="storesuite-dashboard-menu">';
 
 		foreach ( $menus as $key => $menu ) {
-			// Check if the current user has permission to view this menu item.
-			if ( current_user_can( $menu['permission'] ) ) {
-				$active_class = ( $current_url === $menu['url'] ) ? ' class=active' : '';
-
-				// Hide wp dashboard menu item if prevent admin access is enabled.
-				if ( 'wp_dashboard' === $key && storesuite_get_option_by_key( 'storesuite_prevent_admin_access' ) === 'yes' && ! current_user_can( 'administrator' ) ) {
-					continue;
-				}
-
-				echo '<li>';
-				echo '<a href="' . esc_url( $menu['url'] ) . '"' . esc_attr( $active_class ) . ' target="' . esc_attr( $menu['target'] ) . '">';
-				echo wp_kses(
-					$menu['icon'],
-					array(
-						'i'    => array( 'class' => array() ),
-						'svg'  => array(
-							'xmlns'   => array(),
-							'width'   => array(),
-							'height'  => array(),
-							'fill'    => array(),
-							'class'   => array(),
-							'viewBox' => array(),
-						),
-						'path' => array(
-							'd'         => array(),
-							'fill-rule' => array(),
-						),
-					)
-				) . '<span>' . esc_html( $menu['title'] ) . '</span>';
-				echo '</a>';
-
-				// Check for and render submenu.
-				if ( isset( $menu['submenu'] ) && is_array( $menu['submenu'] ) ) {
-					echo '<ul class="submenu">';
-					foreach ( $menu['submenu'] as $subkey => $submenu ) {
-						// Check if the current user has permission to view this submenu item.
-						if ( current_user_can( $submenu['permission'] ) ) {
-							echo '<li>';
-							echo '<a href="' . esc_url( $submenu['url'] ) . '">';
-							echo wp_kses(
-								$submenu['icon'],
-								array(
-									'i'    => array( 'class' => array() ),
-									'svg'  => array(
-										'xmlns'   => array(),
-										'width'   => array(),
-										'height'  => array(),
-										'fill'    => array(),
-										'class'   => array(),
-										'viewBox' => array(),
-									),
-									'path' => array(
-										'd'         => array(),
-										'fill-rule' => array(),
-									),
-								)
-							) . '<span>' . esc_html( $submenu['title'] ) . '</span>';
-							echo '</a>';
-							echo '</li>';
-						}
-					}
-					echo '</ul>';
-				}
-
-				echo '</li>';
+			if ( ! current_user_can( $menu['permission'] ) ) {
+				continue;
 			}
+
+			if ( 'wp_dashboard' === $key && storesuite_get_option_by_key( 'storesuite_prevent_admin_access' ) === 'yes' && ! current_user_can( 'manage_options' ) ) {
+				continue;
+			}
+
+			$has_submenu = ! empty( $menu['submenu'] ) && is_array( $menu['submenu'] );
+			$is_active   = ( $active_menu === $key );
+
+			$li_classes = array();
+			if ( $has_submenu ) {
+				$li_classes[] = 'has-submenu';
+			}
+			if ( $is_active && $has_submenu ) {
+				$li_classes[] = 'is-open';
+			}
+
+			$li_class_attr = ! empty( $li_classes )
+				? ' class="' . esc_attr( implode( ' ', $li_classes ) ) . '"'
+				: '';
+
+			echo '<li' . $li_class_attr . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+			echo '<a href="' . esc_url( $menu['url'] ) . '" class="' . ( $is_active ? 'active' : '' ) . '" target="' . esc_attr( $menu['target'] ) . '" data-storesuite-tooltip="' . esc_attr( $menu['title'] ) . '">';
+			echo wp_kses( $menu['icon'], $this->allowed_icon_tags() );
+			echo '<span>' . esc_html( $menu['title'] ) . '</span>';
+			if ( $has_submenu ) {
+				echo wp_kses( $chevron, $this->allowed_icon_tags() );
+			}
+			echo '</a>';
+
+			if ( $has_submenu ) {
+				echo '<ul class="submenu">';
+				foreach ( $menu['submenu'] as $subkey => $submenu ) {
+					if ( ! current_user_can( $submenu['permission'] ) ) {
+						continue;
+					}
+					if ( isset( $submenu['endpoint'] ) ) {
+						$sub_active = $is_active && ( $current_endpoint === $submenu['endpoint'] );
+					} else {
+						$sub_active = $is_active && ( $current_report === $subkey );
+					}
+					echo '<li>';
+					echo '<a href="' . esc_url( $submenu['url'] ) . '" class="' . ( $sub_active ? 'active' : '' ) . '">';
+					echo '<span>' . esc_html( $submenu['title'] ) . '</span>';
+					echo '</a>';
+					echo '</li>';
+				}
+				echo '</ul>';
+			}
+
+			echo '</li>';
 		}
 
 		echo '</ul>';
@@ -121,6 +137,38 @@ class DashboardMenu {
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+				'submenu'    => array(
+					'products'         => array(
+						'title'      => __( 'All Products', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'products' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'products',
+					),
+					'add-new-product'  => array(
+						'title'      => __( 'Add New Product', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'add-new-product' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'add-new-product',
+					),
+					'categories'       => array(
+						'title'      => __( 'Categories', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'categories' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'categories',
+					),
+					'brands'           => array(
+						'title'      => __( 'Brands', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'brands' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'brands',
+					),
+					'tags'             => array(
+						'title'      => __( 'Tags', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'tags' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'tags',
+					),
+				),
 			),
 			'orders'       => array(
 				'title'      => __( 'Orders', 'storesuite' ),
@@ -131,30 +179,20 @@ class DashboardMenu {
 				'pos'        => 50,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
-			),
-			'categories'   => array(
-				'title'      => __( 'Categories', 'storesuite' ),
-				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24"><path d="M7,0H4A4,4,0,0,0,0,4V7a4,4,0,0,0,4,4H7a4,4,0,0,0,4-4V4A4,4,0,0,0,7,0ZM9,7A2,2,0,0,1,7,9H4A2,2,0,0,1,2,7V4A2,2,0,0,1,4,2H7A2,2,0,0,1,9,4Z"/><path d="M20,0H17a4,4,0,0,0-4,4V7a4,4,0,0,0,4,4h3a4,4,0,0,0,4-4V4A4,4,0,0,0,20,0Zm2,7a2,2,0,0,1-2,2H17a2,2,0,0,1-2-2V4a2,2,0,0,1,2-2h3a2,2,0,0,1,2,2Z"/><path d="M7,13H4a4,4,0,0,0-4,4v3a4,4,0,0,0,4,4H7a4,4,0,0,0,4-4V17A4,4,0,0,0,7,13Zm2,7a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V17a2,2,0,0,1,2-2H7a2,2,0,0,1,2,2Z"/><path d="M20,13H17a4,4,0,0,0-4,4v3a4,4,0,0,0,4,4h3a4,4,0,0,0,4-4V17A4,4,0,0,0,20,13Zm2,7a2,2,0,0,1-2,2H17a2,2,0,0,1-2-2V17a2,2,0,0,1,2-2h3a2,2,0,0,1,2,2Z"/></svg>',
-				'url'        => storesuite_get_navigation_url( 'categories' ),
-				'pos'        => 30,
-				'permission' => 'manage_woocommerce',
-				'target'     => '_self',
-			),
-			'brands'       => array(
-				'title'      => __( 'Brands', 'storesuite' ),
-				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M21,0H3A3,3,0,0,0,0,3V21a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V3A3,3,0,0,0,21,0ZM22,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V3A1,1,0,0,1,3,2H21a1,1,0,0,1,1,1Z"/><path d="M7,17H17a1,1,0,0,0,0-2H7a1,1,0,0,0,0,2Z"/><path d="M10,12h7a1,1,0,0,0,0-2H10a1,1,0,0,0,0,2Z"/><path d="M17,7H7A1,1,0,0,0,7,9H17a1,1,0,0,0,0-2Z"/></svg>',
-				'url'        => storesuite_get_navigation_url( 'brands' ),
-				'pos'        => 30,
-				'permission' => 'manage_woocommerce',
-				'target'     => '_self',
-			),
-			'tags'         => array(
-				'title'      => __( 'Tags', 'storesuite' ),
-				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M7.707,9.256c.391,.391,.391,1.024,0,1.414-.391,.391-1.024,.391-1.414,0-.391-.391-.391-1.024,0-1.414,.391-.391,1.024-.391,1.414,0Zm13.852,6.085l-.565,.565c-.027,1.233-.505,2.457-1.435,3.399l-3.167,3.208c-.943,.955-2.201,1.483-3.543,1.487h-.017c-1.335,0-2.59-.52-3.534-1.464L1.882,15.183c-.65-.649-.964-1.542-.864-2.453l.765-6.916c.051-.456,.404-.819,.858-.881l6.889-.942c.932-.124,1.87,.193,2.528,.851l7.475,7.412c.387,.387,.697,.823,.931,1.288,.812-1.166,.698-2.795-.342-3.835L12.531,2.302c-.229-.229-.545-.335-.851-.292l-6.889,.942c-.549,.074-1.052-.309-1.127-.855-.074-.547,.309-1.051,.855-1.126L11.409,.028c.921-.131,1.869,.191,2.528,.852l7.589,7.405c1.946,1.945,1.957,5.107,.032,7.057Zm-3.438-1.67l-7.475-7.412c-.223-.223-.536-.326-.847-.287l-6.115,.837-.679,6.14c-.033,.303,.071,.601,.287,.816l7.416,7.353c.569,.57,1.322,.881,2.123,.881h.01c.806-.002,1.561-.319,2.126-.893l3.167-3.208c1.155-1.17,1.149-3.067-.014-4.229Z"/></svg>',
-				'url'        => storesuite_get_navigation_url( 'tags' ),
-				'pos'        => 30,
-				'permission' => 'manage_woocommerce',
-				'target'     => '_self',
+				'submenu'    => array(
+					'orders'        => array(
+						'title'      => __( 'All Orders', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'orders' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'orders',
+					),
+					'add-new-order' => array(
+						'title'      => __( 'Add New Order', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'add-new-order' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'add-new-order',
+					),
+				),
 			),
 			'attributes'   => array(
 				'title'      => __( 'Attributes', 'storesuite' ),
@@ -171,7 +209,76 @@ class DashboardMenu {
 				'pos'        => 30,
 				'permission' => 'manage_woocommerce',
 				'target'     => '_self',
+				'submenu'    => array(
+					'coupons'        => array(
+						'title'      => __( 'All Coupons', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'coupons' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'coupons',
+					),
+					'add-new-coupon' => array(
+						'title'      => __( 'Add New Coupon', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'add-new-coupon' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'add-new-coupon',
+					),
+				),
 			),
+			// 'analytics'    => array(
+				// 'title'      => __( 'Analytics', 'storesuite' ),
+				// 'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M23,22H5a3,3,0,0,1-3-3V1A1,1,0,0,0,0,1V19a5.006,5.006,0,0,0,5,5H23a1,1,0,0,0,0-2Z"/><path d="M6,20a1,1,0,0,0,1-1V12a1,1,0,0,0-2,0v7A1,1,0,0,0,6,20Z"/><path d="M10,10v9a1,1,0,0,0,2,0V10a1,1,0,0,0-2,0Z"/><path d="M15,13v6a1,1,0,0,0,2,0V13a1,1,0,0,0-2,0Z"/><path d="M20,9V19a1,1,0,0,0,2,0V9a1,1,0,0,0-2,0Z"/><path d="M6,9a1,1,0,0,0,.707-.293l3.586-3.586a1.025,1.025,0,0,1,1.414,0l2.172,2.172a3,3,0,0,0,4.242,0l5.586-5.586A1,1,0,0,0,22.293.293L16.707,5.878a1,1,0,0,1-1.414,0L13.121,3.707a3,3,0,0,0-4.242,0L5.293,7.293A1,1,0,0,0,6,9Z"/></svg>',
+				// 'url'        => storesuite_get_navigation_url( 'analytics' ),
+				// 'pos'        => 20,
+				// 'permission' => 'manage_woocommerce',
+				// 'target'     => '_self',
+				// 'submenu'    => apply_filters(
+					// 'storesuite_analytics_menu_items',
+					// array(
+						// 'overview'   => array(
+							// 'title'      => __( 'Overview', 'storesuite' ),
+							// 'url'        => add_query_arg( 'report', 'overview', storesuite_get_navigation_url( 'analytics' ) ),
+							// 'icon'       => '',
+							// 'permission' => 'manage_woocommerce',
+						// ),
+						// 'revenue'    => array(
+							// 'title'      => __( 'Revenue', 'storesuite' ),
+							// 'url'        => add_query_arg( 'report', 'revenue', storesuite_get_navigation_url( 'analytics' ) ),
+							// 'icon'       => '',
+							// 'permission' => 'manage_woocommerce',
+						// ),
+						// 'orders'     => array(
+							// 'title'      => __( 'Orders', 'storesuite' ),
+							// 'url'        => add_query_arg( 'report', 'orders', storesuite_get_navigation_url( 'analytics' ) ),
+							// 'icon'       => '',
+							// 'permission' => 'manage_woocommerce',
+						// ),
+						// 'products'   => array(
+							// 'title'      => __( 'Products', 'storesuite' ),
+							// 'url'        => add_query_arg( 'report', 'products', storesuite_get_navigation_url( 'analytics' ) ),
+							// 'icon'       => '',
+							// 'permission' => 'manage_woocommerce',
+						// ),
+						// 'variations' => array(
+							// 'title'      => __( 'Variations', 'storesuite' ),
+							// 'url'        => add_query_arg( 'report', 'variations', storesuite_get_navigation_url( 'analytics' ) ),
+							// 'icon'       => '',
+							// 'permission' => 'manage_woocommerce',
+						// ),
+						// 'categories' => array(
+							// 'title'      => __( 'Categories', 'storesuite' ),
+							// 'url'        => add_query_arg( 'report', 'categories', storesuite_get_navigation_url( 'analytics' ) ),
+							// 'icon'       => '',
+							// 'permission' => 'manage_woocommerce',
+						// ),
+						// 'stock'      => array(
+							// 'title'      => __( 'Stock', 'storesuite' ),
+							// 'url'        => add_query_arg( 'report', 'stock', storesuite_get_navigation_url( 'analytics' ) ),
+							// 'icon'       => '',
+							// 'permission' => 'manage_woocommerce',
+						// ),
+					// )
+				// ),
+			// ),
 			'edit-account-details' => array(
 				'title'      => __( 'Account', 'storesuite' ),
 				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M15,6c0-3.309-2.691-6-6-6S3,2.691,3,6s2.691,6,6,6,6-2.691,6-6Zm-6,4c-2.206,0-4-1.794-4-4s1.794-4,4-4,4,1.794,4,4-1.794,4-4,4Zm-.008,4.938c.068,.548-.32,1.047-.869,1.116-3.491,.436-6.124,3.421-6.124,6.946,0,.552-.448,1-1,1s-1-.448-1-1c0-4.531,3.386-8.37,7.876-8.93,.542-.069,1.047,.32,1.116,.869Zm13.704,4.195l-.974-.562c.166-.497,.278-1.019,.278-1.572s-.111-1.075-.278-1.572l.974-.562c.478-.276,.642-.888,.366-1.366-.277-.479-.887-.644-1.366-.366l-.973,.562c-.705-.794-1.644-1.375-2.723-1.594v-1.101c0-.552-.448-1-1-1s-1,.448-1,1v1.101c-1.079,.22-2.018,.801-2.723,1.594l-.973-.562c-.48-.277-1.09-.113-1.366,.366-.276,.479-.112,1.09,.366,1.366l.974,.562c-.166,.497-.278,1.019-.278,1.572s.111,1.075,.278,1.572l-.974,.562c-.478,.276-.642,.888-.366,1.366,.186,.321,.521,.5,.867,.5,.169,0,.341-.043,.499-.134l.973-.562c.705,.794,1.644,1.375,2.723,1.594v1.101c0,.552,.448,1,1,1s1-.448,1-1v-1.101c1.079-.22,2.018-.801,2.723-1.594l.973,.562c.158,.091,.33,.134,.499,.134,.346,0,.682-.179,.867-.5,.276-.479,.112-1.09-.366-1.366Zm-5.696,.866c-1.654,0-3-1.346-3-3s1.346-3,3-3,3,1.346,3,3-1.346,3-3,3Z"/></svg>',
@@ -223,10 +330,34 @@ class DashboardMenu {
 		unset( $active[0] );
 
 		if ( $active ) {
-			$active_menu = implode( '/', $active );
+			// First segment after the dashboard root is the endpoint slug.
+			// Edit pages append the entity ID (e.g. edit-category/123) which
+			// would otherwise miss the lookup and leave the parent menu
+			// un-highlighted.
+			$active_menu = reset( $active );
 
-			if ( $active_menu === 'new-product' ) {
-				$active_menu = 'products';
+			$endpoint_to_parent = array(
+				'add-new-product'  => 'products',
+				'edit-product'     => 'products',
+				'new-product'      => 'products',
+				'add-new-order'    => 'orders',
+				'edit-order'       => 'orders',
+				'order-details'    => 'orders',
+				'categories'       => 'products',
+				'add-new-category' => 'products',
+				'edit-category'    => 'products',
+				'brands'           => 'products',
+				'add-new-brand'    => 'products',
+				'edit-brand'       => 'products',
+				'tags'             => 'products',
+				'add-new-tag'      => 'products',
+				'edit-tag'         => 'products',
+				'add-new-coupon'   => 'coupons',
+				'edit-coupon'      => 'coupons',
+			);
+
+			if ( isset( $endpoint_to_parent[ $active_menu ] ) ) {
+				$active_menu = $endpoint_to_parent[ $active_menu ];
 			}
 
 			if ( get_query_var( 'edit' ) && is_singular( 'product' ) ) {

@@ -194,6 +194,7 @@ class Main {
 			'--storesuite-sidebar-menu-text'     => 'storesuite_color_sidebar_menu_text',
 			'--storesuite-sidebar-active-text'    => 'storesuite_color_sidebar_active_text',
 			'--storesuite-sidebar-active-background' => 'storesuite_color_sidebar_active_background',
+			'--storesuite-sidebar-border-color'   => 'storesuite_color_sidebar_border',
 			'--storesuite-bg-color-light'         => 'storesuite_color_lite_bg',
 			'--storesuite-border-color'           => 'storesuite_color_border',
 		);
@@ -205,12 +206,18 @@ class Main {
 				$rules[] = $var_name . ': ' . esc_attr( $value );
 			}
 		}
-
 		if ( empty( $rules ) ) {
 			return;
 		}
-		
+
 		$css = ':root{ ' . esc_attr( implode( ';', $rules ) ) . ' }';
+
+		if ( storesuite_get_option_by_key( 'storesuite_color_palette_mode' ) === 'predefined' ) {
+			$css .= '.storesuite-table-search-icon svg,'
+				. '.storesuite-dashboard-braedcrumb ul li svg,'
+				. '.storesuite-dropdown svg{fill:#94a3b8}';
+		}
+
 		wp_register_style( 'storesuite-css-variables', false );
 		wp_enqueue_style( 'storesuite-css-variables' );
 		wp_add_inline_style( 'storesuite-css-variables', $css );

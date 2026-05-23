@@ -1,0 +1,144 @@
+import { __ } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
+import { compose } from '@wordpress/compose';
+import { withSelect } from '@wordpress/data';
+import PropTypes from 'prop-types';
+import { getNewPath } from '@woocommerce/navigation';
+import {
+	SummaryList,
+	SummaryListPlaceholder,
+	SummaryNumber,
+} from '@woocommerce/components';
+import { calculateDelta, formatValue } from '@woocommerce/number';
+import { getSummaryNumbers, SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { getDateParamsFromQuery } from '@woocommerce/date';
+import { CurrencyContext } from '@woocommerce/currency';
+import ReportError from '../report-error';
+
+export class ReportSummary extends Component {
+	formatVal( val, type ) {
+		const { formatAmount, getCurrencyConfig } = this.context;
+		return type === 'currency'
+			? formatAmount( val )
+			: formatValue( getCurrencyConfig(), type, val );
+	}
+
+	getValues( key, type ) {
+		const { emptySearchResults, summaryData } = this.props;
+		const { totals } = summaryData;
+		const primaryTotal   = totals.primary   ? totals.primary[ key ]   : 0;
+		const secondaryTotal = totals.secondary ? totals.secondary[ key ] : 0;
+		const primaryValue   = emptySearchResults ? 0 : primaryTotal;
+		const secondaryValue = emptySearchResults ? 0 : secondaryTotal;
+		return {
+			delta:      calculateDelta( primaryValue, secondaryValue ),
+			prevValue:  this.formatVal( secondaryValue, type ),
+			value:      this.formatVal( primaryValue, type ),
+		};
+	}
+
+	render() {
+		const { charts, query, selectedChart, summaryData, endpoint, report, defaultDateRange } = this.props;
+		const { isError, isRequesting } = summaryData;
+
+		if ( isError ) {
+			return <ReportError />;
+		}
+		if ( isRequesting ) {
+			return <SummaryListPlaceholder numberOfItems={ charts.length } />;
+		}
+
+		const { compare } = getDateParamsFromQuery( query, defaultDateRange );
+
+		const renderSummaryNumbers = ( { onToggle } ) =>
+			charts.map( ( chart ) => {
+				const { key, order, orderby, label, type, isReverseTrend, labelTooltipText } = chart;
+				const newPath = { chart: key };
+				if ( orderby ) {
+					newPath.orderby = orderby;
+				}
+				if ( order ) {
+					newPath.order = order;
+				}
+				const href       = getNewPath( newPath );
+				const isSelected = selectedChart.key === key;
+				const { delta, prevValue, value } = this.getValues( key, type );
+
+				return (
+					<SummaryNumber
+						key={ key }
+						delta={ delta }
+						href={ href }
+						label={ label }
+						reverseTrend={ isReverseTrend }
+						prevLabel={
+							compare === 'previous_period'
+								? __( 'Previous period:', 'storesuite' )
+								: __( 'Previous year:', 'storesuite' )
+						}
+						prevValue={ prevValue }
+						selected={ isSelected }
+						value={ value }
+						labelTooltipText={ labelTooltipText }
+						onLinkClickCallback={ () => {
+							if ( onToggle ) {
+								onToggle();
+							}
+						} }
+					/>
+				);
+			} );
+
+		return <SummaryList>{ renderSummaryNumbers }</SummaryList>;
+	}
+}
+
+ReportSummary.defaultProps = {
+	summaryData: {
+		totals:      { primary: {}, secondary: {} },
+		isError:     false,
+		isRequesting: false,
+	},
+};
+
+ReportSummary.contextType = CurrencyContext;
+
+export default compose(
+	withSelect( ( select, props ) => {
+		const {
+			charts,
+			endpoint,
+			limitProperties,
+			query,
+			filters,
+			advancedFilters,
+		} = props;
+		const limitBy = limitProperties || [ endpoint ];
+
+		const hasLimitByParam = limitBy.some(
+			( item ) => query[ item ] && query[ item ].length
+		);
+		if ( query.search && ! hasLimitByParam ) {
+			return { emptySearchResults: true };
+		}
+
+		const fields = charts && charts.map( ( chart ) => chart.key );
+
+		const { woocommerce_default_date_range: defaultDateRange } = select(
+			SETTINGS_STORE_NAME
+		).getSetting( 'wc_admin', 'wcAdminSettings' );
+
+		const summaryData = getSummaryNumbers( {
+			endpoint,
+			query,
+			select,
+			limitBy,
+			filters,
+			advancedFilters,
+			defaultDateRange,
+			fields,
+		} );
+
+		return { summaryData, defaultDateRange };
+	} )
+)( ReportSummary );

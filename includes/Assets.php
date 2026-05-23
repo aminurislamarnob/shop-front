@@ -89,12 +89,11 @@ class Assets {
 		$frontend_product_script      = STORESUITE_PLUGIN_ASSET . '/frontend/product.js';
 		$frontend_form_handler_script = STORESUITE_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
-		$storesuite_daterangepicker   = STORESUITE_PLUGIN_ASSET . '/frontend/library/daterangepicker.min.js';
 		$frontend_variation_script 	  = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
-		wp_register_script( 'storesuite_daterangepicker', $storesuite_daterangepicker, array( 'jquery', 'moment' ), '3.1.0', true );
-		wp_register_script( 'storesuite_script', $frontend_script, array( 'jquery', 'storesuite_daterangepicker' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_global_script', STORESUITE_PLUGIN_ASSET . '/frontend/global.js', array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_script', $frontend_script, array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
 		wp_register_script( 'storesuite_form_handler_script', $frontend_form_handler_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), filemtime( STORESUITE_DIR . '/assets/frontend/form-handler.js' ), true );
@@ -102,7 +101,7 @@ class Assets {
 
 		// Order scripts.
 		wp_register_script( 'storesuite_order_script', $frontend_order_script, array( 'storesuite_selectWoo' ), STORESUITE_PLUGIN_VERSION, true );
-		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_script', 'storesuite_form_handler_script', 'storesuite_selectWoo', 'jquery-ui-datepicker', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable' ), STORESUITE_PLUGIN_VERSION, true );
@@ -118,12 +117,10 @@ class Assets {
 		$frontend_style                   = STORESUITE_PLUGIN_ASSET . '/frontend/style.css';
 		$bs_grid_style                    = STORESUITE_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
 		$frontend_sweetalert2_style       = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
-		$storesuite_daterangepicker_style = STORESUITE_PLUGIN_ASSET . '/frontend/library/daterangepicker.css';
 
 		wp_register_style( 'storesuite_admin_style', $admin_style, array(), STORESUITE_PLUGIN_VERSION );
 		wp_register_style( 'storesuite_style', $frontend_style, array(), STORESUITE_PLUGIN_VERSION );
 		wp_register_style( 'storesuite_bs_grid', $bs_grid_style, array(), STORESUITE_PLUGIN_VERSION );
-		wp_register_style( 'storesuite_daterangepicker', $storesuite_daterangepicker_style, array(), '3.1.0' );
 
 		wp_register_style( 'storesuite_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 		wp_register_style( 'storesuite_jquery-ui-style', WC()->plugin_url() . '/assets/css/jquery-ui/jquery-ui.min.css', array(), STORESUITE_PLUGIN_VERSION );
@@ -137,19 +134,30 @@ class Assets {
 	public function enqueue_admin_scripts() {
 		$page = get_current_screen();
 		if ( 'woocommerce_page_storesuite' === $page->id ) {
+			wp_enqueue_media();
+
 			$asset_file = include STORESUITE_DIR . '/assets/build/admin/script.asset.php';
+
+			$admin_script_dependencies = array_values(
+				array_unique(
+					array_merge(
+						$asset_file['dependencies'],
+						array( 'media-editor' )
+					)
+				)
+			);
 
 			wp_enqueue_script(
 				'storesuite-admin-page',
 				STORESUITE_PLUGIN_ASSET . '/build/admin/script.js',
-				$asset_file['dependencies'],
+				$admin_script_dependencies,
 				$asset_file['version'],
 				true
 			);
 
 			wp_enqueue_style(
 				'storesuite-admin-styles',
-				STORESUITE_PLUGIN_ASSET . '/build/admin.css',
+				STORESUITE_PLUGIN_ASSET . '/build/admin/script.css',
 				array( 'wp-components' ),
 				$asset_file['version'] ?? null,
 			);
@@ -164,45 +172,104 @@ class Assets {
 	 * @return void
 	 */
 	public function enqueue_front_scripts() {
-		if ( storesuite_is_dashboard_page() ) {
+		if ( ! storesuite_is_dashboard_page() ) {
+			return;
+		}
+
+		// Base shell styles — always needed.
+		wp_enqueue_style( 'storesuite_style' );
+		wp_enqueue_style( 'storesuite_bs_grid' );
+
+		// Sidebar collapse, submenu, and dropdown behaviours run on every
+		// dashboard page including the React root and analytics route.
+		wp_enqueue_script( 'storesuite_global_script' );
+
+		// React-only routes (dashboard root + analytics) render with
+		// @woocommerce/components and don't need the legacy jQuery stack
+		// or wp_enqueue_media(). Enqueueing those here adds ~700KB of
+		// unused media-views/mediaelement/plupload scripts to LCP.
+		$is_dashboard_root = ! storesuite_is_endpoint_url();
+		$is_analytics      = storesuite_is_endpoint_url( 'analytics' );
+		if ( $is_dashboard_root || $is_analytics ) {
+			return;
+		}
+
+		// Per-endpoint flags.
+		$is_products = storesuite_is_endpoint_url( 'products' )
+			|| storesuite_is_endpoint_url( 'add-new-product' )
+			|| storesuite_is_endpoint_url( 'edit-product' );
+		$is_orders = storesuite_is_endpoint_url( 'orders' )
+			|| storesuite_is_endpoint_url( 'add-new-order' )
+			|| storesuite_is_endpoint_url( 'edit-order' )
+			|| storesuite_is_endpoint_url( 'order-details' );
+		$is_coupons = storesuite_is_endpoint_url( 'coupons' )
+			|| storesuite_is_endpoint_url( 'add-new-coupon' )
+			|| storesuite_is_endpoint_url( 'edit-coupon' );
+		$is_categories = storesuite_is_endpoint_url( 'categories' )
+			|| storesuite_is_endpoint_url( 'add-new-category' )
+			|| storesuite_is_endpoint_url( 'edit-category' );
+		$is_tags = storesuite_is_endpoint_url( 'tags' )
+			|| storesuite_is_endpoint_url( 'add-new-tag' )
+			|| storesuite_is_endpoint_url( 'edit-tag' );
+		$is_brands = storesuite_is_endpoint_url( 'brands' )
+			|| storesuite_is_endpoint_url( 'add-new-brand' )
+			|| storesuite_is_endpoint_url( 'edit-brand' );
+		$is_account = storesuite_is_endpoint_url( 'edit-account-details' );
+
+		$needs_media        = $is_products || $is_categories || $is_brands;
+		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_account;
+		$needs_sweetalert   = $needs_form_handler || $is_orders;
+		$needs_select2      = $is_products || $is_orders || $is_coupons;
+		// jQuery UI datepicker styles: any form-handler page that renders
+		// .date-picker inputs (currently the coupon expiry date) needs them.
+		$needs_jquery_ui    = $is_products || $is_coupons;
+
+		if ( $needs_jquery_ui ) {
+			wp_enqueue_style( 'storesuite_jquery-ui-style' );
+		}
+
+		if ( $needs_select2 ) {
 			wp_enqueue_style( 'select2' );
-			wp_enqueue_style( 'storesuite_style' );
-			wp_enqueue_style( 'storesuite_bs_grid' );
-			wp_enqueue_style( 'storesuite_daterangepicker' );
-			wp_enqueue_script( 'storesuite_script' );
-			wp_localize_script(
-				'storesuite_script',
-				'storeSuiteFrontScript',
-				array(
-					'upload_image_text'     => __( 'Upload Image', 'storesuite' ),
-					'remove_image_text'     => __( 'Remove Image', 'storesuite' ),
-					'upload_product_image'  => __( 'Upload Product Image', 'storesuite' ),
-					'insert_image'          => __( 'Insert Image', 'storesuite' ),
-					'product_image'         => __( 'Product Image', 'storesuite' ),
-					'product_gallery_image' => __( 'Product Gallery Image', 'storesuite' ),
-					'upload_category_image' => __( 'Upload Category Image', 'storesuite' ),
-					'category_image'        => __( 'Category Image', 'storesuite' ),
-					'upload_brand_image'    => __( 'Upload Brand Image', 'storesuite' ),
-					'brand_image'           => __( 'Brand Image', 'storesuite' ),
-					'upload_gallery_images' => __( 'Upload Product Gallery Images', 'storesuite' ),
-				)
-			);
+		}
 
-			wp_localize_script(
-				'storesuite_script',
-				'storeSuiteDateRangesI18n',
-				array(
-					'today'      => __( 'Today', 'storesuite' ),
-					'yesterday'  => __( 'Yesterday', 'storesuite' ),
-					'last7'      => __( 'Last 7 Days', 'storesuite' ),
-					'last30'     => __( 'Last 30 Days', 'storesuite' ),
-					'this_month' => __( 'This Month', 'storesuite' ),
-					'last_month' => __( 'Last Month', 'storesuite' ),
-				)
-			);
+		wp_enqueue_script( 'storesuite_script' );
+		wp_localize_script(
+			'storesuite_script',
+			'storeSuiteFrontScript',
+			array(
+				'upload_image_text'     => __( 'Upload Image', 'storesuite' ),
+				'remove_image_text'     => __( 'Remove Image', 'storesuite' ),
+				'upload_product_image'  => __( 'Upload Product Image', 'storesuite' ),
+				'insert_image'          => __( 'Insert Image', 'storesuite' ),
+				'product_image'         => __( 'Product Image', 'storesuite' ),
+				'product_gallery_image' => __( 'Product Gallery Image', 'storesuite' ),
+				'upload_category_image' => __( 'Upload Category Image', 'storesuite' ),
+				'category_image'        => __( 'Category Image', 'storesuite' ),
+				'upload_brand_image'    => __( 'Upload Brand Image', 'storesuite' ),
+				'brand_image'           => __( 'Brand Image', 'storesuite' ),
+				'upload_gallery_images' => __( 'Upload Product Gallery Images', 'storesuite' ),
+			)
+		);
 
+		wp_localize_script(
+			'storesuite_script',
+			'storeSuiteDateRangesI18n',
+			array(
+				'today'      => __( 'Today', 'storesuite' ),
+				'yesterday'  => __( 'Yesterday', 'storesuite' ),
+				'last7'      => __( 'Last 7 Days', 'storesuite' ),
+				'last30'     => __( 'Last 30 Days', 'storesuite' ),
+				'this_month' => __( 'This Month', 'storesuite' ),
+				'last_month' => __( 'Last Month', 'storesuite' ),
+			)
+		);
+
+		if ( $needs_sweetalert ) {
 			wp_enqueue_style( 'storesuite_sweetalert2_style' );
 			wp_enqueue_script( 'storesuite_sweetalert2_script' );
+		}
+
+		if ( $needs_form_handler ) {
 			wp_enqueue_script( 'storesuite_form_handler_script' );
 			wp_localize_script(
 				'storesuite_form_handler_script',
@@ -317,14 +384,19 @@ class Assets {
 						'account_last_name_required'     => __( 'Last name is required.', 'storesuite' ),
 						'account_display_name_required'  => __( 'Display name is required.', 'storesuite' ),
 						'account_email_required'         => __( 'Email address is required.', 'storesuite' ),
+						'account_password_mismatch'      => __( 'New password and confirm password do not match.', 'storesuite' ),
 					),
 					'coupons_url'                  => storesuite_get_navigation_url( 'coupons' ),
 					'attribute_terms_url'          => storesuite_get_navigation_url( 'attribute-terms' ),
 				)
 			);
-			wp_enqueue_media();
+		}
 
-			// Order styles and scripts.
+		if ( $needs_media ) {
+			wp_enqueue_media();
+		}
+
+		if ( $is_orders ) {
 			wp_enqueue_script( 'storesuite_selectWoo' );
 			wp_enqueue_script( 'storesuite_order_script' );
 
@@ -414,12 +486,12 @@ class Assets {
 					'order_success_title'          => __( 'Success!', 'storesuite' ),
 				)
 			);
+		}
 
-			// product styles and scripts.
-			wp_enqueue_style( 'storesuite_jquery-ui-style' );
+		if ( $is_products ) {
+			wp_enqueue_script( 'storesuite_selectWoo' );
 			wp_enqueue_script( 'storesuite_product_script' );
 
-			// Prepare product script data.
 			$product_script_data = array(
 				'i18n_global_unique_id_error' => __( 'Please enter only numbers and hyphens (-).', 'storesuite' ),
 				'ajax_url'                    => admin_url( 'admin-ajax.php' ),
@@ -430,6 +502,29 @@ class Assets {
 					'error_title'      => __( 'Error!', 'storesuite' ),
 					'ok_button'        => __( 'OK', 'storesuite' ),
 					'unexpected_error' => __( 'An unexpected error occurred. Please try again.', 'storesuite' ),
+				),
+				'bulk_edit'                   => array(
+					'nonce'                   => wp_create_nonce( 'storesuite_bulk_edit_products' ),
+					'trash_nonce'             => wp_create_nonce( 'storesuite_bulk_trash_products' ),
+					'select_products_title'   => __( 'Select products', 'storesuite' ),
+					'select_products_message' => __( 'Choose at least one product to bulk edit.', 'storesuite' ),
+					'success_title'           => __( 'Bulk update complete', 'storesuite' ),
+					'trash_success_title'     => __( 'Bulk trash complete', 'storesuite' ),
+					'ok_button'               => __( 'OK', 'storesuite' ),
+				),
+				'woocommerce_admin'          => array(
+					'mon_decimal_point' => wc_get_price_decimal_separator(),
+				),
+				'woocommerce_quick_edit'     => array(
+					'strings' => array(
+						'allow_reviews' => __( 'Enable reviews', 'storesuite' ),
+					),
+				),
+				'quick_edit'                 => array(
+					'nonce'                 => wp_create_nonce( 'storesuite_product_quick_edit' ),
+					'load_form_nonce'       => wp_create_nonce( 'storesuite_product_quick_edit_form' ),
+					'success_title'         => __( 'Product updated', 'storesuite' ),
+					'loading_text'          => __( 'Loading…', 'storesuite' ),
 				),
 			);
 

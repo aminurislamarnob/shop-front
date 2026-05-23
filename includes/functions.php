@@ -51,7 +51,7 @@ function storesuite_get_template_part( $slug, $name = '', $args = array() ) {
 }
 
 /**
- * storesuite_is_endpoint_url - Check if an endpoint is showing.
+ * Storesuite_is_endpoint_url - Check if an endpoint is showing.
  *
  * @param string|false $endpoint Whether endpoint.
  * @return bool
@@ -269,9 +269,15 @@ function storesuite_get_navigation_url( $name = '' ) {
  * @return bool
  */
 function storesuite_is_dashboard_page() {
-	$page_id = (int) storesuite_get_option_by_key( 'storesuite_dashboard_page_id' );
+	static $cached = null;
+	if ( null !== $cached ) {
+		return $cached;
+	}
 
-	return ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'storesuite_dashboard' );
+	$page_id = (int) storesuite_get_option_by_key( 'storesuite_dashboard_page_id' );
+	$cached  = ( $page_id && is_page( $page_id ) ) || wc_post_content_has_shortcode( 'storesuite_dashboard' );
+
+	return $cached;
 }
 
 

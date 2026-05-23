@@ -42,7 +42,7 @@ $actions            = array_filter(
 do_action( 'storesuite_dashboard_wrapper_start' );
 ?>
 <div class="my-storesuite-container">
-	<aside class="my-storesuite-sidebar">
+	<aside id="storesuite-dashboard-sidebar" class="my-storesuite-sidebar" role="navigation" aria-label="<?php esc_attr_e( 'Store dashboard navigation', 'storesuite' ); ?>">
 		<?php do_action( 'storesuite_dashboard_navigation' ); ?>
 	</aside>
 	<div class="my-storesuite-wrapper">
@@ -81,7 +81,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			</div>
 			<div class="storesuite-dashboard-order-details">
 				<div class="row">
-					<div class="col-md-9">
+					<div class="col-md-8">
 						<div class="storesuite-card">
 							<?php do_action( 'storesuite_before_order_items_table', $order ); ?>
 	
@@ -171,7 +171,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 						storesuite_get_template_part( 'orders/order-details-customer', '', array( 'order' => $order ) );
 						?>
 					</div>
-					<div class="col-md-3">
+					<div class="col-md-4">
 						<?php
 							/**
 							 * Action hook fired after the order details action.

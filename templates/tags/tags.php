@@ -14,7 +14,7 @@ use PluginizeLab\StoreSuite\ProductTag\Tags;
 do_action( 'storesuite_dashboard_wrapper_start' );
 ?>
 <div class="my-storesuite-container">
-	<aside class="my-storesuite-sidebar">
+	<aside id="storesuite-dashboard-sidebar" class="my-storesuite-sidebar" role="navigation" aria-label="<?php esc_attr_e( 'Store dashboard navigation', 'storesuite' ); ?>">
 		<?php do_action( 'storesuite_dashboard_navigation' ); ?>
 	</aside>
 	<div class="my-storesuite-wrapper">
@@ -53,14 +53,14 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			$tags_data     = $product_tags->get_paginated_tags( $tags_per_page, $current_page, $search_term );
 			?>
 			<div class="storesuite-table-responsive">
-				<table class="my-storesuite-tbl my-storesuite-product-list-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table my-storesuite-tags-table">
 					<thead>
 						<tr>
 							<th width="210"><?php echo esc_html__( 'Name', 'storesuite' ); ?></th>
 							<th><?php echo esc_html__( 'Description', 'storesuite' ); ?></th>
 							<th width="210"><?php echo esc_html__( 'Slug', 'storesuite' ); ?></th>
 							<th width="70"><?php echo esc_html__( 'Count', 'storesuite' ); ?></th>
-							<th class="text-right"><?php echo esc_html__( 'Action', 'storesuite' ); ?></th>
+							<th class="text-right"><?php echo esc_html__( 'Actions', 'storesuite' ); ?></th>
 						</tr>
 						<tbody>
 						<?php
@@ -79,7 +79,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							foreach ( $tags_data->tags as $product_tag ) {
 								?>
 						<tr id="tag-row-<?php echo esc_attr( $product_tag->term_id ); ?>">
-							<td><?php echo esc_html( $product_tag->name ); ?></td>
+							<td><a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-tag' ) . '%s', $product_tag->term_id ) ); ?>"><?php echo esc_html( $product_tag->name ); ?></a></td>
 							<td><?php echo esc_html( wp_trim_words( $product_tag->description, '9', '...' ) ); ?></td>
 							<td><?php echo esc_html( $product_tag->slug ); ?></td>
 							<td><?php echo esc_html( $product_tag->count ); ?></td>

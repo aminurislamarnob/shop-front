@@ -6,6 +6,31 @@
 			this.bindEvents();
 			this.initDatePicker();
 			this.initProductSearch();
+			this.initSelect2();
+		},
+
+		// Enhance plain .storesuite-select2 fields (e.g. coupon Product
+		// Categories / Exclude Categories) with selectWoo. Mirrors the same
+		// helper in product.js so non-product pages that load form-handler
+		// (coupons, categories, brands, tags, account) also get enhanced.
+		initSelect2: function () {
+			if ( typeof $.fn.selectWoo !== 'function' ) {
+				return;
+			}
+			$( '.storesuite-select2' )
+				.filter( ':not(.enhanced)' )
+				.each( function () {
+					var $field = $( this );
+					$field
+						.selectWoo( {
+							allowClear: !! $field.data( 'allow_clear' ),
+							placeholder: $field.data( 'placeholder' ) || '',
+							minimumResultsForSearch:
+								$field.data( 'minimum_results_for_search' ) || 0,
+							width: '100%',
+						} )
+						.addClass( 'enhanced' );
+				} );
 		},
 
 		bindEvents: function () {
@@ -29,6 +54,8 @@
 			this.handleCouponDelete();
 			this.handleGenerateCouponCode();
 			this.handleEditAccount();
+			this.bindEditAccountPasswordLiveValidation();
+			this.bindPasswordVisibilityToggle();
 			this.initEditAccountPasswordToggle();
 		},
 
@@ -97,6 +124,10 @@
 				$field.parent().hasClass( 'storesuite-coupon-code-wrapper' )
 			) {
 				$field.parent().after( $errorMsg );
+			} else if (
+				$field.parent().hasClass( 'storesuite-password-field' )
+			) {
+				$field.parent().after( $errorMsg );
 			} else {
 				$field.after( $errorMsg );
 			}
@@ -110,6 +141,122 @@
 					.siblings( '.storesuite-field-error' )
 					.remove();
 			} );
+		},
+
+		/**
+		 * Check whether new password and confirm password match.
+		 *
+		 * @param {jQuery} $form Edit account form.
+		 * @return {boolean} True when valid.
+		 */
+		validateEditAccountPasswordMatch: function ( $form ) {
+			var $newPassword = $form.find( '#password_1' );
+			var $confirmPassword = $form.find( '#password_2' );
+			var mismatchMessage =
+				storeSuiteFormHandler.i18n.account_password_mismatch;
+
+			if ( ! $newPassword.length || ! $confirmPassword.length ) {
+				return true;
+			}
+
+			var newPasswordValue = $newPassword.val() || '';
+			var confirmPasswordValue = $confirmPassword.val() || '';
+
+			// Clear previous mismatch UI.
+			$newPassword.removeClass( 'storesuite-field-invalid' );
+			$confirmPassword.removeClass( 'storesuite-field-invalid' );
+			$newPassword.siblings( '.storesuite-field-error' ).remove();
+			$confirmPassword.siblings( '.storesuite-field-error' ).remove();
+			$newPassword
+				.parent()
+				.siblings( '.storesuite-field-error' )
+				.remove();
+			$confirmPassword
+				.parent()
+				.siblings( '.storesuite-field-error' )
+				.remove();
+
+			if (
+				( newPasswordValue || confirmPasswordValue ) &&
+				newPasswordValue !== confirmPasswordValue
+			) {
+				this.markFieldAsInvalid( $confirmPassword, mismatchMessage );
+				return false;
+			}
+
+			return true;
+		},
+
+		/**
+		 * Validate password fields while user types.
+		 */
+		bindEditAccountPasswordLiveValidation: function () {
+			var self = this;
+			var fieldsSelector =
+				'#storesuite-edit-account-form #password_1, #storesuite-edit-account-form #password_2';
+			var eventName =
+				'input.storesuiteAccountPassword change.storesuiteAccountPassword';
+
+			$( document ).off( eventName, fieldsSelector );
+			$( document ).on( eventName, fieldsSelector, function () {
+				self.validateEditAccountPasswordMatch(
+					$( '#storesuite-edit-account-form' )
+				);
+			} );
+		},
+
+		/**
+		 * Toggle password visibility for account password fields.
+		 */
+		bindPasswordVisibilityToggle: function () {
+			$( document )
+				.off(
+					'click.storesuitePasswordToggle',
+					'.storesuite-password-toggle'
+				)
+				.on(
+					'click.storesuitePasswordToggle',
+					'.storesuite-password-toggle',
+					function () {
+						var $toggleButton = $( this );
+						var targetSelector =
+							$toggleButton.data( 'target' ) || '';
+						var $targetField = $( targetSelector );
+						var $showIcon = $toggleButton.find(
+							'.storesuite-password-icon-show'
+						);
+						var $hideIcon = $toggleButton.find(
+							'.storesuite-password-icon-hide'
+						);
+						var showLabel =
+							$toggleButton.data( 'show-label' ) ||
+							'Show password';
+						var hideLabel =
+							$toggleButton.data( 'hide-label' ) ||
+							'Hide password';
+
+						if ( ! $targetField.length ) {
+							return;
+						}
+
+						var isPasswordHidden =
+							$targetField.attr( 'type' ) === 'password';
+						$targetField.attr(
+							'type',
+							isPasswordHidden ? 'text' : 'password'
+						);
+						$toggleButton.attr(
+							'aria-label',
+							isPasswordHidden ? hideLabel : showLabel
+						);
+						$toggleButton.attr(
+							'title',
+							isPasswordHidden ? hideLabel : showLabel
+						);
+						$showIcon.toggleClass( 'storesuite-hide' );
+						$hideIcon.toggleClass( 'storesuite-hide' );
+					}
+				);
 		},
 
 		/**
@@ -1735,6 +1882,11 @@
 					if (
 						! self.validateRequiredFields( $form, requiredFields )
 					) {
+						return;
+					}
+
+					if ( ! self.validateEditAccountPasswordMatch( $form ) ) {
+						$form.find( '#password_2' ).trigger( 'focus' );
 						return;
 					}
 

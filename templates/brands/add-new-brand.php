@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 do_action( 'storesuite_dashboard_wrapper_start' );
 ?>
 <div class="my-storesuite-container">
-	<aside class="my-storesuite-sidebar">
+	<aside id="storesuite-dashboard-sidebar" class="my-storesuite-sidebar" role="navigation" aria-label="<?php esc_attr_e( 'Store dashboard navigation', 'storesuite' ); ?>">
 		<?php do_action( 'storesuite_dashboard_navigation' ); ?>
 	</aside>
 	<div class="my-storesuite-wrapper">
@@ -75,7 +75,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								<?php wp_nonce_field( '_storesuite_add_product_brand_', 'storesuite_add_product_brand_nonce' ); ?>
 								<input type="hidden" name="action" value="storesuite_add_product_brand">
 								<div class="storesuite-button-group">
-									<button class="my-storesuite-button" name="save_product_brand" type="submit"><?php esc_html_e( 'Submit', 'storesuite' ); ?></button>
+									<button class="my-storesuite-button" name="save_product_brand" type="submit"><?php esc_html_e( 'Add Brand', 'storesuite' ); ?></button>
 									<a href="<?php echo esc_url( storesuite_get_navigation_url( 'brands' ) ); ?>" class="my-storesuite-button my-storesuite-button-light"><?php esc_html_e( 'Back', 'storesuite' ); ?></a>
 								</div>
 							</div>

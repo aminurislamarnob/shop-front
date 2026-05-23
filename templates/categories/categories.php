@@ -14,7 +14,7 @@ use PluginizeLab\StoreSuite\ProductCategory\Categories;
 do_action( 'storesuite_dashboard_wrapper_start' );
 ?>
 <div class="my-storesuite-container">
-	<aside class="my-storesuite-sidebar">
+	<aside id="storesuite-dashboard-sidebar" class="my-storesuite-sidebar" role="navigation" aria-label="<?php esc_attr_e( 'Store dashboard navigation', 'storesuite' ); ?>">
 		<?php do_action( 'storesuite_dashboard_navigation' ); ?>
 	</aside>
 	<div class="my-storesuite-wrapper">
@@ -62,7 +62,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<th><?php echo esc_html__( 'Parent', 'storesuite' ); ?></th>
 							<th width="210"><?php echo esc_html__( 'Slug', 'storesuite' ); ?></th>
 							<th width="70"><?php echo esc_html__( 'Count', 'storesuite' ); ?></th>
-							<th class="text-right"><?php echo esc_html__( 'Action', 'storesuite' ); ?></th>
+							<th class="text-right"><?php echo esc_html__( 'Actions', 'storesuite' ); ?></th>
 						</tr>
 						<tbody>
 							<?php

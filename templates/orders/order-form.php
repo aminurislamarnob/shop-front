@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="row">
 			<!-- Left Column -->
 			<div class="col-md-8">
-				<!-- Products Section -->
-				<div class="storesuite-card product-serach-for-order-box">
+				<!-- Products Section: visibility toggles reactively with #order_status via order.js. -->
+				<div class="storesuite-card product-serach-for-order-box<?php echo $order->is_editable() ? '' : ' storesuite-hide'; ?>">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Products', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
 						<div class="storesuite-form-group search-group">
@@ -600,7 +600,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 											<?php
 											printf(
 												/* translators: $1: Date created, $2 Time created */
-												esc_html__( 'added on %1$s at %2$s', 'storesuite' ),
+												esc_html__( '%1$s at %2$s', 'storesuite' ),
 												esc_html( $note->date_created->date_i18n( wc_date_format() ) ),
 												esc_html( $note->date_created->date_i18n( wc_time_format() ) )
 											);

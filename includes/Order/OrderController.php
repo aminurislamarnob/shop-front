@@ -106,7 +106,7 @@ class OrderController {
 					<?php
 					printf(
 						/* translators: $1: Date created, $2 Time created */
-						esc_html__( 'added on %1$s at %2$s', 'storesuite' ),
+						esc_html__( '%1$s at %2$s', 'storesuite' ),
 						esc_html( $note->date_created->date_i18n( wc_date_format() ) ),
 						esc_html( $note->date_created->date_i18n( wc_time_format() ) )
 					);
@@ -282,8 +282,7 @@ class OrderController {
 					wc_downloadable_product_permissions( $order_id, true );
 
 				} elseif ( ! did_action( 'woocommerce_order_action_' . sanitize_title( $action ) ) ) {
-
-						do_action( 'woocommerce_order_action_' . sanitize_title( $action ), $order );
+					do_action( 'woocommerce_order_action_' . sanitize_title( $action ), $order );
 				}
 			}
 
@@ -390,9 +389,11 @@ class OrderController {
 				$response['redirect_url'] = esc_url( storesuite_get_navigation_url( 'edit-order' ) . $order_id );
 				$response['message'] 	  = __( 'Order created successfully!', 'storesuite' );
 				$response['context'] 	  = 'add';
+				$response['is_order_editable'] = $order->is_editable();
 			}else{
 				$response['message'] = __( 'Order updated successfully!', 'storesuite' );
 				$response['context'] = 'edit';
+				$response['is_order_editable'] = $order->is_editable();
 			}
 		} catch ( \Exception $e ) {
 			wp_send_json_error( array( 'error' => $e->getMessage() ) );

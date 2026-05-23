@@ -22,7 +22,6 @@ class ProductController {
 		add_action( 'wp_ajax_storesuite_edit_product_action', array( $this, 'handle_edit_product' ) );
 		add_action( 'wp_ajax_storesuite_delete_product', array( $this, 'handle_delete_product' ) );
 	}
-
 	/**
 	 * Load the new product template.
 	 *
@@ -332,4 +331,5 @@ class ProductController {
 
 		return $data;
 	}
+
 }
