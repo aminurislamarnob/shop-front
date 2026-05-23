@@ -4,7 +4,7 @@ Tags: woocommerce, store management, shop manager, store suite, front-end shop m
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,13 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.0.6 =
+* Improved dashboard analytics with React for faster load, net sales chart, recent orders, quick actions, and leaderboards.
+* Nest Categories, Brands, and Tags under the Products menu with a collapsed-sidebar flyout submenu.
+* Improve Lighthouse scores by deferring rendering, reserving widget heights, and enqueueing assets per endpoint.
+* Harden analytics REST permissions, cache preload payloads per user capability, and bust cache on role changes.
+* Patch dependency vulnerabilities and bump build toolchain to Node 22.
 
 = 1.0.3 =
 * Minor update on admin settings UI.

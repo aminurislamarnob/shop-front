@@ -6,6 +6,31 @@
 			this.bindEvents();
 			this.initDatePicker();
 			this.initProductSearch();
+			this.initSelect2();
+		},
+
+		// Enhance plain .storesuite-select2 fields (e.g. coupon Product
+		// Categories / Exclude Categories) with selectWoo. Mirrors the same
+		// helper in product.js so non-product pages that load form-handler
+		// (coupons, categories, brands, tags, account) also get enhanced.
+		initSelect2: function () {
+			if ( typeof $.fn.selectWoo !== 'function' ) {
+				return;
+			}
+			$( '.storesuite-select2' )
+				.filter( ':not(.enhanced)' )
+				.each( function () {
+					var $field = $( this );
+					$field
+						.selectWoo( {
+							allowClear: !! $field.data( 'allow_clear' ),
+							placeholder: $field.data( 'placeholder' ) || '',
+							minimumResultsForSearch:
+								$field.data( 'minimum_results_for_search' ) || 0,
+							width: '100%',
+						} )
+						.addClass( 'enhanced' );
+				} );
 		},
 
 		bindEvents: function () {

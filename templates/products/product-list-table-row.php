@@ -33,7 +33,7 @@ if ( empty( $storesuite_wfm_thumb ) ) {
 		<img src="<?php echo esc_url( $storesuite_wfm_thumb ); ?>" class="my-storesuite-thumb" alt="<?php echo esc_attr( get_the_title( $product_id ) ); ?>">
 	</td>
 	<td class="tbl-product-name" data-title="<?php esc_attr_e( 'Name', 'storesuite' ); ?>">
-		<a href="<?php echo esc_url( get_the_permalink( $product_id ) ); ?>"><?php echo esc_html( get_the_title( $product_id ) ); ?></a>
+		<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-product' ) . '%s', $product_id ) ); ?>"><?php echo esc_html( get_the_title( $product_id ) ); ?></a>
 	</td>
 	<td data-title="<?php esc_attr_e( 'Category', 'storesuite' ); ?>">
 		<?php echo wp_kses_post( wc_get_product_category_list( $product_id, ', ', '', '' ) ); ?>

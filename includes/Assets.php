@@ -217,7 +217,14 @@ class Assets {
 		$needs_media        = $is_products || $is_categories || $is_brands;
 		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_account;
 		$needs_sweetalert   = $needs_form_handler || $is_orders;
-		$needs_select2      = $is_products || $is_orders;
+		$needs_select2      = $is_products || $is_orders || $is_coupons;
+		// jQuery UI datepicker styles: any form-handler page that renders
+		// .date-picker inputs (currently the coupon expiry date) needs them.
+		$needs_jquery_ui    = $is_products || $is_coupons;
+
+		if ( $needs_jquery_ui ) {
+			wp_enqueue_style( 'storesuite_jquery-ui-style' );
+		}
 
 		if ( $needs_select2 ) {
 			wp_enqueue_style( 'select2' );
@@ -462,7 +469,6 @@ class Assets {
 		}
 
 		if ( $is_products ) {
-			wp_enqueue_style( 'storesuite_jquery-ui-style' );
 			wp_enqueue_script( 'storesuite_selectWoo' );
 			wp_enqueue_script( 'storesuite_product_script' );
 

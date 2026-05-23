@@ -603,9 +603,9 @@ template {
   margin-left: auto;
 }
 
-@media (min-width: 1536px) {
+@media (min-width: 1920px) {
   .my-storesuite-page-content {
-    max-width: 1536px;
+    max-width: 1920px;
   }
 }
 
@@ -744,10 +744,10 @@ table.my-storesuite-tbl>tbody {
 .my-storesuite-tbl td.action-buttons {
   width: 245px;
 }
-.my-storesuite-tbl tr td:first-child a {
+.my-storesuite-tbl:not(.my-storesuite-tags-table) tr td:first-child a {
   color: var(--storesuite-primary-bg);
 }
-.my-storesuite-tbl tr td:first-child a:hover{
+.my-storesuite-tbl:not(.my-storesuite-tags-table) tr td:first-child a:hover{
   text-decoration: underline;
 }
 

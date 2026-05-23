@@ -208,7 +208,9 @@ class Rewrites {
 				$title = __( 'Add New Order', 'storesuite' );
 				break;
 			case 'edit-order':
-				$title = __( 'Edit Order', 'storesuite' );
+				$order = wc_get_order( $wp->query_vars['edit-order'] );
+				/* translators: %s: order number */
+				$title = $order ? sprintf( __( 'Edit Order #%s', 'storesuite' ), $order->get_order_number() ) : __( 'Edit Order', 'storesuite' );
 				break;
 			case 'order-details':
 				$order = wc_get_order( $wp->query_vars['order-details'] );
@@ -249,7 +251,9 @@ class Rewrites {
 				$title = __( 'Add New Coupon', 'storesuite' );
 				break;
 			case 'edit-coupon':
-				$title = __( 'Edit Coupon', 'storesuite' );
+				$coupon_id = absint( $wp->query_vars['edit-coupon'] );
+				/* translators: %d: coupon post ID */
+				$title = $coupon_id ? sprintf( __( 'Edit Coupon #%d', 'storesuite' ), $coupon_id ) : __( 'Edit Coupon', 'storesuite' );
 				break;
 			case 'edit-account-details':
 				$title = __( 'Account details', 'storesuite' );

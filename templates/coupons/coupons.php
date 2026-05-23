@@ -106,7 +106,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									</label>
 								</td>
 								<td class="tbl-coupon-code" data-title="<?php esc_attr_e( 'Code', 'storesuite' ); ?>">
-									<strong><?php echo esc_html( $coupon->get_code() ); ?></strong>
+									<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-coupon' ) . '%s', $coupon_id ) ); ?>"><?php echo esc_html( $coupon->get_code() ); ?></a>
 								</td>
 								<td data-title="<?php esc_attr_e( 'Type', 'storesuite' ); ?>">
 									<?php echo esc_html( wc_get_coupon_type( $coupon->get_discount_type() ) ); ?>

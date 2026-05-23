@@ -15,7 +15,6 @@ import './Components/LayoutStyles.css';
 import { SettingsProvider } from './context/SettingsContext';
 import Layout from './Components/Layout';
 import ColorsSettings from './Components/ColorsSettings';
-import DashboardSettings from './Components/DashboardSettings';
 import GeneralSettings from './Components/GeneralSettings';
 import PaginationSettings from './Components/PaginationSettings';
 
@@ -32,10 +31,6 @@ const App = () => (
 					<Route
 						path="pagination-settings"
 						element={ <PaginationSettings /> }
-					/>
-					<Route
-						path="dashboard-settings"
-						element={ <DashboardSettings /> }
 					/>
 				</Route>
 			</Routes>

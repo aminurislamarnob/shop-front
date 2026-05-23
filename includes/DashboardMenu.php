@@ -322,7 +322,11 @@ class DashboardMenu {
 		unset( $active[0] );
 
 		if ( $active ) {
-			$active_menu = implode( '/', $active );
+			// First segment after the dashboard root is the endpoint slug.
+			// Edit pages append the entity ID (e.g. edit-category/123) which
+			// would otherwise miss the lookup and leave the parent menu
+			// un-highlighted.
+			$active_menu = reset( $active );
 
 			$endpoint_to_parent = array(
 				'add-new-product'  => 'products',

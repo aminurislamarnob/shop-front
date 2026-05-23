@@ -193,7 +193,7 @@ class OrderManager {
 	 * @return void
 	 */
 	public function get_order_number_column_value( WC_Order $order ): void {
-		echo '<a href="' . esc_url( sprintf( storesuite_get_navigation_url( 'order-details' ) . '%s', $order->get_id() ) ) . '" class="order-view"><strong>#' . esc_attr( $order->get_order_number() ) . '</strong></a>';
+		echo '<a href="' . esc_url( sprintf( storesuite_get_navigation_url( 'order-details' ) . '%s', $order->get_id() ) ) . '" class="order-view">#' . esc_attr( $order->get_order_number() ) . '</a>';
 	}
 
 	/**
