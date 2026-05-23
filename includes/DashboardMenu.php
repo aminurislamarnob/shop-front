@@ -216,61 +216,61 @@ class DashboardMenu {
 					),
 				),
 			),
-			// 'analytics'    => array(
-				// 'title'      => __( 'Analytics', 'storesuite' ),
-				// 'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M23,22H5a3,3,0,0,1-3-3V1A1,1,0,0,0,0,1V19a5.006,5.006,0,0,0,5,5H23a1,1,0,0,0,0-2Z"/><path d="M6,20a1,1,0,0,0,1-1V12a1,1,0,0,0-2,0v7A1,1,0,0,0,6,20Z"/><path d="M10,10v9a1,1,0,0,0,2,0V10a1,1,0,0,0-2,0Z"/><path d="M15,13v6a1,1,0,0,0,2,0V13a1,1,0,0,0-2,0Z"/><path d="M20,9V19a1,1,0,0,0,2,0V9a1,1,0,0,0-2,0Z"/><path d="M6,9a1,1,0,0,0,.707-.293l3.586-3.586a1.025,1.025,0,0,1,1.414,0l2.172,2.172a3,3,0,0,0,4.242,0l5.586-5.586A1,1,0,0,0,22.293.293L16.707,5.878a1,1,0,0,1-1.414,0L13.121,3.707a3,3,0,0,0-4.242,0L5.293,7.293A1,1,0,0,0,6,9Z"/></svg>',
-				// 'url'        => storesuite_get_navigation_url( 'analytics' ),
-				// 'pos'        => 20,
-				// 'permission' => 'manage_woocommerce',
-				// 'target'     => '_self',
-				// 'submenu'    => apply_filters(
-					// 'storesuite_analytics_menu_items',
-					// array(
-						// 'overview'   => array(
-							// 'title'      => __( 'Overview', 'storesuite' ),
-							// 'url'        => add_query_arg( 'report', 'overview', storesuite_get_navigation_url( 'analytics' ) ),
-							// 'icon'       => '',
-							// 'permission' => 'manage_woocommerce',
-						// ),
-						// 'revenue'    => array(
-							// 'title'      => __( 'Revenue', 'storesuite' ),
-							// 'url'        => add_query_arg( 'report', 'revenue', storesuite_get_navigation_url( 'analytics' ) ),
-							// 'icon'       => '',
-							// 'permission' => 'manage_woocommerce',
-						// ),
-						// 'orders'     => array(
-							// 'title'      => __( 'Orders', 'storesuite' ),
-							// 'url'        => add_query_arg( 'report', 'orders', storesuite_get_navigation_url( 'analytics' ) ),
-							// 'icon'       => '',
-							// 'permission' => 'manage_woocommerce',
-						// ),
-						// 'products'   => array(
-							// 'title'      => __( 'Products', 'storesuite' ),
-							// 'url'        => add_query_arg( 'report', 'products', storesuite_get_navigation_url( 'analytics' ) ),
-							// 'icon'       => '',
-							// 'permission' => 'manage_woocommerce',
-						// ),
-						// 'variations' => array(
-							// 'title'      => __( 'Variations', 'storesuite' ),
-							// 'url'        => add_query_arg( 'report', 'variations', storesuite_get_navigation_url( 'analytics' ) ),
-							// 'icon'       => '',
-							// 'permission' => 'manage_woocommerce',
-						// ),
-						// 'categories' => array(
-							// 'title'      => __( 'Categories', 'storesuite' ),
-							// 'url'        => add_query_arg( 'report', 'categories', storesuite_get_navigation_url( 'analytics' ) ),
-							// 'icon'       => '',
-							// 'permission' => 'manage_woocommerce',
-						// ),
-						// 'stock'      => array(
-							// 'title'      => __( 'Stock', 'storesuite' ),
-							// 'url'        => add_query_arg( 'report', 'stock', storesuite_get_navigation_url( 'analytics' ) ),
-							// 'icon'       => '',
-							// 'permission' => 'manage_woocommerce',
-						// ),
-					// )
-				// ),
-			// ),
+			'analytics'    => array(
+				'title'      => __( 'Analytics', 'storesuite' ),
+				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M23,22H5a3,3,0,0,1-3-3V1A1,1,0,0,0,0,1V19a5.006,5.006,0,0,0,5,5H23a1,1,0,0,0,0-2Z"/><path d="M6,20a1,1,0,0,0,1-1V12a1,1,0,0,0-2,0v7A1,1,0,0,0,6,20Z"/><path d="M10,10v9a1,1,0,0,0,2,0V10a1,1,0,0,0-2,0Z"/><path d="M15,13v6a1,1,0,0,0,2,0V13a1,1,0,0,0-2,0Z"/><path d="M20,9V19a1,1,0,0,0,2,0V9a1,1,0,0,0-2,0Z"/><path d="M6,9a1,1,0,0,0,.707-.293l3.586-3.586a1.025,1.025,0,0,1,1.414,0l2.172,2.172a3,3,0,0,0,4.242,0l5.586-5.586A1,1,0,0,0,22.293.293L16.707,5.878a1,1,0,0,1-1.414,0L13.121,3.707a3,3,0,0,0-4.242,0L5.293,7.293A1,1,0,0,0,6,9Z"/></svg>',
+				'url'        => storesuite_get_navigation_url( 'analytics' ),
+				'pos'        => 20,
+				'permission' => 'manage_woocommerce',
+				'target'     => '_self',
+				'submenu'    => apply_filters(
+					'storesuite_analytics_menu_items',
+					array(
+						'overview'   => array(
+							'title'      => __( 'Overview', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'overview', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'revenue'    => array(
+							'title'      => __( 'Revenue', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'revenue', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'orders'     => array(
+							'title'      => __( 'Orders', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'orders', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'products'   => array(
+							'title'      => __( 'Products', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'products', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'variations' => array(
+							'title'      => __( 'Variations', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'variations', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'categories' => array(
+							'title'      => __( 'Categories', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'categories', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+						'stock'      => array(
+							'title'      => __( 'Stock', 'storesuite' ),
+							'url'        => add_query_arg( 'report', 'stock', storesuite_get_navigation_url( 'analytics' ) ),
+							'icon'       => '',
+							'permission' => 'manage_woocommerce',
+						),
+					)
+				),
+			),
 			'edit-account-details' => array(
 				'title'      => __( 'Account', 'storesuite' ),
 				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M15,6c0-3.309-2.691-6-6-6S3,2.691,3,6s2.691,6,6,6,6-2.691,6-6Zm-6,4c-2.206,0-4-1.794-4-4s1.794-4,4-4,4,1.794,4,4-1.794,4-4,4Zm-.008,4.938c.068,.548-.32,1.047-.869,1.116-3.491,.436-6.124,3.421-6.124,6.946,0,.552-.448,1-1,1s-1-.448-1-1c0-4.531,3.386-8.37,7.876-8.93,.542-.069,1.047,.32,1.116,.869Zm13.704,4.195l-.974-.562c.166-.497,.278-1.019,.278-1.572s-.111-1.075-.278-1.572l.974-.562c.478-.276,.642-.888,.366-1.366-.277-.479-.887-.644-1.366-.366l-.973,.562c-.705-.794-1.644-1.375-2.723-1.594v-1.101c0-.552-.448-1-1-1s-1,.448-1,1v1.101c-1.079,.22-2.018,.801-2.723,1.594l-.973-.562c-.48-.277-1.09-.113-1.366,.366-.276,.479-.112,1.09,.366,1.366l.974,.562c-.166,.497-.278,1.019-.278,1.572s.111,1.075,.278,1.572l-.974,.562c-.478,.276-.642,.888-.366,1.366,.186,.321,.521,.5,.867,.5,.169,0,.341-.043,.499-.134l.973-.562c.705,.794,1.644,1.375,2.723,1.594v1.101c0,.552,.448,1,1,1s1-.448,1-1v-1.101c1.079-.22,2.018-.801,2.723-1.594l.973,.562c.158,.091,.33,.134,.499,.134,.346,0,.682-.179,.867-.5,.276-.479,.112-1.09-.366-1.366Zm-5.696,.866c-1.654,0-3-1.346-3-3s1.346-3,3-3,3,1.346,3,3-1.346,3-3,3Z"/></svg>',
