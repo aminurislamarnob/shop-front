@@ -181,6 +181,9 @@ class ProductManager {
 			$post_data['featured'] = 'off';
 		}
 
+		$post_data['virtual']      = ( isset( $data['_virtual'] ) && 'yes' === $data['_virtual'] );
+		$post_data['downloadable'] = ( isset( $data['_downloadable'] ) && 'yes' === $data['_downloadable'] );
+
 		if ( isset( $data['menu_order'] ) ) {
 			$post_data['menu_order'] = wc_clean( wp_unslash( $data['menu_order'] ) );
 		}

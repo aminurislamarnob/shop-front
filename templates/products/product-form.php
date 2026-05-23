@@ -50,6 +50,8 @@ $is_reviews_allowed    = false;
 $thumbnail_id          = 0;
 $gallery_image_ids     = array();
 $global_unique_id      = '';
+$is_virtual            = 'no';
+$is_downloadable       = 'no';
 
 // Check if this is edit mode.
 if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['edit-product'] ) ) {
@@ -117,6 +119,10 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 
 		// Get meta data.
 		$global_unique_id = $product->get_global_unique_id( 'edit' );
+
+		// Virtual & downloadable.
+		$is_virtual      = $product->get_virtual() ? 'yes' : 'no';
+		$is_downloadable = $product->get_downloadable() ? 'yes' : 'no';
 	}
 }
 $product_types    = apply_filters( 'storesuite_product_types', array( 'simple' => __( 'Simple', 'storesuite' ) ) );
@@ -547,6 +553,20 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $product_type, $key ); ?>><?php echo esc_html( $value ); ?></option>
 								<?php endforeach; ?>
 							</select>
+						</div>
+						<div class="row show_if_simple">
+							<div class="col-md-6">
+								<div class="storesuite-form-group storesuite-form-switch">
+									<input type="checkbox" class="storesuite-form-control" id="_virtual" name="_virtual" value="yes" <?php checked( $is_virtual, 'yes' ); ?>>
+									<label for="_virtual"><?php esc_html_e( 'Virtual', 'storesuite' ); ?></label>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="storesuite-form-group storesuite-form-switch">
+									<input type="checkbox" class="storesuite-form-control" id="_downloadable" name="_downloadable" value="yes" <?php checked( $is_downloadable, 'yes' ); ?>>
+									<label for="_downloadable"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></label>
+								</div>
+							</div>
 						</div>
 						<div class="storesuite-form-group">
 							<label for="post_status"><?php esc_html_e( 'Status', 'storesuite' ); ?></label>

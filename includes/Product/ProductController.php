@@ -298,6 +298,12 @@ class ProductController {
 		if ( isset( $post_data['_featured'] ) ) {
 			$data['_featured'] = sanitize_key( wp_unslash( $post_data['_featured'] ) );
 		}
+		if ( isset( $post_data['_virtual'] ) ) {
+			$data['_virtual'] = sanitize_key( wp_unslash( $post_data['_virtual'] ) );
+		}
+		if ( isset( $post_data['_downloadable'] ) ) {
+			$data['_downloadable'] = sanitize_key( wp_unslash( $post_data['_downloadable'] ) );
+		}
 
 		// Date fields.
 		if ( isset( $post_data['_sale_price_dates_from'] ) ) {
