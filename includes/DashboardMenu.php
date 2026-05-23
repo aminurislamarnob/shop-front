@@ -168,6 +168,12 @@ class DashboardMenu {
 						'permission' => 'manage_woocommerce',
 						'endpoint'   => 'tags',
 					),
+					'attributes'       => array(
+						'title'      => __( 'Attributes', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'attributes' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'attributes',
+					),
 				),
 			),
 			'orders'       => array(
@@ -193,14 +199,6 @@ class DashboardMenu {
 						'endpoint'   => 'add-new-order',
 					),
 				),
-			),
-			'attributes'   => array(
-				'title'      => __( 'Attributes', 'storesuite' ),
-				'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 24 24" data-name="Layer 1" width="24" height="24"><path d="m24 12c0 .552-.448 1-1 1h-5c-.552 0-1-.448-1-1s.448-1 1-1h5c.552 0 1 .448 1 1zm-1 8h-5c-.552 0-1 .448-1 1s.448 1 1 1h5c.552 0 1-.448 1-1s-.448-1-1-1zm-13-16h13c.552 0 1-.448 1-1s-.448-1-1-1h-13c-.552 0-1 .448-1 1s.448 1 1 1zm4 7v2c0 1.103-.897 2-2 2h-2c-1.103 0-2-.897-2-2h-4v5c0 1.103.897 2 2 2h2c0-1.103.897-2 2-2h2c1.103 0 2 .897 2 2v2c0 1.103-.897 2-2 2h-2c-1.103 0-2-.897-2-2h-2c-2.206 0-4-1.794-4-4v-12c-1.103 0-2-.897-2-2v-2c0-1.103.897-2 2-2h2c1.103 0 2 .897 2 2v2c0 1.103-.897 2-2 2v5h4c0-1.103.897-2 2-2h2c1.103 0 2 .897 2 2zm-12-7h2v-2h-2zm8 18h2v-2h-2zm2-11h-2v2h2z"/></svg>',
-				'url'        => storesuite_get_navigation_url( 'attributes' ),
-				'pos'        => 30,
-				'permission' => 'manage_woocommerce',
-				'target'     => '_self',
 			),
 			'coupons'      => array(
 				'title'      => __( 'Coupons', 'storesuite' ),
@@ -352,6 +350,10 @@ class DashboardMenu {
 				'tags'             => 'products',
 				'add-new-tag'      => 'products',
 				'edit-tag'         => 'products',
+				'attributes'       => 'products',
+				'add-new-attribute' => 'products',
+				'edit-attribute'   => 'products',
+				'attribute-terms'  => 'products',
 				'add-new-coupon'   => 'coupons',
 				'edit-coupon'      => 'coupons',
 			);

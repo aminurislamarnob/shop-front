@@ -146,7 +146,7 @@ $terms = get_terms(
 										<?php else : ?>
 											<?php foreach ( $terms as $term ) : ?>
 												<tr id="term-row-<?php echo esc_attr( $term->term_id ); ?>">
-													<td><?php echo esc_html( $term->name ); ?></td>
+													<td><a href="<?php echo esc_url( add_query_arg( array( 'taxonomy' => $taxonomy, 'term_id' => $term->term_id ), storesuite_get_navigation_url( 'attribute-terms' ) ) ); ?>"><?php echo esc_html( $term->name ); ?></a></td>
 													<td><?php echo esc_html( $term->slug ); ?></td>
 													<td><?php echo esc_html( $term->count ); ?></td>
 													<td class="text-right">

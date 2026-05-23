@@ -744,10 +744,10 @@ table.my-storesuite-tbl>tbody {
 .my-storesuite-tbl td.action-buttons {
   width: 245px;
 }
-.my-storesuite-tbl:not(.my-storesuite-tags-table) tr td:first-child a {
+.my-storesuite-tbl:not(.my-storesuite-tags-table):not(.my-storesuite-attributes-table):not(.storesuite-attribute-terms-table) tr td:first-child a {
   color: var(--storesuite-primary-bg);
 }
-.my-storesuite-tbl:not(.my-storesuite-tags-table) tr td:first-child a:hover{
+.my-storesuite-tbl:not(.my-storesuite-tags-table):not(.my-storesuite-attributes-table):not(.storesuite-attribute-terms-table) tr td:first-child a:hover{
   text-decoration: underline;
 }
 
@@ -828,6 +828,22 @@ form.storesuite-filters-form .row {
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
   -o-border-radius: 5px;
+}
+.my-storesuite-attributes-table .storesuite-dropdown .storesuite-dropdown-menu {
+  width: 160px;
+}
+.storesuite-configure-terms-link {
+  margin-top: 4px;
+  font-size: 12px;
+}
+.storesuite-configure-terms-link a,
+.storesuite-configure-terms-link a:visited,
+.storesuite-configure-terms-link a:focus {
+  color: var(--storesuite-primary-bg) !important;
+  text-decoration: none;
+}
+.storesuite-configure-terms-link a:hover {
+  text-decoration: underline;
 }
 .storesuite-dropdown svg{
   fill: var(--storesuite-icon-color);

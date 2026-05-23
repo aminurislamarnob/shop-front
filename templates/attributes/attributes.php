@@ -39,7 +39,7 @@ $attributes = wc_get_attribute_taxonomies();
 			</div>
 
 			<div class="storesuite-table-responsive">
-				<table class="my-storesuite-tbl my-storesuite-product-list-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table my-storesuite-attributes-table">
 					<thead>
 						<tr>
 							<th><?php esc_html_e( 'Name', 'storesuite' ); ?></th>
@@ -107,7 +107,7 @@ $attributes = wc_get_attribute_taxonomies();
 								}
 								?>
 								<tr id="attribute-row-<?php echo esc_attr( $attribute->attribute_id ); ?>">
-									<td><?php echo esc_html( $attribute->attribute_label ); ?></td>
+									<td><a href="<?php echo esc_url( add_query_arg( array( 'taxonomy' => $taxonomy ), storesuite_get_navigation_url( 'attribute-terms' ) ) ); ?>"><?php echo esc_html( $attribute->attribute_label ); ?></a></td>
 									<td><?php echo esc_html( $attribute->attribute_name ); ?></td>
 									<td><?php echo esc_html( wc_get_attribute_types()[ $attribute->attribute_type ] ?? $attribute->attribute_type ); ?></td>
 											<td><?php echo esc_html( $order_by_label ); ?></td>
@@ -120,6 +120,11 @@ $attributes = wc_get_attribute_taxonomies();
 											esc_html_e( 'No terms', 'storesuite' );
 										}
 										?>
+										<div class="storesuite-configure-terms-link">
+											<a href="<?php echo esc_url( add_query_arg( array( 'taxonomy' => $taxonomy ), storesuite_get_navigation_url( 'attribute-terms' ) ) ); ?>">
+												<?php esc_html_e( 'Configure terms', 'storesuite' ); ?>
+											</a>
+										</div>
 									</td>
 									<td class="text-right">
 										<div class="storesuite-dropdown">
