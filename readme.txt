@@ -114,11 +114,16 @@ Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order S
 == Changelog ==
 
 = 1.0.6 =
-* Improved dashboard analytics with React for faster load, net sales chart, recent orders, quick actions, and leaderboards.
-* Nest Categories, Brands, and Tags under the Products menu with a collapsed-sidebar flyout submenu.
-* Improve Lighthouse scores by deferring rendering, reserving widget heights, and enqueueing assets per endpoint.
-* Harden analytics REST permissions, cache preload payloads per user capability, and bust cache on role changes.
-* Patch dependency vulnerabilities and bump build toolchain to Node 22.
+* Rewrite dashboard analytics in React with net sales chart, recent orders, quick actions, and leaderboards.
+* Nest Categories, Brands, and Tags under the Products menu with a collapsed-sidebar flyout.
+* Improve Lighthouse scores via deferred rendering, reserved widget heights, and per-endpoint asset loading.
+* Harden analytics REST permissions and cache preload payloads per user capability.
+* Patch dependency vulnerabilities and move build toolchain to Node 22.
+* Append order number / coupon ID to the Edit Order and Edit Coupon page titles.
+* Link list-table names (products, categories, brands, tags, coupons) to their StoreSuite edit page.
+* Keep the Products parent menu active on edit Category / Brand / Tag pages.
+* Reactively toggle the order Products section based on the saved order's editable state.
+* Fix Upsells / Cross-sells on the product form and Products / Categories selects + datepicker styling on the coupon form.
 
 = 1.0.3 =
 * Minor update on admin settings UI.
