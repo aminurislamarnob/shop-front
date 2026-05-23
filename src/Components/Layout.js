@@ -22,11 +22,6 @@ import SettingsHeader from './SettingsHeader';
 const TABS = [
 	{ to: '/', icon: GearIcon, label: __( 'General', 'storesuite' ) },
 	{
-		to: '/dashboard-settings',
-		icon: Squares2X2Icon,
-		label: __( 'Dashboard', 'storesuite' ),
-	},
-	{
 		to: '/appearance-settings',
 		icon: PaletteIcon,
 		label: __( 'Appearance', 'storesuite' ),
@@ -38,7 +33,7 @@ const TABS = [
 	},
 ];
 
-const SKELETON_WIDTHS = [ 120, 116, 110, 100 ];
+const SKELETON_WIDTHS = [ 120, 110, 100 ];
 
 const Layout = () => {
 	const { isLoading } = useSettings();

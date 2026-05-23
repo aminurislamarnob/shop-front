@@ -5,6 +5,7 @@
 			this.errorTips();
 			this.initSalePriceSchedule();
 			this.initSelect2();
+			this.initWcProductSearch();
 			this.toggleStockFields();
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
@@ -12,6 +13,69 @@
 			this.handleProductDelete();
 			this.initProductBulkEditModal();
 			this.initProductQuickEditModal();
+		},
+
+		// Enhance .wc-product-search selects (Upsells / Cross-sells) with
+		// SelectWoo + AJAX product search. Previously these worked only
+		// because order.js was enqueued on the product page; the per-endpoint
+		// asset refactor removed that, so the product page now ships its own
+		// init using StoreSuite_Product nonces.
+		initWcProductSearch: function () {
+			if ( typeof $.fn.selectWoo !== 'function' ) {
+				return;
+			}
+			if ( typeof StoreSuite_Product === 'undefined' ) {
+				return;
+			}
+
+			$( ':input.wc-product-search' )
+				.filter( ':not(.enhanced)' )
+				.each( function () {
+					var $select = $( this );
+					$select
+						.selectWoo( {
+							allowClear: !! $select.data( 'allow_clear' ),
+							placeholder: $select.data( 'placeholder' ),
+							minimumInputLength:
+								$select.data( 'minimum_input_length' ) || 3,
+							escapeMarkup: function ( m ) {
+								return m;
+							},
+							ajax: {
+								url: StoreSuite_Product.ajax_url,
+								dataType: 'json',
+								delay: 250,
+								data: function ( params ) {
+									return {
+										term: params.term,
+										action:
+											$select.data( 'action' ) ||
+											'woocommerce_json_search_products_and_variations',
+										security:
+											StoreSuite_Product.search_products_nonce,
+										exclude: $select.data( 'exclude' ),
+										exclude_type:
+											$select.data( 'exclude_type' ),
+										include: $select.data( 'include' ),
+										limit: $select.data( 'limit' ),
+										display_stock:
+											$select.data( 'display_stock' ),
+									};
+								},
+								processResults: function ( data ) {
+									var terms = [];
+									if ( data ) {
+										$.each( data, function ( id, text ) {
+											terms.push( { id: id, text: text } );
+										} );
+									}
+									return { results: terms };
+								},
+								cache: true,
+							},
+						} )
+						.addClass( 'enhanced' );
+				} );
 		},
 		bindEvents: function () {
 			var self = this;

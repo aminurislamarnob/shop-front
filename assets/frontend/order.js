@@ -1651,6 +1651,8 @@
 									}
 								} );
 							} else if ( response.data.context === 'edit' ) {
+								$( '.product-serach-for-order-box' ).toggleClass( 'storesuite-hide', ! response.data.is_order_editable );
+
 								Swal.fire( {
 									icon: 'success',
 									title: StoreSuite_Order.order_success_title,

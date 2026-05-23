@@ -53,7 +53,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			$tags_data     = $product_tags->get_paginated_tags( $tags_per_page, $current_page, $search_term );
 			?>
 			<div class="storesuite-table-responsive">
-				<table class="my-storesuite-tbl my-storesuite-product-list-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table my-storesuite-tags-table">
 					<thead>
 						<tr>
 							<th width="210"><?php echo esc_html__( 'Name', 'storesuite' ); ?></th>
@@ -79,7 +79,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							foreach ( $tags_data->tags as $product_tag ) {
 								?>
 						<tr id="tag-row-<?php echo esc_attr( $product_tag->term_id ); ?>">
-							<td><?php echo esc_html( $product_tag->name ); ?></td>
+							<td><a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-tag' ) . '%s', $product_tag->term_id ) ); ?>"><?php echo esc_html( $product_tag->name ); ?></a></td>
 							<td><?php echo esc_html( wp_trim_words( $product_tag->description, '9', '...' ) ); ?></td>
 							<td><?php echo esc_html( $product_tag->slug ); ?></td>
 							<td><?php echo esc_html( $product_tag->count ); ?></td>

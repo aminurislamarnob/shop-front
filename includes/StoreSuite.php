@@ -18,7 +18,7 @@ final class StoreSuite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.5';
+	public $version = '1.0.6';
 
 	/**
 	 * Instance of self
@@ -233,7 +233,6 @@ final class StoreSuite {
 		$this->container['storesuite_helper']                      = new Helper();
 		$this->container['storesuite_rewrites']                    = new Rewrites();
 		$this->container['storesuite_dashboard_menu']              = new DashboardMenu();
-		$this->container['storesuite_dashboard']                   = new Dashboard();
 		$this->container['storesuite_dashboard_header']            = new TemplateParts();
 		$this->container['storesuite_shortcode']                   = new Shortcodes\Shortcodes();
 		$this->container['storesuite_admin_settings']              = new Admin\Settings();
@@ -257,6 +256,23 @@ final class StoreSuite {
 		$this->container['storesuite_coupon_manager']              = new Coupon\CouponManager();
 		$this->container['storesuite_account_controller']          = new Account\AccountController();
 		$this->container['storesuite_handle_paginations']          = new HandlePaginations();
+
+		// Analytics (uses WooCommerce analytics packages — no SQL filtering needed).
+		$this->container['analytics_permissions'] = new Analytics\RestPermissions();
+		$this->container['analytics_controller']  = new Analytics\Controller();
+		$this->container['analytics_assets']      = new Analytics\Assets();
+		$this->container['dashboard_assets']      = new Dashboard\Assets();
+
+		$this->container['analytics_permissions']->register_hooks();
+		$this->container['analytics_controller']->register_hooks();
+		$this->container['analytics_assets']->register_hooks();
+		$this->container['dashboard_assets']->register_hooks();
+
+		// Bust the analytics preload transient when a user's role changes so a
+		// downgraded user cannot read a payload cached against their old caps.
+		add_action( 'set_user_role', array( Analytics\Settings::class, 'invalidate_user_cache' ), 10, 1 );
+		add_action( 'add_user_role', array( Analytics\Settings::class, 'invalidate_user_cache' ), 10, 1 );
+		add_action( 'remove_user_role', array( Analytics\Settings::class, 'invalidate_user_cache' ), 10, 1 );
 	}
 
 	/**
@@ -365,6 +381,12 @@ final class StoreSuite {
 	 * @return object
 	 */
 	public function get_storesuite_query() {
+		// Reuse the container instance instead of constructing on every call —
+		// init_query_vars() runs filter chains and option lookups that callers
+		// like DashboardMenu invoke many times per request.
+		if ( isset( $this->container['storesuite_rewrites'] ) ) {
+			return $this->container['storesuite_rewrites'];
+		}
 		return new Rewrites();
 	}
 }

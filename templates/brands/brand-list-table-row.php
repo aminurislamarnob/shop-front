@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 	</td>
 	<td class="brand-name">
-		<?php echo wp_kses_post( $dash_prefix ); ?><?php echo esc_html( $brand->name ); ?>
+		<?php echo wp_kses_post( $dash_prefix ); ?><a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-brand' ) . '%s', $brand->term_id ) ); ?>"><?php echo esc_html( $brand->name ); ?></a>
 	</td>
 	<td class="brand-description">
 		<?php echo esc_html( wp_trim_words( $brand->description, 10, '...' ) ); ?>

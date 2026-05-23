@@ -46,6 +46,13 @@ class Dashboard extends MyStoreSuiteShortcode {
 			return ob_get_clean();
 		}
 
+		// Analytics endpoint must be checked before any query-string-based vars (e.g. products, orders)
+		// because filter params like ?products=61 also set those query vars, causing the wrong template to load.
+		if ( storesuite_is_endpoint_url( 'analytics' ) ) {
+			do_action( 'storesuite_load_custom_template', $wp->query_vars );
+			return ob_get_clean();
+		}
+
 		if ( isset( $wp->query_vars['products'] ) ) {
 			storesuite_get_template_part( 'products/products' );
 			return ob_get_clean();

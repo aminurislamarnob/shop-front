@@ -31,7 +31,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		}
 		?>
 	</td>
-	<td><?php echo esc_html( $dash_prefix . $category->name ); ?></td>
+	<td>
+		<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-category' ) . '%s', $category->term_id ) ); ?>">
+			<?php echo esc_html( $dash_prefix . $category->name ); ?>
+		</a>
+	</td>
 	<td><?php echo esc_html( wp_trim_words( $category->description, '9', '...' ) ); ?></td>
 	<td><?php echo esc_html( $parent ? $parent->name : '-' ); ?></td>
 	<td><?php echo esc_html( $category->slug ); ?></td>
