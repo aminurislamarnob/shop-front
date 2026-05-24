@@ -4237,3 +4237,14 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   border: 1px solid #fcd34d;
   border-radius: 4px;
 }
+
+/* Hide number input spinner arrows on product add/edit form. */
+#storesuite-add-product input[type="number"]::-webkit-outer-spin-button,
+#storesuite-add-product input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#storesuite-add-product input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

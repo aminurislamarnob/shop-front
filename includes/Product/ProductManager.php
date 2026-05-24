@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use WP_Error;
 
 /**
@@ -189,6 +190,9 @@ class ProductManager {
 		}
 		if ( isset( $data['_button_text'] ) ) {
 			$post_data['button_text'] = wc_clean( wp_unslash( $data['_button_text'] ) );
+		}
+		if ( isset( $data['_cogs_value'] ) ) {
+			$post_data['cogs_value'] = wc_clean( wp_unslash( $data['_cogs_value'] ) );
 		}
 
 		if ( isset( $data['menu_order'] ) ) {
@@ -509,6 +513,12 @@ class ProductManager {
 			if ( isset( $args['download_expiry'] ) ) {
 				$product->set_download_expiry( $args['download_expiry'] );
 			}
+		}
+
+		// Cost of Goods Sold value.
+		if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+			$cogs_value = wc_clean( wp_unslash( $args['cogs_value'] ?? null ) );
+			$product->set_cogs_value( is_null( $cogs_value ) ? null : (float) wc_format_decimal( $cogs_value ) );
 		}
 
 		// Product url and button text for external products.

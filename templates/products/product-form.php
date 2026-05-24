@@ -5,6 +5,8 @@
  * @package StoreSuite
  */
 
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -54,6 +56,7 @@ $is_virtual            = 'no';
 $is_downloadable       = 'no';
 $external_product_url  = '';
 $external_button_text  = '';
+$cogs_value            = '';
 
 // Check if this is edit mode.
 if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['edit-product'] ) ) {
@@ -131,11 +134,24 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 			$external_product_url = $product->get_product_url( 'edit' );
 			$external_button_text = $product->get_button_text( 'edit' );
 		}
+
+		// Cost of Goods Sold value.
+		if ( method_exists( $product, 'get_cogs_value' ) ) {
+			$cogs_value = $product->get_cogs_value();
+		}
 	}
 }
 $product_types    = apply_filters( 'storesuite_product_types', array( 'simple' => __( 'Simple', 'storesuite' ) ) );
 $product_statuses = apply_filters( 'storesuite_product_statuses', array( 'publish' => __( 'Simple', 'storesuite' ) ) );
 $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_product_brands();
+
+// Cost of Goods Sold feature availability.
+$cogs_controller      = wc_get_container()->get( CostOfGoodsSoldController::class );
+$cogs_is_enabled      = $cogs_controller->feature_is_enabled();
+$pricing_card_classes = 'show_if_simple show_if_external';
+if ( $cogs_is_enabled ) {
+	$pricing_card_classes .= ' show_if_variable';
+}
 ?>
 <form id="storesuite-add-product" method="POST">
 		<div class="row">
@@ -288,13 +304,13 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						</div>
 					</div>
 				</div>
-				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 show_if_simple">
+				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 <?php echo esc_attr( $pricing_card_classes ); ?>">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Pricing', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
-						<div class="row">
+						<div class="row show_if_simple show_if_external">
 							<div class="col-md-6">
 								<div class="storesuite-form-group">
-									<label for="regular_price"><?php esc_html_e( 'Regular Price', 'storesuite' ); ?></label>
+									<label for="regular_price"><?php esc_html_e( 'Regular Price', 'storesuite' ); ?> (<?php echo esc_html( get_woocommerce_currency_symbol() ); ?>)</label>
 									<input type="number" class="storesuite-form-control" id="regular_price" name="regular_price" step="any" value="<?php echo esc_attr( $regular_price ); ?>">
 								</div>
 							</div>
@@ -302,7 +318,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 								<div class="storesuite-form-group">
 									<div class="row">
 										<div class="col-md-8">
-											<label for="sale_price"><?php esc_html_e( 'Sale Price', 'storesuite' ); ?></label>
+											<label for="sale_price"><?php esc_html_e( 'Sale Price', 'storesuite' ); ?> (<?php echo esc_html( get_woocommerce_currency_symbol() ); ?>)</label>
 										</div>
 										<div class="col-md-4 text-right">
 											<a href="#" class="sale_schedule"><?php esc_html_e( 'Schedule', 'storesuite' ); ?></a>
@@ -329,6 +345,16 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 								</div>
 							</div>
 						</div>
+						<?php if ( $cogs_is_enabled ) : ?>
+							<div class="row show_if_simple show_if_variable show_if_external">
+								<div class="col-md-12">
+									<div class="storesuite-form-group">
+										<label for="_cogs_value"><?php esc_html_e( 'Cost of goods', 'storesuite' ); ?> (<?php echo esc_html( get_woocommerce_currency_symbol() ); ?>)</label>
+										<input type="number" class="storesuite-form-control" id="_cogs_value" name="_cogs_value" step="any" placeholder="0" value="<?php echo esc_attr( $cogs_value ); ?>">
+									</div>
+								</div>
+							</div>
+						<?php endif; ?>
 					</div>
 				</div>
 				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24">
@@ -347,7 +373,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									<input type="text" class="storesuite-form-control" id="_global_unique_id" name="_global_unique_id" value="<?php echo esc_attr( $global_unique_id ); ?>">
 								</div>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 show_if_simple show_if_variable">
 								<div class="storesuite-form-group storesuite-form-switch">
 									<input type="checkbox" class="storesuite-form-control" id="_manage_stock" name="_manage_stock" value="yes" <?php checked( $manage_stock, 'yes' ); ?>>
 									<label for="_manage_stock"><?php esc_html_e( 'Enable product stock management', 'storesuite' ); ?></label>
@@ -379,7 +405,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									</div>
 								</div>
 							</div>
-							<div class="col-md-6 _stock_status_field">
+							<div class="col-md-6 _stock_status_field show_if_simple show_if_variable">
 								<div class="storesuite-form-group">
 									<label for="_stock_status"><?php esc_html_e( 'Stock Status', 'storesuite' ); ?></label>
 									<select class="storesuite-form-control" id="_stock_status" name="_stock_status">
@@ -389,7 +415,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									</select>
 								</div>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 show_if_simple show_if_variable">
 								<div class="storesuite-form-group storesuite-form-switch">
 									<input type="checkbox" class="storesuite-form-control" id="_sold_individually" name="_sold_individually" value="yes" <?php checked( $sold_individually, 'yes' ); ?>>
 									<label for="_sold_individually"><?php esc_html_e( 'Limit Purchases to 1 Item Per Order?', 'storesuite' ); ?></label>
@@ -470,7 +496,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									</select>
 								</div>
 							</div>
-							<div class="col-md-6">
+							<div class="col-md-6 hide_if_grouped hide_if_external">
 								<div class="storesuite-form-group">
 									<label for="crosssell_ids"><?php esc_html_e( 'Cross-sells', 'storesuite' ); ?></label>
 									<select class="storesuite-form-control wc-product-search" id="crosssell_ids" name="crosssell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'storesuite' ); ?>" data-allow_clear="true" multiple>
@@ -540,7 +566,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									<label for="_featured"><?php esc_html_e( 'Mark this product as featured.', 'storesuite' ); ?></label>
 								</div>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 hide_if_external hide_if_grouped">
 								<div class="storesuite-form-group">
 									<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'storesuite' ); ?></strong></label>
 									<textarea class="storesuite-form-control" id="_purchase_note" name="_purchase_note" rows="2" cols="20"><?php echo esc_textarea( $purchase_note ); ?></textarea>
@@ -582,7 +608,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 							<small class="storesuite-form-text"><?php esc_html_e( 'Enter the external URL to the product.', 'storesuite' ); ?></small>
 						</div>
 						<div class="storesuite-form-group show_if_external">
-							<label for="_button_text"><?php esc_html_e( 'Button text', 'storesuite' ); ?></label>
+							<label for="_button_text"><?php esc_html_e( 'Button Text', 'storesuite' ); ?></label>
 							<input type="text" class="storesuite-form-control" id="_button_text" name="_button_text" placeholder="<?php esc_attr_e( 'Buy product', 'storesuite' ); ?>" value="<?php echo esc_attr( $external_button_text ); ?>">
 							<small class="storesuite-form-text"><?php esc_html_e( 'This text will be shown on the button linking to the external product.', 'storesuite' ); ?></small>
 						</div>

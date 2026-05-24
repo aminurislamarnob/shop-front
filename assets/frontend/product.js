@@ -424,9 +424,15 @@
 		toggleProductTypeFields: function () {
 			const product_type = $( 'select#post_type' ).val();
 
-			$( '.show_if_simple, .show_if_variable, .show_if_external' )
-				.hide();
+			$(
+				'.show_if_simple, .show_if_variable, .show_if_external, .show_if_grouped'
+			).hide();
 			$( '.show_if_' + product_type ).show();
+
+			$(
+				'.hide_if_simple, .hide_if_variable, .hide_if_external, .hide_if_grouped'
+			).show();
+			$( '.hide_if_' + product_type ).hide();
 		},
 		validateGlobalUniqueIdOnKeyUp: function () {
 			var global_unique_id = $( this ).val();

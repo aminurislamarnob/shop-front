@@ -310,6 +310,9 @@ class ProductController {
 		if ( isset( $post_data['_button_text'] ) ) {
 			$data['_button_text'] = sanitize_text_field( wp_unslash( $post_data['_button_text'] ) );
 		}
+		if ( isset( $post_data['_cogs_value'] ) ) {
+			$data['_cogs_value'] = wc_clean( wp_unslash( $post_data['_cogs_value'] ) );
+		}
 
 		// Date fields.
 		if ( isset( $post_data['_sale_price_dates_from'] ) ) {
