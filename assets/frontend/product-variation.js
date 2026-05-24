@@ -29,6 +29,13 @@
             // Default attributes save.
             $(document).on('click', '#storesuite-save-default-attrs-btn', this.saveDefaultAttributes.bind(this));
 
+            // Toggle the Default Form Values section.
+            $(document).on('click', '#storesuite-toggle-default-values', function(e) {
+                e.preventDefault();
+                $(this).toggleClass('is-active');
+                $('#storesuite-default-attributes').slideToggle(200);
+            });
+
             // Auto-load variations on edit page.
             if ( StoreSuiteVariation.product_id > 0 && $('#post_type').val() === 'variable' ) {
                 this.reload();

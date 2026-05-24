@@ -54,7 +54,7 @@ $product_attributes   = $product ? $product->get_attributes( 'edit' ) : array();
 
 	<!-- Add attribute toolbar (card footer) -->
 	<div class="storesuite-card-footer storesuite-attribute-toolbar" id="storesuite-attribute-toolbar">
-		<div class="storesuite-attribute-input-group">
+		<div class="storesuite-input-group">
 			<select id="storesuite-add-attribute-select" class="storesuite-form-control">
 				<option value=""><?php esc_html_e( 'Custom attribute', 'storesuite' ); ?></option>
 				<?php foreach ( $attribute_taxonomies as $tax ) : ?>

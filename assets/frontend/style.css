@@ -3317,26 +3317,36 @@ button.remove_order_item_meta.button:hover {
   justify-content: space-between;
   gap: 16px;
 }
-.storesuite-attribute-input-group {
+.storesuite-input-group {
   display: flex;
   align-items: stretch;
   flex: 1;
   max-width: 500px;
 }
-.storesuite-attribute-input-group .storesuite-form-control {
+.storesuite-input-group .storesuite-form-control {
   flex: 1;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   border-right: 0;
 }
-.storesuite-attribute-input-group .my-storesuite-button {
+.storesuite-input-group .my-storesuite-button {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   white-space: nowrap;
 }
-#storesuite-attribute-toolbar #storesuite-save-attributes-btn {
+#storesuite-attribute-toolbar #storesuite-save-attributes-btn,
+.storesuite-variation-toolbar #storesuite-save-variations-btn {
   flex: 0 0 auto;
   white-space: nowrap;
+}
+
+/* Variation toolbar — input group layout like the attributes footer */
+.storesuite-variation-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 /* Attribute value display / edit toggle */
@@ -3533,10 +3543,46 @@ button.remove_order_item_meta.button:hover {
 }
 
 /* Default attributes */
+#storesuite-product-variations .storesuite-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.storesuite-text-link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  color: var(--storesuite-primary-bg);
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.storesuite-text-link-button:hover {
+  color: var(--storesuite-primary-bg-hover);
+  text-decoration: none;
+}
+.storesuite-text-link-button svg {
+  fill: currentColor;
+  transition: transform 0.2s ease;
+}
+#storesuite-toggle-default-values.is-active svg {
+  transform: rotate(90deg);
+}
+
 .storesuite-default-attributes {
-  padding: 12px 0;
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 16px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 6px;
+  margin-left: -25px;
+  margin-right: -25px;
 }
 
 .storesuite-default-attributes-title {
