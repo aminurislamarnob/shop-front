@@ -52,6 +52,8 @@ $gallery_image_ids     = array();
 $global_unique_id      = '';
 $is_virtual            = 'no';
 $is_downloadable       = 'no';
+$external_product_url  = '';
+$external_button_text  = '';
 
 // Check if this is edit mode.
 if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['edit-product'] ) ) {
@@ -123,6 +125,12 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 		// Virtual & downloadable.
 		$is_virtual      = $product->get_virtual() ? 'yes' : 'no';
 		$is_downloadable = $product->get_downloadable() ? 'yes' : 'no';
+
+		// External product fields.
+		if ( $product->is_type( 'external' ) ) {
+			$external_product_url = $product->get_product_url( 'edit' );
+			$external_button_text = $product->get_button_text( 'edit' );
+		}
 	}
 }
 $product_types    = apply_filters( 'storesuite_product_types', array( 'simple' => __( 'Simple', 'storesuite' ) ) );
@@ -567,6 +575,16 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									<label for="_downloadable"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></label>
 								</div>
 							</div>
+						</div>
+						<div class="storesuite-form-group show_if_external">
+							<label for="_product_url"><?php esc_html_e( 'Product URL', 'storesuite' ); ?></label>
+							<input type="text" class="storesuite-form-control" id="_product_url" name="_product_url" placeholder="https://" value="<?php echo esc_attr( $external_product_url ); ?>">
+							<small class="storesuite-form-text"><?php esc_html_e( 'Enter the external URL to the product.', 'storesuite' ); ?></small>
+						</div>
+						<div class="storesuite-form-group show_if_external">
+							<label for="_button_text"><?php esc_html_e( 'Button text', 'storesuite' ); ?></label>
+							<input type="text" class="storesuite-form-control" id="_button_text" name="_button_text" placeholder="<?php esc_attr_e( 'Buy product', 'storesuite' ); ?>" value="<?php echo esc_attr( $external_button_text ); ?>">
+							<small class="storesuite-form-text"><?php esc_html_e( 'This text will be shown on the button linking to the external product.', 'storesuite' ); ?></small>
 						</div>
 						<div class="storesuite-form-group">
 							<label for="post_status"><?php esc_html_e( 'Status', 'storesuite' ); ?></label>

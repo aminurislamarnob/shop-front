@@ -29,8 +29,8 @@ class ProductHooks {
 		$product_types = array(
 			'simple'   => __( 'Simple', 'storesuite' ),
 			'variable' => __( 'Variable', 'storesuite' ),
-			// 'external' => __( 'External/Affiliate product', 'storesuite' ),
-			// 'grouped'  => __( 'Group Product', 'storesuite' ),
+			'external' => __( 'External/Affiliate product', 'storesuite' ),
+			'grouped'  => __( 'Group Product', 'storesuite' ),
 		);
 		return $product_types;
 	}

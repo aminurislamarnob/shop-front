@@ -184,6 +184,13 @@ class ProductManager {
 		$post_data['virtual']      = ( isset( $data['_virtual'] ) && 'yes' === $data['_virtual'] );
 		$post_data['downloadable'] = ( isset( $data['_downloadable'] ) && 'yes' === $data['_downloadable'] );
 
+		if ( isset( $data['_product_url'] ) ) {
+			$post_data['external_url'] = esc_url_raw( wp_unslash( $data['_product_url'] ) );
+		}
+		if ( isset( $data['_button_text'] ) ) {
+			$post_data['button_text'] = wc_clean( wp_unslash( $data['_button_text'] ) );
+		}
+
 		if ( isset( $data['menu_order'] ) ) {
 			$post_data['menu_order'] = wc_clean( wp_unslash( $data['menu_order'] ) );
 		}

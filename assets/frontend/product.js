@@ -424,13 +424,9 @@
 		toggleProductTypeFields: function () {
 			const product_type = $( 'select#post_type' ).val();
 
-			if ( 'variable' === product_type ) {
-				$( '.show_if_simple' ).slideUp( 'fast' );
-				$( '.show_if_variable' ).slideDown( 'fast' );
-			} else {
-				$( '.show_if_simple' ).slideDown( 'fast' );
-				$( '.show_if_variable' ).slideUp( 'fast' );
-			}
+			$( '.show_if_simple, .show_if_variable, .show_if_external' )
+				.hide();
+			$( '.show_if_' + product_type ).show();
 		},
 		validateGlobalUniqueIdOnKeyUp: function () {
 			var global_unique_id = $( this ).val();

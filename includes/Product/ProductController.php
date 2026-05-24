@@ -304,6 +304,12 @@ class ProductController {
 		if ( isset( $post_data['_downloadable'] ) ) {
 			$data['_downloadable'] = sanitize_key( wp_unslash( $post_data['_downloadable'] ) );
 		}
+		if ( isset( $post_data['_product_url'] ) ) {
+			$data['_product_url'] = esc_url_raw( wp_unslash( $post_data['_product_url'] ) );
+		}
+		if ( isset( $post_data['_button_text'] ) ) {
+			$data['_button_text'] = sanitize_text_field( wp_unslash( $post_data['_button_text'] ) );
+		}
 
 		// Date fields.
 		if ( isset( $post_data['_sale_price_dates_from'] ) ) {
