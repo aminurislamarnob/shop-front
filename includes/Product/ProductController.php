@@ -344,6 +344,9 @@ class ProductController {
 		if ( isset( $post_data['crosssell_ids'] ) ) {
 			$data['crosssell_ids'] = array_map( 'absint', (array) $post_data['crosssell_ids'] );
 		}
+		if ( isset( $post_data['grouped_products'] ) ) {
+			$data['grouped_products'] = array_map( 'absint', (array) $post_data['grouped_products'] );
+		}
 
 		return $data;
 	}

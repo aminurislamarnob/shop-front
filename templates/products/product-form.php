@@ -42,6 +42,7 @@ $height                = '';
 $shipping_class_id     = '';
 $upsell_ids            = array();
 $crosssell_ids         = array();
+$grouped_product_ids   = array();
 $visibility            = 'visible';
 $product_menu_order    = 0;
 $featured              = 'no';
@@ -101,6 +102,10 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 		// Linked products.
 		$upsell_ids    = $product->get_upsell_ids();
 		$crosssell_ids = $product->get_cross_sell_ids();
+
+		if ( $product->is_type( 'grouped' ) ) {
+			$grouped_product_ids = $product->get_children();
+		}
 
 		// Others.
 		$visibility         = $product->get_catalog_visibility();
@@ -434,7 +439,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 						</div>
 					</div>
 				</div>
-				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24">
+				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 hide_if_external hide_if_grouped">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Shipping', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
 						<div class="row">
@@ -485,13 +490,30 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Linked Products', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
 						<div class="row">
+							<?php
+								// phpcs:enable WordPress.Security.NonceVerification.Recommended
+								$excluded_product_types = array_diff( array_keys( wc_get_product_types() ), array( 'simple', 'variable' ) );
+							?>
+							<div class="col-md-6 show_if_grouped">
+								<div class="storesuite-form-group search-group">
+									<label for="grouped_products"><?php esc_html_e( 'Grouped products', 'storesuite' ); ?></label>
+									<select class="storesuite-form-control wc-product-search" id="grouped_products" name="grouped_products[]" data-action="woocommerce_json_search_products" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'storesuite' ); ?>" data-allow_clear="true" multiple>
+										<?php
+										if ( ! empty( $grouped_product_ids ) ) {
+											foreach ( $grouped_product_ids as $grouped_product_id ) {
+												$grouped_product = wc_get_product( $grouped_product_id );
+												if ( $grouped_product ) {
+													echo '<option value="' . esc_attr( $grouped_product_id ) . '" selected="selected">' . esc_html( $grouped_product->get_name() ) . '</option>';
+												}
+											}
+										}
+										?>
+									</select>
+								</div>
+							</div>
 							<div class="col-md-6">
 								<div class="storesuite-form-group search-group">
 									<label for="upsell_ids"><?php esc_html_e( 'Upsells', 'storesuite' ); ?></label>
-									<?php
-										// phpcs:enable WordPress.Security.NonceVerification.Recommended
-										$excluded_product_types = array_diff( array_keys( wc_get_product_types() ), array( 'simple', 'variable' ) );
-									?>
 									<select class="storesuite-form-control wc-product-search" id="upsell_ids" name="upsell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'storesuite' ); ?>" data-allow_clear="true" multiple>
 										<?php
 										if ( ! empty( $upsell_ids ) ) {

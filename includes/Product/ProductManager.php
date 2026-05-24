@@ -211,6 +211,9 @@ class ProductManager {
 		// Cross-sells - always set even if empty to clear previous values.
 		$post_data['cross_sell_ids'] = isset( $data['crosssell_ids'] ) ? array_map( 'intval', (array) wp_unslash( $data['crosssell_ids'] ) ) : array();
 
+		// Grouped children - always set even if empty to clear previous values.
+		$post_data['grouped_products'] = isset( $data['grouped_products'] ) ? array_map( 'intval', (array) wp_unslash( $data['grouped_products'] ) ) : array();
+
 		// Save shipping class.
 		if ( isset( $data['product_shipping_class'] ) && 'external' !== $post_data['type'] ) {
 			$post_data['product_shipping_class'] = absint( $data['product_shipping_class'] );
