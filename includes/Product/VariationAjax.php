@@ -116,16 +116,29 @@ class VariationAjax {
 			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
 		}
 
-		$children    = $product->get_children();
-		$total       = count( $children );
+		$total       = count( $product->get_children() );
 		$total_pages = max( 1, (int) ceil( $total / $per_page ) );
 		$page        = min( $page, $total_pages );
 		$offset      = ( $page - 1 ) * $per_page;
-		$page_ids    = array_slice( $children, $offset, $per_page );
+
+		// Match the WooCommerce admin variations order: menu_order ASC, ID DESC.
+		$variations = wc_get_products(
+			array(
+				'status'  => array( 'private', 'publish' ),
+				'type'    => 'variation',
+				'parent'  => $product_id,
+				'limit'   => $per_page,
+				'page'    => $page,
+				'orderby' => array(
+					'menu_order' => 'ASC',
+					'ID'         => 'DESC',
+				),
+				'return'  => 'objects',
+			)
+		);
 
 		ob_start();
-		foreach ( $page_ids as $loop => $child_id ) {
-			$variation = wc_get_product( $child_id );
+		foreach ( $variations as $loop => $variation ) {
 			if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
 				continue;
 			}
@@ -135,7 +148,7 @@ class VariationAjax {
 				'',
 				array(
 					'variation'    => $variation,
-					'variation_id' => $child_id,
+					'variation_id' => $variation->get_id(),
 					'loop'         => $offset + $loop,
 					'parent'       => $product,
 				)

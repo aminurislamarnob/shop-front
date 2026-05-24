@@ -3394,7 +3394,9 @@ button.remove_order_item_meta.button:hover {
   font-size: 14px;
 }
 .storesuite-edit-attribute,
-.storesuite-remove-attribute {
+.storesuite-remove-attribute,
+.storesuite-toggle-variation,
+.storesuite-remove-variation {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -3403,7 +3405,9 @@ button.remove_order_item_meta.button:hover {
   padding: 0;
 }
 .storesuite-edit-attribute svg,
-.storesuite-remove-attribute svg {
+.storesuite-remove-attribute svg,
+.storesuite-toggle-variation svg,
+.storesuite-remove-variation svg {
   width: 16px;
   height: 16px;
   display: block;
@@ -3416,14 +3420,29 @@ button.remove_order_item_meta.button:hover {
 }
 
 .storesuite-variation-row {
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 0;
+  padding: 0;
+}
+#storesuite-variations-container .storesuite-variation-row {
+  margin-bottom: 0;
+}
+#storesuite-variations-container .storesuite-variation-row + .storesuite-variation-row {
+  border-top: 0;
+}
+#storesuite-variations-container .storesuite-variation-row:first-child {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+#storesuite-variations-container .storesuite-variation-row:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
 }
 
 .storesuite-variation-header {
   display: flex;
   align-items: center;
-  padding: 10px 16px;
+  padding: 15px;
   cursor: pointer;
   gap: 10px;
 }
