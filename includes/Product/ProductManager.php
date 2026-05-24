@@ -214,6 +214,17 @@ class ProductManager {
 		// Grouped children - always set even if empty to clear previous values.
 		$post_data['grouped_products'] = isset( $data['grouped_products'] ) ? array_map( 'intval', (array) wp_unslash( $data['grouped_products'] ) ) : array();
 
+		// Downloadable files and options.
+		if ( isset( $data['downloads'] ) ) {
+			$post_data['downloads'] = $data['downloads'];
+		}
+		if ( isset( $data['_download_limit'] ) ) {
+			$post_data['download_limit'] = '' === $data['_download_limit'] ? '' : absint( $data['_download_limit'] );
+		}
+		if ( isset( $data['_download_expiry'] ) ) {
+			$post_data['download_expiry'] = '' === $data['_download_expiry'] ? '' : absint( $data['_download_expiry'] );
+		}
+
 		// Save shipping class.
 		if ( isset( $data['product_shipping_class'] ) && 'external' !== $post_data['type'] ) {
 			$post_data['product_shipping_class'] = absint( $data['product_shipping_class'] );
@@ -685,11 +696,12 @@ class ProductManager {
 	 */
 	protected function save_downloadable_files( $product, $downloads ) {
 		$files = array();
-		foreach ( $downloads as $key => $file ) {
+		foreach ( $downloads as $index => $file ) {
 			if ( empty( $file['file'] ) ) {
 				continue;
 			}
 
+			$key      = ! empty( $file['download_id'] ) ? $file['download_id'] : wp_generate_uuid4();
 			$download = new \WC_Product_Download();
 			$download->set_id( $key );
 			$download->set_name( $file['name'] ? $file['name'] : wc_get_filename_from_url( $file['file'] ) );

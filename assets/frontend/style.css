@@ -4238,6 +4238,85 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   border-radius: 4px;
 }
 
+/* Downloadable files table on product add/edit form. */
+.storesuite-downloadable-files {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+.storesuite-downloadable-files th,
+.storesuite-downloadable-files td {
+  padding: 0.5rem;
+  vertical-align: middle;
+  border: 1px solid #e5e7eb;
+}
+.storesuite-downloadable-files th {
+  background: #f9fafb;
+  text-align: left;
+  font-weight: 600;
+}
+.storesuite-downloadable-files td.sort,
+.storesuite-downloadable-files th.sort {
+  width: 24px;
+  text-align: center;
+}
+.storesuite-downloadable-files .storesuite-drag-handle {
+  cursor: move;
+  color: #9ca3af;
+}
+.storesuite-downloadable-file-url {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.storesuite-downloadable-file-url-input {
+  flex: 1;
+}
+.storesuite-downloadable-files .file_url_choose {
+  white-space: nowrap;
+}
+.storesuite-downloadable-files .file_url_choose a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  text-decoration: none;
+  line-height: 1;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.storesuite-downloadable-files .file_url_choose a + a {
+  margin-left: 6px;
+}
+.storesuite-downloadable-files .storesuite-upload-file-button {
+  color: var(--storesuite-primary-color, #4f46e5);
+  background: color-mix(in srgb, var(--storesuite-primary-color, #4f46e5) 12%, #fff);
+}
+.storesuite-downloadable-files .storesuite-upload-file-button:hover {
+  border-color: var(--storesuite-primary-color, #4f46e5);
+}
+.storesuite-downloadable-files .storesuite-delete-file {
+  color: #ef4444;
+  background: #fef2f2;
+}
+.storesuite-downloadable-files .storesuite-delete-file:hover,
+.storesuite-downloadable-files .storesuite-delete-file:focus {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+.storesuite-downloadable-files .file_url_choose svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+a.my-storesuite-button.storesuite-add-downloadable-file {
+  font-weight: normal;
+  color: var(--storesuite-button-text-color);
+}
+
 /* Hide number input spinner arrows on product add/edit form. */
 #storesuite-add-product input[type="number"]::-webkit-outer-spin-button,
 #storesuite-add-product input[type="number"]::-webkit-inner-spin-button {

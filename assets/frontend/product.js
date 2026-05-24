@@ -8,6 +8,9 @@
 			this.initWcProductSearch();
 			this.toggleStockFields();
 			this.toggleProductTypeFields();
+			this.toggleVirtualFields();
+			this.toggleDownloadableFields();
+			this.initDownloadableFilesSortable();
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
 			this.handleProductBulkEditSubmit();
@@ -88,7 +91,26 @@
 			} );
 			$( document ).on( 'change', '#_downloadable', function () {
 				self.togglePosVisibility();
+				self.toggleDownloadableFields();
 			} );
+			$( document ).on( 'change', '#_virtual', function () {
+				self.toggleVirtualFields();
+			} );
+			$( document ).on(
+				'click',
+				'.storesuite-add-downloadable-file',
+				this.addDownloadableFileRow
+			);
+			$( document ).on(
+				'click',
+				'.storesuite-delete-file',
+				this.removeDownloadableFileRow
+			);
+			$( document ).on(
+				'click',
+				'.storesuite-upload-file-button',
+				this.openDownloadableFileMedia
+			);
 			$( document.body ).on(
 				'keyup',
 				'input[type=text][name*=_global_unique_id]',
@@ -438,6 +460,83 @@
 			$( '.hide_if_' + product_type ).hide();
 
 			this.togglePosVisibility();
+		},
+
+		initDownloadableFilesSortable: function () {
+			var $tbody = $( '.downloadable_files tbody' );
+			if ( ! $tbody.length || typeof $tbody.sortable !== 'function' ) {
+				return;
+			}
+			$tbody.sortable( {
+				items: 'tr',
+				cursor: 'move',
+				axis: 'y',
+				handle: 'td.sort',
+				scrollSensitivity: 40,
+				forcePlaceholderSize: true,
+				helper: 'clone',
+				opacity: 0.65,
+			} );
+		},
+
+		addDownloadableFileRow: function ( e ) {
+			e.preventDefault();
+			var row = $( this ).data( 'row' );
+			if ( ! row ) {
+				return;
+			}
+			$( this )
+				.closest( '.storesuite-downloadable-files' )
+				.find( 'tbody' )
+				.append( row );
+		},
+
+		removeDownloadableFileRow: function ( e ) {
+			e.preventDefault();
+			$( this ).closest( 'tr' ).remove();
+		},
+
+		openDownloadableFileMedia: function ( e ) {
+			e.preventDefault();
+			var $button = $( this );
+			var $input = $button
+				.closest( 'tr' )
+				.find( '.storesuite-downloadable-file-url-input' );
+
+			if ( typeof wp === 'undefined' || ! wp.media ) {
+				return;
+			}
+
+			var frame = wp.media( {
+				title: $button.data( 'choose' ) || 'Choose a file',
+				button: {
+					text: $button.data( 'update' ) || 'Insert file URL',
+				},
+				multiple: false,
+			} );
+
+			frame.on( 'select', function () {
+				var attachment = frame
+					.state()
+					.get( 'selection' )
+					.first()
+					.toJSON();
+				$input.val( attachment.url );
+			} );
+
+			frame.open();
+		},
+
+		toggleVirtualFields: function () {
+			const is_virtual = $( '#_virtual' ).is( ':checked' );
+			$( '.hide_if_virtual' ).toggle( ! is_virtual );
+			$( '.show_if_virtual' ).toggle( is_virtual );
+		},
+
+		toggleDownloadableFields: function () {
+			const is_downloadable = $( '#_downloadable' ).is( ':checked' );
+			$( '.show_if_downloadable' ).toggle( is_downloadable );
+			$( '.hide_if_downloadable' ).toggle( ! is_downloadable );
 		},
 
 		togglePosVisibility: function () {

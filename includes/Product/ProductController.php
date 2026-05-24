@@ -348,7 +348,51 @@ class ProductController {
 			$data['grouped_products'] = array_map( 'absint', (array) $post_data['grouped_products'] );
 		}
 
+		// Those are sanitized inside prepare_downloads.
+		$data['downloads'] = self::prepare_downloads(
+			isset( $post_data['_wc_file_names'] ) ? wp_unslash( $post_data['_wc_file_names'] ) : array(), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			isset( $post_data['_wc_file_urls'] ) ? wp_unslash( $post_data['_wc_file_urls'] ) : array(), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			isset( $post_data['_wc_file_hashes'] ) ? wp_unslash( $post_data['_wc_file_hashes'] ) : array() // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		);
+
+		if ( isset( $post_data['_download_limit'] ) ) {
+			$limit               = wc_clean( wp_unslash( $post_data['_download_limit'] ) );
+			$data['_download_limit'] = '' === $limit ? '' : absint( $limit );
+		}
+		if ( isset( $post_data['_download_expiry'] ) ) {
+			$expiry                   = wc_clean( wp_unslash( $post_data['_download_expiry'] ) );
+			$data['_download_expiry'] = '' === $expiry ? '' : absint( $expiry );
+		}
+
 		return $data;
+	}
+
+	/**
+	 * Prepare downloads for save.
+	 *
+	 * @param array $file_names File names.
+	 * @param array $file_urls File urls.
+	 * @param array $file_hashes File hashes.
+	 *
+	 * @return array
+	 */
+	private static function prepare_downloads( $file_names, $file_urls, $file_hashes ) {
+		$downloads = array();
+
+		if ( ! empty( $file_urls ) ) {
+			$file_url_size = count( $file_urls );
+
+			for ( $i = 0; $i < $file_url_size; $i++ ) {
+				if ( ! empty( $file_urls[ $i ] ) ) {
+					$downloads[] = array(
+						'name'        => wc_clean( $file_names[ $i ] ),
+						'file'        => wp_unslash( trim( $file_urls[ $i ] ) ),
+						'download_id' => wc_clean( $file_hashes[ $i ] ),
+					);
+				}
+			}
+		}
+		return $downloads;
 	}
 
 }

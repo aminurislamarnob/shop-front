@@ -56,6 +56,9 @@ $gallery_image_ids     = array();
 $global_unique_id      = '';
 $is_virtual            = 'no';
 $is_downloadable       = 'no';
+$downloadable_files    = array();
+$download_limit        = '';
+$download_expiry       = '';
 $external_product_url  = '';
 $external_button_text  = '';
 $cogs_value            = '';
@@ -136,6 +139,11 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 		// Virtual & downloadable.
 		$is_virtual      = $product->get_virtual() ? 'yes' : 'no';
 		$is_downloadable = $product->get_downloadable() ? 'yes' : 'no';
+
+		// Downloadable options.
+		$downloadable_files = $product->get_downloads( 'edit' );
+		$download_limit     = $product->get_download_limit( 'edit' );
+		$download_expiry    = $product->get_download_expiry( 'edit' );
 
 		// External product fields.
 		if ( $product->is_type( 'external' ) ) {
@@ -372,6 +380,109 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 						<?php endif; ?>
 					</div>
 				</div>
+				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 show_if_downloadable" style="display:none;">
+					<h3 class="storesuite-card-title"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></h3>
+					<div class="storesuite-card-content">
+						<div class="storesuite-form-group downloadable_files">
+							<label><?php esc_html_e( 'Downloadable files', 'storesuite' ); ?></label>
+							<table class="storesuite-downloadable-files my-storesuite-tbl">
+								<thead>
+									<tr>
+										<th class="sort">&nbsp;</th>
+										<th><?php esc_html_e( 'Name', 'storesuite' ); ?></th>
+										<th colspan="2"><?php esc_html_e( 'File URL', 'storesuite' ); ?></th>
+										<th>&nbsp;</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+									$disabled_downloads_count = 0;
+									if ( ! empty( $downloadable_files ) ) {
+										foreach ( $downloadable_files as $download_key => $download_file ) {
+											$file = is_object( $download_file ) ? array(
+												'name'    => $download_file->get_name(),
+												'file'    => $download_file->get_file(),
+												'enabled' => method_exists( $download_file, 'get_enabled' ) ? $download_file->get_enabled() : true,
+											) : $download_file;
+
+											$key                       = (string) $download_key;
+											$disabled_download         = isset( $file['enabled'] ) && false === $file['enabled'];
+											$disabled_downloads_count += (int) $disabled_download;
+
+											storesuite_get_template_part(
+											'products/html-product-download',
+											'',
+											array(
+												'key'               => $key,
+												'file'              => $file,
+												'disabled_download' => $disabled_download,
+											)
+										);
+										}
+									}
+									?>
+								</tbody>
+								<tfoot>
+									<tr>
+										<th colspan="2">
+											<a href="#" class="my-storesuite-button storesuite-add-downloadable-file" data-row="
+											<?php
+											$key               = '';
+											$file              = array(
+												'file' => '',
+												'name' => '',
+											);
+											$disabled_download = false;
+											ob_start();
+											storesuite_get_template_part(
+												'products/html-product-download',
+												'',
+												array(
+													'key'               => $key,
+													'file'              => $file,
+													'disabled_download' => $disabled_download,
+												)
+											);
+											echo esc_attr( ob_get_clean() );
+											?>
+											"><?php esc_html_e( 'Add File', 'storesuite' ); ?></a>
+										</th>
+										<th colspan="3">
+											<?php if ( $disabled_downloads_count ) : ?>
+												<span class="disabled">*</span>
+												<?php
+												printf(
+													/* translators: 1: opening link tag, 2: closing link tag. */
+													esc_html__( 'The indicated downloads have been disabled (invalid location or filetype&mdash;%1$slearn more%2$s).', 'storesuite' ),
+													'<a href="https://woocommerce.com/document/approved-download-directories" target="_blank">',
+													'</a>'
+												);
+												?>
+											<?php endif; ?>
+										</th>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="storesuite-form-group">
+									<label for="_download_limit"><?php esc_html_e( 'Download limit', 'storesuite' ); ?></label>
+									<input type="number" class="storesuite-form-control" id="_download_limit" name="_download_limit" min="0" step="1" placeholder="<?php esc_attr_e( 'Unlimited', 'storesuite' ); ?>" value="<?php echo esc_attr( -1 === $download_limit ? '' : $download_limit ); ?>">
+									<small class="storesuite-form-text"><?php esc_html_e( 'Leave blank for unlimited re-downloads.', 'storesuite' ); ?></small>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="storesuite-form-group">
+									<label for="_download_expiry"><?php esc_html_e( 'Download expiry', 'storesuite' ); ?></label>
+									<input type="number" class="storesuite-form-control" id="_download_expiry" name="_download_expiry" min="0" step="1" placeholder="<?php esc_attr_e( 'Never', 'storesuite' ); ?>" value="<?php echo esc_attr( -1 === $download_expiry ? '' : $download_expiry ); ?>">
+									<small class="storesuite-form-text"><?php esc_html_e( 'Enter the number of days before a download link expires, or leave blank.', 'storesuite' ); ?></small>
+								</div>
+							</div>
+						</div>
+						<?php do_action( 'woocommerce_product_options_downloads' ); ?>
+					</div>
+				</div>
 				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Inventory', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
@@ -439,7 +550,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 						</div>
 					</div>
 				</div>
-				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 hide_if_external hide_if_grouped">
+				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 hide_if_external hide_if_grouped hide_if_virtual">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Shipping', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
 						<div class="row">
