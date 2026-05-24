@@ -643,10 +643,26 @@
 
             $(document).on('click', '#storesuite-add-attribute-btn', this.addAttribute.bind(this));
             $(document).on('click', '#storesuite-save-attributes-btn', this.saveAttributes.bind(this));
+            $(document).on('click', '.storesuite-edit-attribute', this.toggleEditAttribute);
             $(document).on('click', '.storesuite-remove-attribute', this.removeAttribute);
             $(document).on('click', '.storesuite-toggle-attribute', this.toggleAttribute);
             $(document).on('click', '.storesuite-select-all-terms', this.selectAllTerms);
             $(document).on('click', '.storesuite-select-no-terms', this.selectNoTerms);
+            $(document).on('change', '.storesuite-attribute-values', this.updateTermBadges);
+        },
+
+        updateTermBadges: function() {
+            var $select  = $(this);
+            var $display = $select.closest('.storesuite-attribute-row').find('.storesuite-attribute-terms-display');
+            if ( ! $display.length ) {
+                return;
+            }
+            var html = '';
+            $select.find('option:selected').each(function() {
+                var text = $.trim( $(this).text() );
+                html += '<span class="storesuite-term-badge">' + $('<div>').text( text ).html() + '</span>';
+            });
+            $display.html( html );
         },
 
         addAttribute: function() {
@@ -760,16 +776,24 @@
             $(this).closest('.storesuite-attribute-row').find('.storesuite-attribute-body').slideToggle(200);
         },
 
+        toggleEditAttribute: function(e) {
+            e.preventDefault();
+            var $row = $(this).closest('.storesuite-attribute-row');
+            $row.toggleClass('is-editing');
+            // Nudge select2 to recalc width now that its container is visible.
+            $row.find('select.storesuite-attribute-values').trigger('change.select2');
+        },
+
         selectAllTerms: function(e) {
             e.preventDefault();
-            var $select = $(this).closest('.storesuite-form-group').find('select');
+            var $select = $(this).closest('td, .storesuite-form-group').find('select.storesuite-attribute-values');
             $select.find('option').prop('selected', true);
             $select.trigger('change');
         },
 
         selectNoTerms: function(e) {
             e.preventDefault();
-            var $select = $(this).closest('.storesuite-form-group').find('select');
+            var $select = $(this).closest('td, .storesuite-form-group').find('select.storesuite-attribute-values');
             $select.find('option').prop('selected', false);
             $select.trigger('change');
         }

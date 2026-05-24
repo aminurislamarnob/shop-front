@@ -21,6 +21,7 @@
   --storesuite-text-color-light: rgb(130 130 130);
   --storesuite-icon-color: rgb(148 163 184);
   --storesuite-bg-color-light: #f7f7f7;
+  --storesuite-bg-color-muted: #f8f9fa;
   --storesuite-border-color: rgb(226 232 240);
   --storesuite-button-text-color: #ffffff;
   --storesuite-button-text-hover-color: #ffffff;
@@ -1132,6 +1133,46 @@ span.order-failed {
 }
 .refund-actions button.button.cancel-action {
   background: rgb(244 63 94);
+}
+
+/* Soft primary button — primary text on light-primary bg, inverts on hover. */
+.my-storesuite-button.my-storesuite-button-soft {
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 12%, #fff);
+  border: 1px solid color-mix(in srgb, var(--storesuite-primary-bg) 18%, #fff);
+}
+.my-storesuite-button.my-storesuite-button-soft svg {
+  fill: var(--storesuite-primary-bg);
+}
+.my-storesuite-button.my-storesuite-button-soft:hover,
+.my-storesuite-button.my-storesuite-button-soft:focus {
+  color: #fff;
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-button.my-storesuite-button-soft:hover svg,
+.my-storesuite-button.my-storesuite-button-soft:focus svg {
+  fill: #fff;
+}
+
+/* Soft danger button — red text on light-red bg, inverts on hover. */
+.my-storesuite-button.my-storesuite-button-danger-soft {
+  color: #ef4444;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+}
+.my-storesuite-button.my-storesuite-button-danger-soft svg {
+  fill: #ef4444;
+}
+.my-storesuite-button.my-storesuite-button-danger-soft:hover,
+.my-storesuite-button.my-storesuite-button-danger-soft:focus {
+  color: #fff;
+  background: #ef4444;
+  border-color: #ef4444;
+}
+.my-storesuite-button.my-storesuite-button-danger-soft:hover svg,
+.my-storesuite-button.my-storesuite-button-danger-soft:focus svg {
+  fill: #fff;
 }
 
 .refund-actions button.button.cancel-action:hover {
@@ -3224,7 +3265,149 @@ button.remove_order_item_meta.button:hover {
 }
 
 .storesuite-attribute-terms-toggle {
-  margin-top: 6px;
+  margin-top: 10px;
+}
+.storesuite-attribute-terms-toggle .storesuite-select-all-terms,
+.storesuite-attribute-terms-toggle .storesuite-select-no-terms {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+/* Attributes bordered table — horizontal row borders only, 6px radius */
+#storesuite-product-attributes .my-storesuite-tbl {
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+#storesuite-product-attributes .my-storesuite-tbl th,
+#storesuite-product-attributes .my-storesuite-tbl td {
+  border-left: 0;
+  border-right: 0;
+}
+#storesuite-product-attributes .my-storesuite-tbl thead th {
+  border-bottom: 1px solid var(--storesuite-border-color);
+}
+#storesuite-product-attributes .my-storesuite-tbl tbody td {
+  border-top: 1px solid var(--storesuite-border-color);
+}
+
+/* Attributes table column widths */
+#storesuite-product-attributes .storesuite-attribute-col-name {
+  width: auto;
+}
+#storesuite-product-attributes .storesuite-attribute-col-visible {
+  width: 85px;
+}
+#storesuite-product-attributes .storesuite-attribute-col-variation {
+  width: 100px;
+}
+#storesuite-product-attributes .storesuite-attribute-col-actions {
+  width: 105px;
+}
+
+/* Attributes card footer toolbar */
+#storesuite-product-attributes .storesuite-card-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--storesuite-border-color);
+  background-color: var(--storesuite-bg-color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.storesuite-attribute-input-group {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  max-width: 500px;
+}
+.storesuite-attribute-input-group .storesuite-form-control {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+.storesuite-attribute-input-group .my-storesuite-button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  white-space: nowrap;
+}
+#storesuite-attribute-toolbar #storesuite-save-attributes-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* Attribute value display / edit toggle */
+.storesuite-attribute-name-head {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.storesuite-attribute-terms-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.storesuite-term-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  border: 1px solid var(--storesuite-border-color);
+  color: var(--storesuite-text-black);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.storesuite-attribute-terms-display:empty {
+  display: none;
+}
+.storesuite-attribute-edit-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.3s ease, opacity 0.2s ease;
+}
+.storesuite-attribute-row.is-editing .storesuite-attribute-edit-wrap {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 10px;
+}
+.storesuite-attribute-edit-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Attributes card — table layout */
+#storesuite-product-attributes .select2-container .select2-selection--multiple .select2-search--inline,
+#storesuite-product-attributes .select2-container .select2-selection--multiple .select2-search--inline .select2-search__field {
+  width: auto !important;
+}
+
+.my-storesuite-wrapper #storesuite-product-attributes .storesuite-form-group {
+  margin-bottom: 0;
+}
+
+.storesuite-attributes-subtitle {
+  color: #6b7280;
+  margin: 0 0 16px 0;
+  font-size: 14px;
+}
+.storesuite-edit-attribute,
+.storesuite-remove-attribute {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+.storesuite-edit-attribute svg,
+.storesuite-remove-attribute svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  margin: 0;
 }
 
 /* Product variations UI */

@@ -380,7 +380,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 						<?php endif; ?>
 					</div>
 				</div>
-				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 show_if_downloadable" style="display:none;">
+				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 show_if_downloadable show_if_simple">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
 						<div class="storesuite-form-group downloadable_files">
