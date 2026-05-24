@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+use Automattic\WooCommerce\Internal\ProductFeed\Integrations\POSCatalog\POSProductVisibilitySync;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use WP_Error;
 
 /**
@@ -215,6 +217,11 @@ class ProductManager {
 		}
 
 		$product = $this->create_product( $post_data );
+
+		if ( $product && FeaturesUtil::feature_is_enabled( 'point_of_sale' ) ) {
+			$visible_in_pos = ! empty( $data['_visible_in_pos'] );
+			wc_get_container()->get( POSProductVisibilitySync::class )->set_product_pos_visibility( $product->get_id(), $visible_in_pos );
+		}
 
 		if ( ! $is_updating ) {
 			do_action( 'storesuite_new_product_added', $product->get_id(), $data );

@@ -313,6 +313,7 @@ class ProductController {
 		if ( isset( $post_data['_cogs_value'] ) ) {
 			$data['_cogs_value'] = wc_clean( wp_unslash( $post_data['_cogs_value'] ) );
 		}
+		$data['_visible_in_pos'] = isset( $post_data['_visible_in_pos'] ) && 'yes' === wc_clean( wp_unslash( $post_data['_visible_in_pos'] ) );
 
 		// Date fields.
 		if ( isset( $post_data['_sale_price_dates_from'] ) ) {

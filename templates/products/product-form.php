@@ -6,6 +6,7 @@
  */
 
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -57,6 +58,8 @@ $is_downloadable       = 'no';
 $external_product_url  = '';
 $external_button_text  = '';
 $cogs_value            = '';
+$visible_in_pos        = true;
+$is_pos_supported      = true;
 
 // Check if this is edit mode.
 if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['edit-product'] ) ) {
@@ -139,6 +142,10 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 		if ( method_exists( $product, 'get_cogs_value' ) ) {
 			$cogs_value = $product->get_cogs_value();
 		}
+
+		// POS visibility.
+		$visible_in_pos   = ! has_term( 'pos-hidden', 'pos_product_visibility', $product_id );
+		$is_pos_supported = $product->is_type( array( 'simple', 'variable' ) ) && ! $product->is_downloadable();
 	}
 }
 $product_types    = apply_filters( 'storesuite_product_types', array( 'simple' => __( 'Simple', 'storesuite' ) ) );
@@ -152,6 +159,9 @@ $pricing_card_classes = 'show_if_simple show_if_external';
 if ( $cogs_is_enabled ) {
 	$pricing_card_classes .= ' show_if_variable';
 }
+
+// Point of Sale feature availability.
+$pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 ?>
 <form id="storesuite-add-product" method="POST">
 		<div class="row">
@@ -560,12 +570,26 @@ if ( $cogs_is_enabled ) {
 									<input type="number" class="storesuite-form-control" id="menu_order" name="menu_order" value="<?php echo esc_attr( $product_menu_order ); ?>">
 								</div>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-6">
 								<div class="storesuite-form-group storesuite-form-switch">
 									<input type="checkbox" class="storesuite-form-control" id="_featured" name="_featured" value="yes" <?php checked( $featured, 'yes' ); ?>>
 									<label for="_featured"><?php esc_html_e( 'Mark this product as featured.', 'storesuite' ); ?></label>
 								</div>
 							</div>
+							<?php if ( $pos_feature_enabled ) : ?>
+								<div class="col-md-6" id="pos_visibility_supported"<?php echo $is_pos_supported ? '' : ' style="display: none;"'; ?>>
+									<div class="storesuite-form-group storesuite-form-switch">
+										<input type="checkbox" class="storesuite-form-control" id="_visible_in_pos" name="_visible_in_pos" value="yes" <?php checked( $visible_in_pos, true ); ?>>
+										<label for="_visible_in_pos"><?php esc_html_e( 'Available for POS', 'storesuite' ); ?></label>
+									</div>
+								</div>
+								<div class="col-md-6" id="pos_visibility_unsupported"<?php echo $is_pos_supported ? ' style="display: none;"' : ''; ?>>
+									<div class="storesuite-form-group storesuite-form-switch">
+										<input type="checkbox" class="storesuite-form-control" id="_visible_in_pos_disabled" disabled>
+										<label for="_visible_in_pos_disabled"><?php esc_html_e( 'Product type is not for POS', 'storesuite' ); ?></label>
+									</div>
+								</div>
+							<?php endif; ?>
 							<div class="col-md-12 hide_if_external hide_if_grouped">
 								<div class="storesuite-form-group">
 									<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'storesuite' ); ?></strong></label>

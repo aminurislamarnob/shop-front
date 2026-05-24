@@ -86,6 +86,9 @@
 			$( document ).on( 'change', 'select#post_type', function () {
 				self.toggleProductTypeFields();
 			} );
+			$( document ).on( 'change', '#_downloadable', function () {
+				self.togglePosVisibility();
+			} );
 			$( document.body ).on(
 				'keyup',
 				'input[type=text][name*=_global_unique_id]',
@@ -433,6 +436,29 @@
 				'.hide_if_simple, .hide_if_variable, .hide_if_external, .hide_if_grouped'
 			).show();
 			$( '.hide_if_' + product_type ).hide();
+
+			this.togglePosVisibility();
+		},
+
+		togglePosVisibility: function () {
+			const $supported = $( '#pos_visibility_supported' );
+			const $unsupported = $( '#pos_visibility_unsupported' );
+			if ( ! $supported.length && ! $unsupported.length ) {
+				return;
+			}
+			const product_type = $( 'select#post_type' ).val();
+			const is_downloadable = $( '#_downloadable' ).is( ':checked' );
+			const is_pos_supported =
+				( 'simple' === product_type || 'variable' === product_type ) &&
+				! is_downloadable;
+
+			if ( is_pos_supported ) {
+				$supported.show();
+				$unsupported.hide();
+			} else {
+				$supported.hide();
+				$unsupported.show();
+			}
 		},
 		validateGlobalUniqueIdOnKeyUp: function () {
 			var global_unique_id = $( this ).val();
