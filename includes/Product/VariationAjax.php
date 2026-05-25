@@ -7,6 +7,7 @@ use WC_Product_Variation;
 use WC_Product_Variable;
 use WC_Meta_Box_Product_Data;
 use Automattic\WooCommerce\Enums\ProductType;
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
 use Exception;
 use WC_Product_Factory;
 
@@ -440,6 +441,11 @@ class VariationAjax {
 				$variation->set_sku( wc_clean( wp_unslash( $_POST['variable_sku'][ $i ] ) ) );
 			}
 
+			// GTIN, UPC, EAN, or ISBN.
+			if ( isset( $_POST['variable_global_unique_id'][ $i ] ) ) {
+				$variation->set_global_unique_id( wc_clean( wp_unslash( $_POST['variable_global_unique_id'][ $i ] ) ) );
+			}
+
 			// Prices.
 			if ( isset( $_POST['variable_regular_price'][ $i ] ) ) {
 				$variation->set_regular_price( wc_clean( wp_unslash( $_POST['variable_regular_price'][ $i ] ) ) );
@@ -448,16 +454,42 @@ class VariationAjax {
 				$variation->set_sale_price( wc_clean( wp_unslash( $_POST['variable_sale_price'][ $i ] ) ) );
 			}
 
+			// Sale price schedule.
+			$date_from = isset( $_POST['variable_sale_price_dates_from'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_sale_price_dates_from'][ $i ] ) ) : '';
+			$date_to   = isset( $_POST['variable_sale_price_dates_to'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_sale_price_dates_to'][ $i ] ) ) : '';
+			$variation->set_date_on_sale_from( $date_from ? wc_clean( $date_from ) : '' );
+			$variation->set_date_on_sale_to( $date_to ? wc_clean( $date_to ) : '' );
+
 			// Stock management.
 			$manage_stock = isset( $_POST['variable_manage_stock'][ $i ] );
 			$variation->set_manage_stock( $manage_stock );
 
-			if ( $manage_stock && isset( $_POST['variable_stock_qty'][ $i ] ) ) {
-				$variation->set_stock_quantity( wc_clean( wp_unslash( $_POST['variable_stock_qty'][ $i ] ) ) );
+			if ( $manage_stock ) {
+				if ( isset( $_POST['variable_stock_qty'][ $i ] ) ) {
+					$variation->set_stock_quantity( wc_clean( wp_unslash( $_POST['variable_stock_qty'][ $i ] ) ) );
+				}
+
+				// Backorders.
+				if ( isset( $_POST['variable_backorders'][ $i ] ) ) {
+					$variation->set_backorders( wc_clean( wp_unslash( $_POST['variable_backorders'][ $i ] ) ) );
+				}
+
+				// Low stock threshold.
+				$low_stock = isset( $_POST['variable_low_stock_amount'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_low_stock_amount'][ $i ] ) ) : '';
+				$variation->set_low_stock_amount( '' === $low_stock ? '' : wc_stock_amount( $low_stock ) );
+			} else {
+				$variation->set_backorders( 'no' );
+				$variation->set_low_stock_amount( '' );
 			}
 
 			if ( isset( $_POST['variable_stock_status'][ $i ] ) ) {
 				$variation->set_stock_status( wc_clean( wp_unslash( $_POST['variable_stock_status'][ $i ] ) ) );
+			}
+
+			// Cost of Goods Sold value.
+			if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+				$cogs_value = isset( $_POST['variable_cogs_value'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_cogs_value'][ $i ] ) ) : '';
+				$variation->set_cogs_value( '' === $cogs_value ? null : (float) wc_format_decimal( $cogs_value ) );
 			}
 
 			// Virtual & Downloadable.

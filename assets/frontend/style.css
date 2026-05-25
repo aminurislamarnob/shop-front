@@ -2133,7 +2133,7 @@ span.storesuite-sidebar-trigger svg {
   font-size: 12px;
 }
 .storesuite-main-dashboard .select2-container .select2-selection--multiple .select2-selection__choice {
-  background-color: #f8f9fa;
+  background-color: var(--storesuite-bg-color-muted);
   border: 1px solid var(--storesuite-border-color);
   border-radius: 4px;
   color: #444;
@@ -2672,7 +2672,7 @@ span.select2-selection__clear {
 }
 
 .storesuite-dashboard-order-details .storesuite-table th, .storesuite-order-items-box table th {
-  background-color: #f8f9fa;
+  background-color: var(--storesuite-bg-color-muted);
   font-weight: 600;
   color: var(--storesuite-text-color);
   font-size: 14px;
@@ -2706,7 +2706,7 @@ span.select2-selection__clear {
 }
 
 .storesuite-dashboard-order-details .delete-btn:hover {
-  background-color: #f8f9fa;
+  background-color: var(--storesuite-bg-color-muted);
 }
 
 .storesuite-dashboard-order-details .coupon-group {
@@ -2771,7 +2771,7 @@ span.select2-selection__clear {
 }
 
 .storesuite-dashboard-order-details .order-summary {
-  background-color: #f8f9fa;
+  background-color: var(--storesuite-bg-color-muted);
   padding: 16px;
   border-radius: 8px;
 }
@@ -3135,7 +3135,7 @@ div#woocommerce-order-items .line_cost {
   margin: 0;
   padding: 0;
   text-align: right;
-  background: #f8f9fa;
+  background: var(--storesuite-bg-color-muted);
 }
 #woocommerce-order-items .wc-order-totals .total {
   text-align: right;
@@ -3363,7 +3363,7 @@ button.remove_order_item_meta.button:hover {
   display: inline-block;
   padding: 4px 8px;
   border-radius: 4px;
-  background-color: #f8f9fa;
+  background-color: var(--storesuite-bg-color-muted);
   border: 1px solid var(--storesuite-border-color);
   color: var(--storesuite-text-black);
   font-size: 12px;
@@ -3496,6 +3496,9 @@ button.remove_order_item_meta.button:hover {
 
 .storesuite-variation-image-upload {
   cursor: pointer;
+  position: relative;
+  display: inline-block;
+  line-height: 0;
 }
 
 .storesuite-variation-image-upload img {
@@ -3504,20 +3507,76 @@ button.remove_order_item_meta.button:hover {
   border: 1px solid #e0e0e0;
 }
 
-.storesuite-remove-variation-image {
-  display: block;
-  margin-top: 4px;
-  font-size: 11px;
-  color: #d63638;
+.storesuite-variation-image-actions {
+  position: absolute;
+  inset: 0;
+}
+
+.storesuite-variation-image-actions a {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  line-height: 1;
   text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.storesuite-variation-image-upload:hover .storesuite-variation-image-actions a {
+  opacity: 1;
+}
+
+.storesuite-variation-image-actions a svg {
+  display: block;
+  box-sizing: content-box;
+  width: 16px;
+  height: 16px;
+  padding: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  fill: #fff;
+}
+
+.storesuite-upload-variation-image {
+  color: var(--storesuite-primary-bg);
+}
+
+.storesuite-upload-variation-image:hover {
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 20%, transparent);
+}
+
+.storesuite-remove-variation-image {
+  color: #ef4444;
 }
 
 .storesuite-remove-variation-image:hover {
-  text-decoration: underline;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.storesuite-variation-image-upload:not(.has-variation-image) .storesuite-remove-variation-image,
+.storesuite-variation-image-upload.has-variation-image .storesuite-upload-variation-image {
+  display: none;
 }
 
 .storesuite-variation-row.variation-needs-update {
-  border-left: 4px solid #2271b1;
+  border-left: 4px solid var(--storesuite-primary-bg);
+}
+
+.storesuite-form-text a.storesuite-cogs-default-link {
+  text-decoration: underline !important;
+}
+
+.variable-switches-group {
+  margin: 10px 0;
+}
+
+.storesuite-variation-body.is-open .storesuite-card-content {
+  background: var(--storesuite-bg-color-muted);
 }
 
 /* Drag reorder */
@@ -3578,7 +3637,7 @@ button.remove_order_item_meta.button:hover {
 .storesuite-default-attributes {
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 16px;
-  background: #f8f9fa;
+  background: var(--storesuite-bg-color-muted);
   padding: 20px;
   border-radius: 6px;
   margin-left: -25px;

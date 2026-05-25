@@ -21,6 +21,9 @@ $variation_image  = $variation->get_image_id()
 $variation_thumb  = $variation_image ? $variation_image[0] : wc_placeholder_img_src( 'thumbnail' );
 $parent_attributes = $parent->get_attributes( 'edit' );
 $variation_attrs   = $variation->get_attributes();
+
+// Cost of Goods Sold feature availability.
+$cogs_is_enabled = wc_get_container()->get( \Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController::class )->feature_is_enabled();
 ?>
 
 <div class="storesuite-variation-row storesuite-card storesuite-mb-12" data-variation-id="<?php echo esc_attr( $variation_id ); ?>">
@@ -87,38 +90,40 @@ $variation_attrs   = $variation->get_attributes();
 	<!-- Body (collapsed by default) -->
 	<div class="storesuite-variation-body" style="display:none;">
 		<div class="storesuite-card-content">
-			<div class="row">
-				<!-- Enabled / Virtual / Downloadable / Manage stock -->
-				<div class="col-md-3">
-					<div class="storesuite-form-group storesuite-form-switch">
-						<input type="checkbox" id="variable_enabled_<?php echo esc_attr( $loop ); ?>"
-							name="variable_enabled[<?php echo esc_attr( $loop ); ?>]" value="1"
-							<?php checked( 'publish' === $variation->get_status() || ! $variation_id ); ?>>
-						<label for="variable_enabled_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Enabled', 'storesuite' ); ?></label>
+			<div class="variable-switches-group">
+				<div class="row">
+					<!-- Enabled / Virtual / Downloadable / Manage stock -->
+					<div class="col-md-3">
+						<div class="storesuite-form-group storesuite-form-switch">
+							<input type="checkbox" id="variable_enabled_<?php echo esc_attr( $loop ); ?>"
+								name="variable_enabled[<?php echo esc_attr( $loop ); ?>]" value="1"
+								<?php checked( 'publish' === $variation->get_status() || ! $variation_id ); ?>>
+							<label for="variable_enabled_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Enabled', 'storesuite' ); ?></label>
+						</div>
 					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="storesuite-form-group storesuite-form-switch">
-						<input type="checkbox" class="variable_is_virtual" id="variable_is_virtual_<?php echo esc_attr( $loop ); ?>"
-							name="variable_is_virtual[<?php echo esc_attr( $loop ); ?>]" value="1"
-							<?php checked( $variation->get_virtual() ); ?>>
-						<label for="variable_is_virtual_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Virtual', 'storesuite' ); ?></label>
+					<div class="col-md-3">
+						<div class="storesuite-form-group storesuite-form-switch">
+							<input type="checkbox" class="variable_is_virtual" id="variable_is_virtual_<?php echo esc_attr( $loop ); ?>"
+								name="variable_is_virtual[<?php echo esc_attr( $loop ); ?>]" value="1"
+								<?php checked( $variation->get_virtual() ); ?>>
+							<label for="variable_is_virtual_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Virtual', 'storesuite' ); ?></label>
+						</div>
 					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="storesuite-form-group storesuite-form-switch">
-						<input type="checkbox" id="variable_is_downloadable_<?php echo esc_attr( $loop ); ?>"
-							name="variable_is_downloadable[<?php echo esc_attr( $loop ); ?>]" value="1"
-							<?php checked( $variation->get_downloadable() ); ?>>
-						<label for="variable_is_downloadable_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></label>
+					<div class="col-md-3">
+						<div class="storesuite-form-group storesuite-form-switch">
+							<input type="checkbox" id="variable_is_downloadable_<?php echo esc_attr( $loop ); ?>"
+								name="variable_is_downloadable[<?php echo esc_attr( $loop ); ?>]" value="1"
+								<?php checked( $variation->get_downloadable() ); ?>>
+							<label for="variable_is_downloadable_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></label>
+						</div>
 					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="storesuite-form-group storesuite-form-switch">
-						<input type="checkbox" class="variable_manage_stock" id="variable_manage_stock_<?php echo esc_attr( $loop ); ?>"
-							name="variable_manage_stock[<?php echo esc_attr( $loop ); ?>]" value="1"
-							<?php checked( $variation->get_manage_stock() ); ?>>
-						<label for="variable_manage_stock_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Manage stock', 'storesuite' ); ?></label>
+					<div class="col-md-3">
+						<div class="storesuite-form-group storesuite-form-switch">
+							<input type="checkbox" class="variable_manage_stock" id="variable_manage_stock_<?php echo esc_attr( $loop ); ?>"
+								name="variable_manage_stock[<?php echo esc_attr( $loop ); ?>]" value="1"
+								<?php checked( $variation->get_manage_stock() ); ?>>
+							<label for="variable_manage_stock_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Manage stock', 'storesuite' ); ?></label>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -128,15 +133,45 @@ $variation_attrs   = $variation->get_attributes();
 				<div class="col-md-2">
 					<div class="storesuite-form-group storesuite-variation-image-group">
 						<label><?php esc_html_e( 'Image', 'storesuite' ); ?></label>
-						<div class="storesuite-variation-image-upload" data-loop="<?php echo esc_attr( $loop ); ?>">
-							<img src="<?php echo esc_url( $variation_thumb ); ?>" width="60" height="60" alt="">
+						<div class="storesuite-variation-image-upload<?php echo $variation->get_image_id() ? ' has-variation-image' : ''; ?>" data-loop="<?php echo esc_attr( $loop ); ?>">
+							<img src="<?php echo esc_url( $variation_thumb ); ?>" width="100" height="100" alt="">
 							<input type="hidden" name="variable_image_id[<?php echo esc_attr( $loop ); ?>]" value="<?php echo esc_attr( $variation->get_image_id() ); ?>">
-							<a href="#" class="storesuite-remove-variation-image" <?php echo $variation->get_image_id() ? '' : 'style="display:none;"'; ?>><?php esc_html_e( 'Remove image', 'storesuite' ); ?></a>
+							<span class="storesuite-variation-image-actions">
+								<a href="#" class="storesuite-upload-variation-image" aria-label="<?php esc_attr_e( 'Upload image', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Upload image', 'storesuite' ); ?>">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.4,7.379a1.128,1.128,0,0,1-.769-.754h0a8,8,0,1,0-15.1,5.237A1.046,1.046,0,0,1,2.223,13.1,5.5,5.5,0,0,0,.057,18.3,5.622,5.622,0,0,0,5.683,23H11a1,1,0,0,0,1-1h0a1,1,0,0,0-1-1H5.683a3.614,3.614,0,0,1-3.646-2.981,3.456,3.456,0,0,1,1.376-3.313A3.021,3.021,0,0,0,4.4,11.141a6.113,6.113,0,0,1-.073-4.126A5.956,5.956,0,0,1,9.215,3.05,6.109,6.109,0,0,1,9.987,3a5.984,5.984,0,0,1,5.756,4.28,2.977,2.977,0,0,0,2.01,1.99,5.934,5.934,0,0,1,.778,11.09.976.976,0,0,0-.531.888h0a.988.988,0,0,0,1.388.915c4.134-1.987,6.38-7.214,2.88-12.264A6.935,6.935,0,0,0,18.4,7.379Z"/><path d="M18.707,16.707a1,1,0,0,0,0-1.414l-1.586-1.586a3,3,0,0,0-4.242,0l-1.586,1.586a1,1,0,0,0,1.414,1.414L14,15.414V23a1,1,0,0,0,2,0V15.414l1.293,1.293a1,1,0,0,0,1.414,0Z"/></svg>
+								</a>
+								<a href="#" class="storesuite-remove-variation-image" aria-label="<?php esc_attr_e( 'Remove image', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Remove image', 'storesuite' ); ?>">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6A1,1,0,0,0,6,7.414L10.586,12,6,16.586A1,1,0,0,0,6,18H6a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/></svg>
+								</a>
+							</span>
 						</div>
 					</div>
 				</div>
-				<!-- Regular price -->
+				<!-- SKU -->
 				<div class="col-md-5">
+					<div class="storesuite-form-group">
+						<label for="variable_sku_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'SKU', 'storesuite' ); ?></label>
+						<input type="text" class="storesuite-form-control"
+							id="variable_sku_<?php echo esc_attr( $loop ); ?>"
+							name="variable_sku[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation->get_sku() ); ?>">
+					</div>
+				</div>
+				<!-- GTIN, UPC, EAN, or ISBN -->
+				<div class="col-md-5">
+					<div class="storesuite-form-group">
+						<label for="variable_global_unique_id_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'GTIN, UPC, EAN, or ISBN', 'storesuite' ); ?></label>
+						<input type="text" class="storesuite-form-control"
+							id="variable_global_unique_id_<?php echo esc_attr( $loop ); ?>"
+							name="variable_global_unique_id[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation->get_global_unique_id( 'edit' ) ); ?>">
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<!-- Regular price -->
+				<div class="col-md-6">
 					<div class="storesuite-form-group">
 						<label for="variable_regular_price_<?php echo esc_attr( $loop ); ?>">
 							<?php /* translators: %s: currency symbol */ printf( esc_html__( 'Regular price (%s)', 'storesuite' ), esc_html( get_woocommerce_currency_symbol() ) ); ?>
@@ -148,11 +183,19 @@ $variation_attrs   = $variation->get_attributes();
 					</div>
 				</div>
 				<!-- Sale price -->
-				<div class="col-md-5">
+				<div class="col-md-6">
 					<div class="storesuite-form-group">
-						<label for="variable_sale_price_<?php echo esc_attr( $loop ); ?>">
-							<?php /* translators: %s: currency symbol */ printf( esc_html__( 'Sale price (%s)', 'storesuite' ), esc_html( get_woocommerce_currency_symbol() ) ); ?>
-						</label>
+						<div class="row">
+							<div class="col-md-8">
+								<label for="variable_sale_price_<?php echo esc_attr( $loop ); ?>">
+									<?php /* translators: %s: currency symbol */ printf( esc_html__( 'Sale price (%s)', 'storesuite' ), esc_html( get_woocommerce_currency_symbol() ) ); ?>
+								</label>
+							</div>
+							<div class="col-md-4 text-right">
+								<a href="#" class="storesuite-variation-sale-schedule"><?php esc_html_e( 'Schedule', 'storesuite' ); ?></a>
+								<a href="#" class="storesuite-variation-cancel-schedule"><?php esc_html_e( 'Cancel', 'storesuite' ); ?></a>
+							</div>
+						</div>
 						<input type="text" class="storesuite-form-control wc_input_price"
 							id="variable_sale_price_<?php echo esc_attr( $loop ); ?>"
 							name="variable_sale_price[<?php echo esc_attr( $loop ); ?>]"
@@ -161,19 +204,61 @@ $variation_attrs   = $variation->get_attributes();
 				</div>
 			</div>
 
-			<div class="row">
-				<!-- SKU -->
-				<div class="col-md-4">
+			<?php
+			$variation_sale_from = $variation->get_date_on_sale_from( 'edit' ) ? wp_date( 'Y-m-d', $variation->get_date_on_sale_from( 'edit' )->getTimestamp() ) : '';
+			$variation_sale_to   = $variation->get_date_on_sale_to( 'edit' ) ? wp_date( 'Y-m-d', $variation->get_date_on_sale_to( 'edit' )->getTimestamp() ) : '';
+			?>
+			<div class="row storesuite-variation-sale-dates">
+				<div class="col-md-6">
 					<div class="storesuite-form-group">
-						<label for="variable_sku_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'SKU', 'storesuite' ); ?></label>
+						<label for="variable_sale_price_dates_from_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Sale start date', 'storesuite' ); ?></label>
 						<input type="text" class="storesuite-form-control"
-							id="variable_sku_<?php echo esc_attr( $loop ); ?>"
-							name="variable_sku[<?php echo esc_attr( $loop ); ?>]"
-							value="<?php echo esc_attr( $variation->get_sku() ); ?>">
+							id="variable_sale_price_dates_from_<?php echo esc_attr( $loop ); ?>"
+							name="variable_sale_price_dates_from[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation_sale_from ); ?>"
+							placeholder="<?php echo esc_attr( _x( 'From&hellip; YYYY-MM-DD', 'placeholder', 'storesuite' ) ); ?>">
 					</div>
 				</div>
+				<div class="col-md-6">
+					<div class="storesuite-form-group">
+						<label for="variable_sale_price_dates_to_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Sale end date', 'storesuite' ); ?></label>
+						<input type="text" class="storesuite-form-control"
+							id="variable_sale_price_dates_to_<?php echo esc_attr( $loop ); ?>"
+							name="variable_sale_price_dates_to[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation_sale_to ); ?>"
+							placeholder="<?php echo esc_attr( _x( 'To&hellip; YYYY-MM-DD', 'placeholder', 'storesuite' ) ); ?>">
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<?php if ( $cogs_is_enabled ) : ?>
+					<!-- Cost of goods -->
+					<div class="col-md">
+						<div class="storesuite-form-group">
+							<label for="variable_cogs_value_<?php echo esc_attr( $loop ); ?>">
+								<?php /* translators: %s: currency symbol */ printf( esc_html__( 'Cost (%s)', 'storesuite' ), esc_html( get_woocommerce_currency_symbol() ) ); ?>
+							</label>
+							<input type="text" class="storesuite-form-control wc_input_price"
+								id="variable_cogs_value_<?php echo esc_attr( $loop ); ?>"
+								name="variable_cogs_value[<?php echo esc_attr( $loop ); ?>]"
+								value="<?php echo esc_attr( wc_format_localized_price( $variation->get_cogs_value() ) ); ?>"
+								placeholder="<?php esc_attr_e( '0 (default)', 'storesuite' ); ?>">
+							<small class="storesuite-form-text">
+								<?php
+								printf(
+									/* translators: %1$s: opening link tag, %2$s: closing link tag */
+									esc_html__( 'You can specify a %1$sdefault value%2$s for all variations.', 'storesuite' ),
+									'<a href="#_cogs_value" class="storesuite-cogs-default-link">',
+									'</a>'
+								);
+								?>
+							</small>
+						</div>
+					</div>
+				<?php endif; ?>
 				<!-- Stock status -->
-				<div class="col-md-4">
+				<div class="col-md">
 					<div class="storesuite-form-group">
 						<label for="variable_stock_status_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Stock status', 'storesuite' ); ?></label>
 						<select class="storesuite-form-control"
@@ -186,13 +271,40 @@ $variation_attrs   = $variation->get_attributes();
 					</div>
 				</div>
 				<!-- Stock quantity -->
-				<div class="col-md-4 show_if_variation_manage_stock" <?php echo $variation->get_manage_stock() ? '' : 'style="display:none;"'; ?>>
+				<div class="col-md show_if_variation_manage_stock" <?php echo $variation->get_manage_stock() ? '' : 'style="display:none;"'; ?>>
 					<div class="storesuite-form-group">
 						<label for="variable_stock_qty_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Stock qty', 'storesuite' ); ?></label>
 						<input type="number" class="storesuite-form-control" step="any"
 							id="variable_stock_qty_<?php echo esc_attr( $loop ); ?>"
 							name="variable_stock_qty[<?php echo esc_attr( $loop ); ?>]"
 							value="<?php echo esc_attr( $variation->get_stock_quantity() ); ?>">
+					</div>
+				</div>
+			</div>
+
+			<div class="row show_if_variation_manage_stock" <?php echo $variation->get_manage_stock() ? '' : 'style="display:none;"'; ?>>
+				<!-- Allow backorders -->
+				<div class="col-md-6">
+					<div class="storesuite-form-group">
+						<label for="variable_backorders_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Allow backorders?', 'storesuite' ); ?></label>
+						<select class="storesuite-form-control"
+							id="variable_backorders_<?php echo esc_attr( $loop ); ?>"
+							name="variable_backorders[<?php echo esc_attr( $loop ); ?>]">
+							<option value="no" <?php selected( $variation->get_backorders(), 'no' ); ?>><?php esc_html_e( 'Do not allow', 'storesuite' ); ?></option>
+							<option value="notify" <?php selected( $variation->get_backorders(), 'notify' ); ?>><?php esc_html_e( 'Allow but notify customer', 'storesuite' ); ?></option>
+							<option value="yes" <?php selected( $variation->get_backorders(), 'yes' ); ?>><?php esc_html_e( 'Allow', 'storesuite' ); ?></option>
+						</select>
+					</div>
+				</div>
+				<!-- Low stock threshold -->
+				<div class="col-md-6">
+					<div class="storesuite-form-group">
+						<label for="variable_low_stock_amount_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Low stock threshold', 'storesuite' ); ?></label>
+						<input type="number" class="storesuite-form-control" step="any" min="0"
+							id="variable_low_stock_amount_<?php echo esc_attr( $loop ); ?>"
+							name="variable_low_stock_amount[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation->get_low_stock_amount( 'edit' ) ); ?>"
+							placeholder="<?php /* translators: %d: store-wide low stock amount */ printf( esc_attr__( 'Store-wide threshold (%d)', 'storesuite' ), esc_attr( get_option( 'woocommerce_notify_low_stock_amount', 2 ) ) ); ?>">
 					</div>
 				</div>
 			</div>
