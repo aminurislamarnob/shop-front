@@ -494,7 +494,39 @@ class VariationAjax {
 
 			// Virtual & Downloadable.
 			$variation->set_virtual( isset( $_POST['variable_is_virtual'][ $i ] ) );
-			$variation->set_downloadable( isset( $_POST['variable_is_downloadable'][ $i ] ) );
+			$is_downloadable = isset( $_POST['variable_is_downloadable'][ $i ] );
+			$variation->set_downloadable( $is_downloadable );
+
+			if ( $is_downloadable ) {
+				// Downloadable files.
+				$file_names  = isset( $_POST['_wc_variation_file_names'][ $i ] ) ? array_map( 'wc_clean', wp_unslash( (array) $_POST['_wc_variation_file_names'][ $i ] ) ) : array();
+				$file_urls   = isset( $_POST['_wc_variation_file_urls'][ $i ] ) ? wp_unslash( (array) $_POST['_wc_variation_file_urls'][ $i ] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				$file_hashes = isset( $_POST['_wc_variation_file_hashes'][ $i ] ) ? array_map( 'wc_clean', wp_unslash( (array) $_POST['_wc_variation_file_hashes'][ $i ] ) ) : array();
+
+				$downloads = array();
+				foreach ( $file_urls as $index => $url ) {
+					$url = trim( $url );
+					if ( '' === $url ) {
+						continue;
+					}
+
+					$key      = ! empty( $file_hashes[ $index ] ) ? $file_hashes[ $index ] : wp_generate_uuid4();
+					$download = new \WC_Product_Download();
+					$download->set_id( $key );
+					$download->set_name( ! empty( $file_names[ $index ] ) ? $file_names[ $index ] : wc_get_filename_from_url( $url ) );
+					$download->set_file( esc_url_raw( $url ) );
+					$downloads[ $key ] = $download;
+				}
+				$variation->set_downloads( $downloads );
+
+				// Download limit.
+				$download_limit = isset( $_POST['variable_download_limit'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_download_limit'][ $i ] ) ) : '';
+				$variation->set_download_limit( '' === $download_limit ? '' : absint( $download_limit ) );
+
+				// Download expiry.
+				$download_expiry = isset( $_POST['variable_download_expiry'][ $i ] ) ? wc_clean( wp_unslash( $_POST['variable_download_expiry'][ $i ] ) ) : '';
+				$variation->set_download_expiry( '' === $download_expiry ? '' : absint( $download_expiry ) );
+			}
 
 			// Weight & Dimensions (only if not virtual).
 			if ( isset( $_POST['variable_weight'][ $i ] ) ) {

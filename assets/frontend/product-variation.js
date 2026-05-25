@@ -46,6 +46,13 @@
 				this.onVirtualChange
 			);
 
+			// Toggle downloadable fields when downloadable checkbox changes.
+			$( document ).on(
+				'change',
+				'.variable_is_downloadable',
+				this.onDownloadableChange
+			);
+
 			// Toggle stock qty field when manage stock checkbox changes.
 			$( document ).on(
 				'change',
@@ -796,6 +803,18 @@
 			var $dates = $row.find( '.storesuite-variation-sale-dates' );
 			$dates.slideUp();
 			$dates.find( 'input' ).val( '' ).trigger( 'change' );
+		},
+
+		/**
+		 * Toggle downloadable fields visibility when downloadable checkbox changes.
+		 */
+		onDownloadableChange: function () {
+			var $row = $( this ).closest( '.storesuite-variation-row' );
+			if ( $( this ).is( ':checked' ) ) {
+				$row.find( '.show_if_variation_downloadable' ).show();
+			} else {
+				$row.find( '.show_if_variation_downloadable' ).hide();
+			}
 		},
 
 		/**

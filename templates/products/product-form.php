@@ -384,7 +384,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
 						<div class="storesuite-form-group downloadable_files">
-							<label><?php esc_html_e( 'Downloadable files', 'storesuite' ); ?></label>
+							<label><?php esc_html_e( 'Downloadable Files', 'storesuite' ); ?></label>
 							<table class="storesuite-downloadable-files my-storesuite-tbl">
 								<thead>
 									<tr>
