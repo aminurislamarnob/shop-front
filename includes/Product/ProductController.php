@@ -364,7 +364,62 @@ class ProductController {
 			$data['_download_expiry'] = '' === $expiry ? '' : absint( $expiry );
 		}
 
+		// Attributes (when the attributes section was submitted with the form).
+		if ( isset( $post_data['storesuite_attributes_submitted'] ) ) {
+			$data['attributes'] = $this->prepare_attributes_from_post( $post_data );
+		}
+
 		return $data;
+	}
+
+	/**
+	 * Build a product attributes array from posted form fields.
+	 *
+	 * Mirrors the standalone "Save Attributes" handler so submitting the
+	 * product form persists attribute changes too.
+	 *
+	 * @param array $post_data Raw POST data.
+	 * @return array Prepared attributes keyed for WC_Product::set_attributes().
+	 */
+	private function prepare_attributes_from_post( $post_data ) {
+		$attribute_names  = isset( $post_data['attribute_names'] ) ? stripslashes_deep( (array) $post_data['attribute_names'] ) : array();
+		$attribute_values = isset( $post_data['attribute_values'] ) ? stripslashes_deep( (array) $post_data['attribute_values'] ) : array();
+
+		// Custom (non-taxonomy) attributes must be a "|"-separated string so
+		// WC treats the values as text, not term IDs.
+		if ( ! empty( $attribute_names ) && ! empty( $attribute_values ) ) {
+			foreach ( $attribute_names as $index => $name ) {
+				if ( empty( $name ) || ! isset( $attribute_values[ $index ] ) ) {
+					continue;
+				}
+
+				if ( 0 === strpos( $name, 'pa_' ) ) {
+					continue;
+				}
+
+				if ( is_array( $attribute_values[ $index ] ) ) {
+					$clean_values = array();
+					foreach ( $attribute_values[ $index ] as $val ) {
+						$val = wc_clean( wp_unslash( $val ) );
+						if ( '' !== $val ) {
+							$clean_values[] = $val;
+						}
+					}
+
+					$attribute_values[ $index ] = implode( ' | ', $clean_values );
+				}
+			}
+		}
+
+		$data = array(
+			'attribute_names'      => $attribute_names,
+			'attribute_values'     => $attribute_values,
+			'attribute_visibility' => isset( $post_data['attribute_visibility'] ) ? stripslashes_deep( (array) $post_data['attribute_visibility'] ) : array(),
+			'attribute_variation'  => isset( $post_data['attribute_variation'] ) ? stripslashes_deep( (array) $post_data['attribute_variation'] ) : array(),
+			'attribute_position'   => isset( $post_data['attribute_position'] ) ? stripslashes_deep( (array) $post_data['attribute_position'] ) : array(),
+		);
+
+		return \WC_Meta_Box_Product_Data::prepare_attributes( $data );
 	}
 
 	/**

@@ -18,6 +18,8 @@ $product_attributes   = $product ? $product->get_attributes( 'edit' ) : array();
 		<?php esc_html_e( 'Attributes', 'storesuite' ); ?>
 	</h3>
 	<div class="storesuite-card-content">
+		<?php // Marker so the product save handler knows attributes were submitted (and can clear them when all rows are removed). ?>
+		<input type="hidden" name="storesuite_attributes_submitted" value="1">
 		<p class="storesuite-attributes-subtitle">
 			<?php esc_html_e( 'Manage product attributes for content and filtering', 'storesuite' ); ?>
 		</p>
@@ -75,7 +77,7 @@ $product_attributes   = $product ? $product->get_attributes( 'edit' ) : array();
 				<?php esc_html_e( 'Add Attribute', 'storesuite' ); ?>
 			</button>
 		</div>
-		<button type="button" id="storesuite-save-attributes-btn" class="my-storesuite-button">
+		<button type="button" id="storesuite-save-attributes-btn" class="my-storesuite-button my-storesuite-button-light">
 			<?php esc_html_e( 'Save Attributes', 'storesuite' ); ?>
 		</button>
 	</div>

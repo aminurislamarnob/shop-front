@@ -230,6 +230,11 @@ class ProductManager {
 			$post_data['product_shipping_class'] = absint( $data['product_shipping_class'] );
 		}
 
+		// Attributes (already prepared in ProductController::sanitize_product_data).
+		if ( isset( $data['attributes'] ) ) {
+			$post_data['attributes'] = $data['attributes'];
+		}
+
 		$product = $this->create_product( $post_data );
 
 		if ( $product && FeaturesUtil::feature_is_enabled( 'point_of_sale' ) ) {
