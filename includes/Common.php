@@ -41,6 +41,14 @@ class Common {
 	public function storesuite_add_body_class( $classes ) {
 		if ( storesuite_is_dashboard_page() ) {
 			$classes[] = 'storesuite-main-dashboard';
+
+			// Expose the active predefined palette for palette-specific styling.
+			if ( 'predefined' === storesuite_get_option_by_key( 'storesuite_color_palette_mode' ) ) {
+				$palette = storesuite_get_option_by_key( 'storesuite_color_palette_name' );
+				if ( ! empty( $palette ) ) {
+					$classes[] = 'storesuite-palette-' . sanitize_html_class( $palette );
+				}
+			}
 		}
 
 		return $classes;

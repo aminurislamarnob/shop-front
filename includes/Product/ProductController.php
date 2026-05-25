@@ -385,6 +385,13 @@ class ProductController {
 		$attribute_names  = isset( $post_data['attribute_names'] ) ? stripslashes_deep( (array) $post_data['attribute_names'] ) : array();
 		$attribute_values = isset( $post_data['attribute_values'] ) ? stripslashes_deep( (array) $post_data['attribute_values'] ) : array();
 
+		// No attribute rows submitted: return an empty set (clears existing
+		// attributes). Avoids passing empty arrays into WC's prepare_attributes(),
+		// where max( array_keys( $attribute_names ) ) would throw on PHP 8.
+		if ( empty( $attribute_names ) ) {
+			return array();
+		}
+
 		// Custom (non-taxonomy) attributes must be a "|"-separated string so
 		// WC treats the values as text, not term IDs.
 		if ( ! empty( $attribute_names ) && ! empty( $attribute_values ) ) {

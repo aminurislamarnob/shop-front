@@ -147,6 +147,28 @@ const PREDEFINED_PALETTES = [
 			liteBgColor: '#eef2ff',
 		},
 	},
+	{
+		value: 'graphite',
+		label: __( 'Graphite', 'storesuite' ),
+		colorOptions: [ '#10131a', '#2f6bff', '#1f5fe6', '#e6efff' ],
+		colors: {
+			buttonText: '#ffffff',
+			buttonBackground: '#2f6bff',
+			buttonHoverText: '#ffffff',
+			buttonHoverBackground: '#1f5fe6',
+			textColor: '#475569',
+			titleTextColor: '#10131a',
+			liteTextColor: '#828282',
+			iconColor: '#ffffff',
+			sidebarMenuText: '#cbd5e1',
+			sidebarBackground: '#10131a',
+			sidebarActiveText: '#ffffff',
+			sidebarActiveBackground: '#2f6bff',
+			sidebarBorderColor: '#20242e',
+			borderColor: '#e2e8f0',
+			liteBgColor: '#f6f8fb',
+		},
+	},
 ];
 
 // Defaults match :root CSS variables in Main::add_storesuite_css_variables()

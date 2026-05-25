@@ -840,7 +840,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 		<!-- Floating sticky save bar (shown when there are unsaved changes) -->
 		<div class="storesuite-sticky-actions" id="storesuite-product-sticky-actions" aria-hidden="true">
 			<div class="storesuite-sticky-actions-inner">
-				<span class="storesuite-sticky-actions-label"><?php esc_html_e( 'Unsaved Changes', 'storesuite' ); ?></span>
+				<span class="storesuite-sticky-actions-label"><?php esc_html_e( 'Unsaved Changes?', 'storesuite' ); ?></span>
 				<div class="storesuite-sticky-actions-buttons">
 					<button type="button" class="my-storesuite-button storesuite-sticky-discard"><?php esc_html_e( 'Discard', 'storesuite' ); ?></button>
 					<button type="submit" name="save_product" class="my-storesuite-button storesuite-sticky-save">

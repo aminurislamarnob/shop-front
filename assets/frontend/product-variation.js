@@ -1050,6 +1050,8 @@
 				'#storesuite-attributes-list .storesuite-attribute-row'
 			).length;
 
+			this.toggleHeader();
+
 			$( document ).on(
 				'click',
 				'#storesuite-add-attribute-btn',
@@ -1090,6 +1092,14 @@
 				'.storesuite-attribute-values',
 				this.updateTermBadges
 			);
+		},
+
+		// Show the attributes table only when at least one attribute row exists.
+		toggleHeader: function () {
+			var hasRows =
+				$( '#storesuite-attributes-list .storesuite-attribute-row' )
+					.length > 0;
+			$( '#storesuite-attributes-table' ).toggle( hasRows );
 		},
 
 		updateTermBadges: function () {
@@ -1141,6 +1151,8 @@
 						$( '#storesuite-attributes-list' ).append(
 							response.data.html
 						);
+
+						StoreSuiteAttributes.toggleHeader();
 
 						$( '.storesuite-select2' )
 							.filter( ':not(.enhanced)' )
@@ -1226,7 +1238,13 @@
 						// Reload variations section (attributes may have changed).
 						StoreSuiteVariations.reload();
 					} else {
-						Swal.fire( { icon: 'error', text: response.data } );
+						Swal.fire( {
+							icon: 'error',
+							text:
+								( response.data && response.data.message ) ||
+								response.data ||
+								'Error saving attributes.',
+						} );
 					}
 				},
 				complete: function () {
@@ -1243,6 +1261,7 @@
 				.closest( '.storesuite-attribute-row' )
 				.slideUp( 200, function () {
 					$( this ).remove();
+					StoreSuiteAttributes.toggleHeader();
 				} );
 		},
 

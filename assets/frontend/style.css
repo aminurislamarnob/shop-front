@@ -1967,6 +1967,15 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   padding: 10px 24px;
 }
 
+/* Graphite palette: keep the header white and tint the sidebar toggle icon
+   with the (dark) sidebar background so it stays visible on white. */
+.storesuite-palette-graphite .storesuite-dashboard-header {
+  background: #ffffff;
+}
+.storesuite-palette-graphite span.storesuite-sidebar-trigger svg {
+  fill: var(--storesuite-sidebar-bg-color);
+}
+
 .storesuite-dropdown.storesuite-header-dropdown img {
   width: 35px;
   height: 35px;

@@ -49,16 +49,18 @@ class ProductManager {
 		}
 
 		// Handle slug.
-		$product_slug = '';
-		if ( isset( $data['product_slug'] ) && ! empty( $data['product_slug'] ) ) {
+		$slug_provided = isset( $data['product_slug'] ) && '' !== trim( (string) $data['product_slug'] );
+		if ( $slug_provided ) {
 			$product_slug = sanitize_title( $data['product_slug'] );
 		} else {
 			// Auto-generate slug from title.
 			$product_slug = sanitize_title( $data['product_title'] );
 		}
 
-		// Check for slug uniqueness.
-		if ( ! empty( $product_slug ) ) {
+		// Only block duplicates when the user explicitly chose a slug. When the
+		// slug is auto-generated from the title, let WordPress append a numeric
+		// suffix on save (product-slug-1, product-slug-2, …) instead of erroring.
+		if ( $slug_provided && ! empty( $product_slug ) ) {
 			$slug_exists = get_page_by_path( $product_slug, OBJECT, 'product' );
 			if ( $slug_exists && ( ! $is_updating || $slug_exists->ID !== $post_arr['product_id'] ) ) {
 				return new WP_Error( 'slug-exists', __( 'This slug already exists. Please choose a different slug.', 'storesuite' ) );

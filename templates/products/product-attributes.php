@@ -13,7 +13,7 @@ $attribute_taxonomies = wc_get_attribute_taxonomies();
 $product_attributes   = $product ? $product->get_attributes( 'edit' ) : array();
 ?>
 
-<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 show_if_variable" id="storesuite-product-attributes">
+<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 hide_if_grouped" id="storesuite-product-attributes">
 	<h3 class="storesuite-card-title">
 		<?php esc_html_e( 'Attributes', 'storesuite' ); ?>
 	</h3>
@@ -24,7 +24,7 @@ $product_attributes   = $product ? $product->get_attributes( 'edit' ) : array();
 			<?php esc_html_e( 'Manage product attributes for content and filtering', 'storesuite' ); ?>
 		</p>
 
-		<table class="my-storesuite-tbl my-storesuite-attributes-table">
+		<table class="my-storesuite-tbl my-storesuite-attributes-table" id="storesuite-attributes-table"<?php echo empty( $product_attributes ) ? ' style="display:none;"' : ''; ?>>
 			<thead>
 				<tr>
 					<th class="storesuite-attribute-col-name"><?php esc_html_e( 'Attribute', 'storesuite' ); ?></th>
