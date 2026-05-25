@@ -212,44 +212,57 @@
 				return;
 			}
 
-			var html =
-				'<span class="storesuite-variation-page-info">' +
-				total +
-				' ' +
-				( total === 1 ? 'variation' : 'variations' ) +
-				'</span> ';
+			var startItem = ( currentPage - 1 ) * perPage + 1;
+			var endItem = Math.min( total, currentPage * perPage );
+
+			var items = '';
 
 			if ( currentPage > 1 ) {
-				html +=
-					'<a href="#" data-page="' +
+				items +=
+					'<li><a href="#" data-page="' +
 					( currentPage - 1 ) +
-					'" class="storesuite-variation-page-link">&laquo; ' +
-					'</a> ';
+					'" class="page-numbers prev">&larr;</a></li>';
 			}
 
 			for ( var i = 1; i <= totalPages; i++ ) {
 				if ( i === currentPage ) {
-					html +=
-						'<span class="storesuite-variation-page-link current">' +
+					items +=
+						'<li><span class="page-numbers current">' +
 						i +
-						'</span> ';
+						'</span></li>';
 				} else {
-					html +=
-						'<a href="#" data-page="' +
+					items +=
+						'<li><a href="#" data-page="' +
 						i +
-						'" class="storesuite-variation-page-link">' +
+						'" class="page-numbers">' +
 						i +
-						'</a> ';
+						'</a></li>';
 				}
 			}
 
 			if ( currentPage < totalPages ) {
-				html +=
-					'<a href="#" data-page="' +
+				items +=
+					'<li><a href="#" data-page="' +
 					( currentPage + 1 ) +
-					'" class="storesuite-variation-page-link">' +
-					' &raquo;</a>';
+					'" class="page-numbers next">&rarr;</a></li>';
 			}
+
+			var showingTemplate =
+				StoreSuiteVariation.i18n.showing || 'Showing %1$s to %2$s of %3$s';
+			var resultText = showingTemplate
+				.replace( '%1$s', startItem )
+				.replace( '%2$s', endItem )
+				.replace( '%3$s', total );
+
+			var html =
+				'<div class="storesuite-pagination-wrap">' +
+				'<div class="storesuite-result-text">' +
+				resultText +
+				'</div>' +
+				'<ul class="storesuite-pagination">' +
+				items +
+				'</ul>' +
+				'</div>';
 
 			$pagination.html( html );
 		},

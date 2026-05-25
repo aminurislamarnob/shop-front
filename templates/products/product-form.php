@@ -827,12 +827,25 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 						<?php wp_nonce_field( '_storesuite_add_product_', 'storesuite_add_product_nonce' ); ?>
 						<input type="hidden" name="action" value="storesuite_add_product_action">
 					<?php endif; ?>
-					<div class="storesuite-button-group">
+					<div class="storesuite-button-group" id="storesuite-product-actions">
 						<button class="my-storesuite-button" name="save_product" type="submit">
 							<?php echo $is_edit_mode ? esc_html__( 'Update Product', 'storesuite' ) : esc_html__( 'Add Product', 'storesuite' ); ?>
 						</button>
 						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'products' ) ); ?>" class="my-storesuite-button my-storesuite-button-light"><?php esc_html_e( 'Back', 'storesuite' ); ?></a>
 					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Floating sticky save bar (shown when there are unsaved changes) -->
+		<div class="storesuite-sticky-actions" id="storesuite-product-sticky-actions" aria-hidden="true">
+			<div class="storesuite-sticky-actions-inner">
+				<span class="storesuite-sticky-actions-label"><?php esc_html_e( 'Unsaved Changes', 'storesuite' ); ?></span>
+				<div class="storesuite-sticky-actions-buttons">
+					<button type="button" class="my-storesuite-button storesuite-sticky-discard"><?php esc_html_e( 'Discard', 'storesuite' ); ?></button>
+					<button type="submit" name="save_product" class="my-storesuite-button storesuite-sticky-save">
+						<?php echo $is_edit_mode ? esc_html__( 'Update Product', 'storesuite' ) : esc_html__( 'Add Product', 'storesuite' ); ?>
+					</button>
 				</div>
 			</div>
 		</div>

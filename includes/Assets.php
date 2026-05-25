@@ -556,6 +556,8 @@ class Assets {
 					'saved'              => __( 'Changes saved.', 'storesuite' ),
 					'loading_variations'     => __( 'Loading variations…', 'storesuite' ),
 					'no_variations'          => __( 'No variations found.', 'storesuite' ),
+					/* translators: %1$s: start item, %2$s: end item, %3$s: total items */
+					'showing'                => __( 'Showing %1$s to %2$s of %3$s', 'storesuite' ),
 					'confirm_generate'       => __( 'Generate variations?', 'storesuite' ),
 					'confirm_generate_text'  => __( 'This will create variations for all attribute combinations.', 'storesuite' ),
 					'ok_button'              => __( 'OK', 'storesuite' ),

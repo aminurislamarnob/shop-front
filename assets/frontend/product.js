@@ -13,6 +13,7 @@
 			this.initDownloadableFilesSortable();
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
+			this.handleStickyActions();
 			this.handleProductBulkEditSubmit();
 			this.handleProductDelete();
 			this.initProductBulkEditModal();
@@ -280,6 +281,12 @@
 										storeSuiteFormHandler.i18n.ok_button,
 								} );
 
+								// Changes saved — hide the unsaved-changes bar
+								// after any form-reset change triggers settle.
+								setTimeout( function () {
+									self.hideStickyActions();
+								}, 0 );
+
 								// Reset form fields only if adding (not editing)
 								if ( response.data.context === 'add' ) {
 									$form[ 0 ].reset();
@@ -346,6 +353,70 @@
 				}
 			);
 		},
+
+		/**
+		 * Floating "Unsaved Changes" bar — visible only when the form is dirty
+		 * and the in-form Update button is scrolled out of view.
+		 */
+		handleStickyActions: function () {
+			var self = this;
+			var $bar = $( '#storesuite-product-sticky-actions' );
+			var btn = document.getElementById( 'storesuite-product-actions' );
+			if ( ! $bar.length ) {
+				return;
+			}
+
+			self._dirty = false;
+
+			// Single source of truth for the bar's visibility.
+			self.refreshStickyBar = function () {
+				var inView = false;
+				if ( btn ) {
+					var rect = btn.getBoundingClientRect();
+					inView = rect.top < window.innerHeight && rect.bottom > 0;
+				}
+				var show = self._dirty && ! inView;
+				$bar.toggleClass( 'is-visible', show ).attr(
+					'aria-hidden',
+					show ? 'false' : 'true'
+				);
+			};
+
+			$( document ).on(
+				'change input',
+				'#storesuite-add-product :input',
+				function ( e ) {
+					if (
+						$( e.target ).closest( '.storesuite-sticky-actions' )
+							.length
+					) {
+						return;
+					}
+					self._dirty = true;
+					self.refreshStickyBar();
+				}
+			);
+
+			$( document ).on(
+				'click',
+				'.storesuite-sticky-discard',
+				function ( e ) {
+					e.preventDefault();
+					window.location.reload();
+				}
+			);
+
+			$( window ).on( 'scroll resize', self.refreshStickyBar );
+			self.refreshStickyBar();
+		},
+
+		hideStickyActions: function () {
+			this._dirty = false;
+			if ( this.refreshStickyBar ) {
+				this.refreshStickyBar();
+			}
+		},
+
 		showError: function ( message ) {
 			Swal.fire( {
 				icon: 'error',
