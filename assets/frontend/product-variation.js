@@ -917,8 +917,12 @@
 		/**
 		 * Save only the variation rows that have been modified.
 		 */
-		saveVariations: function () {
+		saveVariations: function ( opts ) {
 			var self = this;
+			// Silent mode (triggered by the product form submit) skips this
+			// module's own loader and success dialog so the product save owns
+			// the UX; errors are still surfaced.
+			var silent = !! ( opts && opts.silent );
 			var $dirty = $(
 				'#storesuite-variations-container .variation-needs-update'
 			);
@@ -927,9 +931,11 @@
 				return;
 			}
 
-			window.StoreSuite.storeSuiteLoader.block(
-				$( '.my-storesuite-wrapper' )
-			);
+			if ( ! silent ) {
+				window.StoreSuite.storeSuiteLoader.block(
+					$( '.my-storesuite-wrapper' )
+				);
+			}
 
 			var formData = new FormData();
 			formData.append( 'action', 'storesuite_save_variations' );
@@ -974,12 +980,14 @@
 				contentType: false,
 				success: function ( response ) {
 					if ( response && response.success ) {
-						Swal.fire( {
-							icon: 'success',
-							text: response.data.message,
-							timer: 2000,
-							showConfirmButton: false,
-						} );
+						if ( ! silent ) {
+							Swal.fire( {
+								icon: 'success',
+								text: response.data.message,
+								timer: 2000,
+								showConfirmButton: false,
+							} );
+						}
 						$dirty.removeClass( 'variation-needs-update' );
 						$( '#storesuite-save-variations-btn' ).prop(
 							'disabled',
@@ -1001,9 +1009,11 @@
 					} );
 				},
 				complete: function () {
-					window.StoreSuite.storeSuiteLoader.unblock(
-						$( '.my-storesuite-wrapper' )
-					);
+					if ( ! silent ) {
+						window.StoreSuite.storeSuiteLoader.unblock(
+							$( '.my-storesuite-wrapper' )
+						);
+					}
 				},
 			} );
 		},
@@ -1272,6 +1282,8 @@
 			$select.trigger( 'change' );
 		},
 	};
+	// Expose so the main product form submit can also persist dirty variations.
+	window.StoreSuiteVariations = StoreSuiteVariations;
 	StoreSuiteAttributes.init();
 	StoreSuiteVariations.init();
 } )( jQuery );

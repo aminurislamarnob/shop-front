@@ -287,6 +287,17 @@
 									self.hideStickyActions();
 								}, 0 );
 
+								// Also persist any unsaved variation row changes.
+								if (
+									window.StoreSuiteVariations &&
+									typeof window.StoreSuiteVariations
+										.saveVariations === 'function'
+								) {
+									window.StoreSuiteVariations.saveVariations( {
+										silent: true,
+									} );
+								}
+
 								// Reset form fields only if adding (not editing)
 								if ( response.data.context === 'add' ) {
 									$form[ 0 ].reset();
