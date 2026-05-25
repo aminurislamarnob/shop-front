@@ -112,6 +112,11 @@ class DashboardMenu {
 		}
 
 		echo '</ul>';
+
+		// Branding footer pinned to the bottom of the sidebar.
+		echo '<div class="storesuite-sidebar-branding">';
+		echo '<img class="storesuite-sidebar-branding-logo" src="' . esc_url( STORESUITE_PLUGIN_ASSET . '/frontend/images/store-suite-duotone.svg' ) . '" alt="' . esc_attr__( 'StoreSuite', 'storesuite' ) . '" />';
+		echo '</div>';
 	}
 
 	/**

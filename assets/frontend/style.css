@@ -30,7 +30,7 @@
   --storesuite-sidebar-menu-text: rgb(71 85 105);
   --storesuite-sidebar-active-text: #213fd4;
   --storesuite-sidebar-active-background: #213fd4;
-  --storesuite-sidebar-width-expanded: 290px;
+  --storesuite-sidebar-width-expanded: 250px;
   --storesuite-sidebar-width-collapsed: 72px;
 }
 /* Apply border-box to all elements and pseudo-elements */
@@ -1585,6 +1585,28 @@ ul.my-storesuite-metas {
   overflow-y: auto;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Branding footer pinned to the bottom of the sidebar */
+.storesuite-sidebar-branding {
+  margin: auto -10px -10px; /* push to bottom (flex), reach the sidebar edges */
+  position: sticky;
+  bottom: -10px; /* stay pinned while the menu scrolls (cancels bottom padding) */
+  padding: 14px 16px;
+  background: var(--storesuite-sidebar-bg-color);
+  border-top: 1px solid
+    var(--storesuite-sidebar-border-color, var(--storesuite-border-color));
+}
+.storesuite-sidebar-branding-logo {
+  display: block;
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+}
+.my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-branding {
+  display: none;
 }
 .storesuite-sidebar-site-title {
   font-weight: 600;
