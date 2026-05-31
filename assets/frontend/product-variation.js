@@ -18,8 +18,18 @@
 			);
 			$( document ).on(
 				'click',
-				'#storesuite-do-variation-action',
-				this.onToolbarAction.bind( this )
+				'#storesuite-add-variation-btn',
+				this.addVariation.bind( this )
+			);
+			$( document ).on(
+				'click',
+				'#storesuite-generate-variations-btn',
+				this.generateAll.bind( this )
+			);
+			$( document ).on(
+				'click',
+				'#storesuite-apply-bulk-action',
+				this.onApplyBulkAction.bind( this )
 			);
 			$( document ).on(
 				'click',
@@ -147,6 +157,27 @@
 			this.loadPage( this.page );
 		},
 
+		// Show the bulk-actions control and default-values toggle only
+		// when variations exist.
+		toggleBulkActions: function ( total ) {
+			var hide = Number( total ) <= 0;
+			$( '.storesuite-variation-bulk-group' ).toggleClass(
+				'storesuite-hidden',
+				hide
+			);
+			$( '#storesuite-toggle-default-values' ).toggleClass(
+				'storesuite-hidden',
+				hide
+			);
+			// Collapse the defaults panel if the toggle is being hidden.
+			if ( hide ) {
+				$( '#storesuite-toggle-default-values' ).removeClass(
+					'is-active'
+				);
+				$( '#storesuite-default-attributes' ).hide();
+			}
+		},
+
 		loadPage: function ( page ) {
 			var self = this;
 			var $container = $( '#storesuite-variations-container' );
@@ -178,6 +209,7 @@
 						$container
 							.attr( 'data-total', data.total )
 							.attr( 'data-page', data.page );
+						self.toggleBulkActions( data.total );
 						$container.html(
 							data.html ||
 								'<p class="storesuite-text-muted">' +
@@ -266,23 +298,20 @@
 			$pagination.html( html );
 		},
 
-		onToolbarAction: function ( e ) {
+		onApplyBulkAction: function ( e ) {
 			e.preventDefault();
-			var action = $( '#storesuite-variation-actions' ).val();
+			var $select = $( '#storesuite-bulk-action-select' );
+			var action = $select.val();
 
-			switch ( action ) {
-				case 'add_variation':
-					this.addVariation();
-					break;
-				case 'generate_variations':
-					this.generateAll();
-					break;
-				case '':
-					break;
-				default:
-					this.bulkAction( action );
-					break;
+			// Ignore the disabled placeholder.
+			if ( ! action ) {
+				return;
 			}
+
+			this.bulkAction( action );
+
+			// Reset back to the placeholder after triggering.
+			$select.val( '' );
 		},
 
 		generateAll: function () {
@@ -590,6 +619,7 @@
 							.find( '.storesuite-variation-empty' )
 							.remove();
 						$container.prepend( response.data.html );
+						self.toggleBulkActions( 1 );
 						self.initSaleSchedules();
 						Swal.fire( {
 							icon: 'success',
@@ -1415,6 +1445,11 @@
 				.slideUp( 200, function () {
 					$( this ).remove();
 					StoreSuiteAttributes.toggleHeader();
+					// Notify the product form dirty-state tracker (sticky
+					// "Unsaved Changes" bar) since removing a row is silent.
+					$( 'input[name="storesuite_attributes_submitted"]' )
+						.first()
+						.trigger( 'change' );
 				} );
 		},
 

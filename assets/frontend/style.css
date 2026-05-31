@@ -3350,6 +3350,10 @@ button.remove_order_item_meta.button:hover {
   justify-content: space-between;
   gap: 16px;
 }
+.storesuite-hidden {
+  display: none !important;
+}
+
 .storesuite-input-group {
   display: flex;
   align-items: stretch;
@@ -3373,13 +3377,33 @@ button.remove_order_item_meta.button:hover {
   white-space: nowrap;
 }
 
-/* Variation toolbar — input group layout like the attributes footer */
+/* Variation toolbar — primary actions row + Save changes */
 .storesuite-variation-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+}
+.storesuite-variation-toolbar-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+#storesuite-add-variation-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+#storesuite-add-variation-btn svg {
+  flex: 0 0 auto;
+}
+
+/* Bulk actions group — inline with the primary actions */
+.storesuite-variation-bulk-group {
+  flex: 0 1 320px;
+  max-width: 320px;
 }
 
 /* Attribute value display / edit toggle */
@@ -3485,9 +3509,6 @@ button.remove_order_item_meta.button:hover {
 }
 
 /* Product variations UI */
-.storesuite-variation-toolbar {
-  margin-bottom: 16px;
-}
 
 /* Empty state (no variations yet) */
 .storesuite-variation-empty {
