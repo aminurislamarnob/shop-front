@@ -84,9 +84,7 @@
 					}
 					$( 'html, body' ).animate(
 						{
-							scrollTop:
-								$target.offset().top -
-								100,
+							scrollTop: $target.offset().top - 100,
 						},
 						400,
 						function () {
@@ -248,7 +246,8 @@
 			}
 
 			var showingTemplate =
-				StoreSuiteVariation.i18n.showing || 'Showing %1$s to %2$s of %3$s';
+				StoreSuiteVariation.i18n.showing ||
+				'Showing %1$s to %2$s of %3$s';
 			var resultText = showingTemplate
 				.replace( '%1$s', startItem )
 				.replace( '%2$s', endItem )
@@ -896,6 +895,9 @@
 		 */
 		onRemoveImageClick: function ( e ) {
 			e.preventDefault();
+			// Stop the click from bubbling to the .storesuite-variation-image-actions
+			// upload handler, which would otherwise open the media frame.
+			e.stopPropagation();
 			var $upload = $( this ).closest(
 				'.storesuite-variation-image-upload'
 			);
@@ -1051,6 +1053,7 @@
 			).length;
 
 			this.toggleHeader();
+			this.initSortable();
 
 			$( document ).on(
 				'click',
@@ -1088,6 +1091,11 @@
 				this.selectNoTerms
 			);
 			$( document ).on(
+				'click',
+				'.storesuite-add-attribute-term',
+				this.addAttributeTerm
+			);
+			$( document ).on(
 				'change',
 				'.storesuite-attribute-values',
 				this.updateTermBadges
@@ -1100,6 +1108,42 @@
 				$( '#storesuite-attributes-list .storesuite-attribute-row' )
 					.length > 0;
 			$( '#storesuite-attributes-table' ).toggle( hasRows );
+		},
+
+		/**
+		 * Initialize jQuery UI Sortable on the attributes table for drag reordering.
+		 * Renumbers the attribute_position hidden inputs on drop so the new order
+		 * is persisted on the next "Save Attributes".
+		 */
+		initSortable: function () {
+			var $list = $( '#storesuite-attributes-list' );
+			if ( ! $list.length || ! $.fn.sortable ) {
+				return;
+			}
+
+			$list.sortable( {
+				items: 'tr.storesuite-attribute-row',
+				handle: '.storesuite-attribute-sort-handle',
+				cursor: 'move',
+				placeholder: 'storesuite-attribute-sortable-placeholder',
+				forcePlaceholderSize: true,
+				// Preserve cell widths while dragging a table row.
+				helper: function ( event, ui ) {
+					ui.children().each( function () {
+						$( this ).width( $( this ).width() );
+					} );
+					return ui;
+				},
+				stop: function () {
+					$list
+						.find( 'tr.storesuite-attribute-row' )
+						.each( function ( index ) {
+							$( this )
+								.find( 'input.attribute_position' )
+								.val( index );
+						} );
+				},
+			} );
 		},
 
 		updateTermBadges: function () {
@@ -1123,6 +1167,24 @@
 
 		addAttribute: function () {
 			var taxonomy = $( '#storesuite-add-attribute-select' ).val();
+
+			// Placeholder selected — nothing to add.
+			if ( ! taxonomy ) {
+				return;
+			}
+
+			// A custom (non-taxonomy) attribute is added with an empty taxonomy.
+			if ( '__custom__' === taxonomy ) {
+				taxonomy = '';
+			}
+
+			this.appendAttributeRow( taxonomy );
+		},
+
+		/**
+		 * Render a new attribute row (custom or for a given taxonomy) via AJAX.
+		 */
+		appendAttributeRow: function ( taxonomy ) {
 			var index = this.index++;
 
 			window.StoreSuite.storeSuiteLoader.block(
@@ -1171,12 +1233,24 @@
 							} );
 
 						if ( taxonomy ) {
-							$(
+							var $opt = $(
 								'#storesuite-add-attribute-select option[value="' +
 									taxonomy +
 									'"]'
-							).remove();
+							);
+							var $group = $opt.closest( 'optgroup' );
+							$opt.remove();
+							// Drop the "Global attributes" group once it is empty.
+							if (
+								$group.length &&
+								$group.children( 'option' ).length === 0
+							) {
+								$group.remove();
+							}
 						}
+
+						// Reset the selector back to the placeholder.
+						$( '#storesuite-add-attribute-select' ).val( '' );
 					}
 				},
 				complete: function () {
@@ -1299,6 +1373,87 @@
 				.find( 'select.storesuite-attribute-values' );
 			$select.find( 'option' ).prop( 'selected', false );
 			$select.trigger( 'change' );
+		},
+
+		/**
+		 * Create a new term for a global (taxonomy) attribute inline and select it.
+		 */
+		addAttributeTerm: function ( e ) {
+			e.preventDefault();
+			var i18n = StoreSuiteVariation.i18n;
+			var $row = $( this ).closest( '.storesuite-attribute-row' );
+			var taxonomy = $row.data( 'taxonomy' );
+			var $select = $row.find( 'select.storesuite-attribute-values' );
+
+			if ( ! taxonomy || ! $select.length ) {
+				return;
+			}
+
+			Swal.fire( {
+				title: i18n.add_term_title || 'Add new term',
+				input: 'text',
+				inputPlaceholder: i18n.add_term_placeholder || 'Term name',
+				showCancelButton: true,
+				confirmButtonText: i18n.add_button || 'Add',
+				showLoaderOnConfirm: true,
+				allowOutsideClick: function () {
+					return ! Swal.isLoading();
+				},
+				preConfirm: function ( term ) {
+					if ( ! term ) {
+						Swal.showValidationMessage(
+							i18n.term_required || 'Please enter a name.'
+						);
+						return false;
+					}
+					return $.ajax( {
+						url: StoreSuiteVariation.ajax_url,
+						type: 'POST',
+						dataType: 'json',
+						data: {
+							action: 'storesuite_add_attribute_term',
+							storesuite_add_attribute_term_nonce:
+								StoreSuiteVariation.add_term_nonce,
+							taxonomy: taxonomy,
+							term_name: term,
+						},
+					} )
+						.then( function ( response ) {
+							if ( ! response || ! response.success ) {
+								throw new Error(
+									( response &&
+										response.data &&
+										( response.data.error ||
+											response.data.message ) ) ||
+										'Error creating term.'
+								);
+							}
+							return response.data;
+						} )
+						.catch( function ( err ) {
+							Swal.showValidationMessage(
+								err.message || 'Error creating term.'
+							);
+						} );
+				},
+			} ).then( function ( result ) {
+				if ( ! result.value || ! result.value.term_id ) {
+					return;
+				}
+				var data = result.value;
+				if (
+					$select.find( 'option[value="' + data.term_id + '"]' )
+						.length === 0
+				) {
+					$select.append(
+						$( '<option>' ).val( data.term_id ).text( data.name )
+					);
+				}
+				$select
+					.find( 'option[value="' + data.term_id + '"]' )
+					.prop( 'selected', true );
+				$select.trigger( 'change' );
+			} );
 		},
 	};
 	// Expose so the main product form submit can also persist dirty variations.

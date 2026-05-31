@@ -3297,10 +3297,11 @@ button.remove_order_item_meta.button:hover {
 }
 
 .storesuite-attribute-terms-toggle {
-  margin-top: 10px;
+  margin-top: 0;
 }
 .storesuite-attribute-terms-toggle .storesuite-select-all-terms,
-.storesuite-attribute-terms-toggle .storesuite-select-no-terms {
+.storesuite-attribute-terms-toggle .storesuite-select-no-terms,
+.storesuite-attribute-terms-toggle .storesuite-add-attribute-term {
   padding: 8px 10px;
   font-size: 12px;
 }
@@ -3383,8 +3384,30 @@ button.remove_order_item_meta.button:hover {
 
 /* Attribute value display / edit toggle */
 .storesuite-attribute-name-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 6px;
   font-weight: 500;
+}
+
+/* Attribute drag-sort */
+.storesuite-attribute-sort-handle {
+  display: inline-flex;
+  align-items: center;
+  cursor: grab;
+  color: var(--storesuite-text-black);
+}
+.storesuite-attribute-sort-handle:active {
+  cursor: grabbing;
+}
+#storesuite-attributes-list .ui-sortable-helper {
+  display: table;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.storesuite-attribute-sortable-placeholder {
+  outline: 2px dashed #2271b1;
+  background: #f0f6fc;
 }
 .storesuite-attribute-terms-display {
   display: flex;
@@ -3416,13 +3439,18 @@ button.remove_order_item_meta.button:hover {
   margin-top: 10px;
 }
 .storesuite-attribute-edit-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   overflow: hidden;
   min-height: 0;
 }
 
-/* Attributes card — table layout */
-#storesuite-product-attributes .select2-container .select2-selection--multiple .select2-search--inline,
-#storesuite-product-attributes .select2-container .select2-selection--multiple .select2-search--inline .select2-search__field {
+/* Attributes card — table layout.
+   Excludes .storesuite-attribute-col-name so select2 sizes its own search
+   field there and the placeholder text is not clipped. */
+#storesuite-product-attributes .select2-container .select2-selection--multiple .select2-search--inline:not( .storesuite-attribute-col-name * ),
+#storesuite-product-attributes .select2-container .select2-selection--multiple .select2-search--inline:not( .storesuite-attribute-col-name * ) .select2-search__field {
   width: auto !important;
 }
 

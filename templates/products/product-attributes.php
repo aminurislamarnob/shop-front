@@ -57,21 +57,29 @@ $product_attributes   = $product ? $product->get_attributes( 'edit' ) : array();
 	<!-- Add attribute toolbar (card footer) -->
 	<div class="storesuite-card-footer storesuite-attribute-toolbar" id="storesuite-attribute-toolbar">
 		<div class="storesuite-input-group">
+			<?php
+			// Global attributes not already added to this product.
+			$available_global_attributes = array();
+			foreach ( $attribute_taxonomies as $tax ) {
+				$tax_name = wc_attribute_taxonomy_name( $tax->attribute_name );
+				if ( isset( $product_attributes[ $tax_name ] ) ) {
+					continue;
+				}
+				$available_global_attributes[ $tax_name ] = $tax->attribute_label;
+			}
+			?>
 			<select id="storesuite-add-attribute-select" class="storesuite-form-control">
-				<option value=""><?php esc_html_e( 'Custom attribute', 'storesuite' ); ?></option>
-				<?php foreach ( $attribute_taxonomies as $tax ) : ?>
-					<?php
-					$tax_name = wc_attribute_taxonomy_name( $tax->attribute_name );
-					// Skip if already added
-					$already_added = isset( $product_attributes[ $tax_name ] );
-					if ( $already_added ) {
-						continue;
-					}
-					?>
-					<option value="<?php echo esc_attr( $tax_name ); ?>">
-						<?php echo esc_html( $tax->attribute_label ); ?>
-					</option>
-				<?php endforeach; ?>
+				<option value="" disabled selected><?php esc_html_e( 'Select an attribute…', 'storesuite' ); ?></option>
+				<optgroup label="<?php esc_attr_e( 'Create', 'storesuite' ); ?>">
+					<option value="__custom__"><?php esc_html_e( '+ New custom attribute', 'storesuite' ); ?></option>
+				</optgroup>
+				<?php if ( ! empty( $available_global_attributes ) ) : ?>
+					<optgroup label="<?php esc_attr_e( 'Global attributes', 'storesuite' ); ?>">
+						<?php foreach ( $available_global_attributes as $tax_name => $tax_label ) : ?>
+							<option value="<?php echo esc_attr( $tax_name ); ?>"><?php echo esc_html( $tax_label ); ?></option>
+						<?php endforeach; ?>
+					</optgroup>
+				<?php endif; ?>
 			</select>
 			<button type="button" id="storesuite-add-attribute-btn" class="my-storesuite-button my-storesuite-button-soft">
 				<?php esc_html_e( 'Add Attribute', 'storesuite' ); ?>

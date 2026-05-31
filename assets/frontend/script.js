@@ -31,6 +31,35 @@
 	};
 
 	/**
+	 * Resolve a usable image URL from a wp.media attachment.
+	 *
+	 * Not every attachment has a generated `thumbnail` size (small images,
+	 * SVG/GIF, or sizes not yet regenerated), so fall back through medium and
+	 * full to the original URL. Accessing `sizes.thumbnail.url` directly throws
+	 * when the size is missing, which aborts the select handler and leaves no
+	 * image rendered.
+	 *
+	 * @param {Object} attachment wp.media attachment JSON.
+	 * @return {string} Best-available image URL.
+	 */
+	function storeSuiteAttachmentImageUrl( attachment ) {
+		if ( ! attachment ) {
+			return '';
+		}
+		var sizes = attachment.sizes || {};
+		if ( sizes.thumbnail && sizes.thumbnail.url ) {
+			return sizes.thumbnail.url;
+		}
+		if ( sizes.medium && sizes.medium.url ) {
+			return sizes.medium.url;
+		}
+		if ( sizes.full && sizes.full.url ) {
+			return sizes.full.url;
+		}
+		return attachment.url || '';
+	}
+
+	/**
 	 * Overlay modal helpers: focus return, Escape, Tab cycle, backdrop and close buttons.
 	 * Expects the root overlay to use the hidden attribute when closed.
 	 * Pass initOverlay { fade: true } and matching CSS (see .storesuite-modal-fade) for opacity transitions.
@@ -292,6 +321,8 @@
 						.find( '.image-drop-text span' )
 						.text( storeSuiteFrontScript.upload_image_text );
 					$( targetContainer ).removeClass( 'image-drop-bg' );
+					// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+					$( '#product_thumbnail_id' ).trigger( 'change' );
 				} else {
 					// If the media frame already exists, reopen it.
 					if ( frame ) {
@@ -321,13 +352,13 @@
 						// Send the attachment URL to our custom image input field.
 						$( '#product_thumb_img' ).html(
 							'<img src="' +
-								attachment.sizes.thumbnail.url +
+								storeSuiteAttachmentImageUrl( attachment ) +
 								'" alt="' +
 								storeSuiteFrontScript.product_image +
 								'"/>'
 						);
 						$( '#product_thumbnail_url' ).val(
-							attachment.sizes.thumbnail.url
+							storeSuiteAttachmentImageUrl( attachment )
 						);
 
 						//add class to hide text normaly
@@ -335,6 +366,8 @@
 						$( '#product-single-image .image-drop-text span' ).text(
 							storeSuiteFrontScript.remove_image_text
 						);
+						// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+						$( '#product_thumbnail_id' ).trigger( 'change' );
 					} );
 
 					frame.open();
@@ -397,13 +430,13 @@
 						) {
 							galleryImageIds.push( String( attachment.id ) );
 							galleryImageUrls.push(
-								attachment.sizes.thumbnail.url
+								storeSuiteAttachmentImageUrl( attachment )
 							);
 							$( '#product_gallery_img' ).append(
 								'<div class="preview-image-box"><i class="las la-trash" data-id="' +
 									attachment.id +
 									'"></i><img src="' +
-									attachment.sizes.thumbnail.url +
+									storeSuiteAttachmentImageUrl( attachment ) +
 									'" data-id="' +
 									attachment.id +
 									'" alt="' +
@@ -419,6 +452,8 @@
 					$( '#product_image_gallery_url' ).val(
 						galleryImageUrls.join( ',' )
 					);
+					// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+					$( '#product_image_gallery' ).trigger( 'change' );
 
 					//add class to hide text normaly
 					$( targetContainer ).addClass(
@@ -438,15 +473,40 @@
 				'.remove-gallery-image',
 				function ( event ) {
 					event.preventDefault();
-					var imageId = $( this ).data( 'id' );
-					var galleryImageIds = $( '#product_image_gallery' ).val();
-					var newGalleryImageIds = galleryImageIds
-						.split( ',' )
-						.filter( function ( id ) {
-							return parseInt( id ) !== parseInt( imageId );
-						} )
-						.join( ',' );
-					$( '#product_image_gallery' ).val( newGalleryImageIds );
+					var imageId = String( $( this ).data( 'id' ) );
+
+					var ids = $.map(
+						( $( '#product_image_gallery' ).val() || '' ).split(
+							','
+						),
+						function ( id ) {
+							id = $.trim( id );
+							return id ? id : null;
+						}
+					);
+					var urls = $.map(
+						( $( '#product_image_gallery_url' ).val() || '' ).split(
+							','
+						),
+						function ( url ) {
+							url = $.trim( url );
+							return url ? url : null;
+						}
+					);
+
+					// Remove the matching id and its parallel url by index.
+					var idx = $.inArray( imageId, ids );
+					if ( idx !== -1 ) {
+						ids.splice( idx, 1 );
+						if ( idx < urls.length ) {
+							urls.splice( idx, 1 );
+						}
+					}
+
+					$( '#product_image_gallery' ).val( ids.join( ',' ) );
+					$( '#product_image_gallery_url' ).val( urls.join( ',' ) );
+					// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+					$( '#product_image_gallery' ).trigger( 'change' );
 					$( this ).closest( '.preview-image-box' ).remove();
 				}
 			);
@@ -497,13 +557,13 @@
 						// Send the attachment URL to our custom image input field.
 						$( '#category_thumb_img' ).html(
 							'<img src="' +
-								attachment.sizes.thumbnail.url +
+								storeSuiteAttachmentImageUrl( attachment ) +
 								'" alt="' +
 								storeSuiteFrontScript.category_image +
 								'"/>'
 						);
 						$( '#product_category_thumbnail_url' ).val(
-							attachment.sizes.thumbnail.url
+							storeSuiteAttachmentImageUrl( attachment )
 						);
 
 						//add class to hide text normaly
@@ -561,13 +621,13 @@
 						// Send the attachment URL to our custom image input field.
 						$( '#brand_thumb_img' ).html(
 							'<img src="' +
-								attachment.sizes.thumbnail.url +
+								storeSuiteAttachmentImageUrl( attachment ) +
 								'" alt="' +
 								storeSuiteFrontScript.brand_image +
 								'"/>'
 						);
 						$( '#product_brand_thumbnail_url' ).val(
-							attachment.sizes.thumbnail.url
+							storeSuiteAttachmentImageUrl( attachment )
 						);
 
 						//add class to hide text normaly

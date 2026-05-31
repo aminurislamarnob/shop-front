@@ -547,6 +547,7 @@ class Assets {
 				'ajax_url'              => admin_url( 'admin-ajax.php' ),
 				'nonce'                 => wp_create_nonce( 'storesuite-variation-nonce' ),
 				'add_attribute_nonce'   => wp_create_nonce( 'add-attribute' ),
+				'add_term_nonce'        => wp_create_nonce( '_storesuite_add_attribute_term_' ),
 				'save_attributes_nonce' => wp_create_nonce( 'save-attributes' ),
 				'save_variations_nonce'  => wp_create_nonce( 'save-variations' ),
 				'add_variation_nonce'    => wp_create_nonce( 'add-variation' ),
@@ -581,6 +582,10 @@ class Assets {
 					'set_image'              => __( 'Set image', 'storesuite' ),
 					'remove_image'           => __( 'Remove image', 'storesuite' ),
 					'defaults_saved'         => __( 'Default attributes saved.', 'storesuite' ),
+					'add_button'             => __( 'Add', 'storesuite' ),
+					'add_term_title'         => __( 'Add new term', 'storesuite' ),
+					'add_term_placeholder'   => __( 'Term name', 'storesuite' ),
+					'term_required'          => __( 'Please enter a name.', 'storesuite' ),
 				),
 			) );
 		}

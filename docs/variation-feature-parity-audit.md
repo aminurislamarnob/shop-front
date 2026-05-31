@@ -24,12 +24,12 @@ Sources reviewed:
 | Visible on product page toggle | ✅ | ✅ | |
 | Used for variations toggle | ✅ | ✅ | |
 | Select all / Select none terms | ✅ | ✅ | |
-| Drag-sort attribute order | ✅ | ❌ | `attribute_position` hidden field exists but no sortable JS wired for attribute rows |
+| Drag-sort attribute order | ✅ | ✅ | jQuery UI sortable on the attributes table; renumbers `attribute_position` on drop |
 | Expand/collapse rows | ✅ | ✅ | |
 | Remove attribute | ✅ | ✅ | |
 | Save attributes (AJAX) | ✅ | ✅ | Uses `WC_Meta_Box_Product_Data::prepare_attributes` |
-| Add new attribute term inline | ✅ ("Add new") | ❌ | Must pre-create terms in WP admin |
-| Create new global attribute on-the-fly | ✅ | ❌ | |
+| Add new attribute term inline | ✅ ("Add new") | ✅ | "Add new" button → `storesuite_add_attribute_term` (`wp_insert_term`) |
+| Create new global attribute on-the-fly | ✅ | ❌ | Global attributes must be created in WP admin |
 
 ## Variations section
 
@@ -89,8 +89,7 @@ Sources reviewed:
 1. **Expanded bulk actions** — WC has ~25, StoreSuite has 5. Missing: price ±%/amount (regular & sale), bulk stock qty, bulk weight/dimensions, bulk shipping/tax class, bulk download settings, schedule sale.
 
 **UX polish:**
-2. **Drag-sort for attribute rows** — `attribute_position` hidden field exists; needs sortable JS wired up (the variations sortable in `initSortable()` is a working pattern to mirror).
-3. **Inline create** for new global attribute taxonomies or new terms (currently must pre-create them in WP admin).
+2. **Create new global attribute on-the-fly** — global attribute taxonomies must still be created in WP admin (inline term creation for existing global attributes is supported).
 
 ### Closed since the previous audit
-Sale price schedule, backorders, low stock threshold, GTIN/UPC/EAN/ISBN, downloadable files table + limit/expiry, per-variation Cost of Goods Sold, drag-sort variation order, and per-variation shipping class + tax class are now implemented.
+Sale price schedule, backorders, low stock threshold, GTIN/UPC/EAN/ISBN, downloadable files table + limit/expiry, per-variation Cost of Goods Sold, drag-sort variation order, per-variation shipping class + tax class, drag-sort attribute order, and inline attribute-term creation are now implemented.
