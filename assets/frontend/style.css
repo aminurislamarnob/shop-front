@@ -1600,10 +1600,11 @@ ul.my-storesuite-metas {
     var(--storesuite-sidebar-border-color, var(--storesuite-border-color));
 }
 .storesuite-sidebar-branding-logo {
-  display: block;
-  width: 100%;
-  max-width: 150px;
-  height: auto;
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 30px;
+    height: auto;
 }
 .my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-branding {
   display: none;

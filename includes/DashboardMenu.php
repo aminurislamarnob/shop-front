@@ -114,8 +114,23 @@ class DashboardMenu {
 		echo '</ul>';
 
 		// Branding footer pinned to the bottom of the sidebar.
+		$palette_mode = storesuite_get_option_by_key( 'storesuite_color_palette_mode' );
+
+		if ( 'custom' === $palette_mode ) {
+			// Custom palette: respect the explicitly chosen logo variant (defaults to dark).
+			$logo_variant = storesuite_get_option_by_key( 'storesuite_attribution_logo_variant' );
+			$use_dark_logo = ( 'light' !== $logo_variant );
+		} else {
+			// The StoreSuite Default palette uses a light sidebar, so show the dark logo;
+			// every other predefined palette uses a dark sidebar, so show the light logo.
+			$palette_name = storesuite_get_option_by_key( 'storesuite_color_palette_name' );
+			$use_dark_logo = ( '' === $palette_name || 'default' === $palette_name );
+		}
+
+		$logo_file = $use_dark_logo ? 'storesuite-logo-dark.png' : 'storesuite-logo-light.png';
+
 		echo '<div class="storesuite-sidebar-branding">';
-		echo '<img class="storesuite-sidebar-branding-logo" src="' . esc_url( STORESUITE_PLUGIN_ASSET . '/frontend/images/store-suite-duotone.svg' ) . '" alt="' . esc_attr__( 'StoreSuite', 'storesuite' ) . '" />';
+		echo '<img class="storesuite-sidebar-branding-logo" src="' . esc_url( STORESUITE_PLUGIN_ASSET . '/frontend/images/' . $logo_file ) . '" alt="' . esc_attr__( 'StoreSuite', 'storesuite' ) . '" />';
 		echo '</div>';
 	}
 

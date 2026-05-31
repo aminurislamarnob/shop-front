@@ -265,6 +265,19 @@ const COLOR_FIELDS = [
 	},
 ];
 
+const LOGO_VARIANTS = [
+	{
+		value: 'dark',
+		label: __( 'Dark logo', 'storesuite' ),
+		description: __( 'Best for light sidebar backgrounds.', 'storesuite' ),
+	},
+	{
+		value: 'light',
+		label: __( 'Light logo', 'storesuite' ),
+		description: __( 'Best for dark sidebar backgrounds.', 'storesuite' ),
+	},
+];
+
 const findPalette = ( slug ) =>
 	PREDEFINED_PALETTES.find( ( palette ) => palette.value === slug );
 
@@ -383,6 +396,11 @@ const ColorsSettings = () => {
 	const [ colors, setColors ] = useState( () =>
 		getInitialColors( settings )
 	);
+	const [ logoVariant, setLogoVariant ] = useState(
+		settings.storesuite_attribution_logo_variant === 'light'
+			? 'light'
+			: 'dark'
+	);
 
 	const applyPalette = ( slug ) => {
 		const palette = findPalette( slug );
@@ -420,6 +438,7 @@ const ColorsSettings = () => {
 			storesuite_color_palette_mode: paletteMode,
 			storesuite_color_palette_name:
 				paletteMode === 'predefined' ? selectedPalette : '',
+			storesuite_attribution_logo_variant: logoVariant,
 		};
 		COLOR_FIELDS.forEach( ( { key, apiKey } ) => {
 			data[ apiKey ] = colors[ key ] ?? '';
@@ -576,7 +595,7 @@ const ColorsSettings = () => {
 												) }
 											</button>
 										</div>
-										<div className="storesuite-custom-color-list">
+										<div className="storesuite-custom-color-list storesuite-settings-group">
 											{ COLOR_FIELDS.map(
 												( {
 													key,
@@ -603,6 +622,85 @@ const ColorsSettings = () => {
 													/>
 												)
 											) }
+										</div>
+										<div className="storesuite-sidebar-footer-logo">
+											<div className="storesuite-custom-color-header storesuite-logo-variant-header">
+												<h4>
+													{ __(
+														'Sidebar Footer Attribution Logo:',
+														'storesuite'
+													) }
+												</h4>
+											</div>
+											<div className="storesuite-palette-list storesuite-logo-variant-list">
+												{ LOGO_VARIANTS.map(
+													( variant ) => (
+														<div
+															key={
+																variant.value
+															}
+															className={ `storesuite-palette-item${
+																logoVariant ===
+																variant.value
+																	? ' is-active'
+																	: ''
+															}` }
+															onClick={ () =>
+																setLogoVariant(
+																	variant.value
+																)
+															}
+														>
+															<div className="storesuite-palette-item__radio">
+																<input
+																	id={ `storesuite-logo-variant-${ variant.value }` }
+																	type="radio"
+																	name="storesuite_attribution_logo_variant"
+																	value={
+																		variant.value
+																	}
+																	checked={
+																		logoVariant ===
+																		variant.value
+																	}
+																	onChange={ () =>
+																		setLogoVariant(
+																			variant.value
+																		)
+																	}
+																/>
+																<span
+																	className="storesuite-palette-item__indicator"
+																	aria-hidden="true"
+																>
+																	<svg
+																		viewBox="0 0 20 20"
+																		fill="currentColor"
+																	>
+																		<path
+																			fillRule="evenodd"
+																			d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+																			clipRule="evenodd"
+																		/>
+																	</svg>
+																</span>
+																<label
+																	htmlFor={ `storesuite-logo-variant-${ variant.value }` }
+																>
+																	{
+																		variant.label
+																	}
+																	<span className="storesuite-logo-variant-hint">
+																		{
+																			variant.description
+																		}
+																	</span>
+																</label>
+															</div>
+														</div>
+													)
+												) }
+											</div>
 										</div>
 									</>
 								) }
