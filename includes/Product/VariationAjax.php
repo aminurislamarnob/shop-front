@@ -139,21 +139,25 @@ class VariationAjax {
 		);
 
 		ob_start();
-		foreach ( $variations as $loop => $variation ) {
-			if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
-				continue;
-			}
+		if ( empty( $variations ) ) {
+			storesuite_get_template_part( 'products/variation-empty-state' );
+		} else {
+			foreach ( $variations as $loop => $variation ) {
+				if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
+					continue;
+				}
 
-			storesuite_get_template_part(
-				'products/product-variation-row',
-				'',
-				array(
-					'variation'    => $variation,
-					'variation_id' => $variation->get_id(),
-					'loop'         => $offset + $loop,
-					'parent'       => $product,
-				)
-			);
+				storesuite_get_template_part(
+					'products/product-variation-row',
+					'',
+					array(
+						'variation'    => $variation,
+						'variation_id' => $variation->get_id(),
+						'loop'         => $offset + $loop,
+						'parent'       => $product,
+					)
+				);
+			}
 		}
 		$html = ob_get_clean();
 
@@ -627,7 +631,8 @@ class VariationAjax {
 		$product_id  = absint( wp_unslash( $_POST['product_id'] ) );
 		$product     = wc_get_product( $product_id );
 		$bulk_action = isset( $_POST['bulk_action'] ) ? sanitize_text_field( wp_unslash( $_POST['bulk_action'] ) ) : '';
-		$value       = isset( $_POST['value'] ) ? wc_clean( wp_unslash( $_POST['value'] ) ) : '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- wc_clean sanitizes recursively.
+		$data = isset( $_POST['data'] ) && is_array( $_POST['data'] ) ? wc_clean( wp_unslash( $_POST['data'] ) ) : array();
 
 		if ( ! $product || ! $product->is_type( 'variable' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
@@ -640,10 +645,29 @@ class VariationAjax {
 		}
 
 		$allowed_actions = array(
-			'variable_regular_price',
-			'variable_sale_price',
-			'variable_stock_status',
 			'toggle_enabled',
+			'toggle_downloadable',
+			'toggle_virtual',
+			'toggle_manage_stock',
+			'variable_regular_price',
+			'variable_regular_price_increase',
+			'variable_regular_price_decrease',
+			'variable_sale_price',
+			'variable_sale_price_increase',
+			'variable_sale_price_decrease',
+			'variable_sale_schedule',
+			'variable_unset_cogs_value',
+			'variable_stock',
+			'variable_stock_status_instock',
+			'variable_stock_status_outofstock',
+			'variable_stock_status_onbackorder',
+			'variable_low_stock_amount',
+			'variable_length',
+			'variable_width',
+			'variable_height',
+			'variable_weight',
+			'variable_download_limit',
+			'variable_download_expiry',
 			'delete_all',
 		);
 
@@ -651,38 +675,57 @@ class VariationAjax {
 			wp_send_json_error( array( 'message' => __( 'Invalid bulk action.', 'storesuite' ) ) );
 		}
 
-		$updated = 0;
+		// Keep only valid variation objects.
+		$variations = array();
+		foreach ( $children as $child_id ) {
+			$variation = wc_get_product( $child_id );
+			if ( $variation && $variation->is_type( 'variation' ) ) {
+				$variations[] = $variation;
+			}
+		}
 
 		if ( 'delete_all' === $bulk_action ) {
-			foreach ( $children as $child_id ) {
-				$variation = wc_get_product( $child_id );
-				if ( $variation && $variation->is_type( 'variation' ) ) {
-					$variation->delete( true );
-					++$updated;
-				}
+			$deleted = 0;
+			foreach ( $variations as $variation ) {
+				$variation->delete( true );
+				++$deleted;
 			}
 
 			WC_Product_Variable::sync( $product_id );
+			wc_delete_product_transients( $product_id );
 
 			wp_send_json_success(
 				array(
-					'updated' => $updated,
+					'updated' => $deleted,
 					'message' => sprintf(
 						/* translators: %d: number of variations deleted */
 						__( '%d variation(s) deleted.', 'storesuite' ),
-						$updated
+						$deleted
 					),
 				)
 			);
 		}
 
-		foreach ( $children as $child_id ) {
-			$variation = wc_get_product( $child_id );
-			if ( ! $variation || ! $variation->is_type( 'variation' ) ) {
-				continue;
-			}
+		$value = isset( $data['value'] ) ? $data['value'] : '';
 
+		foreach ( $variations as $variation ) {
 			switch ( $bulk_action ) {
+				case 'toggle_enabled':
+					$variation->set_status( 'private' === $variation->get_status( 'edit' ) ? 'publish' : 'private' );
+					break;
+
+				case 'toggle_downloadable':
+					$variation->set_downloadable( ! $variation->get_downloadable( 'edit' ) );
+					break;
+
+				case 'toggle_virtual':
+					$variation->set_virtual( ! $variation->get_virtual( 'edit' ) );
+					break;
+
+				case 'toggle_manage_stock':
+					$variation->set_manage_stock( ! $variation->get_manage_stock( 'edit' ) );
+					break;
+
 				case 'variable_regular_price':
 					$variation->set_regular_price( $value );
 					break;
@@ -691,21 +734,97 @@ class VariationAjax {
 					$variation->set_sale_price( $value );
 					break;
 
-				case 'variable_stock_status':
-					$variation->set_stock_status( $value );
+				case 'variable_regular_price_increase':
+					$this->adjust_price( $variation, 'regular_price', '+', $value );
 					break;
 
-				case 'toggle_enabled':
-					$new_status = ( 'publish' === $variation->get_status() ) ? 'private' : 'publish';
-					$variation->set_status( $new_status );
+				case 'variable_regular_price_decrease':
+					$this->adjust_price( $variation, 'regular_price', '-', $value );
+					break;
+
+				case 'variable_sale_price_increase':
+					$this->adjust_price( $variation, 'sale_price', '+', $value );
+					break;
+
+				case 'variable_sale_price_decrease':
+					$this->adjust_price( $variation, 'sale_price', '-', $value );
+					break;
+
+				case 'variable_sale_schedule':
+					if ( isset( $data['date_from'] ) && 'false' !== $data['date_from'] ) {
+						$variation->set_date_on_sale_from( gmdate( 'Y-m-d 00:00:00', strtotime( $data['date_from'] ) ) );
+					}
+					if ( isset( $data['date_to'] ) && 'false' !== $data['date_to'] ) {
+						$variation->set_date_on_sale_to( gmdate( 'Y-m-d 23:59:59', strtotime( $data['date_to'] ) ) );
+					}
+					break;
+
+				case 'variable_unset_cogs_value':
+					if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+						$variation->set_cogs_value( null );
+					}
+					break;
+
+				case 'variable_stock':
+					if ( $variation->managing_stock() ) {
+						$variation->set_stock_quantity( wc_stock_amount( $value ) );
+					} else {
+						$variation->set_stock_quantity( null );
+					}
+					break;
+
+				case 'variable_stock_status_instock':
+					$variation->set_stock_status( 'instock' );
+					break;
+
+				case 'variable_stock_status_outofstock':
+					$variation->set_stock_status( 'outofstock' );
+					break;
+
+				case 'variable_stock_status_onbackorder':
+					$variation->set_stock_status( 'onbackorder' );
+					break;
+
+				case 'variable_low_stock_amount':
+					if ( $variation->managing_stock() ) {
+						$variation->set_low_stock_amount( wc_stock_amount( $value ) );
+					} else {
+						$variation->set_low_stock_amount( '' );
+					}
+					break;
+
+				case 'variable_length':
+					$variation->set_length( $value );
+					break;
+
+				case 'variable_width':
+					$variation->set_width( $value );
+					break;
+
+				case 'variable_height':
+					$variation->set_height( $value );
+					break;
+
+				case 'variable_weight':
+					$variation->set_weight( $value );
+					break;
+
+				case 'variable_download_limit':
+					$variation->set_download_limit( $value );
+					break;
+
+				case 'variable_download_expiry':
+					$variation->set_download_expiry( $value );
 					break;
 			}
 
 			$variation->save();
-			++$updated;
 		}
 
 		WC_Product_Variable::sync( $product_id );
+		wc_delete_product_transients( $product_id );
+
+		$updated = count( $variations );
 
 		wp_send_json_success(
 			array(
@@ -717,6 +836,32 @@ class VariationAjax {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Increase or decrease a variation price by a fixed amount or percentage.
+	 *
+	 * @param \WC_Product_Variation $variation Variation object.
+	 * @param string                $field     Price field (regular_price or sale_price).
+	 * @param string                $operator  Either '+' or '-'.
+	 * @param string                $value     Fixed amount, or percentage when suffixed with '%'.
+	 * @return void
+	 */
+	private function adjust_price( $variation, $field, $operator, $value ) {
+		$field_value = $variation->{"get_$field"}( 'edit' );
+
+		if ( '' === $field_value || null === $field_value ) {
+			return;
+		}
+
+		if ( '%' === substr( $value, -1 ) ) {
+			$percent      = wc_format_decimal( substr( $value, 0, -1 ) );
+			$field_value += round( ( $field_value / 100 ) * $percent, wc_get_price_decimals() ) * ( '-' === $operator ? -1 : 1 );
+		} else {
+			$field_value += (float) $value * ( '-' === $operator ? -1 : 1 );
+		}
+
+		$variation->{"set_$field"}( $field_value );
 	}
 
 	/**

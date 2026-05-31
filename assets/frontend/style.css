@@ -3489,6 +3489,43 @@ button.remove_order_item_meta.button:hover {
   margin-bottom: 16px;
 }
 
+/* Empty state (no variations yet) */
+.storesuite-variation-empty {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 0;
+  min-height: 320px;
+}
+.storesuite-variation-empty-arrow {
+  position: absolute;
+  top: 0;
+  left: 24px;
+}
+.storesuite-variation-empty-arrow img {
+  display: block;
+  width: 57px;
+  height: auto;
+}
+.storesuite-variation-empty-bg {
+  display: block;
+  width: 80px;
+  height: auto;
+}
+.storesuite-variation-empty p {
+  width: 90%;
+  max-width: 544px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--storesuite-text-black);
+}
+
 .storesuite-variation-row {
   border: 1px solid var(--storesuite-border-color);
   border-radius: 0;

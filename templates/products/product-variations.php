@@ -56,11 +56,42 @@ if ( $product && $product->is_type( 'variable' ) ) {
 							<option value="add_variation"><?php esc_html_e( 'Add variation', 'storesuite' ); ?></option>
 							<option value="generate_variations"><?php esc_html_e( 'Create variations from all attributes', 'storesuite' ); ?></option>
 						</optgroup>
-						<optgroup label="<?php esc_attr_e( 'Bulk actions', 'storesuite' ); ?>">
-							<option value="variable_regular_price"><?php esc_html_e( 'Set regular prices', 'storesuite' ); ?></option>
-							<option value="variable_sale_price"><?php esc_html_e( 'Set sale prices', 'storesuite' ); ?></option>
-							<option value="variable_stock_status"><?php esc_html_e( 'Set stock status', 'storesuite' ); ?></option>
+						<optgroup label="<?php esc_attr_e( 'Status', 'storesuite' ); ?>">
 							<option value="toggle_enabled"><?php esc_html_e( 'Toggle "Enabled"', 'storesuite' ); ?></option>
+							<option value="toggle_downloadable"><?php esc_html_e( 'Toggle "Downloadable"', 'storesuite' ); ?></option>
+							<option value="toggle_virtual"><?php esc_html_e( 'Toggle "Virtual"', 'storesuite' ); ?></option>
+						</optgroup>
+						<optgroup label="<?php esc_attr_e( 'Pricing', 'storesuite' ); ?>">
+							<option value="variable_regular_price"><?php esc_html_e( 'Set regular prices', 'storesuite' ); ?></option>
+							<option value="variable_regular_price_increase"><?php esc_html_e( 'Increase regular prices (fixed amount or percentage)', 'storesuite' ); ?></option>
+							<option value="variable_regular_price_decrease"><?php esc_html_e( 'Decrease regular prices (fixed amount or percentage)', 'storesuite' ); ?></option>
+							<option value="variable_sale_price"><?php esc_html_e( 'Set sale prices', 'storesuite' ); ?></option>
+							<option value="variable_sale_price_increase"><?php esc_html_e( 'Increase sale prices (fixed amount or percentage)', 'storesuite' ); ?></option>
+							<option value="variable_sale_price_decrease"><?php esc_html_e( 'Decrease sale prices (fixed amount or percentage)', 'storesuite' ); ?></option>
+							<option value="variable_sale_schedule"><?php esc_html_e( 'Set scheduled sale dates', 'storesuite' ); ?></option>
+						</optgroup>
+						<?php if ( wc_get_container()->get( \Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController::class )->feature_is_enabled() ) : ?>
+							<optgroup label="<?php esc_attr_e( 'Cost of goods', 'storesuite' ); ?>">
+								<option value="variable_unset_cogs_value"><?php esc_html_e( 'Remove custom costs', 'storesuite' ); ?></option>
+							</optgroup>
+						<?php endif; ?>
+						<optgroup label="<?php esc_attr_e( 'Inventory', 'storesuite' ); ?>">
+							<option value="toggle_manage_stock"><?php esc_html_e( 'Toggle "Manage stock"', 'storesuite' ); ?></option>
+							<option value="variable_stock"><?php esc_html_e( 'Stock', 'storesuite' ); ?></option>
+							<option value="variable_stock_status_instock"><?php esc_html_e( 'Set Status - In stock', 'storesuite' ); ?></option>
+							<option value="variable_stock_status_outofstock"><?php esc_html_e( 'Set Status - Out of stock', 'storesuite' ); ?></option>
+							<option value="variable_stock_status_onbackorder"><?php esc_html_e( 'Set Status - On backorder', 'storesuite' ); ?></option>
+							<option value="variable_low_stock_amount"><?php esc_html_e( 'Low stock threshold', 'storesuite' ); ?></option>
+						</optgroup>
+						<optgroup label="<?php esc_attr_e( 'Shipping', 'storesuite' ); ?>">
+							<option value="variable_length"><?php esc_html_e( 'Length', 'storesuite' ); ?></option>
+							<option value="variable_width"><?php esc_html_e( 'Width', 'storesuite' ); ?></option>
+							<option value="variable_height"><?php esc_html_e( 'Height', 'storesuite' ); ?></option>
+							<option value="variable_weight"><?php esc_html_e( 'Weight', 'storesuite' ); ?></option>
+						</optgroup>
+						<optgroup label="<?php esc_attr_e( 'Downloadable products', 'storesuite' ); ?>">
+							<option value="variable_download_limit"><?php esc_html_e( 'Download limit', 'storesuite' ); ?></option>
+							<option value="variable_download_expiry"><?php esc_html_e( 'Download expiry', 'storesuite' ); ?></option>
 						</optgroup>
 						<optgroup label="<?php esc_attr_e( 'Delete', 'storesuite' ); ?>">
 							<option value="delete_all"><?php esc_html_e( 'Delete all variations', 'storesuite' ); ?></option>

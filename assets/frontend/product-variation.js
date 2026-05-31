@@ -277,14 +277,10 @@
 				case 'generate_variations':
 					this.generateAll();
 					break;
-				case 'variable_regular_price':
-				case 'variable_sale_price':
-				case 'variable_stock_status':
-				case 'toggle_enabled':
-				case 'delete_all':
-					this.bulkAction( action );
+				case '':
 					break;
 				default:
+					this.bulkAction( action );
 					break;
 			}
 		},
@@ -354,6 +350,28 @@
 			} );
 		},
 
+		// Bulk actions that prompt for a single value.
+		valuePromptActions: [
+			'variable_regular_price',
+			'variable_sale_price',
+			'variable_stock',
+			'variable_low_stock_amount',
+			'variable_weight',
+			'variable_length',
+			'variable_width',
+			'variable_height',
+			'variable_download_limit',
+			'variable_download_expiry',
+		],
+
+		// Bulk actions that prompt for a fixed amount or percentage.
+		priceAdjustActions: [
+			'variable_regular_price_increase',
+			'variable_regular_price_decrease',
+			'variable_sale_price_increase',
+			'variable_sale_price_decrease',
+		],
+
 		/**
 		 * Prompt user for bulk action value and execute.
 		 */
@@ -361,93 +379,138 @@
 			var self = this;
 			var i18n = StoreSuiteVariation.i18n;
 
-			switch ( action ) {
-				case 'variable_regular_price':
-				case 'variable_sale_price':
-					var title =
-						action === 'variable_regular_price'
-							? i18n.set_regular_price ||
-							  'Set regular price for all variations'
-							: i18n.set_sale_price ||
-							  'Set sale price for all variations';
-
-					Swal.fire( {
-						title: title,
-						input: 'text',
-						inputLabel: i18n.enter_price || 'Enter price',
-						showCancelButton: true,
-						confirmButtonText: i18n.ok_button || 'OK',
-						inputValidator: function ( val ) {
-							if ( ! val || isNaN( parseFloat( val ) ) ) {
-								return (
-									i18n.enter_price || 'Enter a valid price.'
-								);
-							}
-						},
-					} ).then( function ( result ) {
-						if ( result.isConfirmed ) {
-							self.executeBulkAction( action, result.value );
-						}
-					} );
-					break;
-
-				case 'variable_stock_status':
-					Swal.fire( {
-						title:
-							i18n.select_stock_status ||
-							'Select stock status for all variations',
-						input: 'select',
-						inputOptions: {
-							instock: i18n.in_stock || 'In stock',
-							outofstock: i18n.out_of_stock || 'Out of stock',
-							onbackorder: i18n.on_backorder || 'On backorder',
-						},
-						showCancelButton: true,
-						confirmButtonText: i18n.ok_button || 'OK',
-					} ).then( function ( result ) {
-						if ( result.isConfirmed ) {
-							self.executeBulkAction( action, result.value );
-						}
-					} );
-					break;
-
-				case 'toggle_enabled':
-					Swal.fire( {
-						title:
-							i18n.confirm_toggle_enabled ||
-							'Toggle enabled/disabled status for all variations?',
-						icon: 'question',
-						showCancelButton: true,
-						confirmButtonText: i18n.ok_button || 'OK',
-					} ).then( function ( result ) {
-						if ( result.isConfirmed ) {
-							self.executeBulkAction( action, '' );
-						}
-					} );
-					break;
-
-				case 'delete_all':
-					Swal.fire( {
-						title:
-							i18n.confirm_delete_all ||
-							'Delete all variations? This cannot be undone.',
-						icon: 'warning',
-						showCancelButton: true,
-						confirmButtonColor: '#d63638',
-						confirmButtonText: i18n.ok_button || 'OK',
-					} ).then( function ( result ) {
-						if ( result.isConfirmed ) {
-							self.executeBulkAction( action, '' );
-						}
-					} );
-					break;
+			if ( 'delete_all' === action ) {
+				Swal.fire( {
+					title:
+						i18n.confirm_delete_all ||
+						'Delete all variations? This cannot be undone.',
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#d63638',
+					confirmButtonText: i18n.ok_button || 'OK',
+				} ).then( function ( result ) {
+					if ( result.isConfirmed ) {
+						self.executeBulkAction( action, { allowed: 'true' } );
+					}
+				} );
+				return;
 			}
+
+			if ( 'variable_unset_cogs_value' === action ) {
+				Swal.fire( {
+					title:
+						i18n.confirm_remove_cogs ||
+						'Remove the custom cost from every variation?',
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonText: i18n.ok_button || 'OK',
+				} ).then( function ( result ) {
+					if ( result.isConfirmed ) {
+						self.executeBulkAction( action, {} );
+					}
+				} );
+				return;
+			}
+
+			if ( 'variable_sale_schedule' === action ) {
+				self.promptSaleSchedule();
+				return;
+			}
+
+			if ( self.priceAdjustActions.indexOf( action ) !== -1 ) {
+				Swal.fire( {
+					title:
+						i18n.enter_value_fixed_or_percent ||
+						'Enter a value (fixed or %)',
+					input: 'text',
+					showCancelButton: true,
+					confirmButtonText: i18n.ok_button || 'OK',
+					inputValidator: function ( val ) {
+						if ( ! val ) {
+							return i18n.enter_a_value || 'Enter a value.';
+						}
+					},
+				} ).then( function ( result ) {
+					if ( result.isConfirmed ) {
+						self.executeBulkAction( action, {
+							value: result.value,
+						} );
+					}
+				} );
+				return;
+			}
+
+			if ( self.valuePromptActions.indexOf( action ) !== -1 ) {
+				Swal.fire( {
+					title: i18n.enter_a_value || 'Enter a value',
+					input: 'text',
+					showCancelButton: true,
+					confirmButtonText: i18n.ok_button || 'OK',
+				} ).then( function ( result ) {
+					if ( result.isConfirmed ) {
+						self.executeBulkAction( action, {
+							value: result.value,
+						} );
+					}
+				} );
+				return;
+			}
+
+			// Toggles and stock-status changes run immediately.
+			self.executeBulkAction( action, {} );
+		},
+
+		/**
+		 * Prompt for sale start/end dates, then execute the schedule action.
+		 */
+		promptSaleSchedule: function () {
+			var self = this;
+			var i18n = StoreSuiteVariation.i18n;
+
+			Swal.fire( {
+				title:
+					i18n.sale_start_date ||
+					'Sale start date (leave blank to skip)',
+				input: 'date',
+				showCancelButton: true,
+				confirmButtonText: i18n.next_button || 'Next',
+			} ).then( function ( fromResult ) {
+				if ( ! fromResult.isConfirmed ) {
+					return;
+				}
+
+				var dateFrom = fromResult.value || '';
+
+				Swal.fire( {
+					title:
+						i18n.sale_end_date ||
+						'Sale end date (leave blank to skip)',
+					input: 'date',
+					showCancelButton: true,
+					confirmButtonText: i18n.ok_button || 'OK',
+				} ).then( function ( toResult ) {
+					if ( ! toResult.isConfirmed ) {
+						return;
+					}
+
+					var dateTo = toResult.value || '';
+
+					if ( '' === dateFrom && '' === dateTo ) {
+						return;
+					}
+
+					self.executeBulkAction( 'variable_sale_schedule', {
+						date_from: '' === dateFrom ? 'false' : dateFrom,
+						date_to: '' === dateTo ? 'false' : dateTo,
+					} );
+				} );
+			} );
 		},
 
 		/**
 		 * Send bulk action AJAX request and reload variations.
 		 */
-		executeBulkAction: function ( action, value ) {
+		executeBulkAction: function ( action, data ) {
 			var self = this;
 
 			window.StoreSuite.storeSuiteLoader.block(
@@ -463,7 +526,7 @@
 					security: StoreSuiteVariation.bulk_edit_nonce,
 					product_id: StoreSuiteVariation.product_id,
 					bulk_action: action,
-					value: value,
+					data: data || {},
 				},
 				success: function ( response ) {
 					if ( response && response.success ) {
@@ -522,6 +585,10 @@
 						var $container = $(
 							'#storesuite-variations-container'
 						);
+						// Drop the empty-state placeholder before adding the row.
+						$container
+							.find( '.storesuite-variation-empty' )
+							.remove();
 						$container.prepend( response.data.html );
 						self.initSaleSchedules();
 						Swal.fire( {
