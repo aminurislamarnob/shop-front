@@ -661,6 +661,12 @@
 						'disabled',
 						false
 					);
+					// Notify the product form dirty-state tracker (sticky
+					// "Unsaved Changes" bar) since .val() above is silent.
+					$container
+						.find( 'input[name^="variable_menu_order"]' )
+						.first()
+						.trigger( 'change' );
 				},
 			} );
 		},
@@ -1142,6 +1148,12 @@
 								.find( 'input.attribute_position' )
 								.val( index );
 						} );
+					// Notify the product form dirty-state tracker (sticky
+					// "Unsaved Changes" bar) since .val() above is silent.
+					$list
+						.find( 'input.attribute_position' )
+						.first()
+						.trigger( 'change' );
 				},
 			} );
 		},
