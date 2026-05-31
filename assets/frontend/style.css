@@ -3507,6 +3507,17 @@ button.remove_order_item_meta.button:hover {
   display: block;
   margin: 0;
 }
+/* Toggle icon swap: closed icon by default, open icon when expanded/editing */
+.storesuite-toggle-variation .storesuite-toggle-icon-open,
+.storesuite-toggle-variation.is-open .storesuite-toggle-icon-closed,
+.storesuite-edit-attribute .storesuite-toggle-icon-open,
+.storesuite-attribute-row.is-editing .storesuite-edit-attribute .storesuite-toggle-icon-closed {
+  display: none;
+}
+.storesuite-toggle-variation.is-open .storesuite-toggle-icon-open,
+.storesuite-attribute-row.is-editing .storesuite-edit-attribute .storesuite-toggle-icon-open {
+  display: block;
+}
 
 /* Product variations UI */
 

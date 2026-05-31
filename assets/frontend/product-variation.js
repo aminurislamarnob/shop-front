@@ -666,6 +666,7 @@
 					'Remove this variation?',
 				icon: 'warning',
 				showCancelButton: true,
+				confirmButtonColor: '#d63638',
 				confirmButtonText: StoreSuiteVariation.i18n.ok_button || 'OK',
 			} ).then( function ( result ) {
 				if ( ! result.isConfirmed ) {
@@ -1125,14 +1126,12 @@
 
 		toggleVariation: function ( e ) {
 			e.preventDefault();
-			$( this )
-				.closest( '.storesuite-variation-row' )
-				.find( '.storesuite-variation-body' )
-				.slideToggle( 200 );
-			$( this )
-				.closest( '.storesuite-variation-row' )
-				.find( '.storesuite-variation-body' )
+			var $row = $( this ).closest( '.storesuite-variation-row' );
+			$row.find( '.storesuite-variation-body' )
+				.slideToggle( 200 )
 				.toggleClass( 'is-open' );
+			// Swap the toggle button icon to reflect the open/closed state.
+			$( this ).toggleClass( 'is-open' );
 		},
 
 		onPaginationClick: function ( e ) {
@@ -1440,10 +1439,23 @@
 
 		removeAttribute: function ( e ) {
 			e.preventDefault();
-			$( this )
-				.closest( '.storesuite-attribute-row' )
-				.slideUp( 200, function () {
-					$( this ).remove();
+			var i18n = StoreSuiteVariation.i18n;
+			var $row = $( this ).closest( '.storesuite-attribute-row' );
+
+			Swal.fire( {
+				title:
+					i18n.confirm_remove_attribute || 'Remove this attribute?',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#d63638',
+				confirmButtonText: i18n.ok_button || 'OK',
+			} ).then( function ( result ) {
+				if ( ! result.isConfirmed ) {
+					return;
+				}
+
+				$row.slideUp( 200, function () {
+					$row.remove();
 					StoreSuiteAttributes.toggleHeader();
 					// Notify the product form dirty-state tracker (sticky
 					// "Unsaved Changes" bar) since removing a row is silent.
@@ -1451,6 +1463,7 @@
 						.first()
 						.trigger( 'change' );
 				} );
+			} );
 		},
 
 		toggleAttribute: function ( e ) {

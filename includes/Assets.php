@@ -559,6 +559,7 @@ class Assets {
 				'placeholder_img'       => wc_placeholder_img_src( 'thumbnail' ),
 				'i18n'                  => array(
 					'confirm_remove'     => __( 'Remove this variation?', 'storesuite' ),
+					'confirm_remove_attribute' => __( 'Remove this attribute?', 'storesuite' ),
 					'confirm_delete_all' => __( 'Delete all variations? This cannot be undone.', 'storesuite' ),
 					'generated'          => __( 'variations created.', 'storesuite' ),
 					'no_attributes'      => __( 'Add variation attributes first.', 'storesuite' ),
