@@ -8,6 +8,7 @@ Sources reviewed:
 - `templates/products/product-attribute-row.php`
 - `templates/products/product-variations.php`
 - `templates/products/product-variation-row.php`
+- `templates/products/html-variation-download.php`
 - `assets/frontend/product-variation.js`
 
 ---
@@ -23,7 +24,7 @@ Sources reviewed:
 | Visible on product page toggle | ✅ | ✅ | |
 | Used for variations toggle | ✅ | ✅ | |
 | Select all / Select none terms | ✅ | ✅ | |
-| Drag-sort attribute order | ✅ | ❌ | `attribute_position` hidden field exists but no sortable JS wired |
+| Drag-sort attribute order | ✅ | ❌ | `attribute_position` hidden field exists but no sortable JS wired for attribute rows |
 | Expand/collapse rows | ✅ | ✅ | |
 | Remove attribute | ✅ | ✅ | |
 | Save attributes (AJAX) | ✅ | ✅ | Uses `WC_Meta_Box_Product_Data::prepare_attributes` |
@@ -39,23 +40,24 @@ Sources reviewed:
 | Pagination | ✅ (per_page=10) | ✅ (default 15, `storesuite_variations_per_page` filter) | |
 | Default form values | ✅ | ✅ | Saved via separate `save_default_attributes` AJAX |
 | Per-variation: Enabled toggle | ✅ | ✅ | |
-| Per-variation: Downloadable | ✅ | ✅ (checkbox only) | ⚠️ No files UI / no download limit / no expiry |
+| Per-variation: Downloadable | ✅ | ✅ | Full files table + limit + expiry |
 | Per-variation: Virtual | ✅ | ✅ | |
 | Per-variation: Manage stock + qty | ✅ | ✅ | |
 | Per-variation: Stock status | ✅ | ✅ | |
 | Per-variation: Regular & Sale price | ✅ | ✅ | |
-| Sale price schedule (from/to dates) | ✅ | ❌ | Missing |
+| Sale price schedule (from/to dates) | ✅ | ✅ | `date_on_sale_from` / `date_on_sale_to` with Schedule/Cancel toggle |
 | Per-variation: SKU | ✅ | ✅ | |
-| Per-variation: GTIN/UPC/EAN/ISBN | ✅ (WC 9.1+) | ❌ | Missing |
+| Per-variation: GTIN/UPC/EAN/ISBN | ✅ (WC 9.1+) | ✅ | `global_unique_id` |
 | Per-variation: Weight & dimensions | ✅ | ✅ | |
-| Per-variation: Shipping class | ✅ | ❌ | Missing |
-| Per-variation: Tax class | ✅ | ❌ | Missing |
-| Per-variation: Backorders setting | ✅ (allow/notify/no) | ❌ | Only `stock_status` is set |
-| Per-variation: Low stock threshold | ✅ | ❌ | Missing |
+| Per-variation: Shipping class | ✅ | ✅ | `variable_shipping_class`; hidden when virtual (`hide_if_variation_virtual`), `0` = Same as parent |
+| Per-variation: Tax class | ✅ | ✅ | `variable_tax_class`; only shown when `wc_tax_enabled()`, `parent` = Same as parent |
+| Per-variation: Backorders setting | ✅ (allow/notify/no) | ✅ | `no` / `notify` / `yes` |
+| Per-variation: Low stock threshold | ✅ | ✅ | `low_stock_amount` |
+| Per-variation: Cost of Goods Sold | ✅ (when feature enabled) | ✅ | `cogs_value` (gated on `CostOfGoodsSoldController`) |
 | Per-variation: Image | ✅ | ✅ | `variable_image_id`; media uploader handling on frontend |
 | Per-variation: Description | ✅ | ✅ | |
-| Downloadable files table | ✅ | ❌ | Missing entirely |
-| Download limit / expiry | ✅ | ❌ | Missing |
+| Downloadable files table | ✅ | ✅ | `html-variation-download` row template, add/remove files |
+| Download limit / expiry | ✅ | ✅ | |
 | Bulk: set regular prices | ✅ | ✅ | |
 | Bulk: set sale prices | ✅ | ✅ | |
 | Bulk: set stock status | ✅ | ✅ | |
@@ -67,7 +69,7 @@ Sources reviewed:
 | Bulk: set download files / limit / expiry | ✅ | ❌ | |
 | Bulk: schedule sale | ✅ | ❌ | |
 | (Total bulk actions) | ~25 | 5 | |
-| Drag-sort variation order | ✅ | ❌ | `variable_menu_order` stored as hidden, no sortable handle wired |
+| Drag-sort variation order | ✅ | ✅ | `initSortable()` updates `variable_menu_order` inputs on drop |
 | Expand/collapse rows | ✅ | ✅ | |
 
 ## Save flow
@@ -79,22 +81,16 @@ Sources reviewed:
 
 ## Summary
 
-**Core CRUD is in place.** Shop managers can add/generate/edit/delete variations, manage attributes (global + custom), set defaults, paginate, edit price/SKU/stock/dimensions/description, set per-variation image, and run the most common bulk actions.
+**Core CRUD and almost all per-variation fields are in place.** Shop managers can add/generate/edit/delete variations, manage attributes (global + custom), set defaults, paginate, drag-reorder variations, and edit price, sale schedule, SKU, GTIN, stock (with backorders + low-stock threshold), downloadable files (limit/expiry), dimensions, COGS, image, and description.
 
-### Gaps vs WC admin (prioritized)
-
-**High-impact, low-effort** — add a few `set_*` calls in `VariationAjax::save_variations()` plus matching template fields:
-1. **Sale price schedule** (`date_on_sale_from`, `date_on_sale_to`)
-2. **Backorders** setting (`no` / `notify` / `yes`) — currently only `stock_status` is saved
-3. **Shipping class** (`shipping_class_id`)
-4. **Tax class** (`tax_class`)
-5. **Low stock threshold** (`low_stock_amount`)
-6. **GTIN/UPC/EAN/ISBN** (WC 9.1+ global identifiers)
+### Remaining gaps vs WC admin (prioritized)
 
 **Medium effort:**
-7. **Downloadable files table** — files, download limit, expiry (currently only the checkbox toggle)
-8. **Expanded bulk actions** — WC has ~25, StoreSuite has 5. Missing: price ±%/amount, bulk stock qty, bulk weight/dimensions, bulk shipping/tax class, bulk download settings, schedule sale.
+1. **Expanded bulk actions** — WC has ~25, StoreSuite has 5. Missing: price ±%/amount (regular & sale), bulk stock qty, bulk weight/dimensions, bulk shipping/tax class, bulk download settings, schedule sale.
 
 **UX polish:**
-9. **Drag-sort** for both attributes and variations — hidden position/menu_order fields exist; just needs sortable JS wired up.
-10. **Inline create** for new global attribute taxonomies or new terms (currently must pre-create them in WP admin).
+2. **Drag-sort for attribute rows** — `attribute_position` hidden field exists; needs sortable JS wired up (the variations sortable in `initSortable()` is a working pattern to mirror).
+3. **Inline create** for new global attribute taxonomies or new terms (currently must pre-create them in WP admin).
+
+### Closed since the previous audit
+Sale price schedule, backorders, low stock threshold, GTIN/UPC/EAN/ISBN, downloadable files table + limit/expiry, per-variation Cost of Goods Sold, drag-sort variation order, and per-variation shipping class + tax class are now implemented.

@@ -542,6 +542,16 @@ class VariationAjax {
 				$variation->set_height( wc_clean( wp_unslash( $_POST['variable_height'][ $i ] ) ) );
 			}
 
+			// Shipping class (0 = same as parent).
+			if ( isset( $_POST['variable_shipping_class'][ $i ] ) ) {
+				$variation->set_shipping_class_id( absint( wp_unslash( $_POST['variable_shipping_class'][ $i ] ) ) );
+			}
+
+			// Tax class ('parent' = same as parent).
+			if ( isset( $_POST['variable_tax_class'][ $i ] ) ) {
+				$variation->set_tax_class( sanitize_title( wp_unslash( $_POST['variable_tax_class'][ $i ] ) ) );
+			}
+
 			// Description.
 			if ( isset( $_POST['variable_description'][ $i ] ) ) {
 				$variation->set_description( wc_clean( wp_unslash( $_POST['variable_description'][ $i ] ) ) );

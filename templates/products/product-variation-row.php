@@ -368,6 +368,57 @@ $cogs_is_enabled = wc_get_container()->get( \Automattic\WooCommerce\Internal\Cos
 				</div>
 			</div>
 
+			<?php
+			$shipping_classes = get_terms(
+				array(
+					'taxonomy'   => 'product_shipping_class',
+					'hide_empty' => false,
+				)
+			);
+			if ( is_wp_error( $shipping_classes ) ) {
+				$shipping_classes = array();
+			}
+			$variation_shipping_class = $variation->get_shipping_class_id( 'edit' );
+			$variation_tax_class      = $variation->get_tax_class( 'edit' );
+			$tax_class_options        = array( 'parent' => __( 'Same as parent', 'storesuite' ) ) + wc_get_product_tax_class_options();
+			$tax_enabled              = wc_tax_enabled();
+			?>
+			<div class="row">
+				<!-- Shipping class (hidden when virtual, like dimensions) -->
+				<div class="col-md-6 hide_if_variation_virtual" <?php echo $variation->get_virtual() ? 'style="display:none;"' : ''; ?>>
+					<div class="storesuite-form-group">
+						<label for="variable_shipping_class_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Shipping class', 'storesuite' ); ?></label>
+						<select class="storesuite-form-control"
+							id="variable_shipping_class_<?php echo esc_attr( $loop ); ?>"
+							name="variable_shipping_class[<?php echo esc_attr( $loop ); ?>]">
+							<option value="0" <?php selected( ! $variation_shipping_class ); ?>><?php esc_html_e( 'Same as parent', 'storesuite' ); ?></option>
+							<?php foreach ( $shipping_classes as $shipping_class ) : ?>
+								<option value="<?php echo esc_attr( $shipping_class->term_id ); ?>" <?php selected( $variation_shipping_class, $shipping_class->term_id ); ?>>
+									<?php echo esc_html( $shipping_class->name ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				</div>
+				<!-- Tax class (only when taxes are enabled) -->
+				<?php if ( $tax_enabled ) : ?>
+					<div class="col-md-6">
+						<div class="storesuite-form-group">
+							<label for="variable_tax_class_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Tax class', 'storesuite' ); ?></label>
+							<select class="storesuite-form-control"
+								id="variable_tax_class_<?php echo esc_attr( $loop ); ?>"
+								name="variable_tax_class[<?php echo esc_attr( $loop ); ?>]">
+								<?php foreach ( $tax_class_options as $tax_value => $tax_label ) : ?>
+									<option value="<?php echo esc_attr( $tax_value ); ?>" <?php selected( $variation_tax_class, $tax_value ); ?>>
+										<?php echo esc_html( $tax_label ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+						</div>
+					</div>
+				<?php endif; ?>
+			</div>
+
 			<div class="row">
 				<!-- Description -->
 				<div class="col-md-12">
