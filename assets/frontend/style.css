@@ -4814,3 +4814,127 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
     padding: 12px 14px;
   }
 }
+
+/* ---------------------------------------------------------------
+ * SweetAlert2 — modern flat theme
+ * --------------------------------------------------------------- */
+.swal2-container {
+  padding: 16px;
+}
+.swal2-container.swal2-backdrop-show {
+  background: rgba(15, 23, 42, 0.4);
+}
+.swal2-popup {
+  width: 26em;
+  padding: 28px;
+  border-radius: 14px;
+  box-shadow: 0 12px 44px rgba(15, 23, 42, 0.16);
+  font-family: inherit;
+}
+.swal2-title {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--storesuite-title-text-color);
+}
+.swal2-html-container {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--storesuite-text-color-light);
+}
+
+/* Flat icon — palette colors. Keep default geometry so the success/error
+ * line children (absolutely positioned for the default size) stay aligned. */
+.swal2-icon {
+  margin: 6px auto 16px;
+}
+.swal2-icon.swal2-warning {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+.swal2-icon.swal2-error {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+.swal2-icon.swal2-error [class^="swal2-x-mark-line"] {
+  background-color: #ef4444;
+}
+.swal2-icon.swal2-question {
+  border-color: var(--storesuite-primary-bg);
+  color: var(--storesuite-primary-bg);
+}
+.swal2-icon.swal2-success {
+  border-color: #10b981;
+}
+.swal2-icon.swal2-success [class^="swal2-success-line"] {
+  background-color: #10b981;
+}
+.swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* Actions / buttons — flat, StoreSuite style */
+.swal2-actions {
+  gap: 8px;
+  margin-top: 22px;
+}
+.swal2-styled {
+  margin: 0;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: none !important;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.swal2-styled.swal2-confirm {
+  background: var(--storesuite-primary-bg);
+  color: #fff;
+}
+.swal2-styled.swal2-confirm:hover,
+.swal2-styled.swal2-confirm:focus {
+  background: var(--storesuite-primary-bg-hover);
+}
+.swal2-styled.swal2-cancel {
+  background: #fff;
+  border: 1px solid var(--storesuite-border-color);
+  color: var(--storesuite-text-color-light);
+}
+.swal2-styled.swal2-cancel:hover,
+.swal2-styled.swal2-cancel:focus {
+  background: var(--storesuite-bg-color-muted);
+}
+.swal2-styled:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--storesuite-primary-bg) 28%, transparent) !important;
+}
+
+/* Inputs */
+.swal2-input,
+.swal2-select,
+.swal2-textarea {
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  box-shadow: none;
+  font-size: 14px;
+  color: var(--storesuite-text-black);
+}
+.swal2-input:focus,
+.swal2-select:focus,
+.swal2-textarea:focus {
+  border-color: var(--storesuite-primary-bg);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--storesuite-primary-bg) 16%, transparent);
+}
+.swal2-validation-message {
+  background: transparent;
+  font-size: 13px;
+  color: #ef4444;
+}
