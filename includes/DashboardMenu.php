@@ -128,10 +128,30 @@ class DashboardMenu {
 		}
 
 		$logo_file = $use_dark_logo ? 'storesuite-logo-dark.png' : 'storesuite-logo-light.png';
+		$logo_url  = STORESUITE_PLUGIN_ASSET . '/frontend/images/' . $logo_file;
 
-		echo '<div class="storesuite-sidebar-branding">';
-		echo '<img class="storesuite-sidebar-branding-logo" src="' . esc_url( STORESUITE_PLUGIN_ASSET . '/frontend/images/' . $logo_file ) . '" alt="' . esc_attr__( 'StoreSuite', 'storesuite' ) . '" />';
-		echo '</div>';
+		/**
+		 * Filters the StoreSuite sidebar attribution logo URL.
+		 *
+		 * @param string $logo_url      Full URL to the branding logo image.
+		 * @param bool   $use_dark_logo Whether the dark logo variant is active.
+		 */
+		$logo_url = apply_filters( 'storesuite_sidebar_attribution_logo_url', $logo_url, $use_dark_logo );
+
+		/**
+		 * Filters the StoreSuite sidebar attribution logo link URL.
+		 *
+		 * @param string $link_url Destination URL the attribution logo links to.
+		 */
+		$link_url = apply_filters( 'storesuite_sidebar_attribution_link_url', 'https://aiarnob.com/product/storesuite/' );
+
+		if ( ! empty( $logo_url ) ) {
+			echo '<div class="storesuite-sidebar-branding">';
+			echo '<a class="storesuite-sidebar-branding-link" href="' . esc_url( $link_url ) . '" target="_blank" rel="noopener noreferrer">';
+			echo '<img class="storesuite-sidebar-branding-logo" src="' . esc_url( $logo_url ) . '" alt="' . esc_attr__( 'StoreSuite', 'storesuite' ) . '" />';
+			echo '</a>';
+			echo '</div>';
+		}
 	}
 
 	/**

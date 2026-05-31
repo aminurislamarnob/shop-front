@@ -51,6 +51,7 @@ const Layout = () => {
 		<div className="storesuite-admin-app">
 			<SettingsHeader
 				icon={ Squares2X2Icon }
+				logo={ window.storeSuiteAdmin?.logoUrl }
 				title={ __( 'StoreSuite', 'storesuite' ) }
 				subTitle={ __(
 					'Configure your frontend dashboard pages, appearance, and pagination.',

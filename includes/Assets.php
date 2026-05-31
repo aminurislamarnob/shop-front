@@ -155,6 +155,14 @@ class Assets {
 				true
 			);
 
+			wp_localize_script(
+				'storesuite-admin-page',
+				'storeSuiteAdmin',
+				array(
+					'logoUrl' => STORESUITE_PLUGIN_ASSET . '/frontend/images/storesuite-logo-dark.png',
+				)
+			);
+
 			wp_enqueue_style(
 				'storesuite-admin-styles',
 				STORESUITE_PLUGIN_ASSET . '/build/admin/script.css',

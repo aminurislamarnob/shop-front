@@ -44,7 +44,8 @@ class Common {
 
 			// Expose the active predefined palette for palette-specific styling.
 			if ( 'predefined' === storesuite_get_option_by_key( 'storesuite_color_palette_mode' ) ) {
-				$palette = storesuite_get_option_by_key( 'storesuite_color_palette_name' );
+				$classes[] = 'storesuite-palette-predefined';
+				$palette   = storesuite_get_option_by_key( 'storesuite_color_palette_name' );
 				if ( ! empty( $palette ) ) {
 					$classes[] = 'storesuite-palette-' . sanitize_html_class( $palette );
 				}
