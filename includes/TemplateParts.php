@@ -13,9 +13,19 @@ class TemplateParts {
 	 * The constructor.
 	 */
 	public function __construct() {
+		add_action( 'storesuite_dashboard_wrapper_start', array( $this, 'dashboard_icons_template' ), 1 );
 		add_action( 'storesuite_dashboard_navigation', array( $this, 'add_dashboard_sidebar_logo' ), 1 );
 		add_action( 'storesuite_dashboard_content_before', array( $this, 'dashboard_header_template' ), 1 );
 		add_action( 'storesuite_dashboard_before_main_content', array( $this, 'storesuite_page_endpoint_title' ) );
+	}
+
+	/**
+	 * Load the shared SVG icon symbols once per dashboard page.
+	 *
+	 * @return void
+	 */
+	public function dashboard_icons_template() {
+		storesuite_get_template_part( 'dashboard-icons' );
 	}
 
 	public function add_dashboard_sidebar_logo() {

@@ -152,9 +152,7 @@ $terms = get_terms(
 													<td class="text-right">
 														<div class="storesuite-dropdown">
 															<span class="storesuite-dropdown-icon">
-																<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-																	<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
-																</svg>
+																<svg width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-three-dots"></use></svg>
 															</span>
 															<ul class="storesuite-dropdown-menu">
 																<li>
