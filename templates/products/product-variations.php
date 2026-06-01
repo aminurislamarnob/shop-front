@@ -107,9 +107,6 @@ if ( $product && $product->is_type( 'variable' ) ) {
 						</button>
 					</div>
 				</div>
-				<button type="button" id="storesuite-save-variations-btn" class="my-storesuite-button my-storesuite-button-light" disabled>
-					<?php esc_html_e( 'Save changes', 'storesuite' ); ?>
-				</button>
 			</div>
 
 			<!-- Default attributes -->

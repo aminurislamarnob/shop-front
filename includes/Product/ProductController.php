@@ -375,8 +375,7 @@ class ProductController {
 	/**
 	 * Build a product attributes array from posted form fields.
 	 *
-	 * Mirrors the standalone "Save Attributes" handler so submitting the
-	 * product form persists attribute changes too.
+	 * Attribute changes are persisted as part of the product form submission.
 	 *
 	 * @param array $post_data Raw POST data.
 	 * @return array Prepared attributes keyed for WC_Product::set_attributes().

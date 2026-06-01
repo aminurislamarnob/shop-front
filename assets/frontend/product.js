@@ -403,6 +403,15 @@
 					) {
 						return;
 					}
+					// These pickers are UI controls, not saved fields, so
+					// changing them must not mark the form dirty.
+					if (
+						$( e.target ).is(
+							'#storesuite-bulk-action-select, #storesuite-add-attribute-select'
+						)
+					) {
+						return;
+					}
 					self._dirty = true;
 					self.refreshStickyBar();
 				}

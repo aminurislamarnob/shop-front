@@ -558,7 +558,6 @@ class Assets {
 				'nonce'                 => wp_create_nonce( 'storesuite-variation-nonce' ),
 				'add_attribute_nonce'   => wp_create_nonce( 'add-attribute' ),
 				'add_term_nonce'        => wp_create_nonce( '_storesuite_add_attribute_term_' ),
-				'save_attributes_nonce' => wp_create_nonce( 'save-attributes' ),
 				'save_variations_nonce'  => wp_create_nonce( 'save-variations' ),
 				'add_variation_nonce'    => wp_create_nonce( 'add-variation' ),
 				'remove_variation_nonce' => wp_create_nonce( 'remove-variation' ),

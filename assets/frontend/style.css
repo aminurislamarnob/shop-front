@@ -3460,13 +3460,22 @@ button.remove_order_item_meta.button:hover {
   border-bottom-left-radius: 0;
   white-space: nowrap;
 }
-#storesuite-attribute-toolbar #storesuite-save-attributes-btn,
-.storesuite-variation-toolbar #storesuite-save-variations-btn {
-  flex: 0 0 auto;
+#storesuite-add-custom-attribute-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   white-space: nowrap;
 }
+#storesuite-add-custom-attribute-btn svg {
+  flex: 0 0 auto;
+}
+/* Match the global-attribute picker width to the variation bulk-actions group. */
+#storesuite-attribute-toolbar .storesuite-input-group {
+  flex: 0 1 320px;
+  max-width: 320px;
+}
 
-/* Variation toolbar — primary actions row + Save changes */
+/* Variation toolbar — primary actions row */
 .storesuite-variation-toolbar {
   display: flex;
   align-items: center;
@@ -3479,6 +3488,7 @@ button.remove_order_item_meta.button:hover {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  flex: 1;
 }
 #storesuite-add-variation-btn {
   display: inline-flex;
@@ -3488,11 +3498,18 @@ button.remove_order_item_meta.button:hover {
 #storesuite-add-variation-btn svg {
   flex: 0 0 auto;
 }
+/* When bulk actions are visible they sit on the left and the Generate/Add
+   buttons move to the right; with no variations the buttons stay left. */
+.storesuite-variation-toolbar-primary.has-bulk-actions
+  #storesuite-generate-variations-btn {
+  margin-left: auto;
+}
 
-/* Bulk actions group — inline with the primary actions */
+/* Bulk actions group — pinned to the left of the toolbar. */
 .storesuite-variation-bulk-group {
   flex: 0 1 320px;
   max-width: 320px;
+  order: -1;
 }
 
 /* Attribute value display / edit toggle */

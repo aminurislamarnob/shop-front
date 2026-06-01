@@ -33,11 +33,6 @@
 			);
 			$( document ).on(
 				'click',
-				'#storesuite-save-variations-btn',
-				this.saveVariations.bind( this )
-			);
-			$( document ).on(
-				'click',
 				'.storesuite-remove-variation',
 				this.onRemoveVariationClick.bind( this )
 			);
@@ -164,6 +159,13 @@
 			$( '.storesuite-variation-bulk-group' ).toggleClass(
 				'storesuite-hidden',
 				hide
+			);
+			// When the bulk-actions group is shown it sits on the left and the
+			// action buttons move to the right; with no variations the buttons
+			// stay left-aligned.
+			$( '.storesuite-variation-toolbar-primary' ).toggleClass(
+				'has-bulk-actions',
+				! hide
 			);
 			$( '#storesuite-toggle-default-values' ).toggleClass(
 				'storesuite-hidden',
@@ -755,10 +757,6 @@
 								$( this ).addClass( 'variation-needs-update' );
 							}
 						} );
-					$( '#storesuite-save-variations-btn' ).prop(
-						'disabled',
-						false
-					);
 					// Notify the product form dirty-state tracker (sticky
 					// "Unsaved Changes" bar) since .val() above is silent.
 					$container
@@ -835,7 +833,6 @@
 			if ( ! $row.hasClass( 'variation-needs-update' ) ) {
 				$row.addClass( 'variation-needs-update' );
 			}
-			$( '#storesuite-save-variations-btn' ).prop( 'disabled', false );
 		},
 
 		/**
@@ -985,10 +982,6 @@
 				if ( ! $row.hasClass( 'variation-needs-update' ) ) {
 					$row.addClass( 'variation-needs-update' );
 				}
-				$( '#storesuite-save-variations-btn' ).prop(
-					'disabled',
-					false
-				);
 			} );
 
 			frame.open();
@@ -1017,7 +1010,6 @@
 			if ( ! $row.hasClass( 'variation-needs-update' ) ) {
 				$row.addClass( 'variation-needs-update' );
 			}
-			$( '#storesuite-save-variations-btn' ).prop( 'disabled', false );
 		},
 
 		/**
@@ -1095,10 +1087,6 @@
 							} );
 						}
 						$dirty.removeClass( 'variation-needs-update' );
-						$( '#storesuite-save-variations-btn' ).prop(
-							'disabled',
-							true
-						);
 					} else {
 						Swal.fire( {
 							icon: 'error',
@@ -1164,8 +1152,8 @@
 			);
 			$( document ).on(
 				'click',
-				'#storesuite-save-attributes-btn',
-				this.saveAttributes.bind( this )
+				'#storesuite-add-custom-attribute-btn',
+				this.addCustomAttribute.bind( this )
 			);
 			$( document ).on(
 				'click',
@@ -1215,7 +1203,7 @@
 		/**
 		 * Initialize jQuery UI Sortable on the attributes table for drag reordering.
 		 * Renumbers the attribute_position hidden inputs on drop so the new order
-		 * is persisted on the next "Save Attributes".
+		 * is persisted when the product form is saved.
 		 */
 		initSortable: function () {
 			var $list = $( '#storesuite-attributes-list' );
@@ -1281,12 +1269,12 @@
 				return;
 			}
 
-			// A custom (non-taxonomy) attribute is added with an empty taxonomy.
-			if ( '__custom__' === taxonomy ) {
-				taxonomy = '';
-			}
-
 			this.appendAttributeRow( taxonomy );
+		},
+
+		// Custom (non-taxonomy) attributes are added with an empty taxonomy.
+		addCustomAttribute: function () {
+			this.appendAttributeRow( '' );
 		},
 
 		/**
@@ -1341,92 +1329,29 @@
 							} );
 
 						if ( taxonomy ) {
-							var $opt = $(
-								'#storesuite-add-attribute-select option[value="' +
-									taxonomy +
-									'"]'
+							var $select = $(
+								'#storesuite-add-attribute-select'
 							);
-							var $group = $opt.closest( 'optgroup' );
-							$opt.remove();
-							// Drop the "Global attributes" group once it is empty.
+							$select
+								.find(
+									'option[value="' + taxonomy + '"]'
+								)
+								.remove();
+
+							// Drop the global-attribute picker once every
+							// available attribute has been added.
 							if (
-								$group.length &&
-								$group.children( 'option' ).length === 0
+								$select.find( 'option[value!=""]' ).length ===
+								0
 							) {
-								$group.remove();
+								$select
+									.closest( '.storesuite-input-group' )
+									.remove();
 							}
 						}
 
 						// Reset the selector back to the placeholder.
 						$( '#storesuite-add-attribute-select' ).val( '' );
-					}
-				},
-				complete: function () {
-					window.StoreSuite.storeSuiteLoader.unblock(
-						$( '.my-storesuite-wrapper' )
-					);
-				},
-			} );
-		},
-
-		saveAttributes: function () {
-			window.StoreSuite.storeSuiteLoader.block(
-				$( '.my-storesuite-wrapper' )
-			);
-
-			var formData = new FormData();
-			formData.append( 'action', 'storesuite_save_attributes' );
-			formData.append(
-				'security',
-				StoreSuiteVariation.save_attributes_nonce
-			);
-			formData.append( 'product_id', StoreSuiteVariation.product_id );
-			formData.append( 'product_type', $( '#post_type' ).val() );
-
-			// Collect all attribute fields
-			$( '#storesuite-attributes-list :input' ).each( function () {
-				var $input = $( this );
-				var name = $input.attr( 'name' );
-				if ( ! name ) return;
-
-				if ( $input.is( ':checkbox' ) ) {
-					if ( $input.is( ':checked' ) ) {
-						formData.append( name, $input.val() );
-					}
-				} else if ( $input.is( 'select[multiple]' ) ) {
-					var values = $input.val() || [];
-					values.forEach( function ( v ) {
-						formData.append( name, v );
-					} );
-				} else {
-					formData.append( name, $input.val() );
-				}
-			} );
-
-			$.ajax( {
-				url: StoreSuiteVariation.ajax_url,
-				type: 'POST',
-				data: formData,
-				processData: false,
-				contentType: false,
-				success: function ( response ) {
-					if ( response.success ) {
-						Swal.fire( {
-							icon: 'success',
-							text: response.data.message,
-							timer: 1500,
-							showConfirmButton: false,
-						} );
-						// Reload variations section (attributes may have changed).
-						StoreSuiteVariations.reload();
-					} else {
-						Swal.fire( {
-							icon: 'error',
-							text:
-								( response.data && response.data.message ) ||
-								response.data ||
-								'Error saving attributes.',
-						} );
 					}
 				},
 				complete: function () {
