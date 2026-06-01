@@ -3439,6 +3439,10 @@ button.remove_order_item_meta.button:hover {
   display: none !important;
 }
 
+.storesuite-text-capitalize {
+  text-transform: capitalize;
+}
+
 .storesuite-input-group {
   display: flex;
   align-items: stretch;
@@ -4063,6 +4067,35 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-form-group.storesuite-form-switch input[type="checkbox"]:disabled + label {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Account header card: title/subtitle + Save All Changes */
+.storesuite-account-header-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+}
+.storesuite-account-header-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--storesuite-title-text-color);
+}
+.storesuite-account-header-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--storesuite-text-color-light);
+}
+.storesuite-account-header-card .my-storesuite-button {
+  flex: 0 0 auto;
+}
+.storesuite-account-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
 }
 
 /* Account settings layout: fixed-width nav + flexible content */

@@ -377,7 +377,13 @@
 			} );
 		},
 		initAccountTabs: function () {
-			var addressEnhanced = false;
+			// If the address tab is the active one on load, its selects are
+			// already visible, so WooCommerce enhances them natively on ready.
+			var addressEnhanced = $(
+				'.storesuite-account-panel[data-account-panel="address"].is-active'
+			).length
+				? true
+				: false;
 
 			$( document ).on(
 				'click',
@@ -397,6 +403,13 @@
 							tab +
 							'"]'
 					).addClass( 'is-active' );
+
+					// Reflect the active tab in the URL (?tab=...).
+					if ( window.history && window.history.replaceState ) {
+						var url = new URL( window.location.href );
+						url.searchParams.set( 'tab', tab );
+						window.history.replaceState( {}, '', url.toString() );
+					}
 
 					// WooCommerce's country-select only enhances visible
 					// selects; the Address tab is hidden on load, so enhance
