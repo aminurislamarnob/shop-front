@@ -4834,9 +4834,16 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   color: #6b7280;
 }
 
-.my-storesuite-button.storesuite-export-toggle svg {
+.my-storesuite-button.storesuite-export-toggle svg,
+.my-storesuite-button.storesuite-import-link svg {
   width: 13px;
   height: 13px;
+}
+
+/* The import wizard's "Show advanced options" toggle hides rows via the wp-admin `.hidden` utility,
+   which isn't loaded on the frontend. Provide it scoped to the wizard. */
+.storesuite-import-wizard .woocommerce-importer-advanced.hidden {
+  display: none;
 }
 
 .storesuite-export-progress {

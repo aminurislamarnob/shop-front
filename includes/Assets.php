@@ -107,6 +107,11 @@ class Assets {
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_product_export_script', $frontend_product_export, array( 'jquery', 'storesuite_product_script', 'storesuite_selectWoo', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
+
+		// WooCommerce's product CSV import wizard JS (reused verbatim; drives the AJAX batch import).
+		wp_register_script( 'wc-product-import', WC()->plugin_url() . '/assets/js/admin/wc-product-import.js', array( 'jquery' ), WC_VERSION, true );
+		// wc-product-import.js relies on the global `ajaxurl`, which WordPress only defines in wp-admin.
+		wp_add_inline_script( 'wc-product-import', 'window.ajaxurl = window.ajaxurl || ' . wp_json_encode( admin_url( 'admin-ajax.php' ) ) . ';', 'before' );
 	}
 
 	/**
@@ -126,6 +131,9 @@ class Assets {
 
 		wp_register_style( 'storesuite_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 		wp_register_style( 'storesuite_jquery-ui-style', WC()->plugin_url() . '/assets/css/jquery-ui/jquery-ui.min.css', array(), STORESUITE_PLUGIN_VERSION );
+
+		// WooCommerce admin styles power the reused product import wizard (steps bar, mapping table, progress).
+		wp_register_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
 	}
 
 	/**
@@ -225,6 +233,7 @@ class Assets {
 			|| storesuite_is_endpoint_url( 'add-new-brand' )
 			|| storesuite_is_endpoint_url( 'edit-brand' );
 		$is_account = storesuite_is_endpoint_url( 'edit-account-details' );
+		$is_import  = storesuite_is_endpoint_url( 'import-products' );
 
 		$needs_media        = $is_products || $is_categories || $is_brands || $is_account;
 		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_account;
@@ -240,6 +249,13 @@ class Assets {
 
 		if ( $needs_select2 ) {
 			wp_enqueue_style( 'select2' );
+		}
+
+		// Product import wizard reuses WooCommerce's importer UI. The `wc-product-import` script is
+		// enqueued + localized by the wizard's import() step itself (it needs wc_product_import_params,
+		// which only exists on that step), so we only load the styles here.
+		if ( $is_import ) {
+			wp_enqueue_style( 'woocommerce_admin_styles' );
 		}
 
 		// Account address tab needs WooCommerce's country/state select behaviour.
