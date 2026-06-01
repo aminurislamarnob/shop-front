@@ -90,6 +90,7 @@ class Assets {
 		$frontend_form_handler_script = STORESUITE_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 		$frontend_variation_script 	  = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
+		$frontend_product_export      = STORESUITE_PLUGIN_ASSET . '/frontend/product-export.js';
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_global_script', STORESUITE_PLUGIN_ASSET . '/frontend/global.js', array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
@@ -105,6 +106,7 @@ class Assets {
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_product_export_script', $frontend_product_export, array( 'jquery', 'storesuite_product_script', 'storesuite_selectWoo', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 	}
 
 	/**
@@ -604,6 +606,23 @@ class Assets {
 					'term_required'          => __( 'Please enter a name.', 'storesuite' ),
 				),
 			) );
+
+			wp_enqueue_script( 'storesuite_product_export_script' );
+			wp_localize_script(
+				'storesuite_product_export_script',
+				'StoreSuite_ProductExport',
+				array(
+					'ajax_url'     => admin_url( 'admin-ajax.php' ),
+					'export_nonce' => wp_create_nonce( 'storesuite_product_export' ),
+					'i18n'         => array(
+						'error_title'             => __( 'Error!', 'storesuite' ),
+						'ok_button'               => __( 'OK', 'storesuite' ),
+						'unexpected_error'        => __( 'An unexpected error occurred. Please try again.', 'storesuite' ),
+						'select_products_title'   => __( 'Select products', 'storesuite' ),
+						'select_products_message' => __( 'Choose at least one product to export.', 'storesuite' ),
+					),
+				)
+			);
 		}
 	}
 
