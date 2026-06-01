@@ -4064,6 +4064,246 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Account settings layout: fixed-width nav + flexible content */
+@media (min-width: 768px) {
+  .storesuite-account-layout > .col-md-3 {
+    flex: 0 0 305px;
+    max-width: 305px;
+  }
+  .storesuite-account-layout > .col-md-9 {
+    flex: 1 1 0;
+    max-width: 100%;
+  }
+}
+
+/* Account settings sidebar nav */
+.storesuite-account-nav {
+  padding: 8px;
+}
+.storesuite-account-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.storesuite-account-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--storesuite-text-color);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.storesuite-account-nav-link svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  fill: var(--storesuite-text-black);
+  transition: fill 0.15s ease;
+}
+.storesuite-account-nav-link:hover {
+  background: var(--storesuite-bg-color-muted);
+  color: var(--storesuite-text-color);
+}
+.storesuite-account-nav-link.is-active {
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 12%, #fff);
+  color: var(--storesuite-primary-bg);
+}
+.storesuite-account-nav-link.is-active svg {
+  fill: var(--storesuite-primary-bg);
+}
+.storesuite-account-nav-logout {
+  color: #d63638;
+}
+.storesuite-account-nav-logout svg {
+  fill: #d63638;
+}
+.storesuite-account-nav-logout:hover {
+  background: rgba(214, 54, 56, 0.08);
+  color: #d63638;
+}
+
+/* Account settings tab panels */
+.storesuite-account-panel {
+  display: none;
+}
+.storesuite-account-panel.is-active {
+  display: block;
+}
+
+/* Address tab: WooCommerce form fields styled like StoreSuite */
+.storesuite-address-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-transform: capitalize;
+}
+.storesuite-copy-billing {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+.storesuite-copy-billing svg {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+.storesuite-address-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -8px;
+}
+.storesuite-address-grid .form-row {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 8px;
+  margin: 0 0 16px;
+}
+@media (min-width: 768px) {
+  .storesuite-address-grid .form-row-first,
+  .storesuite-address-grid .form-row-last {
+    width: 50%;
+  }
+}
+.storesuite-address-grid .form-row label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--storesuite-text-color);
+}
+.storesuite-address-grid .form-row .woocommerce-input-wrapper {
+  display: block;
+  width: 100%;
+}
+.storesuite-address-grid .form-row .input-text,
+.storesuite-address-grid .form-row select {
+  width: 100%;
+  height: 40px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  color: var(--storesuite-text-color);
+  transition: 0.3s;
+}
+.storesuite-address-grid .form-row .input-text:focus,
+.storesuite-address-grid .form-row select:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--storesuite-primary-bg);
+}
+.storesuite-address-grid .form-row .select2-container .select2-selection {
+  height: 40px;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+}
+.storesuite-address-grid
+  .form-row
+  .select2-container
+  .select2-selection--single
+  .select2-selection__rendered {
+  line-height: 38px;
+  padding-left: 12px;
+  color: var(--storesuite-text-color);
+}
+.storesuite-address-grid
+  .form-row
+  .select2-container
+  .select2-selection--single
+  .select2-selection__arrow {
+  height: 38px;
+}
+.storesuite-address-grid .form-row .required {
+  color: #d63638;
+  border: 0;
+  text-decoration: none;
+}
+.storesuite-address-grid .form-row .optional {
+  color: var(--storesuite-text-color-light);
+}
+
+/* Account profile picture upload — circular avatar with floating badges */
+.storesuite-account-avatar {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+.storesuite-account-avatar-preview {
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--storesuite-border-color);
+  background: var(--storesuite-bg-color-muted);
+}
+.storesuite-account-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.storesuite-account-avatar-upload,
+.storesuite-account-avatar-remove {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.storesuite-account-avatar-upload {
+  right: -4px;
+  bottom: -4px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--storesuite-border-color);
+}
+.storesuite-account-avatar-upload svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--storesuite-primary-bg);
+}
+.storesuite-account-avatar-upload:hover {
+  background: var(--storesuite-primary-bg);
+}
+.storesuite-account-avatar-upload:hover svg {
+  fill: #fff;
+}
+.storesuite-account-avatar-remove {
+  right: -6px;
+  top: -6px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--storesuite-border-color);
+}
+.storesuite-account-avatar-remove svg {
+  width: 14px;
+  height: 14px;
+  fill: #d63638;
+}
+.storesuite-account-avatar-remove:hover {
+  background: #d63638;
+}
+.storesuite-account-avatar-remove:hover svg {
+  fill: #fff;
+}
 .storesuite-form-group .mce-top-part::before {
   box-shadow: none;
 }

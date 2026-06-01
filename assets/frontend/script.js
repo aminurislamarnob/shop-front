@@ -282,6 +282,8 @@
 		},
 		bindEvents: function () {
 			this.uploadProductImage(); // Upload product image
+			this.initAccountTabs(); // Account settings sidebar tabs
+			this.uploadAccountAvatar(); // Upload account profile picture
 			this.uploadProductGallaryImages(); // Upload product gallery images
 			this.removeGalleryImage(); // Remove gallery image
 			this.uploadCategoryImage(); // Upload category image
@@ -373,6 +375,140 @@
 					frame.open();
 				}
 			} );
+		},
+		initAccountTabs: function () {
+			var addressEnhanced = false;
+
+			$( document ).on(
+				'click',
+				'.storesuite-account-nav-link[data-account-tab]',
+				function ( event ) {
+					event.preventDefault();
+					var tab = $( this ).data( 'account-tab' );
+
+					$( '.storesuite-account-nav-link' ).removeClass(
+						'is-active'
+					);
+					$( this ).addClass( 'is-active' );
+
+					$( '.storesuite-account-panel' ).removeClass( 'is-active' );
+					$(
+						'.storesuite-account-panel[data-account-panel="' +
+							tab +
+							'"]'
+					).addClass( 'is-active' );
+
+					// WooCommerce's country-select only enhances visible
+					// selects; the Address tab is hidden on load, so enhance
+					// its country/state dropdowns the first time it is shown.
+					if ( 'address' === tab && ! addressEnhanced ) {
+						addressEnhanced = true;
+						$( document.body ).trigger(
+							'country_to_state_changed'
+						);
+					}
+				}
+			);
+
+			// Copy billing address values into the shipping fields.
+			$( document ).on(
+				'click',
+				'.storesuite-copy-billing',
+				function ( event ) {
+					event.preventDefault();
+
+					$( '[name^="billing_"]' ).each( function () {
+						var $billing = $( this );
+						var shippingName = $billing
+							.attr( 'name' )
+							.replace( /^billing_/, 'shipping_' );
+						var $shipping = $( '[name="' + shippingName + '"]' );
+
+						if ( ! $shipping.length ) {
+							return;
+						}
+
+						$shipping.val( $billing.val() );
+						// Refresh selectWoo-enhanced country/state dropdowns.
+						if ( $shipping.is( 'select' ) ) {
+							$shipping.trigger( 'change' );
+						}
+					} );
+				}
+			);
+		},
+		uploadAccountAvatar: function () {
+			var avatarFrame;
+
+			// Open the media library to choose a profile picture.
+			$( document ).on(
+				'click',
+				'.storesuite-account-avatar-upload',
+				function ( event ) {
+					event.preventDefault();
+
+					if ( avatarFrame ) {
+						avatarFrame.open();
+						return;
+					}
+
+					avatarFrame = wp.media( {
+						title:
+							storeSuiteFrontScript.upload_profile_picture ||
+							'Upload Profile Picture',
+						button: {
+							text: storeSuiteFrontScript.insert_image,
+						},
+						multiple: false,
+						library: { type: 'image' },
+					} );
+
+					avatarFrame.on( 'select', function () {
+						var attachment = avatarFrame
+							.state()
+							.get( 'selection' )
+							.first()
+							.toJSON();
+						var url = storeSuiteAttachmentImageUrl( attachment );
+						var $wrap = $( '#storesuite-account-avatar' );
+
+						$( '#account_profile_picture_id' ).val( attachment.id );
+						$wrap
+							.addClass( 'has-image' )
+							.find( '.storesuite-account-avatar-preview img' )
+							.attr( 'src', url );
+						$wrap
+							.find( '.storesuite-account-avatar-remove' )
+							.removeClass( 'storesuite-hidden' );
+						// Notify the dirty-state tracker (sticky save bar).
+						$( '#account_profile_picture_id' ).trigger( 'change' );
+					} );
+
+					avatarFrame.open();
+				}
+			);
+
+			// Clear the selected picture (revert to the default avatar).
+			$( document ).on(
+				'click',
+				'.storesuite-account-avatar-remove',
+				function ( event ) {
+					event.preventDefault();
+
+					var $wrap = $( '#storesuite-account-avatar' );
+					$( '#account_profile_picture_id' ).val( '' );
+					$wrap
+						.removeClass( 'has-image' )
+						.find( '.storesuite-account-avatar-preview img' )
+						.attr(
+							'src',
+							storeSuiteFrontScript.default_avatar_url || ''
+						);
+					$( this ).addClass( 'storesuite-hidden' );
+					// Notify the dirty-state tracker (sticky save bar).
+					$( '#account_profile_picture_id' ).trigger( 'change' );
+				}
+			);
 		},
 		uploadProductGallaryImages: function () {
 			$( '#product-gallery-images' ).click( function ( event ) {

@@ -224,7 +224,7 @@ class Assets {
 			|| storesuite_is_endpoint_url( 'edit-brand' );
 		$is_account = storesuite_is_endpoint_url( 'edit-account-details' );
 
-		$needs_media        = $is_products || $is_categories || $is_brands;
+		$needs_media        = $is_products || $is_categories || $is_brands || $is_account;
 		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_account;
 		$needs_sweetalert   = $needs_form_handler || $is_orders;
 		$needs_select2      = $is_products || $is_orders || $is_coupons;
@@ -238,6 +238,14 @@ class Assets {
 
 		if ( $needs_select2 ) {
 			wp_enqueue_style( 'select2' );
+		}
+
+		// Account address tab needs WooCommerce's country/state select behaviour.
+		if ( $is_account ) {
+			wp_enqueue_style( 'select2' );
+			wp_enqueue_script( 'selectWoo' );
+			wp_enqueue_script( 'wc-country-select' );
+			wp_enqueue_script( 'wc-address-i18n' );
 		}
 
 		wp_enqueue_script( 'storesuite_script' );
@@ -256,6 +264,8 @@ class Assets {
 				'upload_brand_image'    => __( 'Upload Brand Image', 'storesuite' ),
 				'brand_image'           => __( 'Brand Image', 'storesuite' ),
 				'upload_gallery_images' => __( 'Upload Product Gallery Images', 'storesuite' ),
+				'upload_profile_picture' => __( 'Upload Profile Picture', 'storesuite' ),
+				'default_avatar_url'    => get_avatar_url( get_current_user_id(), array( 'force_default' => true ) ),
 			)
 		);
 
