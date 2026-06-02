@@ -4,7 +4,7 @@ Tags: woocommerce, store management, shop manager, store suite, front-end shop m
 Requires at least: 6.4
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 1.0.6
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,9 @@ StoreSuite adds a frontend store management dashboard for WooCommerce. Give stor
 
 * **Manage WooCommerce store easily** – Single dashboard for store operations
 * **Products** – List, add, and edit WooCommerce simple products
-* **Products** – Variable product management (Comming soon)
+* **Variable products** – Manage attributes and variations with bulk actions and generate-all-variations
+* **Product attributes** – Manage attributes and their terms (add, edit, list)
+* **Product export** – Export products to CSV with a configurable export modal
 * **Categories** – Manage product categories (add, edit, list)
 * **Tags** – Manage product tags (add, edit, list)
 * **Brands** – Manage product brands
@@ -112,6 +114,12 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.1.0 =
+* Add variable product management: attributes UI, variation CRUD, bulk actions, and generate-all-variations on the frontend product form.
+* Add product attributes management pages (list, add, edit, and attribute terms).
+* Add product CSV export with a configurable export modal.
+* Flush rewrite rules automatically on update so the new attribute endpoints resolve without re-saving permalinks.
 
 = 1.0.6 =
 * Rewrite dashboard analytics in React with net sales chart, recent orders, quick actions, and leaderboards.

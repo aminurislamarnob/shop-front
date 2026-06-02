@@ -18,7 +18,7 @@ final class StoreSuite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.6';
+	public $version = '1.1.0';
 
 	/**
 	 * Instance of self
@@ -224,6 +224,10 @@ final class StoreSuite {
 	 */
 	public function init_classes() {
 		require_once STORESUITE_INC_DIR . '/functions.php';
+
+		// Run pending data migrations before the rest of the services boot.
+		$this->container['storesuite_upgrader'] = new Upgrader();
+		$this->container['storesuite_upgrader']->maybe_upgrade();
 
 		$this->container['cache']                                  = new Cache();
 		$this->container['storesuite_main']                        = new Main();
