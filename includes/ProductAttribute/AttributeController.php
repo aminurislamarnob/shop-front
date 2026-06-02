@@ -32,30 +32,18 @@ class AttributeController {
 	}
 
 	/**
-	 * Verify capability and nonce helper.
-	 *
-	 * @param string $nonce_field Field name.
-	 * @param string $action Action name.
-	 */
-	protected function verify_request( $nonce_field, $action ) {
-		if ( ! isset( $_POST[ $nonce_field ] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST[ $nonce_field ] ) ), $action ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
-		}
-
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error(
-				array(
-					'error' => __( 'You do not have permission to perform this action.', 'storesuite' ),
-				)
-			);
-		}
-	}
-
-	/**
 	 * Handle add global product attribute.
 	 */
 	public function handle_add_attribute() {
-		$this->verify_request( 'storesuite_add_product_attribute_nonce', '_storesuite_add_product_attribute_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_add_product_attribute_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_add_product_attribute_nonce'] ) ), '_storesuite_add_product_attribute_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$attribute_label = isset( $_POST['attribute_label'] ) ? wc_clean( wp_unslash( $_POST['attribute_label'] ) ) : '';
 		$attribute_name  = isset( $_POST['attribute_name'] ) ? wc_sanitize_taxonomy_name( wp_unslash( $_POST['attribute_name'] ) ) : '';
@@ -106,7 +94,15 @@ class AttributeController {
 	 * Handle edit global product attribute.
 	 */
 	public function handle_edit_attribute() {
-		$this->verify_request( 'storesuite_edit_product_attribute_nonce', '_storesuite_edit_product_attribute_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_edit_product_attribute_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_edit_product_attribute_nonce'] ) ), '_storesuite_edit_product_attribute_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$attribute_id    = isset( $_POST['attribute_id'] ) ? absint( $_POST['attribute_id'] ) : 0;
 		$attribute_label = isset( $_POST['attribute_label'] ) ? wc_clean( wp_unslash( $_POST['attribute_label'] ) ) : '';
@@ -154,7 +150,15 @@ class AttributeController {
 	 * Handle delete global product attribute.
 	 */
 	public function handle_delete_attribute() {
-		$this->verify_request( 'storesuite_delete_product_attribute_nonce', '_storesuite_delete_nonce_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_delete_product_attribute_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_delete_product_attribute_nonce'] ) ), '_storesuite_delete_nonce_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$attribute_id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 
@@ -179,7 +183,15 @@ class AttributeController {
 	 * Handle add term for a given attribute taxonomy.
 	 */
 	public function handle_add_term() {
-		$this->verify_request( 'storesuite_add_attribute_term_nonce', '_storesuite_add_attribute_term_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_add_attribute_term_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_add_attribute_term_nonce'] ) ), '_storesuite_add_attribute_term_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$taxonomy = isset( $_POST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) ) : '';
 		$name     = isset( $_POST['term_name'] ) ? sanitize_text_field( wp_unslash( $_POST['term_name'] ) ) : '';
@@ -229,7 +241,15 @@ class AttributeController {
 	 * Handle edit attribute term.
 	 */
 	public function handle_edit_term() {
-		$this->verify_request( 'storesuite_edit_attribute_term_nonce', '_storesuite_edit_attribute_term_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_edit_attribute_term_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_edit_attribute_term_nonce'] ) ), '_storesuite_edit_attribute_term_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$taxonomy = isset( $_POST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) ) : '';
 		$term_id  = isset( $_POST['term_id'] ) ? absint( $_POST['term_id'] ) : 0;
@@ -280,7 +300,15 @@ class AttributeController {
 	 * Handle delete attribute term.
 	 */
 	public function handle_delete_term() {
-		$this->verify_request( 'storesuite_delete_attribute_term_nonce', '_storesuite_delete_nonce_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_delete_attribute_term_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_delete_attribute_term_nonce'] ) ), '_storesuite_delete_nonce_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$taxonomy = isset( $_POST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) ) : '';
 		$term_id  = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
