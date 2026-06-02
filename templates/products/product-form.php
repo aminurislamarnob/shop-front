@@ -422,14 +422,14 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 											$disabled_downloads_count += (int) $disabled_download;
 
 											storesuite_get_template_part(
-											'products/html-product-download',
-											'',
-											array(
-												'key'               => $key,
-												'file'              => $file,
-												'disabled_download' => $disabled_download,
-											)
-										);
+                                                'products/html-product-download',
+                                                '',
+                                                array(
+													'key'               => $key,
+													'file'              => $file,
+													'disabled_download' => $disabled_download,
+                                                )
+											);
 										}
 									}
 									?>

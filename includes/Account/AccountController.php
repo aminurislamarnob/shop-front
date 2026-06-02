@@ -176,16 +176,16 @@ class AccountController {
 		if ( ! empty( $pass_cur ) && empty( $pass1 ) && empty( $pass2 ) ) {
 			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'Please fill out all password fields.', 'storesuite' ) ) );
-		} else if ( ! empty( $pass1 ) && empty( $pass_cur ) ) {
+		} elseif ( ! empty( $pass1 ) && empty( $pass_cur ) ) {
 			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'Please enter your current password.', 'storesuite' ) ) );
-		} else if ( ! empty( $pass1 ) && empty( $pass2 ) ) {
+		} elseif ( ! empty( $pass1 ) && empty( $pass2 ) ) {
 			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'Please re-enter your password.', 'storesuite' ) ) );
-		} else if ( ( ! empty( $pass1 ) || ! empty( $pass2 ) ) && $pass1 !== $pass2 ) {
+		} elseif ( ( ! empty( $pass1 ) || ! empty( $pass2 ) ) && $pass1 !== $pass2 ) {
 			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'New passwords do not match.', 'storesuite' ) ) );
-		} else if ( ! empty( $pass1 ) && ! wp_check_password( $pass_cur, $current_user->user_pass, $current_user->ID ) ) {
+		} elseif ( ! empty( $pass1 ) && ! wp_check_password( $pass_cur, $current_user->user_pass, $current_user->ID ) ) {
 			$save_pass = false;
 			wp_send_json_error( array( 'error' => __( 'Your current password is incorrect.', 'storesuite' ) ) );
 		}

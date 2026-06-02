@@ -146,7 +146,18 @@ $terms = get_terms(
 										<?php else : ?>
 											<?php foreach ( $terms as $term ) : ?>
 												<tr id="term-row-<?php echo esc_attr( $term->term_id ); ?>">
-													<td><a href="<?php echo esc_url( add_query_arg( array( 'taxonomy' => $taxonomy, 'term_id' => $term->term_id ), storesuite_get_navigation_url( 'attribute-terms' ) ) ); ?>"><?php echo esc_html( $term->name ); ?></a></td>
+													<td><a href="
+                                                    <?php
+                                                    echo esc_url(
+                                                        add_query_arg(
+                                                            array(
+																'taxonomy' => $taxonomy,
+																'term_id' => $term->term_id,
+                                                            ), storesuite_get_navigation_url( 'attribute-terms' )
+                                                        )
+                                                    );
+													?>
+                                                                    "><?php echo esc_html( $term->name ); ?></a></td>
 													<td><?php echo esc_html( $term->slug ); ?></td>
 													<td><?php echo esc_html( $term->count ); ?></td>
 													<td class="text-right">
@@ -156,7 +167,18 @@ $terms = get_terms(
 															</span>
 															<ul class="storesuite-dropdown-menu">
 																<li>
-																	<a href="<?php echo esc_url( add_query_arg( array( 'taxonomy' => $taxonomy, 'term_id' => $term->term_id ), storesuite_get_navigation_url( 'attribute-terms' ) ) ); ?>" class="dropdown-link">
+																	<a href="
+                                                                    <?php
+                                                                    echo esc_url(
+                                                                        add_query_arg(
+                                                                            array(
+																				'taxonomy' => $taxonomy,
+																				'term_id' => $term->term_id,
+                                                                            ), storesuite_get_navigation_url( 'attribute-terms' )
+                                                                        )
+                                                                    );
+																	?>
+                                                                                " class="dropdown-link">
 																		<?php esc_html_e( 'Edit', 'storesuite' ); ?>
 																	</a>
 																</li>

@@ -4829,6 +4829,73 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   padding: 1rem 1.25rem;
 }
 
+.storesuite-product-export-intro {
+  margin: 0 0 1rem;
+  color: #6b7280;
+}
+
+.storesuite-export-bulk-notice {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--storesuite-primary-bg);
+  background-color: #f9fafb;
+  color: #374151;
+  border-radius: 4px;
+}
+
+.storesuite-export-bulk-notice[hidden] {
+  display: none;
+}
+
+.storesuite-export-clear-selection {
+  color: var(--storesuite-primary-bg);
+  text-decoration: underline;
+}
+
+.my-storesuite-button.storesuite-export-toggle svg {
+  width: 13px;
+  height: 13px;
+}
+
+.storesuite-export-progress {
+  display: block;
+  width: 100%;
+  height: 14px;
+  margin-top: 1.25rem;
+  border: 0;
+  border-radius: 999px;
+  background-color: var(--storesuite-border-color);
+  overflow: hidden;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.storesuite-export-progress::-webkit-progress-bar {
+  background-color: var(--storesuite-border-color);
+  border-radius: 999px;
+}
+
+.storesuite-export-progress::-webkit-progress-value {
+  background-color: var(--storesuite-primary-bg);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.storesuite-export-progress::-moz-progress-bar {
+  background-color: var(--storesuite-primary-bg);
+  border-radius: 999px;
+}
+
+/* selectWoo dropdowns ship with z-index 1051, which sits below the product modal overlay
+   (z-index 100050), so they render behind the dialog. Lift them above it. The base
+   `.storesuite-main-dashboard .select2-container .select2-dropdown` rule sets no z-index, so this
+   override wins on specificity. */
+.storesuite-main-dashboard .select2-container--open,
+.storesuite-main-dashboard .select2-container .select2-dropdown {
+  z-index: 100060;
+}
+
 .storesuite-product-bulk-edit-core .storesuite-form-group,
 .storesuite-product-bulk-edit-scroll .storesuite-product-bulk-wc-fields .storesuite-form-group {
   margin-bottom: 0.75rem;

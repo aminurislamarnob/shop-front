@@ -248,6 +248,7 @@ final class StoreSuite {
 		$this->container['storesuite_product_bulk_edit']           = new Product\ProductBulkEdit();
 		$this->container['storesuite_product_quick_edit']          = new Product\ProductQuickEdit();
 		$this->container['storesuite_product_controller']          = new Product\ProductController();
+		$this->container['storesuite_product_export_controller']   = new Product\ProductExportController();
 		$this->container['storesuite_product_hooks']               = new Product\ProductHooks();
 		$this->container['storesuite_variation_ajax']              = new Product\VariationAjax();
 		$this->container['storesuite_order_controller']            = new Order\OrderController();

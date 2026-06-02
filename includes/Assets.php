@@ -89,7 +89,8 @@ class Assets {
 		$frontend_product_script      = STORESUITE_PLUGIN_ASSET . '/frontend/product.js';
 		$frontend_form_handler_script = STORESUITE_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
-		$frontend_variation_script 	  = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
+		$frontend_variation_script    = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
+		$frontend_product_export      = STORESUITE_PLUGIN_ASSET . '/frontend/product-export.js';
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_global_script', STORESUITE_PLUGIN_ASSET . '/frontend/global.js', array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
@@ -105,6 +106,7 @@ class Assets {
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_product_export_script', $frontend_product_export, array( 'jquery', 'storesuite_product_script', 'storesuite_selectWoo', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 	}
 
 	/**
@@ -230,7 +232,7 @@ class Assets {
 		$needs_select2      = $is_products || $is_orders || $is_coupons;
 		// jQuery UI datepicker styles: any form-handler page that renders
 		// .date-picker inputs (currently the coupon expiry date) needs them.
-		$needs_jquery_ui    = $is_products || $is_coupons;
+		$needs_jquery_ui = $is_products || $is_coupons;
 
 		if ( $needs_jquery_ui ) {
 			wp_enqueue_style( 'storesuite_jquery-ui-style' );
@@ -364,7 +366,7 @@ class Assets {
 						'edit_attribute_term'                   => __( 'Edit attribute term', 'storesuite' ),
 						'attribute_term_name_placeholder'       => __( 'Term name (e.g. Blue)', 'storesuite' ),
 						'attribute_term_slug_placeholder'       => __( 'Term slug (optional)', 'storesuite' ),
-						'attribute_term_description_placeholder'=> __( 'Optional term description', 'storesuite' ),
+						'attribute_term_description_placeholder' => __( 'Optional term description', 'storesuite' ),
 						'edit_label'                            => __( 'Edit', 'storesuite' ),
 						'delete_label'                          => __( 'Delete', 'storesuite' ),
 
@@ -553,57 +555,79 @@ class Assets {
 			);
 
 			wp_enqueue_script( 'storesuite_variation_script' );
-			wp_localize_script( 'storesuite_variation_script', 'StoreSuiteVariation', array(
-				'ajax_url'              => admin_url( 'admin-ajax.php' ),
-				'nonce'                 => wp_create_nonce( 'storesuite-variation-nonce' ),
-				'add_attribute_nonce'   => wp_create_nonce( 'add-attribute' ),
-				'add_term_nonce'        => wp_create_nonce( '_storesuite_add_attribute_term_' ),
-				'save_variations_nonce'  => wp_create_nonce( 'save-variations' ),
-				'add_variation_nonce'    => wp_create_nonce( 'add-variation' ),
-				'remove_variation_nonce' => wp_create_nonce( 'remove-variation' ),
-				'bulk_edit_nonce'        => wp_create_nonce( 'bulk-edit-variations' ),
-				'default_attributes_nonce' => wp_create_nonce( 'save-default-attributes' ),
-				'product_id'            => absint( get_query_var( 'edit-product' ) ),
-				'per_page'              => 15,
-				'placeholder_img'       => wc_placeholder_img_src( 'thumbnail' ),
-				'i18n'                  => array(
-					'confirm_remove'     => __( 'Remove this variation?', 'storesuite' ),
-					'confirm_remove_attribute' => __( 'Remove this attribute?', 'storesuite' ),
-					'confirm_delete_all' => __( 'Delete all variations? This cannot be undone.', 'storesuite' ),
-					'generated'          => __( 'variations created.', 'storesuite' ),
-					'no_attributes'      => __( 'Add variation attributes first.', 'storesuite' ),
-					'saved'              => __( 'Changes saved.', 'storesuite' ),
-					'loading_variations'     => __( 'Loading variations…', 'storesuite' ),
-					'no_variations'          => __( 'No variations found.', 'storesuite' ),
-					/* translators: %1$s: start item, %2$s: end item, %3$s: total items */
-					'showing'                => __( 'Showing %1$s to %2$s of %3$s', 'storesuite' ),
-					'confirm_generate'       => __( 'Generate variations?', 'storesuite' ),
-					'confirm_generate_text'  => __( 'This will create variations for all attribute combinations.', 'storesuite' ),
-					'ok_button'              => __( 'OK', 'storesuite' ),
-					'enter_price'            => __( 'Enter price', 'storesuite' ),
-					'set_regular_price'      => __( 'Set regular price for all variations', 'storesuite' ),
-					'set_sale_price'         => __( 'Set sale price for all variations', 'storesuite' ),
-					'select_stock_status'    => __( 'Select stock status for all variations', 'storesuite' ),
-					'confirm_toggle_enabled' => __( 'Toggle enabled/disabled status for all variations?', 'storesuite' ),
-					'in_stock'               => __( 'In stock', 'storesuite' ),
-					'out_of_stock'           => __( 'Out of stock', 'storesuite' ),
-					'on_backorder'           => __( 'On backorder', 'storesuite' ),
-					'enter_a_value'          => __( 'Enter a value', 'storesuite' ),
-					'enter_value_fixed_or_percent' => __( 'Enter a value (fixed amount or percentage, e.g. 10 or 10%)', 'storesuite' ),
-					'confirm_remove_cogs'    => __( 'Remove the custom cost from every variation?', 'storesuite' ),
-					'sale_start_date'        => __( 'Sale start date (leave blank to skip)', 'storesuite' ),
-					'sale_end_date'          => __( 'Sale end date (leave blank to skip)', 'storesuite' ),
-					'next_button'            => __( 'Next', 'storesuite' ),
-					'choose_variation_image' => __( 'Choose variation image', 'storesuite' ),
-					'set_image'              => __( 'Set image', 'storesuite' ),
-					'remove_image'           => __( 'Remove image', 'storesuite' ),
-					'defaults_saved'         => __( 'Default attributes saved.', 'storesuite' ),
-					'add_button'             => __( 'Add', 'storesuite' ),
-					'add_term_title'         => __( 'Add new term', 'storesuite' ),
-					'add_term_placeholder'   => __( 'Term name', 'storesuite' ),
-					'term_required'          => __( 'Please enter a name.', 'storesuite' ),
-				),
-			) );
+			wp_localize_script(
+                'storesuite_variation_script', 'StoreSuiteVariation', array(
+					'ajax_url'              => admin_url( 'admin-ajax.php' ),
+					'nonce'                 => wp_create_nonce( 'storesuite-variation-nonce' ),
+					'add_attribute_nonce'   => wp_create_nonce( 'add-attribute' ),
+					'add_term_nonce'        => wp_create_nonce( '_storesuite_add_attribute_term_' ),
+					'save_variations_nonce'  => wp_create_nonce( 'save-variations' ),
+					'add_variation_nonce'    => wp_create_nonce( 'add-variation' ),
+					'remove_variation_nonce' => wp_create_nonce( 'remove-variation' ),
+					'bulk_edit_nonce'        => wp_create_nonce( 'bulk-edit-variations' ),
+					'default_attributes_nonce' => wp_create_nonce( 'save-default-attributes' ),
+					'product_id'            => absint( get_query_var( 'edit-product' ) ),
+					'per_page'              => 15,
+					'placeholder_img'       => wc_placeholder_img_src( 'thumbnail' ),
+					'i18n'                  => array(
+						'confirm_remove'     => __( 'Remove this variation?', 'storesuite' ),
+						'confirm_remove_attribute' => __( 'Remove this attribute?', 'storesuite' ),
+						'confirm_delete_all' => __( 'Delete all variations? This cannot be undone.', 'storesuite' ),
+						'generated'          => __( 'variations created.', 'storesuite' ),
+						'no_attributes'      => __( 'Add variation attributes first.', 'storesuite' ),
+						'saved'              => __( 'Changes saved.', 'storesuite' ),
+						'loading_variations'     => __( 'Loading variations…', 'storesuite' ),
+						'no_variations'          => __( 'No variations found.', 'storesuite' ),
+						/* translators: %1$s: start item, %2$s: end item, %3$s: total items */
+						'showing'                => __( 'Showing %1$s to %2$s of %3$s', 'storesuite' ),
+						'confirm_generate'       => __( 'Generate variations?', 'storesuite' ),
+						'confirm_generate_text'  => __( 'This will create variations for all attribute combinations.', 'storesuite' ),
+						'ok_button'              => __( 'OK', 'storesuite' ),
+						'enter_price'            => __( 'Enter price', 'storesuite' ),
+						'set_regular_price'      => __( 'Set regular price for all variations', 'storesuite' ),
+						'set_sale_price'         => __( 'Set sale price for all variations', 'storesuite' ),
+						'select_stock_status'    => __( 'Select stock status for all variations', 'storesuite' ),
+						'confirm_toggle_enabled' => __( 'Toggle enabled/disabled status for all variations?', 'storesuite' ),
+						'in_stock'               => __( 'In stock', 'storesuite' ),
+						'out_of_stock'           => __( 'Out of stock', 'storesuite' ),
+						'on_backorder'           => __( 'On backorder', 'storesuite' ),
+						'enter_a_value'          => __( 'Enter a value', 'storesuite' ),
+						'enter_value_fixed_or_percent' => __( 'Enter a value (fixed amount or percentage, e.g. 10 or 10%)', 'storesuite' ),
+						'confirm_remove_cogs'    => __( 'Remove the custom cost from every variation?', 'storesuite' ),
+						'sale_start_date'        => __( 'Sale start date (leave blank to skip)', 'storesuite' ),
+						'sale_end_date'          => __( 'Sale end date (leave blank to skip)', 'storesuite' ),
+						'next_button'            => __( 'Next', 'storesuite' ),
+						'choose_variation_image' => __( 'Choose variation image', 'storesuite' ),
+						'set_image'              => __( 'Set image', 'storesuite' ),
+						'remove_image'           => __( 'Remove image', 'storesuite' ),
+						'defaults_saved'         => __( 'Default attributes saved.', 'storesuite' ),
+						'add_button'             => __( 'Add', 'storesuite' ),
+						'add_term_title'         => __( 'Add new term', 'storesuite' ),
+						'add_term_placeholder'   => __( 'Term name', 'storesuite' ),
+						'term_required'          => __( 'Please enter a name.', 'storesuite' ),
+					),
+                )
+            );
+
+			wp_enqueue_script( 'storesuite_product_export_script' );
+			wp_localize_script(
+				'storesuite_product_export_script',
+				'StoreSuite_ProductExport',
+				array(
+					'ajax_url'     => admin_url( 'admin-ajax.php' ),
+					'export_nonce' => wp_create_nonce( 'storesuite_product_export' ),
+					'i18n'         => array(
+						'error_title'             => __( 'Error!', 'storesuite' ),
+						'ok_button'               => __( 'OK', 'storesuite' ),
+						'unexpected_error'        => __( 'An unexpected error occurred. Please try again.', 'storesuite' ),
+						'select_products_title'   => __( 'Select products', 'storesuite' ),
+						'select_products_message' => __( 'Choose at least one product to export.', 'storesuite' ),
+						/* translators: %1$s: number of products, %2$s: "clear your selection" link. */
+						'bulk_export_notice'      => __( 'You are about to export %1$s products. To export all products, %2$s.', 'storesuite' ),
+						'clear_selection'         => __( 'clear your selection', 'storesuite' ),
+					),
+				)
+			);
 		}
 	}
 

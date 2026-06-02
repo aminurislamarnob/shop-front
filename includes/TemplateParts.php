@@ -52,7 +52,7 @@ class TemplateParts {
 		$title = '';
 
 		if ( ! is_null( $wp_query ) && ! is_admin() && is_main_query() && in_the_loop() && is_page() && storesuite_is_endpoint_url() ) {
-			$endpoint       = pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
+			$endpoint = pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
 
 			// The account page renders its own header card with the page title.
 			if ( 'edit-account-details' === $endpoint ) {

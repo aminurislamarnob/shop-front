@@ -38,7 +38,7 @@ class VariationAjax {
      *
      * @return void
      */
-    public function storesuite_ajax_add_attribute(){
+    public function storesuite_ajax_add_attribute() {
         if ( ! check_ajax_referer( 'add-attribute', 'security', false ) ) {
             wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'storesuite' ) ) );
         }
@@ -47,7 +47,7 @@ class VariationAjax {
         $index        = isset( $_POST['i'] ) ? absint( $_POST['i'] ) : 0;
         $product_id   = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
         $product_type = isset( $_POST['product_type'] ) ? wc_clean( wp_unslash( $_POST['product_type'] ) ) : 'simple';
-    
+
         // Build an attribute object or array compatible with your template.
         $attribute = new WC_Product_Attribute();
         $attribute->set_id( wc_attribute_taxonomy_id_by_name( $taxonomy ) );
@@ -65,7 +65,7 @@ class VariationAjax {
 			)
 		);
 		/* phpcs: enable */
-    
+
         ob_start();
         storesuite_get_template_part(
             'products/product-attribute-row',
@@ -78,13 +78,13 @@ class VariationAjax {
             )
         );
         $html = ob_get_clean();
-    
+
         if ( ! $html ) {
             wp_send_json_error(
                 array( 'message' => __( 'Could not generate attribute row.', 'storesuite' ) )
             );
         }
-    
+
         wp_send_json_success(
             array(
                 'html'    => $html,
@@ -201,23 +201,27 @@ class VariationAjax {
 			$attr_key = sanitize_title( $attribute->get_name() );
 
 			if ( $attribute->is_taxonomy() ) {
-				$terms   = get_terms( array(
-					'taxonomy'   => $attribute->get_name(),
-					'orderby'    => 'name',
-					'hide_empty' => false,
-					'fields'     => 'slugs',
-				) );
+				$terms   = get_terms(
+                    array(
+						'taxonomy'   => $attribute->get_name(),
+						'orderby'    => 'name',
+						'hide_empty' => false,
+						'fields'     => 'slugs',
+                    )
+                );
 				$options = is_wp_error( $terms ) ? array() : $terms;
 
 				// Only include terms that are assigned to this product attribute.
 				$assigned_ids = $attribute->get_options();
 				if ( ! empty( $assigned_ids ) ) {
-					$assigned_terms = get_terms( array(
-						'taxonomy'   => $attribute->get_name(),
-						'include'    => $assigned_ids,
-						'hide_empty' => false,
-						'fields'     => 'slugs',
-					) );
+					$assigned_terms = get_terms(
+                        array(
+							'taxonomy'   => $attribute->get_name(),
+							'include'    => $assigned_ids,
+							'hide_empty' => false,
+							'fields'     => 'slugs',
+                        )
+                    );
 					$options = is_wp_error( $assigned_terms ) ? array() : $assigned_terms;
 				}
 			} else {
