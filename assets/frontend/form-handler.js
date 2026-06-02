@@ -389,7 +389,7 @@
 		 * Show success message
 		 */
 		showSuccess: function ( message ) {
-			Swal.fire( {
+			return Swal.fire( {
 				icon: 'success',
 				title: storeSuiteFormHandler.i18n.success_title,
 				text: message,
@@ -1469,7 +1469,11 @@
 							Swal.close();
 
 							if ( response.success ) {
-								self.showSuccess( response.data.message );
+								self.showSuccess(
+									response.data.message
+								).then( function () {
+									window.location.reload();
+								} );
 							} else {
 								self.showError( response.data.error );
 							}

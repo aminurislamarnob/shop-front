@@ -224,10 +224,14 @@ class Assets {
 		$is_brands = storesuite_is_endpoint_url( 'brands' )
 			|| storesuite_is_endpoint_url( 'add-new-brand' )
 			|| storesuite_is_endpoint_url( 'edit-brand' );
+		$is_attributes = storesuite_is_endpoint_url( 'attributes' )
+			|| storesuite_is_endpoint_url( 'add-new-attribute' )
+			|| storesuite_is_endpoint_url( 'edit-attribute' )
+			|| storesuite_is_endpoint_url( 'attribute-terms' );
 		$is_account = storesuite_is_endpoint_url( 'edit-account-details' );
 
 		$needs_media        = $is_products || $is_categories || $is_brands || $is_account;
-		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_account;
+		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_attributes || $is_account;
 		$needs_sweetalert   = $needs_form_handler || $is_orders;
 		$needs_select2      = $is_products || $is_orders || $is_coupons;
 		// jQuery UI datepicker styles: any form-handler page that renders
