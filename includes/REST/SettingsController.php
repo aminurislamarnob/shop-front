@@ -155,7 +155,8 @@ class SettingsController extends WP_REST_Controller {
 		);
 		foreach ( $color_keys as $key ) {
 			if ( $request->has_param( $key ) ) {
-				$storesuite_settings[ $key ] = sanitize_hex_color( $request->get_param( $key ) ) ?: sanitize_text_field( $request->get_param( $key ) );
+				$sanitized_hex               = sanitize_hex_color( $request->get_param( $key ) );
+				$storesuite_settings[ $key ] = $sanitized_hex ? $sanitized_hex : sanitize_text_field( $request->get_param( $key ) );
 			}
 		}
 

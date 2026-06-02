@@ -1,22 +1,3 @@
-# PHPCS — Manual Fixes Required
-
-Branch: `feat/product-csv-export` (compared against `develop`)
-
-These PHPCS errors fall on lines changed in this branch and **cannot** be auto-fixed
-by `composer phpcbf` — they need code changes and human judgement. The mechanical
-issues (whitespace, indentation, function-call signatures) have already been fixed
-with `phpcbf`.
-
-Re-check after fixing with:
-
-```bash
-composer phpcs
-```
-
-**Summary:** 59 errors across 9 files, in three categories.
-
----
-
 ## 1. Security — `includes/ProductAttribute/AttributeController.php` (46 errors)
 
 The highest-priority group. Form handlers read `$_POST`/`$_REQUEST` without a verified
@@ -67,46 +48,15 @@ $attribute_name = isset( $_POST['attribute_name'] )
 
 ---
 
-## 2. `WordPress.WP.GlobalVariablesOverride.Prohibited` (12 errors)
-
-Templates assign to variables that collide with WordPress core globals
-(`$taxonomy`, `$term`, `$tax`). Rename the locals to the `storesuite_` prefix used
-elsewhere in the templates, and update every reference within the same file.
-
-| File | Line | Variable | Suggested rename |
-|------|------|----------|------------------|
-| `templates/attributes/attribute-terms.php` | 14 | `$taxonomy` | `$storesuite_taxonomy` |
-| `templates/attributes/attribute-terms.php` | 147 | `$term` | `$storesuite_term` |
-| `templates/attributes/attributes.php` | 72 | `$taxonomy` | `$storesuite_taxonomy` |
-| `templates/attributes/attributes.php` | 82 | `$term` | `$storesuite_term` |
-| `templates/attributes/edit-attribute-term.php` | 14 | `$taxonomy` | `$storesuite_taxonomy` |
-| `templates/attributes/edit-attribute-term.php` | 25 | `$term` | `$storesuite_term` |
-| `templates/products/product-attribute-row.php` | 52 | `$term` | `$storesuite_term` |
-| `templates/products/product-attribute-row.php` | 99 | `$term` | `$storesuite_term` |
-| `templates/products/product-attributes.php` | 62 | `$tax` | `$storesuite_tax` |
-| `templates/products/product-variation-row.php` | 64 | `$term` | `$storesuite_term` |
-| `templates/products/product-variations.php` | 144 | `$term` | `$storesuite_term` |
-
-Example:
-
-```php
-// Before
-$term = get_term( $term_id, $taxonomy );
-// After
-$storesuite_term = get_term( $term_id, $storesuite_taxonomy );
-```
-
----
-
 ## 3. `Universal.Operators.DisallowShortTernary.Found` (2 errors)
 
 Replace the short ternary `?:` with a full ternary (or `??` when checking for
 existence/null).
 
-| File | Line |
-|------|------|
-| `includes/REST/SettingsController.php` | 158 |
-| `templates/products/product-attribute-row.php` | 74 |
+| File                                           | Line |
+| ---------------------------------------------- | ---- |
+| `includes/REST/SettingsController.php`         | 158  |
+| `templates/products/product-attribute-row.php` | 74   |
 
 ```php
 // Before
