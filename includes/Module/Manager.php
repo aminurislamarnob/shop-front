@@ -1,0 +1,227 @@
+<?php
+/**
+ * Module discovery and lifecycle manager.
+ *
+ * @package StoreSuite
+ */
+
+namespace PluginizeLab\StoreSuite\Module;
+
+use PluginizeLab\StoreSuite\Abstracts\Module;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Discovers modules under `modules/<slug>/module.php`, tracks which ones the
+ * site administrator has activated, and boots them after StoreSuite is loaded.
+ *
+ * Active module slugs are persisted in the `storesuite_active_modules` option
+ * (a plain array of slugs). Other code can query state via `is_active()` and
+ * `get_active()`, or react to the per-module `storesuite_module_{slug}_loaded`
+ * action.
+ */
+class Manager {
+
+	const ACTIVE_OPTION = 'storesuite_active_modules';
+
+	/**
+	 * Map of slug => Module instance for every module discovered on disk.
+	 *
+	 * @var Module[]
+	 */
+	private $modules = array();
+
+	/**
+	 * Whether discovery has run yet.
+	 *
+	 * @var bool
+	 */
+	private $discovered = false;
+
+	/**
+	 * Wire the manager into the StoreSuite lifecycle.
+	 */
+	public function __construct() {
+		// Boot active modules after the rest of StoreSuite has registered its
+		// services and helpers — modules can then safely call into them.
+		// Discovery itself is lazy (see `get_all()`).
+		add_action( 'storesuite_loaded', array( $this, 'boot_active' ) );
+	}
+
+	/**
+	 * Root directory holding all bundled modules.
+	 *
+	 * @return string
+	 */
+	public function get_modules_dir() {
+		/**
+		 * Filter the modules directory. Useful for tests or for sites that want
+		 * to load modules from a custom location.
+		 *
+		 * @param string $dir Absolute path, no trailing slash.
+		 */
+		return untrailingslashit( apply_filters( 'storesuite_modules_dir', STORESUITE_DIR . '/modules' ) );
+	}
+
+	/**
+	 * Scan the modules directory and build the registry.
+	 *
+	 * Each subdirectory containing a `module.php` is loaded; the bootstrap is
+	 * expected to `return` an instance of `Abstracts\Module`. Third-party code
+	 * can register additional modules via the `storesuite_register_modules`
+	 * filter (receives the slug => instance map).
+	 *
+	 * @return void
+	 */
+	public function discover() {
+		if ( $this->discovered ) {
+			return;
+		}
+		$this->discovered = true;
+
+		$dir = $this->get_modules_dir();
+		if ( ! is_dir( $dir ) ) {
+			return;
+		}
+
+		foreach ( (array) glob( $dir . '/*/module.php' ) as $bootstrap ) {
+			$module = include_once $bootstrap;
+
+			if ( ! $module instanceof Module ) {
+				continue;
+			}
+
+			$slug = $module->get_slug();
+			if ( empty( $slug ) || isset( $this->modules[ $slug ] ) ) {
+				continue;
+			}
+
+			$this->modules[ $slug ] = $module;
+		}
+
+		/**
+		 * Register additional modules from outside the bundled directory.
+		 *
+		 * @param Module[] $modules Map of slug => Module instance.
+		 */
+		$this->modules = (array) apply_filters( 'storesuite_register_modules', $this->modules );
+	}
+
+	/**
+	 * Boot every active module. Fires a per-module action so other code can
+	 * hang behavior on a specific module being loaded.
+	 *
+	 * @return void
+	 */
+	public function boot_active() {
+		foreach ( $this->get_active() as $module ) {
+			$module->boot();
+
+			/**
+			 * Fired after a single module finishes booting.
+			 *
+			 * @param Module $module The module instance.
+			 */
+			do_action( 'storesuite_module_' . $module->get_slug() . '_loaded', $module );
+		}
+
+		/**
+		 * Fired after all active modules are loaded.
+		 *
+		 * @param Manager $manager The module manager.
+		 */
+		do_action( 'storesuite_modules_loaded', $this );
+	}
+
+	/**
+	 * Every discovered module, keyed by slug.
+	 *
+	 * @return Module[]
+	 */
+	public function get_all() {
+		$this->discover();
+		return $this->modules;
+	}
+
+	/**
+	 * Active modules only, keyed by slug.
+	 *
+	 * @return Module[]
+	 */
+	public function get_active() {
+		$active = $this->get_active_slugs();
+		return array_intersect_key( $this->get_all(), array_flip( $active ) );
+	}
+
+	/**
+	 * Slugs persisted in the active-modules option, filtered to ones that
+	 * actually exist on disk.
+	 *
+	 * @return string[]
+	 */
+	public function get_active_slugs() {
+		$stored = (array) get_option( self::ACTIVE_OPTION, array() );
+		return array_values( array_intersect( $stored, array_keys( $this->get_all() ) ) );
+	}
+
+	/**
+	 * Is the module active?
+	 *
+	 * @param string $slug Module slug.
+	 * @return bool
+	 */
+	public function is_active( $slug ) {
+		return in_array( $slug, $this->get_active_slugs(), true );
+	}
+
+	/**
+	 * Activate a module: persist the slug and run its `activate()` hook.
+	 *
+	 * @param string $slug Module slug.
+	 * @return bool True if the module is now active, false if the slug is unknown.
+	 */
+	public function activate( $slug ) {
+		$modules = $this->get_all();
+		if ( ! isset( $modules[ $slug ] ) ) {
+			return false;
+		}
+
+		if ( ! $this->is_active( $slug ) ) {
+			$active   = $this->get_active_slugs();
+			$active[] = $slug;
+			update_option( self::ACTIVE_OPTION, array_values( array_unique( $active ) ) );
+
+			$modules[ $slug ]->activate();
+
+			do_action( 'storesuite_module_activated', $slug, $modules[ $slug ] );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Deactivate a module: remove the slug and run its `deactivate()` hook.
+	 *
+	 * @param string $slug Module slug.
+	 * @return bool True on success, false if the slug is unknown.
+	 */
+	public function deactivate( $slug ) {
+		$modules = $this->get_all();
+		if ( ! isset( $modules[ $slug ] ) ) {
+			return false;
+		}
+
+		if ( $this->is_active( $slug ) ) {
+			$active = array_diff( $this->get_active_slugs(), array( $slug ) );
+			update_option( self::ACTIVE_OPTION, array_values( $active ) );
+
+			$modules[ $slug ]->deactivate();
+
+			do_action( 'storesuite_module_deactivated', $slug, $modules[ $slug ] );
+		}
+
+		return true;
+	}
+}

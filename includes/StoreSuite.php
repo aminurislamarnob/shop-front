@@ -193,6 +193,10 @@ final class StoreSuite {
 		$this->includes();
 		$this->init_hooks();
 
+		// Construct the module manager before `storesuite_loaded` fires so it
+		// can hook in and boot active modules from that action.
+		$this->container['modules'] = new Module\Manager();
+
 		do_action( 'storesuite_loaded' );
 	}
 
