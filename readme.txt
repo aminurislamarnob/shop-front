@@ -1,7 +1,7 @@
 === StoreSuite - A frontend dashboard to manage your WooCommerce store ===
 Contributors: aminurislam01
 Tags: woocommerce, store management, shop manager, store suite, front-end shop manager
-Requires at least: 6.4
+Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
 Stable tag: 1.1.1
