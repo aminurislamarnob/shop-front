@@ -51,8 +51,10 @@ if ( is_wp_error( $storesuite_export_cats ) ) {
 			<input type="hidden" name="product_ids" id="storesuite-export-product-ids" value="" />
 
 			<div class="storesuite-product-bulk-edit-scroll">
+				<div class="storesuite-export-bulk-notice" hidden></div>
+
 				<p class="storesuite-product-export-intro">
-					<?php esc_html_e( 'Generate and download a CSV file containing your products. Leave the filters empty to export everything.', 'storesuite' ); ?>
+					<?php esc_html_e( 'This tool allows you to generate and download a CSV file containing a list of all products.', 'storesuite' ); ?>
 				</p>
 
 				<div class="storesuite-form-group">
@@ -66,7 +68,7 @@ if ( is_wp_error( $storesuite_export_cats ) ) {
 					</select>
 				</div>
 
-				<div class="storesuite-form-group">
+				<div class="storesuite-form-group storesuite-export-types-row">
 					<label for="storesuite-export-types" class="storesuite-form-label"><?php esc_html_e( 'Which product types should be exported?', 'storesuite' ); ?></label>
 					<select name="export_types" id="storesuite-export-types" class="storesuite-form-control storesuite-select2 storesuite-export-types" multiple data-placeholder="<?php esc_attr_e( 'Export all products', 'storesuite' ); ?>">
 						<?php foreach ( $storesuite_product_types as $storesuite_type_value => $storesuite_type_label ) : ?>

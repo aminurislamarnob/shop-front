@@ -4834,6 +4834,24 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   color: #6b7280;
 }
 
+.storesuite-export-bulk-notice {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--storesuite-primary-bg);
+  background-color: #f9fafb;
+  color: #374151;
+  border-radius: 4px;
+}
+
+.storesuite-export-bulk-notice[hidden] {
+  display: none;
+}
+
+.storesuite-export-clear-selection {
+  color: var(--storesuite-primary-bg);
+  text-decoration: underline;
+}
+
 .my-storesuite-button.storesuite-export-toggle svg {
   width: 13px;
   height: 13px;

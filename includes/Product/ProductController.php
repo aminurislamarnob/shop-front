@@ -455,5 +455,4 @@ class ProductController {
 		}
 		return $downloads;
 	}
-
 }
