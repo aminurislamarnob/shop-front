@@ -25,7 +25,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			<div class="storesuite-table-header-part">
 				<div class="row">
 					<div class="col-md-auto">
-						<div class="storesuite-form-group d-flex align-items-center storesuite-bulk-order-actions">
+						<div class="storesuite-form-group d-flex align-items-center storesuite-bulk-order-actions mb-0">
 							<select name="action" id="bulk-action-selector-top" class="storesuite-form-control" form="storesuite-order-bulk-actions">
 								<option value="-1"><?php esc_html_e( 'Bulk actions', 'storesuite' ); ?></option>
 								<option value="mark_processing"><?php esc_html_e( 'Change status to processing', 'storesuite' ); ?></option>
