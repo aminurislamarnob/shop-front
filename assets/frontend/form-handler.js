@@ -57,6 +57,42 @@
 			this.bindEditAccountPasswordLiveValidation();
 			this.bindPasswordVisibilityToggle();
 			this.initEditAccountPasswordToggle();
+			this.preventPasswordAutofill();
+		},
+
+		/**
+		 * Stop browsers from autofilling the account password fields on load.
+		 *
+		 * The fields render with the `readonly` attribute so browsers skip them
+		 * during page-load autofill. We drop `readonly` on first focus/touch so
+		 * the user can still type into them normally.
+		 */
+		preventPasswordAutofill: function () {
+			var fieldsSelector = '#password_current, #password_1, #password_2';
+
+			$( document )
+				.off(
+					'focus.storesuitePasswordAutofill touchstart.storesuitePasswordAutofill blur.storesuitePasswordAutofill',
+					fieldsSelector
+				)
+				// Drop readonly on interaction so the field is typeable.
+				.on(
+					'focus.storesuitePasswordAutofill touchstart.storesuitePasswordAutofill',
+					fieldsSelector,
+					function () {
+						$( this ).removeAttr( 'readonly' );
+					}
+				)
+				// Re-arm the autofill guard when the user leaves an empty field.
+				.on(
+					'blur.storesuitePasswordAutofill',
+					fieldsSelector,
+					function () {
+						if ( '' === $( this ).val() ) {
+							$( this ).attr( 'readonly', 'readonly' );
+						}
+					}
+				);
 		},
 
 		/**

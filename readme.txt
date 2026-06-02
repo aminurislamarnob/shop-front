@@ -4,7 +4,7 @@ Tags: woocommerce, store management, shop manager, store suite, front-end shop m
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,10 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.1.1 =
+* Prevent browsers from autofilling the account password fields on load.
+* Remove the required "*" and "(optional)" markers from the account address fields.
 
 = 1.1.0 =
 * Add variable product management: attributes UI, variation CRUD, bulk actions, and generate-all-variations on the frontend product form.

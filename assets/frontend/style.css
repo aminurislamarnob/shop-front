@@ -4234,6 +4234,9 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
   font-weight: 500;
   color: var(--storesuite-text-color);
 }
+.storesuite-address-grid .form-row label .optional {
+  display: none;
+}
 .storesuite-address-grid .form-row .woocommerce-input-wrapper {
   display: block;
   width: 100%;
