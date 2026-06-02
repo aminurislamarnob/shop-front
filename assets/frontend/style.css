@@ -5779,24 +5779,31 @@ body,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   padding: 0;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--storesuite-icon-color);
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 50%;
+  background: #fff;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
-.storesuite-theme-toggle:hover {
-  background: var(--storesuite-bg-color-light);
-  color: var(--storesuite-text-color);
+.storesuite-theme-toggle:hover,
+.storesuite-theme-toggle:focus {
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
 }
 .storesuite-theme-toggle svg {
-  width: 22px;
-  height: 22px;
-  fill: currentColor;
+  width: 15px;
+  height: 15px;
+  fill: var(--storesuite-text-color);
+  transition: fill 0.15s ease;
+}
+.storesuite-theme-toggle:hover svg,
+.storesuite-theme-toggle:focus svg {
+  fill: var(--storesuite-button-text-color);
 }
 .storesuite-theme-toggle .storesuite-theme-toggle-sun {
   display: none;
@@ -5806,4 +5813,10 @@ body,
 }
 [data-theme="dark"] .storesuite-theme-toggle .storesuite-theme-toggle-sun {
   display: inline-block;
+}
+
+/* Dark mode: keep the bordered header circles on a dark surface instead of white */
+[data-theme="dark"] .storesuite-header-icon-link,
+[data-theme="dark"] .storesuite-theme-toggle {
+  background: var(--storesuite-surface-elevated);
 }
