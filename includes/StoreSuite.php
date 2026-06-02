@@ -18,7 +18,7 @@ final class StoreSuite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.6';
+	public $version = '1.1.0';
 
 	/**
 	 * Instance of self
@@ -225,6 +225,10 @@ final class StoreSuite {
 	public function init_classes() {
 		require_once STORESUITE_INC_DIR . '/functions.php';
 
+		// Run pending data migrations before the rest of the services boot.
+		$this->container['storesuite_upgrader'] = new Upgrader();
+		$this->container['storesuite_upgrader']->maybe_upgrade();
+
 		$this->container['cache']                                  = new Cache();
 		$this->container['storesuite_main']                        = new Main();
 		$this->container['scripts']                                = new Assets();
@@ -244,10 +248,13 @@ final class StoreSuite {
 		$this->container['storesuite_product_brand_controller']    = new ProductBrand\BrandController();
 		$this->container['storesuite_product_tags']                = new ProductTag\Tags();
 		$this->container['storesuite_product_tag_controller']      = new ProductTag\TagController();
+		$this->container['storesuite_product_attribute_controller'] = new ProductAttribute\AttributeController();
 		$this->container['storesuite_product_bulk_edit']           = new Product\ProductBulkEdit();
 		$this->container['storesuite_product_quick_edit']          = new Product\ProductQuickEdit();
 		$this->container['storesuite_product_controller']          = new Product\ProductController();
+		$this->container['storesuite_product_export_controller']   = new Product\ProductExportController();
 		$this->container['storesuite_product_hooks']               = new Product\ProductHooks();
+		$this->container['storesuite_variation_ajax']              = new Product\VariationAjax();
 		$this->container['storesuite_order_controller']            = new Order\OrderController();
 		$this->container['storesuite_create_new_order']            = new Order\CreateNewOrder();
 		$this->container['storesuite_order_manager']               = new Order\OrderManager();

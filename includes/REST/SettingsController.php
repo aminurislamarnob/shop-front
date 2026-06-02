@@ -155,7 +155,8 @@ class SettingsController extends WP_REST_Controller {
 		);
 		foreach ( $color_keys as $key ) {
 			if ( $request->has_param( $key ) ) {
-				$storesuite_settings[ $key ] = sanitize_hex_color( $request->get_param( $key ) ) ?: sanitize_text_field( $request->get_param( $key ) );
+				$sanitized_hex               = sanitize_hex_color( $request->get_param( $key ) );
+				$storesuite_settings[ $key ] = $sanitized_hex ? $sanitized_hex : sanitize_text_field( $request->get_param( $key ) );
 			}
 		}
 
@@ -168,6 +169,13 @@ class SettingsController extends WP_REST_Controller {
 
 		if ( $request->has_param( 'storesuite_color_palette_name' ) ) {
 			$storesuite_settings['storesuite_color_palette_name'] = sanitize_text_field( $request->get_param( 'storesuite_color_palette_name' ) );
+		}
+
+		if ( $request->has_param( 'storesuite_attribution_logo_variant' ) ) {
+			$variant = $request->get_param( 'storesuite_attribution_logo_variant' );
+			if ( in_array( $variant, array( 'dark', 'light' ), true ) ) {
+				$storesuite_settings['storesuite_attribution_logo_variant'] = $variant;
+			}
 		}
 
 		update_option( 'storesuite_settings', $storesuite_settings );
@@ -321,6 +329,12 @@ class SettingsController extends WP_REST_Controller {
 				'storesuite_color_palette_name' => array(
 					'description' => __( 'Active predefined color palette slug.', 'storesuite' ),
 					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_attribution_logo_variant' => array(
+					'description' => __( 'Attribution logo variant for the custom palette: dark or light.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'dark', 'light' ),
 					'context'     => array( 'view', 'edit' ),
 				),
 			),

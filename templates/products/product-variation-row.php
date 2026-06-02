@@ -1,0 +1,526 @@
+<?php
+/**
+ * Single product variation row template (accordion).
+ *
+ * @var WC_Product_Variation $variation
+ * @var int                  $variation_id
+ * @var int                  $loop          Index for array-named inputs.
+ * @var WC_Product_Variable  $parent
+ *
+ * @package StoreSuite
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+$variation_data   = $variation->get_data();
+$variation_image  = $variation->get_image_id()
+	? wp_get_attachment_image_src( $variation->get_image_id(), 'thumbnail' )
+	: null;
+$variation_thumb  = $variation_image ? $variation_image[0] : wc_placeholder_img_src( 'thumbnail' );
+$parent_attributes = $parent->get_attributes( 'edit' );
+$variation_attrs   = $variation->get_attributes();
+
+// Cost of Goods Sold feature availability.
+$cogs_is_enabled = wc_get_container()->get( \Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController::class )->feature_is_enabled();
+?>
+
+<div class="storesuite-variation-row storesuite-card storesuite-mb-12" data-variation-id="<?php echo esc_attr( $variation_id ); ?>">
+	<input type="hidden" name="variable_post_id[<?php echo esc_attr( $loop ); ?>]" value="<?php echo esc_attr( $variation_id ); ?>">
+	<input type="hidden" name="variable_menu_order[<?php echo esc_attr( $loop ); ?>]" value="<?php echo esc_attr( $variation->get_menu_order() ); ?>">
+
+	<!-- Header -->
+	<div class="storesuite-variation-header">
+		<div class="storesuite-variation-thumb">
+			<img src="<?php echo esc_url( $variation_thumb ); ?>" width="40" height="40" alt="">
+		</div>
+
+		<div class="storesuite-variation-attrs">
+			<?php foreach ( $parent_attributes as $attribute ) : ?>
+				<?php
+				if ( ! $attribute->get_variation() ) {
+					continue;
+				}
+				$attr_name    = $attribute->get_name();
+				$attr_label   = wc_attribute_label( $attr_name );
+				$current_val  = isset( $variation_attrs[ sanitize_title( $attr_name ) ] ) ? $variation_attrs[ sanitize_title( $attr_name ) ] : '';
+
+				if ( $attribute->is_taxonomy() ) {
+					// Only the terms assigned to this product's attribute, like the WooCommerce admin.
+					$terms = wc_get_product_terms(
+						$parent->get_id(),
+						$attr_name,
+						array( 'fields' => 'all' )
+					);
+				} else {
+					$terms = $attribute->get_options();
+				}
+				?>
+				<select name="attribute_<?php echo esc_attr( sanitize_title( $attr_name ) ); ?>[<?php echo esc_attr( $loop ); ?>]"
+					class="storesuite-form-control storesuite-variation-attr-select">
+					<option value=""><?php /* translators: %s: attribute label */ printf( esc_html__( 'Any %s…', 'storesuite' ), esc_html( $attr_label ) ); ?></option>
+					<?php if ( $attribute->is_taxonomy() && ! is_wp_error( $terms ) ) : ?>
+						<?php foreach ( $terms as $term ) : ?>
+							<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $current_val, $term->slug ); ?>>
+								<?php echo esc_html( $term->name ); ?>
+							</option>
+						<?php endforeach; ?>
+					<?php elseif ( ! $attribute->is_taxonomy() ) : ?>
+						<?php foreach ( $terms as $option ) : ?>
+							<option value="<?php echo esc_attr( $option ); ?>" <?php selected( $current_val, $option ); ?>>
+								<?php echo esc_html( $option ); ?>
+							</option>
+						<?php endforeach; ?>
+					<?php endif; ?>
+				</select>
+			<?php endforeach; ?>
+		</div>
+
+		<span class="storesuite-variation-actions-header">
+			<a href="#" class="my-storesuite-button my-storesuite-button-soft storesuite-toggle-variation" aria-label="<?php esc_attr_e( 'Edit variation', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Edit variation', 'storesuite' ); ?>">
+				<svg class="storesuite-toggle-icon-closed" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-edit"></use></svg>
+				<svg class="storesuite-toggle-icon-open" width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-edit-open"></use></svg>
+			</a>
+			<a href="#" class="my-storesuite-button my-storesuite-button-danger-soft storesuite-remove-variation" data-variation-id="<?php echo esc_attr( $variation_id ); ?>" aria-label="<?php esc_attr_e( 'Remove variation', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Remove variation', 'storesuite' ); ?>">
+				<svg width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-delete"></use></svg>
+			</a>
+		</span>
+	</div>
+
+	<!-- Body (collapsed by default) -->
+	<div class="storesuite-variation-body" style="display:none;">
+		<div class="storesuite-card-content">
+			<div class="row">
+				<!-- Image -->
+				<div class="col-md-auto me-2">
+					<div class="storesuite-form-group storesuite-variation-image-group">
+						<label><?php esc_html_e( 'Image', 'storesuite' ); ?></label>
+						<div class="storesuite-variation-image-upload<?php echo $variation->get_image_id() ? ' has-variation-image' : ''; ?>" data-loop="<?php echo esc_attr( $loop ); ?>">
+							<img src="<?php echo esc_url( $variation_thumb ); ?>" width="100" height="100" alt="">
+							<input type="hidden" name="variable_image_id[<?php echo esc_attr( $loop ); ?>]" value="<?php echo esc_attr( $variation->get_image_id() ); ?>">
+							<span class="storesuite-variation-image-actions">
+								<a href="#" class="storesuite-upload-variation-image" aria-label="<?php esc_attr_e( 'Upload image', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Upload image', 'storesuite' ); ?>">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.4,7.379a1.128,1.128,0,0,1-.769-.754h0a8,8,0,1,0-15.1,5.237A1.046,1.046,0,0,1,2.223,13.1,5.5,5.5,0,0,0,.057,18.3,5.622,5.622,0,0,0,5.683,23H11a1,1,0,0,0,1-1h0a1,1,0,0,0-1-1H5.683a3.614,3.614,0,0,1-3.646-2.981,3.456,3.456,0,0,1,1.376-3.313A3.021,3.021,0,0,0,4.4,11.141a6.113,6.113,0,0,1-.073-4.126A5.956,5.956,0,0,1,9.215,3.05,6.109,6.109,0,0,1,9.987,3a5.984,5.984,0,0,1,5.756,4.28,2.977,2.977,0,0,0,2.01,1.99,5.934,5.934,0,0,1,.778,11.09.976.976,0,0,0-.531.888h0a.988.988,0,0,0,1.388.915c4.134-1.987,6.38-7.214,2.88-12.264A6.935,6.935,0,0,0,18.4,7.379Z"/><path d="M18.707,16.707a1,1,0,0,0,0-1.414l-1.586-1.586a3,3,0,0,0-4.242,0l-1.586,1.586a1,1,0,0,0,1.414,1.414L14,15.414V23a1,1,0,0,0,2,0V15.414l1.293,1.293a1,1,0,0,0,1.414,0Z"/></svg>
+								</a>
+								<a href="#" class="storesuite-remove-variation-image" aria-label="<?php esc_attr_e( 'Remove image', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Remove image', 'storesuite' ); ?>">
+									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6A1,1,0,0,0,6,7.414L10.586,12,6,16.586A1,1,0,0,0,6,18H6a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/></svg>
+								</a>
+							</span>
+						</div>
+					</div>
+				</div>
+				<!-- SKU + GTIN (row 1) and switches (row 2) -->
+				<div class="col-md-10">
+					<div class="row">
+						<!-- SKU -->
+						<div class="col-md-6">
+							<div class="storesuite-form-group">
+								<label for="variable_sku_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'SKU', 'storesuite' ); ?></label>
+								<input type="text" class="storesuite-form-control"
+									id="variable_sku_<?php echo esc_attr( $loop ); ?>"
+									name="variable_sku[<?php echo esc_attr( $loop ); ?>]"
+									value="<?php echo esc_attr( $variation->get_sku() ); ?>">
+							</div>
+						</div>
+						<!-- GTIN, UPC, EAN, or ISBN -->
+						<div class="col-md-6">
+							<div class="storesuite-form-group">
+								<label for="variable_global_unique_id_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'GTIN, UPC, EAN, or ISBN', 'storesuite' ); ?></label>
+								<input type="text" class="storesuite-form-control"
+									id="variable_global_unique_id_<?php echo esc_attr( $loop ); ?>"
+									name="variable_global_unique_id[<?php echo esc_attr( $loop ); ?>]"
+									value="<?php echo esc_attr( $variation->get_global_unique_id( 'edit' ) ); ?>">
+							</div>
+						</div>
+					</div>
+
+					<!-- Enabled / Virtual (under SKU) — Downloadable / Manage stock (under GTIN) -->
+					<div class="row variable-switches-group">
+						<div class="col-md-6">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="storesuite-form-group storesuite-form-switch">
+										<input type="checkbox" id="variable_enabled_<?php echo esc_attr( $loop ); ?>"
+											name="variable_enabled[<?php echo esc_attr( $loop ); ?>]" value="1"
+											<?php checked( 'publish' === $variation->get_status() || ! $variation_id ); ?>>
+										<label for="variable_enabled_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Enabled', 'storesuite' ); ?></label>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="storesuite-form-group storesuite-form-switch">
+										<input type="checkbox" class="variable_is_virtual" id="variable_is_virtual_<?php echo esc_attr( $loop ); ?>"
+											name="variable_is_virtual[<?php echo esc_attr( $loop ); ?>]" value="1"
+											<?php checked( $variation->get_virtual() ); ?>>
+										<label for="variable_is_virtual_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Virtual', 'storesuite' ); ?></label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="storesuite-form-group storesuite-form-switch">
+										<input type="checkbox" class="variable_is_downloadable" id="variable_is_downloadable_<?php echo esc_attr( $loop ); ?>"
+											name="variable_is_downloadable[<?php echo esc_attr( $loop ); ?>]" value="1"
+											<?php checked( $variation->get_downloadable() ); ?>>
+										<label for="variable_is_downloadable_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></label>
+									</div>
+								</div>
+								<div class="col-md-12">
+									<div class="storesuite-form-group storesuite-form-switch">
+										<input type="checkbox" class="variable_manage_stock" id="variable_manage_stock_<?php echo esc_attr( $loop ); ?>"
+											name="variable_manage_stock[<?php echo esc_attr( $loop ); ?>]" value="1"
+											<?php checked( $variation->get_manage_stock() ); ?>>
+										<label for="variable_manage_stock_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Manage Stock?', 'storesuite' ); ?></label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<!-- Regular price -->
+				<div class="col-md-6">
+					<div class="storesuite-form-group">
+						<label for="variable_regular_price_<?php echo esc_attr( $loop ); ?>">
+							<?php /* translators: %s: currency symbol */ printf( esc_html__( 'Regular price (%s)', 'storesuite' ), esc_html( get_woocommerce_currency_symbol() ) ); ?>
+						</label>
+						<input type="text" class="storesuite-form-control wc_input_price"
+							id="variable_regular_price_<?php echo esc_attr( $loop ); ?>"
+							name="variable_regular_price[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( wc_format_localized_price( $variation->get_regular_price() ) ); ?>">
+					</div>
+				</div>
+				<!-- Sale price -->
+				<div class="col-md-6">
+					<div class="storesuite-form-group">
+						<div class="row">
+							<div class="col-md-8">
+								<label for="variable_sale_price_<?php echo esc_attr( $loop ); ?>">
+									<?php /* translators: %s: currency symbol */ printf( esc_html__( 'Sale price (%s)', 'storesuite' ), esc_html( get_woocommerce_currency_symbol() ) ); ?>
+								</label>
+							</div>
+							<div class="col-md-4 text-right">
+								<a href="#" class="storesuite-variation-sale-schedule"><?php esc_html_e( 'Schedule', 'storesuite' ); ?></a>
+								<a href="#" class="storesuite-variation-cancel-schedule"><?php esc_html_e( 'Cancel', 'storesuite' ); ?></a>
+							</div>
+						</div>
+						<input type="text" class="storesuite-form-control wc_input_price"
+							id="variable_sale_price_<?php echo esc_attr( $loop ); ?>"
+							name="variable_sale_price[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( wc_format_localized_price( $variation->get_sale_price() ) ); ?>">
+					</div>
+				</div>
+			</div>
+
+			<?php
+			$variation_sale_from = $variation->get_date_on_sale_from( 'edit' ) ? wp_date( 'Y-m-d', $variation->get_date_on_sale_from( 'edit' )->getTimestamp() ) : '';
+			$variation_sale_to   = $variation->get_date_on_sale_to( 'edit' ) ? wp_date( 'Y-m-d', $variation->get_date_on_sale_to( 'edit' )->getTimestamp() ) : '';
+			?>
+			<div class="row storesuite-variation-sale-dates">
+				<div class="col-md-6">
+					<div class="storesuite-form-group">
+						<label for="variable_sale_price_dates_from_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Sale start date', 'storesuite' ); ?></label>
+						<input type="text" class="storesuite-form-control"
+							id="variable_sale_price_dates_from_<?php echo esc_attr( $loop ); ?>"
+							name="variable_sale_price_dates_from[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation_sale_from ); ?>"
+							placeholder="<?php echo esc_attr( _x( 'From&hellip; YYYY-MM-DD', 'placeholder', 'storesuite' ) ); ?>">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="storesuite-form-group">
+						<label for="variable_sale_price_dates_to_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Sale end date', 'storesuite' ); ?></label>
+						<input type="text" class="storesuite-form-control"
+							id="variable_sale_price_dates_to_<?php echo esc_attr( $loop ); ?>"
+							name="variable_sale_price_dates_to[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation_sale_to ); ?>"
+							placeholder="<?php echo esc_attr( _x( 'To&hellip; YYYY-MM-DD', 'placeholder', 'storesuite' ) ); ?>">
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<?php if ( $cogs_is_enabled ) : ?>
+					<!-- Cost of goods -->
+					<div class="col-md">
+						<div class="storesuite-form-group">
+							<label for="variable_cogs_value_<?php echo esc_attr( $loop ); ?>">
+								<?php /* translators: %s: currency symbol */ printf( esc_html__( 'Cost (%s)', 'storesuite' ), esc_html( get_woocommerce_currency_symbol() ) ); ?>
+							</label>
+							<input type="text" class="storesuite-form-control wc_input_price"
+								id="variable_cogs_value_<?php echo esc_attr( $loop ); ?>"
+								name="variable_cogs_value[<?php echo esc_attr( $loop ); ?>]"
+								value="<?php echo esc_attr( wc_format_localized_price( $variation->get_cogs_value() ) ); ?>"
+								placeholder="<?php esc_attr_e( '0 (default)', 'storesuite' ); ?>">
+							<small class="storesuite-form-text">
+								<?php
+								printf(
+									/* translators: %1$s: opening link tag, %2$s: closing link tag */
+									esc_html__( 'You can specify a %1$sdefault value%2$s for all variations.', 'storesuite' ),
+									'<a href="#_cogs_value" class="storesuite-cogs-default-link">',
+									'</a>'
+								);
+								?>
+							</small>
+						</div>
+					</div>
+				<?php endif; ?>
+				<!-- Stock status -->
+				<div class="col-md">
+					<div class="storesuite-form-group">
+						<label for="variable_stock_status_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Stock status', 'storesuite' ); ?></label>
+						<select class="storesuite-form-control"
+							id="variable_stock_status_<?php echo esc_attr( $loop ); ?>"
+							name="variable_stock_status[<?php echo esc_attr( $loop ); ?>]">
+							<option value="instock" <?php selected( $variation->get_stock_status(), 'instock' ); ?>><?php esc_html_e( 'In stock', 'storesuite' ); ?></option>
+							<option value="outofstock" <?php selected( $variation->get_stock_status(), 'outofstock' ); ?>><?php esc_html_e( 'Out of stock', 'storesuite' ); ?></option>
+							<option value="onbackorder" <?php selected( $variation->get_stock_status(), 'onbackorder' ); ?>><?php esc_html_e( 'On backorder', 'storesuite' ); ?></option>
+						</select>
+					</div>
+				</div>
+				<!-- Stock quantity -->
+				<div class="col-md show_if_variation_manage_stock" <?php echo $variation->get_manage_stock() ? '' : 'style="display:none;"'; ?>>
+					<div class="storesuite-form-group">
+						<label for="variable_stock_qty_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Stock qty', 'storesuite' ); ?></label>
+						<input type="number" class="storesuite-form-control" step="any"
+							id="variable_stock_qty_<?php echo esc_attr( $loop ); ?>"
+							name="variable_stock_qty[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation->get_stock_quantity() ); ?>">
+					</div>
+				</div>
+			</div>
+
+			<div class="row show_if_variation_manage_stock" <?php echo $variation->get_manage_stock() ? '' : 'style="display:none;"'; ?>>
+				<!-- Allow backorders -->
+				<div class="col-md-6">
+					<div class="storesuite-form-group">
+						<label for="variable_backorders_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Allow backorders?', 'storesuite' ); ?></label>
+						<select class="storesuite-form-control"
+							id="variable_backorders_<?php echo esc_attr( $loop ); ?>"
+							name="variable_backorders[<?php echo esc_attr( $loop ); ?>]">
+							<option value="no" <?php selected( $variation->get_backorders(), 'no' ); ?>><?php esc_html_e( 'Do not allow', 'storesuite' ); ?></option>
+							<option value="notify" <?php selected( $variation->get_backorders(), 'notify' ); ?>><?php esc_html_e( 'Allow but notify customer', 'storesuite' ); ?></option>
+							<option value="yes" <?php selected( $variation->get_backorders(), 'yes' ); ?>><?php esc_html_e( 'Allow', 'storesuite' ); ?></option>
+						</select>
+					</div>
+				</div>
+				<!-- Low stock threshold -->
+				<div class="col-md-6">
+					<div class="storesuite-form-group">
+						<label for="variable_low_stock_amount_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Low stock threshold', 'storesuite' ); ?></label>
+						<input type="number" class="storesuite-form-control" step="any" min="0"
+							id="variable_low_stock_amount_<?php echo esc_attr( $loop ); ?>"
+							name="variable_low_stock_amount[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation->get_low_stock_amount( 'edit' ) ); ?>"
+							placeholder="<?php /* translators: %d: store-wide low stock amount */ printf( esc_attr__( 'Store-wide threshold (%d)', 'storesuite' ), esc_attr( get_option( 'woocommerce_notify_low_stock_amount', 2 ) ) ); ?>">
+					</div>
+				</div>
+			</div>
+
+			<!-- Shipping dimensions (hidden when virtual) -->
+			<div class="row hide_if_variation_virtual" <?php echo $variation->get_virtual() ? 'style="display:none;"' : ''; ?>>
+				<div class="col-md-3">
+					<div class="storesuite-form-group">
+						<label for="variable_weight_<?php echo esc_attr( $loop ); ?>">
+							<?php /* translators: %s: weight unit */ printf( esc_html__( 'Weight (%s)', 'storesuite' ), esc_html( get_option( 'woocommerce_weight_unit' ) ) ); ?>
+						</label>
+						<input type="text" class="storesuite-form-control"
+							id="variable_weight_<?php echo esc_attr( $loop ); ?>"
+							name="variable_weight[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation->get_weight() ); ?>">
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="storesuite-form-group">
+						<label for="variable_length_<?php echo esc_attr( $loop ); ?>">
+							<?php /* translators: %s: dimension unit */ printf( esc_html__( 'Length (%s)', 'storesuite' ), esc_html( get_option( 'woocommerce_dimension_unit' ) ) ); ?>
+						</label>
+						<input type="text" class="storesuite-form-control"
+							id="variable_length_<?php echo esc_attr( $loop ); ?>"
+							name="variable_length[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation->get_length() ); ?>">
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="storesuite-form-group">
+						<label for="variable_width_<?php echo esc_attr( $loop ); ?>">
+							<?php /* translators: %s: dimension unit */ printf( esc_html__( 'Width (%s)', 'storesuite' ), esc_html( get_option( 'woocommerce_dimension_unit' ) ) ); ?>
+						</label>
+						<input type="text" class="storesuite-form-control"
+							id="variable_width_<?php echo esc_attr( $loop ); ?>"
+							name="variable_width[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation->get_width() ); ?>">
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="storesuite-form-group">
+						<label for="variable_height_<?php echo esc_attr( $loop ); ?>">
+							<?php /* translators: %s: dimension unit */ printf( esc_html__( 'Height (%s)', 'storesuite' ), esc_html( get_option( 'woocommerce_dimension_unit' ) ) ); ?>
+						</label>
+						<input type="text" class="storesuite-form-control"
+							id="variable_height_<?php echo esc_attr( $loop ); ?>"
+							name="variable_height[<?php echo esc_attr( $loop ); ?>]"
+							value="<?php echo esc_attr( $variation->get_height() ); ?>">
+					</div>
+				</div>
+			</div>
+
+			<?php
+			$shipping_classes = get_terms(
+				array(
+					'taxonomy'   => 'product_shipping_class',
+					'hide_empty' => false,
+				)
+			);
+			if ( is_wp_error( $shipping_classes ) ) {
+				$shipping_classes = array();
+			}
+			$variation_shipping_class = $variation->get_shipping_class_id( 'edit' );
+			$variation_tax_class      = $variation->get_tax_class( 'edit' );
+			$tax_class_options        = array( 'parent' => __( 'Same as parent', 'storesuite' ) ) + wc_get_product_tax_class_options();
+			$tax_enabled              = wc_tax_enabled();
+			?>
+			<div class="row">
+				<!-- Shipping class (hidden when virtual, like dimensions) -->
+				<div class="col-md-6 hide_if_variation_virtual" <?php echo $variation->get_virtual() ? 'style="display:none;"' : ''; ?>>
+					<div class="storesuite-form-group">
+						<label for="variable_shipping_class_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Shipping class', 'storesuite' ); ?></label>
+						<select class="storesuite-form-control"
+							id="variable_shipping_class_<?php echo esc_attr( $loop ); ?>"
+							name="variable_shipping_class[<?php echo esc_attr( $loop ); ?>]">
+							<option value="0" <?php selected( ! $variation_shipping_class ); ?>><?php esc_html_e( 'Same as parent', 'storesuite' ); ?></option>
+							<?php foreach ( $shipping_classes as $shipping_class ) : ?>
+								<option value="<?php echo esc_attr( $shipping_class->term_id ); ?>" <?php selected( $variation_shipping_class, $shipping_class->term_id ); ?>>
+									<?php echo esc_html( $shipping_class->name ); ?>
+								</option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				</div>
+				<!-- Tax class (only when taxes are enabled) -->
+				<?php if ( $tax_enabled ) : ?>
+					<div class="col-md-6">
+						<div class="storesuite-form-group">
+							<label for="variable_tax_class_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Tax class', 'storesuite' ); ?></label>
+							<select class="storesuite-form-control"
+								id="variable_tax_class_<?php echo esc_attr( $loop ); ?>"
+								name="variable_tax_class[<?php echo esc_attr( $loop ); ?>]">
+								<?php foreach ( $tax_class_options as $tax_value => $tax_label ) : ?>
+									<option value="<?php echo esc_attr( $tax_value ); ?>" <?php selected( $variation_tax_class, $tax_value ); ?>>
+										<?php echo esc_html( $tax_label ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+						</div>
+					</div>
+				<?php endif; ?>
+			</div>
+
+			<div class="row">
+				<!-- Description -->
+				<div class="col-md-12">
+					<div class="storesuite-form-group">
+						<label for="variable_description_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Description', 'storesuite' ); ?></label>
+						<textarea class="storesuite-form-control" rows="2"
+							id="variable_description_<?php echo esc_attr( $loop ); ?>"
+							name="variable_description[<?php echo esc_attr( $loop ); ?>]"><?php echo esc_textarea( $variation->get_description() ); ?></textarea>
+					</div>
+				</div>
+			</div>
+
+				<!-- Downloadable files (shown when downloadable) -->
+				<div class="row show_if_variation_downloadable" <?php echo $variation->get_downloadable() ? '' : 'style="display:none;"'; ?>>
+					<div class="col-md-12">
+						<div class="storesuite-form-group downloadable_files">
+							<label><?php esc_html_e( 'Downloadable Files', 'storesuite' ); ?></label>
+							<table class="storesuite-downloadable-files my-storesuite-tbl">
+								<thead>
+									<tr>
+										<th class="sort">&nbsp;</th>
+										<th><?php esc_html_e( 'Name', 'storesuite' ); ?></th>
+										<th colspan="2"><?php esc_html_e( 'File URL', 'storesuite' ); ?></th>
+										<th>&nbsp;</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+									$variation_downloads = $variation->get_downloads( 'edit' );
+									if ( ! empty( $variation_downloads ) ) {
+										foreach ( $variation_downloads as $download_key => $download_file ) {
+											$file = array(
+												'name' => $download_file->get_name(),
+												'file' => $download_file->get_file(),
+											);
+											$key  = (string) $download_key;
+											storesuite_get_template_part(
+												'products/html-variation-download',
+												'',
+												array(
+													'loop' => $loop,
+													'key'  => $key,
+													'file' => $file,
+												)
+											);
+										}
+									}
+									?>
+								</tbody>
+								<tfoot>
+									<tr>
+										<th colspan="5">
+											<a href="#" class="my-storesuite-button storesuite-add-downloadable-file" data-row="
+											<?php
+											$key  = '';
+											$file = array(
+												'file' => '',
+												'name' => '',
+											);
+											ob_start();
+											storesuite_get_template_part(
+												'products/html-variation-download',
+												'',
+												array(
+													'loop' => $loop,
+													'key'  => $key,
+													'file' => $file,
+												)
+											);
+											echo esc_attr( ob_get_clean() );
+											?>
+											"><?php esc_html_e( 'Add File', 'storesuite' ); ?></a>
+										</th>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="storesuite-form-group">
+							<label for="variable_download_limit_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Download limit', 'storesuite' ); ?></label>
+							<input type="number" class="storesuite-form-control" min="0" step="1"
+								id="variable_download_limit_<?php echo esc_attr( $loop ); ?>"
+								name="variable_download_limit[<?php echo esc_attr( $loop ); ?>]"
+								value="<?php echo esc_attr( -1 === $variation->get_download_limit( 'edit' ) ? '' : $variation->get_download_limit( 'edit' ) ); ?>"
+								placeholder="<?php esc_attr_e( 'Unlimited', 'storesuite' ); ?>">
+							<small class="storesuite-form-text"><?php esc_html_e( 'Leave blank for unlimited re-downloads.', 'storesuite' ); ?></small>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="storesuite-form-group">
+							<label for="variable_download_expiry_<?php echo esc_attr( $loop ); ?>"><?php esc_html_e( 'Download expiry', 'storesuite' ); ?></label>
+							<input type="number" class="storesuite-form-control" min="0" step="1"
+								id="variable_download_expiry_<?php echo esc_attr( $loop ); ?>"
+								name="variable_download_expiry[<?php echo esc_attr( $loop ); ?>]"
+								value="<?php echo esc_attr( -1 === $variation->get_download_expiry( 'edit' ) ? '' : $variation->get_download_expiry( 'edit' ) ); ?>"
+								placeholder="<?php esc_attr_e( 'Never', 'storesuite' ); ?>">
+							<small class="storesuite-form-text"><?php esc_html_e( 'Enter the number of days before a download link expires, or leave blank.', 'storesuite' ); ?></small>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+</div>

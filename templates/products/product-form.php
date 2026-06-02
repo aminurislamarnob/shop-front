@@ -5,6 +5,9 @@
  * @package StoreSuite
  */
 
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -39,6 +42,7 @@ $height                = '';
 $shipping_class_id     = '';
 $upsell_ids            = array();
 $crosssell_ids         = array();
+$grouped_product_ids   = array();
 $visibility            = 'visible';
 $product_menu_order    = 0;
 $featured              = 'no';
@@ -50,6 +54,16 @@ $is_reviews_allowed    = false;
 $thumbnail_id          = 0;
 $gallery_image_ids     = array();
 $global_unique_id      = '';
+$is_virtual            = 'no';
+$is_downloadable       = 'no';
+$downloadable_files    = array();
+$download_limit        = '';
+$download_expiry       = '';
+$external_product_url  = '';
+$external_button_text  = '';
+$cogs_value            = '';
+$visible_in_pos        = true;
+$is_pos_supported      = true;
 
 // Check if this is edit mode.
 if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['edit-product'] ) ) {
@@ -92,6 +106,10 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 		$upsell_ids    = $product->get_upsell_ids();
 		$crosssell_ids = $product->get_cross_sell_ids();
 
+		if ( $product->is_type( 'grouped' ) ) {
+			$grouped_product_ids = $product->get_children();
+		}
+
 		// Others.
 		$visibility         = $product->get_catalog_visibility();
 		$product_menu_order = $product->get_menu_order();
@@ -117,13 +135,60 @@ if ( array_key_exists( 'edit-product', $query_vars ) && ! empty( $query_vars['ed
 
 		// Get meta data.
 		$global_unique_id = $product->get_global_unique_id( 'edit' );
+
+		// Virtual & downloadable.
+		$is_virtual      = $product->get_virtual() ? 'yes' : 'no';
+		$is_downloadable = $product->get_downloadable() ? 'yes' : 'no';
+
+		// Downloadable options.
+		$downloadable_files = $product->get_downloads( 'edit' );
+		$download_limit     = $product->get_download_limit( 'edit' );
+		$download_expiry    = $product->get_download_expiry( 'edit' );
+
+		// External product fields.
+		if ( $product->is_type( 'external' ) ) {
+			$external_product_url = $product->get_product_url( 'edit' );
+			$external_button_text = $product->get_button_text( 'edit' );
+		}
+
+		// Cost of Goods Sold value.
+		if ( method_exists( $product, 'get_cogs_value' ) ) {
+			$cogs_value = $product->get_cogs_value();
+		}
+
+		// POS visibility.
+		$visible_in_pos   = ! has_term( 'pos-hidden', 'pos_product_visibility', $product_id );
+		$is_pos_supported = $product->is_type( array( 'simple', 'variable' ) ) && ! $product->is_downloadable();
 	}
 }
 $product_types    = apply_filters( 'storesuite_product_types', array( 'simple' => __( 'Simple', 'storesuite' ) ) );
 $product_statuses = apply_filters( 'storesuite_product_statuses', array( 'publish' => __( 'Simple', 'storesuite' ) ) );
 $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_product_brands();
+
+// Cost of Goods Sold feature availability.
+$cogs_controller      = wc_get_container()->get( CostOfGoodsSoldController::class );
+$cogs_is_enabled      = $cogs_controller->feature_is_enabled();
+$pricing_card_classes = 'show_if_simple show_if_external';
+if ( $cogs_is_enabled ) {
+	$pricing_card_classes .= ' show_if_variable';
+}
+
+// Point of Sale feature availability.
+$pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 ?>
 <form id="storesuite-add-product" method="POST">
+	<?php
+	/*
+	 * Reusable SVG icon symbols for the attributes and variations UI.
+	 * Defined once here and referenced via <use> in the attribute/variation
+	 * rows so the (potentially long) icon paths are not repeated per row.
+	 */
+	?>
+	<svg width="0" height="0" style="position:absolute;display:none;" aria-hidden="true" focusable="false">
+		<symbol id="storesuite-icon-edit" viewBox="0 0 24 24"><path d="m18.813,10c.309,0,.601-.143.79-.387s.255-.562.179-.861c-.311-1.217-.945-2.329-1.833-3.217l-3.485-3.485c-1.322-1.322-3.08-2.05-4.95-2.05h-4.515C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h3c.552,0,1-.448,1-1s-.448-1-1-1h-3c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h4.515c.163,0,.325.008.485.023v4.977c0,1.654,1.346,3,3,3h5.813Zm-6.813-3V2.659c.379.218.732.488,1.05.806l3.485,3.485c.314.314.583.668.803,1.05h-4.338c-.551,0-1-.449-1-1Zm11.122,4.879c-1.134-1.134-3.11-1.134-4.243,0l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.829v1.586c0,.552.448,1,1,1h1.586c1.069,0,2.073-.417,2.828-1.172l6.707-6.707c.567-.567.879-1.32.879-2.122s-.312-1.555-.878-2.121Zm-1.415,2.828l-6.708,6.707c-.377.378-.879.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l6.708-6.707c.377-.378,1.036-.378,1.414,0,.189.188.293.439.293.707s-.104.518-.293.707Z"/></symbol>
+		<symbol id="storesuite-icon-edit-open" viewBox="0 0 24 24"><path d="m22.75,9.693c.806.914,1.25,2.088,1.25,3.307v5c0,2.757-2.243,5-5,5H5c-2.757,0-5-2.243-5-5v-5c0-2.757,2.243-5,5-5h4c.553,0,1,.448,1,1s-.447,1-1,1h-4c-1.654,0-3,1.346-3,3v5c0,1.654,1.346,3,3,3h14c1.654,0,3-1.346,3-3v-5c0-.731-.267-1.436-.75-1.984-.365-.414-.326-1.046.089-1.412.413-.364,1.045-.326,1.411.088ZM5,15.5c0,.828.672,1.5,1.5,1.5s1.5-.672,1.5-1.5-.672-1.5-1.5-1.5-1.5.672-1.5,1.5Zm6.5,1.5c.828,0,1.5-.672,1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5,1.5.672,1.5,1.5,1.5Zm.5-6v-1.586c0-1.068.416-2.073,1.172-2.828L18.879.879c1.17-1.17,3.072-1.17,4.242,0,.566.566.879,1.32.879,2.121s-.313,1.555-.879,2.122l-5.707,5.707c-.755.755-1.76,1.172-2.828,1.172h-1.586c-.553,0-1-.448-1-1Zm2-1h.586c.534,0,1.036-.208,1.414-.586l5.707-5.707c.189-.189.293-.44.293-.707s-.104-.518-.293-.707c-.391-.391-1.023-.39-1.414,0l-5.707,5.707c-.372.373-.586.888-.586,1.414v.586Z"/></symbol>
+		<symbol id="storesuite-icon-delete" viewBox="0 0 24 24"><path d="M21,4H17.9A5.009,5.009,0,0,0,13,0H11A5.009,5.009,0,0,0,6.1,4H3A1,1,0,0,0,3,6H4V19a5.006,5.006,0,0,0,5,5h6a5.006,5.006,0,0,0,5-5V6h1a1,1,0,0,0,0-2ZM11,2h2a3.006,3.006,0,0,1,2.829,2H8.171A3.006,3.006,0,0,1,11,2Zm7,17a3,3,0,0,1-3,3H9a3,3,0,0,1-3-3V6H18Z"/><path d="M10,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,10,18Z"/><path d="M14,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,14,18Z"/></symbol>
+	</svg>
 		<div class="row">
 			<div class="col-md-8">
 				<div class="storesuite-card storesuite-mb-24">
@@ -274,13 +339,13 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						</div>
 					</div>
 				</div>
-				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24">
+				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 <?php echo esc_attr( $pricing_card_classes ); ?>">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Pricing', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
-						<div class="row">
+						<div class="row show_if_simple show_if_external">
 							<div class="col-md-6">
 								<div class="storesuite-form-group">
-									<label for="regular_price"><?php esc_html_e( 'Regular Price', 'storesuite' ); ?></label>
+									<label for="regular_price"><?php esc_html_e( 'Regular Price', 'storesuite' ); ?> (<?php echo esc_html( get_woocommerce_currency_symbol() ); ?>)</label>
 									<input type="number" class="storesuite-form-control" id="regular_price" name="regular_price" step="any" value="<?php echo esc_attr( $regular_price ); ?>">
 								</div>
 							</div>
@@ -288,7 +353,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 								<div class="storesuite-form-group">
 									<div class="row">
 										<div class="col-md-8">
-											<label for="sale_price"><?php esc_html_e( 'Sale Price', 'storesuite' ); ?></label>
+											<label for="sale_price"><?php esc_html_e( 'Sale Price', 'storesuite' ); ?> (<?php echo esc_html( get_woocommerce_currency_symbol() ); ?>)</label>
 										</div>
 										<div class="col-md-4 text-right">
 											<a href="#" class="sale_schedule"><?php esc_html_e( 'Schedule', 'storesuite' ); ?></a>
@@ -315,6 +380,119 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 								</div>
 							</div>
 						</div>
+						<?php if ( $cogs_is_enabled ) : ?>
+							<div class="row show_if_simple show_if_variable show_if_external">
+								<div class="col-md-12">
+									<div class="storesuite-form-group">
+										<label for="_cogs_value"><?php esc_html_e( 'Cost of goods', 'storesuite' ); ?> (<?php echo esc_html( get_woocommerce_currency_symbol() ); ?>)</label>
+										<input type="number" class="storesuite-form-control" id="_cogs_value" name="_cogs_value" step="any" placeholder="0" value="<?php echo esc_attr( $cogs_value ); ?>">
+									</div>
+								</div>
+							</div>
+						<?php endif; ?>
+					</div>
+				</div>
+				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 show_if_downloadable show_if_simple">
+					<h3 class="storesuite-card-title"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></h3>
+					<div class="storesuite-card-content">
+						<div class="storesuite-form-group downloadable_files">
+							<label><?php esc_html_e( 'Downloadable Files', 'storesuite' ); ?></label>
+							<table class="storesuite-downloadable-files my-storesuite-tbl">
+								<thead>
+									<tr>
+										<th class="sort">&nbsp;</th>
+										<th><?php esc_html_e( 'Name', 'storesuite' ); ?></th>
+										<th colspan="2"><?php esc_html_e( 'File URL', 'storesuite' ); ?></th>
+										<th>&nbsp;</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+									$disabled_downloads_count = 0;
+									if ( ! empty( $downloadable_files ) ) {
+										foreach ( $downloadable_files as $download_key => $download_file ) {
+											$file = is_object( $download_file ) ? array(
+												'name'    => $download_file->get_name(),
+												'file'    => $download_file->get_file(),
+												'enabled' => method_exists( $download_file, 'get_enabled' ) ? $download_file->get_enabled() : true,
+											) : $download_file;
+
+											$key                       = (string) $download_key;
+											$disabled_download         = isset( $file['enabled'] ) && false === $file['enabled'];
+											$disabled_downloads_count += (int) $disabled_download;
+
+											storesuite_get_template_part(
+                                                'products/html-product-download',
+                                                '',
+                                                array(
+													'key'               => $key,
+													'file'              => $file,
+													'disabled_download' => $disabled_download,
+                                                )
+											);
+										}
+									}
+									?>
+								</tbody>
+								<tfoot>
+									<tr>
+										<th colspan="2">
+											<a href="#" class="my-storesuite-button storesuite-add-downloadable-file" data-row="
+											<?php
+											$key               = '';
+											$file              = array(
+												'file' => '',
+												'name' => '',
+											);
+											$disabled_download = false;
+											ob_start();
+											storesuite_get_template_part(
+												'products/html-product-download',
+												'',
+												array(
+													'key'               => $key,
+													'file'              => $file,
+													'disabled_download' => $disabled_download,
+												)
+											);
+											echo esc_attr( ob_get_clean() );
+											?>
+											"><?php esc_html_e( 'Add File', 'storesuite' ); ?></a>
+										</th>
+										<th colspan="3">
+											<?php if ( $disabled_downloads_count ) : ?>
+												<span class="disabled">*</span>
+												<?php
+												printf(
+													/* translators: 1: opening link tag, 2: closing link tag. */
+													esc_html__( 'The indicated downloads have been disabled (invalid location or filetype&mdash;%1$slearn more%2$s).', 'storesuite' ),
+													'<a href="https://woocommerce.com/document/approved-download-directories" target="_blank">',
+													'</a>'
+												);
+												?>
+											<?php endif; ?>
+										</th>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="storesuite-form-group">
+									<label for="_download_limit"><?php esc_html_e( 'Download limit', 'storesuite' ); ?></label>
+									<input type="number" class="storesuite-form-control" id="_download_limit" name="_download_limit" min="0" step="1" placeholder="<?php esc_attr_e( 'Unlimited', 'storesuite' ); ?>" value="<?php echo esc_attr( -1 === $download_limit ? '' : $download_limit ); ?>">
+									<small class="storesuite-form-text"><?php esc_html_e( 'Leave blank for unlimited re-downloads.', 'storesuite' ); ?></small>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="storesuite-form-group">
+									<label for="_download_expiry"><?php esc_html_e( 'Download expiry', 'storesuite' ); ?></label>
+									<input type="number" class="storesuite-form-control" id="_download_expiry" name="_download_expiry" min="0" step="1" placeholder="<?php esc_attr_e( 'Never', 'storesuite' ); ?>" value="<?php echo esc_attr( -1 === $download_expiry ? '' : $download_expiry ); ?>">
+									<small class="storesuite-form-text"><?php esc_html_e( 'Enter the number of days before a download link expires, or leave blank.', 'storesuite' ); ?></small>
+								</div>
+							</div>
+						</div>
+						<?php do_action( 'woocommerce_product_options_downloads' ); ?>
 					</div>
 				</div>
 				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24">
@@ -333,7 +511,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									<input type="text" class="storesuite-form-control" id="_global_unique_id" name="_global_unique_id" value="<?php echo esc_attr( $global_unique_id ); ?>">
 								</div>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 show_if_simple show_if_variable">
 								<div class="storesuite-form-group storesuite-form-switch">
 									<input type="checkbox" class="storesuite-form-control" id="_manage_stock" name="_manage_stock" value="yes" <?php checked( $manage_stock, 'yes' ); ?>>
 									<label for="_manage_stock"><?php esc_html_e( 'Enable product stock management', 'storesuite' ); ?></label>
@@ -365,7 +543,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									</div>
 								</div>
 							</div>
-							<div class="col-md-6 _stock_status_field">
+							<div class="col-md-6 _stock_status_field show_if_simple show_if_variable">
 								<div class="storesuite-form-group">
 									<label for="_stock_status"><?php esc_html_e( 'Stock Status', 'storesuite' ); ?></label>
 									<select class="storesuite-form-control" id="_stock_status" name="_stock_status">
@@ -375,7 +553,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									</select>
 								</div>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-12 show_if_simple show_if_variable">
 								<div class="storesuite-form-group storesuite-form-switch">
 									<input type="checkbox" class="storesuite-form-control" id="_sold_individually" name="_sold_individually" value="yes" <?php checked( $sold_individually, 'yes' ); ?>>
 									<label for="_sold_individually"><?php esc_html_e( 'Limit Purchases to 1 Item Per Order?', 'storesuite' ); ?></label>
@@ -384,7 +562,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						</div>
 					</div>
 				</div>
-				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24">
+				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24 hide_if_external hide_if_grouped hide_if_virtual">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Shipping', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
 						<div class="row">
@@ -435,13 +613,30 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Linked Products', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
 						<div class="row">
+							<?php
+								// phpcs:enable WordPress.Security.NonceVerification.Recommended
+								$excluded_product_types = array_diff( array_keys( wc_get_product_types() ), array( 'simple', 'variable' ) );
+							?>
+							<div class="col-md-6 show_if_grouped">
+								<div class="storesuite-form-group search-group">
+									<label for="grouped_products"><?php esc_html_e( 'Grouped products', 'storesuite' ); ?></label>
+									<select class="storesuite-form-control wc-product-search" id="grouped_products" name="grouped_products[]" data-action="woocommerce_json_search_products" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'storesuite' ); ?>" data-allow_clear="true" multiple>
+										<?php
+										if ( ! empty( $grouped_product_ids ) ) {
+											foreach ( $grouped_product_ids as $grouped_product_id ) {
+												$grouped_product = wc_get_product( $grouped_product_id );
+												if ( $grouped_product ) {
+													echo '<option value="' . esc_attr( $grouped_product_id ) . '" selected="selected">' . esc_html( $grouped_product->get_name() ) . '</option>';
+												}
+											}
+										}
+										?>
+									</select>
+								</div>
+							</div>
 							<div class="col-md-6">
 								<div class="storesuite-form-group search-group">
 									<label for="upsell_ids"><?php esc_html_e( 'Upsells', 'storesuite' ); ?></label>
-									<?php
-										// phpcs:enable WordPress.Security.NonceVerification.Recommended
-										$excluded_product_types = array_diff( array_keys( wc_get_product_types() ), array( 'simple', 'variable' ) );
-									?>
 									<select class="storesuite-form-control wc-product-search" id="upsell_ids" name="upsell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'storesuite' ); ?>" data-allow_clear="true" multiple>
 										<?php
 										if ( ! empty( $upsell_ids ) ) {
@@ -456,7 +651,7 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									</select>
 								</div>
 							</div>
-							<div class="col-md-6">
+							<div class="col-md-6 hide_if_grouped hide_if_external">
 								<div class="storesuite-form-group">
 									<label for="crosssell_ids"><?php esc_html_e( 'Cross-sells', 'storesuite' ); ?></label>
 									<select class="storesuite-form-control wc-product-search" id="crosssell_ids" name="crosssell_ids[]" data-action="woocommerce_json_search_products_and_variations" data-exclude_type="<?php echo esc_attr( implode( ',', $excluded_product_types ) ); ?>" data-display_stock="true" data-placeholder="<?php esc_attr_e( 'Select product&hellip;', 'storesuite' ); ?>" data-allow_clear="true" multiple>
@@ -476,6 +671,29 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						</div>
 					</div>
 				</div>
+
+				<?php
+				storesuite_get_template_part(
+					'products/product-attributes',
+					'',
+					array(
+						'product'    => $product,
+						'product_id' => $product_id,
+					)
+				);
+				?>
+
+				<?php
+				storesuite_get_template_part(
+					'products/product-variations',
+					'',
+					array(
+						'product'    => $product,
+						'product_id' => $product_id,
+					)
+				);
+				?>
+
 				<div class="storesuite-card storesuite-card-with-header storesuite-mb-24">
 					<h3 class="storesuite-card-title"><?php esc_html_e( 'Others', 'storesuite' ); ?></h3>
 					<div class="storesuite-card-content">
@@ -497,13 +715,27 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									<input type="number" class="storesuite-form-control" id="menu_order" name="menu_order" value="<?php echo esc_attr( $product_menu_order ); ?>">
 								</div>
 							</div>
-							<div class="col-md-12">
+							<div class="col-md-6">
 								<div class="storesuite-form-group storesuite-form-switch">
 									<input type="checkbox" class="storesuite-form-control" id="_featured" name="_featured" value="yes" <?php checked( $featured, 'yes' ); ?>>
 									<label for="_featured"><?php esc_html_e( 'Mark this product as featured.', 'storesuite' ); ?></label>
 								</div>
 							</div>
-							<div class="col-md-12">
+							<?php if ( $pos_feature_enabled ) : ?>
+								<div class="col-md-6" id="pos_visibility_supported"<?php echo $is_pos_supported ? '' : ' style="display: none;"'; ?>>
+									<div class="storesuite-form-group storesuite-form-switch">
+										<input type="checkbox" class="storesuite-form-control" id="_visible_in_pos" name="_visible_in_pos" value="yes" <?php checked( $visible_in_pos, true ); ?>>
+										<label for="_visible_in_pos"><?php esc_html_e( 'Available for POS', 'storesuite' ); ?></label>
+									</div>
+								</div>
+								<div class="col-md-6" id="pos_visibility_unsupported"<?php echo $is_pos_supported ? ' style="display: none;"' : ''; ?>>
+									<div class="storesuite-form-group storesuite-form-switch">
+										<input type="checkbox" class="storesuite-form-control" id="_visible_in_pos_disabled" disabled>
+										<label for="_visible_in_pos_disabled"><?php esc_html_e( 'Product type is not for POS', 'storesuite' ); ?></label>
+									</div>
+								</div>
+							<?php endif; ?>
+							<div class="col-md-12 hide_if_external hide_if_grouped">
 								<div class="storesuite-form-group">
 									<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'storesuite' ); ?></strong></label>
 									<textarea class="storesuite-form-control" id="_purchase_note" name="_purchase_note" rows="2" cols="20"><?php echo esc_textarea( $purchase_note ); ?></textarea>
@@ -524,6 +756,30 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 									<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $product_type, $key ); ?>><?php echo esc_html( $value ); ?></option>
 								<?php endforeach; ?>
 							</select>
+						</div>
+						<div class="row show_if_simple">
+							<div class="col-md-6">
+								<div class="storesuite-form-group storesuite-form-switch">
+									<input type="checkbox" class="storesuite-form-control" id="_virtual" name="_virtual" value="yes" <?php checked( $is_virtual, 'yes' ); ?>>
+									<label for="_virtual"><?php esc_html_e( 'Virtual', 'storesuite' ); ?></label>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="storesuite-form-group storesuite-form-switch">
+									<input type="checkbox" class="storesuite-form-control" id="_downloadable" name="_downloadable" value="yes" <?php checked( $is_downloadable, 'yes' ); ?>>
+									<label for="_downloadable"><?php esc_html_e( 'Downloadable', 'storesuite' ); ?></label>
+								</div>
+							</div>
+						</div>
+						<div class="storesuite-form-group show_if_external">
+							<label for="_product_url"><?php esc_html_e( 'Product URL', 'storesuite' ); ?></label>
+							<input type="text" class="storesuite-form-control" id="_product_url" name="_product_url" placeholder="https://" value="<?php echo esc_attr( $external_product_url ); ?>">
+							<small class="storesuite-form-text"><?php esc_html_e( 'Enter the external URL to the product.', 'storesuite' ); ?></small>
+						</div>
+						<div class="storesuite-form-group show_if_external">
+							<label for="_button_text"><?php esc_html_e( 'Button Text', 'storesuite' ); ?></label>
+							<input type="text" class="storesuite-form-control" id="_button_text" name="_button_text" placeholder="<?php esc_attr_e( 'Buy product', 'storesuite' ); ?>" value="<?php echo esc_attr( $external_button_text ); ?>">
+							<small class="storesuite-form-text"><?php esc_html_e( 'This text will be shown on the button linking to the external product.', 'storesuite' ); ?></small>
 						</div>
 						<div class="storesuite-form-group">
 							<label for="post_status"><?php esc_html_e( 'Status', 'storesuite' ); ?></label>
@@ -583,12 +839,25 @@ $product_brands   = pluginizelab_storesuite()->storesuite_product_brands->get_pr
 						<?php wp_nonce_field( '_storesuite_add_product_', 'storesuite_add_product_nonce' ); ?>
 						<input type="hidden" name="action" value="storesuite_add_product_action">
 					<?php endif; ?>
-					<div class="storesuite-button-group">
+					<div class="storesuite-button-group" id="storesuite-product-actions">
 						<button class="my-storesuite-button" name="save_product" type="submit">
 							<?php echo $is_edit_mode ? esc_html__( 'Update Product', 'storesuite' ) : esc_html__( 'Add Product', 'storesuite' ); ?>
 						</button>
 						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'products' ) ); ?>" class="my-storesuite-button my-storesuite-button-light"><?php esc_html_e( 'Back', 'storesuite' ); ?></a>
 					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Floating sticky save bar (shown when there are unsaved changes) -->
+		<div class="storesuite-sticky-actions" id="storesuite-product-sticky-actions" aria-hidden="true">
+			<div class="storesuite-sticky-actions-inner">
+				<span class="storesuite-sticky-actions-label"><?php esc_html_e( 'Unsaved Changes?', 'storesuite' ); ?></span>
+				<div class="storesuite-sticky-actions-buttons">
+					<button type="button" class="my-storesuite-button storesuite-sticky-discard"><?php esc_html_e( 'Discard', 'storesuite' ); ?></button>
+					<button type="submit" name="save_product" class="my-storesuite-button storesuite-sticky-save">
+						<?php echo $is_edit_mode ? esc_html__( 'Update Product', 'storesuite' ) : esc_html__( 'Add Product', 'storesuite' ); ?>
+					</button>
 				</div>
 			</div>
 		</div>

@@ -13,9 +13,19 @@ class TemplateParts {
 	 * The constructor.
 	 */
 	public function __construct() {
+		add_action( 'storesuite_dashboard_wrapper_start', array( $this, 'dashboard_icons_template' ), 1 );
 		add_action( 'storesuite_dashboard_navigation', array( $this, 'add_dashboard_sidebar_logo' ), 1 );
 		add_action( 'storesuite_dashboard_content_before', array( $this, 'dashboard_header_template' ), 1 );
 		add_action( 'storesuite_dashboard_before_main_content', array( $this, 'storesuite_page_endpoint_title' ) );
+	}
+
+	/**
+	 * Load the shared SVG icon symbols once per dashboard page.
+	 *
+	 * @return void
+	 */
+	public function dashboard_icons_template() {
+		storesuite_get_template_part( 'dashboard-icons' );
 	}
 
 	public function add_dashboard_sidebar_logo() {
@@ -42,7 +52,13 @@ class TemplateParts {
 		$title = '';
 
 		if ( ! is_null( $wp_query ) && ! is_admin() && is_main_query() && in_the_loop() && is_page() && storesuite_is_endpoint_url() ) {
-			$endpoint       = pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
+			$endpoint = pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
+
+			// The account page renders its own header card with the page title.
+			if ( 'edit-account-details' === $endpoint ) {
+				return $title;
+			}
+
 			$action         = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only; used only for page title display.
 			$endpoint_title = pluginizelab_storesuite()->get_storesuite_query()->get_endpoint_title( $endpoint, $action );
 			$title          = $endpoint_title ? $endpoint_title : $title;
@@ -56,6 +72,8 @@ class TemplateParts {
 				$endpoint = 'tags';
 			} elseif ( 'add-new-brand' === $endpoint || 'edit-brand' === $endpoint ) {
 				$endpoint = 'brands';
+			} elseif ( 'add-new-attribute' === $endpoint || 'edit-attribute' === $endpoint || 'attribute-terms' === $endpoint ) {
+				$endpoint = 'attributes';
 			} elseif ( 'add-new-coupon' === $endpoint || 'edit-coupon' === $endpoint ) {
 				$endpoint = 'coupons';
 			} elseif ( 'order-details' === $endpoint ) {

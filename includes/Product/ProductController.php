@@ -298,6 +298,22 @@ class ProductController {
 		if ( isset( $post_data['_featured'] ) ) {
 			$data['_featured'] = sanitize_key( wp_unslash( $post_data['_featured'] ) );
 		}
+		if ( isset( $post_data['_virtual'] ) ) {
+			$data['_virtual'] = sanitize_key( wp_unslash( $post_data['_virtual'] ) );
+		}
+		if ( isset( $post_data['_downloadable'] ) ) {
+			$data['_downloadable'] = sanitize_key( wp_unslash( $post_data['_downloadable'] ) );
+		}
+		if ( isset( $post_data['_product_url'] ) ) {
+			$data['_product_url'] = esc_url_raw( wp_unslash( $post_data['_product_url'] ) );
+		}
+		if ( isset( $post_data['_button_text'] ) ) {
+			$data['_button_text'] = sanitize_text_field( wp_unslash( $post_data['_button_text'] ) );
+		}
+		if ( isset( $post_data['_cogs_value'] ) ) {
+			$data['_cogs_value'] = wc_clean( wp_unslash( $post_data['_cogs_value'] ) );
+		}
+		$data['_visible_in_pos'] = isset( $post_data['_visible_in_pos'] ) && 'yes' === wc_clean( wp_unslash( $post_data['_visible_in_pos'] ) );
 
 		// Date fields.
 		if ( isset( $post_data['_sale_price_dates_from'] ) ) {
@@ -328,8 +344,115 @@ class ProductController {
 		if ( isset( $post_data['crosssell_ids'] ) ) {
 			$data['crosssell_ids'] = array_map( 'absint', (array) $post_data['crosssell_ids'] );
 		}
+		if ( isset( $post_data['grouped_products'] ) ) {
+			$data['grouped_products'] = array_map( 'absint', (array) $post_data['grouped_products'] );
+		}
+
+		// Those are sanitized inside prepare_downloads.
+		$data['downloads'] = self::prepare_downloads(
+			isset( $post_data['_wc_file_names'] ) ? wp_unslash( $post_data['_wc_file_names'] ) : array(), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			isset( $post_data['_wc_file_urls'] ) ? wp_unslash( $post_data['_wc_file_urls'] ) : array(), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			isset( $post_data['_wc_file_hashes'] ) ? wp_unslash( $post_data['_wc_file_hashes'] ) : array() // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		);
+
+		if ( isset( $post_data['_download_limit'] ) ) {
+			$limit               = wc_clean( wp_unslash( $post_data['_download_limit'] ) );
+			$data['_download_limit'] = '' === $limit ? '' : absint( $limit );
+		}
+		if ( isset( $post_data['_download_expiry'] ) ) {
+			$expiry                   = wc_clean( wp_unslash( $post_data['_download_expiry'] ) );
+			$data['_download_expiry'] = '' === $expiry ? '' : absint( $expiry );
+		}
+
+		// Attributes (when the attributes section was submitted with the form).
+		if ( isset( $post_data['storesuite_attributes_submitted'] ) ) {
+			$data['attributes'] = $this->prepare_attributes_from_post( $post_data );
+		}
 
 		return $data;
 	}
 
+	/**
+	 * Build a product attributes array from posted form fields.
+	 *
+	 * Attribute changes are persisted as part of the product form submission.
+	 *
+	 * @param array $post_data Raw POST data.
+	 * @return array Prepared attributes keyed for WC_Product::set_attributes().
+	 */
+	private function prepare_attributes_from_post( $post_data ) {
+		$attribute_names  = isset( $post_data['attribute_names'] ) ? stripslashes_deep( (array) $post_data['attribute_names'] ) : array();
+		$attribute_values = isset( $post_data['attribute_values'] ) ? stripslashes_deep( (array) $post_data['attribute_values'] ) : array();
+
+		// No attribute rows submitted: return an empty set (clears existing
+		// attributes). Avoids passing empty arrays into WC's prepare_attributes(),
+		// where max( array_keys( $attribute_names ) ) would throw on PHP 8.
+		if ( empty( $attribute_names ) ) {
+			return array();
+		}
+
+		// Custom (non-taxonomy) attributes must be a "|"-separated string so
+		// WC treats the values as text, not term IDs.
+		if ( ! empty( $attribute_names ) && ! empty( $attribute_values ) ) {
+			foreach ( $attribute_names as $index => $name ) {
+				if ( empty( $name ) || ! isset( $attribute_values[ $index ] ) ) {
+					continue;
+				}
+
+				if ( 0 === strpos( $name, 'pa_' ) ) {
+					continue;
+				}
+
+				if ( is_array( $attribute_values[ $index ] ) ) {
+					$clean_values = array();
+					foreach ( $attribute_values[ $index ] as $val ) {
+						$val = wc_clean( wp_unslash( $val ) );
+						if ( '' !== $val ) {
+							$clean_values[] = $val;
+						}
+					}
+
+					$attribute_values[ $index ] = implode( ' | ', $clean_values );
+				}
+			}
+		}
+
+		$data = array(
+			'attribute_names'      => $attribute_names,
+			'attribute_values'     => $attribute_values,
+			'attribute_visibility' => isset( $post_data['attribute_visibility'] ) ? stripslashes_deep( (array) $post_data['attribute_visibility'] ) : array(),
+			'attribute_variation'  => isset( $post_data['attribute_variation'] ) ? stripslashes_deep( (array) $post_data['attribute_variation'] ) : array(),
+			'attribute_position'   => isset( $post_data['attribute_position'] ) ? stripslashes_deep( (array) $post_data['attribute_position'] ) : array(),
+		);
+
+		return \WC_Meta_Box_Product_Data::prepare_attributes( $data );
+	}
+
+	/**
+	 * Prepare downloads for save.
+	 *
+	 * @param array $file_names File names.
+	 * @param array $file_urls File urls.
+	 * @param array $file_hashes File hashes.
+	 *
+	 * @return array
+	 */
+	private static function prepare_downloads( $file_names, $file_urls, $file_hashes ) {
+		$downloads = array();
+
+		if ( ! empty( $file_urls ) ) {
+			$file_url_size = count( $file_urls );
+
+			for ( $i = 0; $i < $file_url_size; $i++ ) {
+				if ( ! empty( $file_urls[ $i ] ) ) {
+					$downloads[] = array(
+						'name'        => wc_clean( $file_names[ $i ] ),
+						'file'        => wp_unslash( trim( $file_urls[ $i ] ) ),
+						'download_id' => wc_clean( $file_hashes[ $i ] ),
+					);
+				}
+			}
+		}
+		return $downloads;
+	}
 }

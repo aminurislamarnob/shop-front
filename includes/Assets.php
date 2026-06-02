@@ -89,6 +89,8 @@ class Assets {
 		$frontend_product_script      = STORESUITE_PLUGIN_ASSET . '/frontend/product.js';
 		$frontend_form_handler_script = STORESUITE_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
+		$frontend_variation_script    = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
+		$frontend_product_export      = STORESUITE_PLUGIN_ASSET . '/frontend/product-export.js';
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_global_script', STORESUITE_PLUGIN_ASSET . '/frontend/global.js', array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
@@ -100,9 +102,11 @@ class Assets {
 
 		// Order scripts.
 		wp_register_script( 'storesuite_order_script', $frontend_order_script, array( 'storesuite_selectWoo' ), STORESUITE_PLUGIN_VERSION, true );
-		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_script', 'storesuite_form_handler_script', 'storesuite_selectWoo', 'jquery-ui-datepicker', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_script', 'storesuite_form_handler_script', 'storesuite_selectWoo', 'jquery-ui-datepicker', 'jquery-ui-sortable', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
+		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_product_export_script', $frontend_product_export, array( 'jquery', 'storesuite_product_script', 'storesuite_selectWoo', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 	}
 
 	/**
@@ -151,6 +155,14 @@ class Assets {
 				$admin_script_dependencies,
 				$asset_file['version'],
 				true
+			);
+
+			wp_localize_script(
+				'storesuite-admin-page',
+				'storeSuiteAdmin',
+				array(
+					'logoUrl' => STORESUITE_PLUGIN_ASSET . '/frontend/images/storesuite-logo-dark.png',
+				)
 			);
 
 			wp_enqueue_style(
@@ -212,15 +224,19 @@ class Assets {
 		$is_brands = storesuite_is_endpoint_url( 'brands' )
 			|| storesuite_is_endpoint_url( 'add-new-brand' )
 			|| storesuite_is_endpoint_url( 'edit-brand' );
+		$is_attributes = storesuite_is_endpoint_url( 'attributes' )
+			|| storesuite_is_endpoint_url( 'add-new-attribute' )
+			|| storesuite_is_endpoint_url( 'edit-attribute' )
+			|| storesuite_is_endpoint_url( 'attribute-terms' );
 		$is_account = storesuite_is_endpoint_url( 'edit-account-details' );
 
-		$needs_media        = $is_products || $is_categories || $is_brands;
-		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_account;
+		$needs_media        = $is_products || $is_categories || $is_brands || $is_account;
+		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_attributes || $is_account;
 		$needs_sweetalert   = $needs_form_handler || $is_orders;
 		$needs_select2      = $is_products || $is_orders || $is_coupons;
 		// jQuery UI datepicker styles: any form-handler page that renders
 		// .date-picker inputs (currently the coupon expiry date) needs them.
-		$needs_jquery_ui    = $is_products || $is_coupons;
+		$needs_jquery_ui = $is_products || $is_coupons;
 
 		if ( $needs_jquery_ui ) {
 			wp_enqueue_style( 'storesuite_jquery-ui-style' );
@@ -228,6 +244,14 @@ class Assets {
 
 		if ( $needs_select2 ) {
 			wp_enqueue_style( 'select2' );
+		}
+
+		// Account address tab needs WooCommerce's country/state select behaviour.
+		if ( $is_account ) {
+			wp_enqueue_style( 'select2' );
+			wp_enqueue_script( 'selectWoo' );
+			wp_enqueue_script( 'wc-country-select' );
+			wp_enqueue_script( 'wc-address-i18n' );
 		}
 
 		wp_enqueue_script( 'storesuite_script' );
@@ -246,6 +270,8 @@ class Assets {
 				'upload_brand_image'    => __( 'Upload Brand Image', 'storesuite' ),
 				'brand_image'           => __( 'Brand Image', 'storesuite' ),
 				'upload_gallery_images' => __( 'Upload Product Gallery Images', 'storesuite' ),
+				'upload_profile_picture' => __( 'Upload Profile Picture', 'storesuite' ),
+				'default_avatar_url'    => get_avatar_url( get_current_user_id(), array( 'force_default' => true ) ),
 			)
 		);
 
@@ -331,6 +357,23 @@ class Assets {
 						'brand_deleting'                 => __( 'Deleting Brand...', 'storesuite' ),
 						'brand_deleted_successfully'     => __( 'Brand deleted successfully!', 'storesuite' ),
 
+						// Attribute messages.
+						'attribute_name_required'        => __( 'Please enter attribute name.', 'storesuite' ),
+						'attribute_deleting'             => __( 'Deleting Attribute...', 'storesuite' ),
+						'delete_attribute_warning'       => __( 'Do you want to delete this attribute?', 'storesuite' ),
+
+						// Attribute term messages.
+						'attribute_term_name_required'           => __( 'Please enter term name.', 'storesuite' ),
+						'attribute_term_updating'               => __( 'Updating term...', 'storesuite' ),
+						'attribute_term_deleting'               => __( 'Deleting term...', 'storesuite' ),
+						'delete_attribute_term_warning'         => __( 'Do you want to delete this term?', 'storesuite' ),
+						'edit_attribute_term'                   => __( 'Edit attribute term', 'storesuite' ),
+						'attribute_term_name_placeholder'       => __( 'Term name (e.g. Blue)', 'storesuite' ),
+						'attribute_term_slug_placeholder'       => __( 'Term slug (optional)', 'storesuite' ),
+						'attribute_term_description_placeholder' => __( 'Optional term description', 'storesuite' ),
+						'edit_label'                            => __( 'Edit', 'storesuite' ),
+						'delete_label'                          => __( 'Delete', 'storesuite' ),
+
 						// Product messages.
 						'product_title_required'         => __( 'Please enter product title.', 'storesuite' ),
 						'product_type_required'          => __( 'Please select a product type.', 'storesuite' ),
@@ -368,6 +411,7 @@ class Assets {
 						'account_password_mismatch'      => __( 'New password and confirm password do not match.', 'storesuite' ),
 					),
 					'coupons_url'                  => storesuite_get_navigation_url( 'coupons' ),
+					'attribute_terms_url'          => storesuite_get_navigation_url( 'attribute-terms' ),
 				)
 			);
 		}
@@ -512,6 +556,81 @@ class Assets {
 				'storesuite_product_script',
 				'StoreSuite_Product',
 				$product_script_data
+			);
+
+			wp_enqueue_script( 'storesuite_variation_script' );
+			wp_localize_script(
+                'storesuite_variation_script', 'StoreSuiteVariation', array(
+					'ajax_url'              => admin_url( 'admin-ajax.php' ),
+					'nonce'                 => wp_create_nonce( 'storesuite-variation-nonce' ),
+					'add_attribute_nonce'   => wp_create_nonce( 'add-attribute' ),
+					'add_term_nonce'        => wp_create_nonce( '_storesuite_add_attribute_term_' ),
+					'save_variations_nonce'  => wp_create_nonce( 'save-variations' ),
+					'add_variation_nonce'    => wp_create_nonce( 'add-variation' ),
+					'remove_variation_nonce' => wp_create_nonce( 'remove-variation' ),
+					'bulk_edit_nonce'        => wp_create_nonce( 'bulk-edit-variations' ),
+					'default_attributes_nonce' => wp_create_nonce( 'save-default-attributes' ),
+					'product_id'            => absint( get_query_var( 'edit-product' ) ),
+					'per_page'              => 15,
+					'placeholder_img'       => wc_placeholder_img_src( 'thumbnail' ),
+					'i18n'                  => array(
+						'confirm_remove'     => __( 'Remove this variation?', 'storesuite' ),
+						'confirm_remove_attribute' => __( 'Remove this attribute?', 'storesuite' ),
+						'confirm_delete_all' => __( 'Delete all variations? This cannot be undone.', 'storesuite' ),
+						'generated'          => __( 'variations created.', 'storesuite' ),
+						'no_attributes'      => __( 'Add variation attributes first.', 'storesuite' ),
+						'saved'              => __( 'Changes saved.', 'storesuite' ),
+						'loading_variations'     => __( 'Loading variations…', 'storesuite' ),
+						'no_variations'          => __( 'No variations found.', 'storesuite' ),
+						/* translators: %1$s: start item, %2$s: end item, %3$s: total items */
+						'showing'                => __( 'Showing %1$s to %2$s of %3$s', 'storesuite' ),
+						'confirm_generate'       => __( 'Generate variations?', 'storesuite' ),
+						'confirm_generate_text'  => __( 'This will create variations for all attribute combinations.', 'storesuite' ),
+						'ok_button'              => __( 'OK', 'storesuite' ),
+						'enter_price'            => __( 'Enter price', 'storesuite' ),
+						'set_regular_price'      => __( 'Set regular price for all variations', 'storesuite' ),
+						'set_sale_price'         => __( 'Set sale price for all variations', 'storesuite' ),
+						'select_stock_status'    => __( 'Select stock status for all variations', 'storesuite' ),
+						'confirm_toggle_enabled' => __( 'Toggle enabled/disabled status for all variations?', 'storesuite' ),
+						'in_stock'               => __( 'In stock', 'storesuite' ),
+						'out_of_stock'           => __( 'Out of stock', 'storesuite' ),
+						'on_backorder'           => __( 'On backorder', 'storesuite' ),
+						'enter_a_value'          => __( 'Enter a value', 'storesuite' ),
+						'enter_value_fixed_or_percent' => __( 'Enter a value (fixed amount or percentage, e.g. 10 or 10%)', 'storesuite' ),
+						'confirm_remove_cogs'    => __( 'Remove the custom cost from every variation?', 'storesuite' ),
+						'sale_start_date'        => __( 'Sale start date (leave blank to skip)', 'storesuite' ),
+						'sale_end_date'          => __( 'Sale end date (leave blank to skip)', 'storesuite' ),
+						'next_button'            => __( 'Next', 'storesuite' ),
+						'choose_variation_image' => __( 'Choose variation image', 'storesuite' ),
+						'set_image'              => __( 'Set image', 'storesuite' ),
+						'remove_image'           => __( 'Remove image', 'storesuite' ),
+						'defaults_saved'         => __( 'Default attributes saved.', 'storesuite' ),
+						'add_button'             => __( 'Add', 'storesuite' ),
+						'add_term_title'         => __( 'Add new term', 'storesuite' ),
+						'add_term_placeholder'   => __( 'Term name', 'storesuite' ),
+						'term_required'          => __( 'Please enter a name.', 'storesuite' ),
+					),
+                )
+            );
+
+			wp_enqueue_script( 'storesuite_product_export_script' );
+			wp_localize_script(
+				'storesuite_product_export_script',
+				'StoreSuite_ProductExport',
+				array(
+					'ajax_url'     => admin_url( 'admin-ajax.php' ),
+					'export_nonce' => wp_create_nonce( 'storesuite_product_export' ),
+					'i18n'         => array(
+						'error_title'             => __( 'Error!', 'storesuite' ),
+						'ok_button'               => __( 'OK', 'storesuite' ),
+						'unexpected_error'        => __( 'An unexpected error occurred. Please try again.', 'storesuite' ),
+						'select_products_title'   => __( 'Select products', 'storesuite' ),
+						'select_products_message' => __( 'Choose at least one product to export.', 'storesuite' ),
+						/* translators: %1$s: number of products, %2$s: "clear your selection" link. */
+						'bulk_export_notice'      => __( 'You are about to export %1$s products. To export all products, %2$s.', 'storesuite' ),
+						'clear_selection'         => __( 'clear your selection', 'storesuite' ),
+					),
+				)
 			);
 		}
 	}

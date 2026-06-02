@@ -43,6 +43,12 @@
 			this.handleBrandAdd();
 			this.handleBrandEdit();
 			this.handleBrandDelete();
+			this.handleAttributeAdd();
+			this.handleAttributeEdit();
+			this.handleAttributeDelete();
+			this.handleAttributeTermAdd();
+			this.handleAttributeTermEdit();
+			this.handleAttributeTermDelete();
 			this.handleCouponAdd();
 			this.handleCouponEdit();
 			this.handleCouponDelete();
@@ -383,7 +389,7 @@
 		 * Show success message
 		 */
 		showSuccess: function ( message ) {
-			Swal.fire( {
+			return Swal.fire( {
 				icon: 'success',
 				title: storeSuiteFormHandler.i18n.success_title,
 				text: message,
@@ -401,6 +407,21 @@
 				text: message || storeSuiteFormHandler.i18n.unexpected_error,
 				confirmButtonText: storeSuiteFormHandler.i18n.ok_button,
 			} );
+		},
+
+		/**
+		 * Simple HTML escape helper for SweetAlert inputs.
+		 */
+		escapeHtml: function ( string ) {
+			if ( 'string' !== typeof string ) {
+				return '';
+			}
+			return string
+				.replace( /&/g, '&amp;' )
+				.replace( /</g, '&lt;' )
+				.replace( />/g, '&gt;' )
+				.replace( /"/g, '&quot;' )
+				.replace( /'/g, '&#039;' );
 		},
 
 		/**
@@ -1050,6 +1071,521 @@
 							error: function ( xhr, status, error ) {
 								Swal.close();
 								self.showError();
+							},
+						} );
+					} );
+				}
+			);
+		},
+
+		/**
+		 * Handle Attribute Add
+		 */
+		handleAttributeAdd: function () {
+			var self = this;
+
+			$( document ).on(
+				'submit',
+				'#storesuite-add-attribute',
+				function ( e ) {
+					e.preventDefault();
+
+					var $form = $( this );
+
+					var requiredFields = [
+						{
+							selector: '#attribute_label',
+							message:
+								storeSuiteFormHandler.i18n
+									.attribute_name_required,
+						},
+					];
+
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
+
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$form[ 0 ].reset();
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function () {
+							Swal.close();
+							self.showError();
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
+				}
+			);
+		},
+
+		/**
+		 * Handle Attribute Edit
+		 */
+		handleAttributeEdit: function () {
+			var self = this;
+
+			$( document ).on(
+				'submit',
+				'#storesuite-edit-attribute',
+				function ( e ) {
+					e.preventDefault();
+
+					var $form = $( this );
+
+					var requiredFields = [
+						{
+							selector: '#attribute_label',
+							message:
+								storeSuiteFormHandler.i18n
+									.attribute_name_required,
+						},
+					];
+
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
+
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function () {
+							Swal.close();
+							self.showError();
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
+				}
+			);
+		},
+
+		/**
+		 * Handle Attribute Delete
+		 */
+		handleAttributeDelete: function () {
+			var self = this;
+
+			$( document ).on(
+				'click',
+				'.storesuite-delete-attribute',
+				function ( e ) {
+					e.preventDefault();
+
+					var attributeId = $( this ).data( 'attribute-id' );
+
+					if (
+						! attributeId ||
+						typeof Swal === 'undefined' ||
+						typeof storeSuiteFormHandler === 'undefined'
+					) {
+						return;
+					}
+
+					var i18n = storeSuiteFormHandler.i18n;
+
+					Swal.fire( {
+						title: i18n.are_you_sure,
+						text: i18n.delete_attribute_warning,
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonText: i18n.yes_delete,
+						cancelButtonText: i18n.cancel_button,
+					} ).then( function ( result ) {
+						if ( ! result.isConfirmed ) {
+							return;
+						}
+
+						window.StoreSuite.storeSuiteLoader.block(
+							$( '.my-storesuite-wrapper' )
+						);
+
+						var formData = new FormData();
+						formData.append( 'id', attributeId );
+						formData.append(
+							'action',
+							'storesuite_delete_product_attribute'
+						);
+						formData.append(
+							'storesuite_delete_product_attribute_nonce',
+							storeSuiteFormHandler.storesuite_woo_delete_nonce_
+						);
+
+						$.ajax( {
+							url: storeSuiteFormHandler.ajax_url,
+							type: 'POST',
+							data: formData,
+							processData: false,
+							contentType: false,
+							success: function ( response ) {
+								if ( response.success ) {
+									Swal.fire( {
+										icon: 'success',
+										title: i18n.success_title,
+										text: response.data.message,
+									} );
+									$(
+										'#attribute-row-' + attributeId
+									).fadeOut( 300, function () {
+										$( this ).remove();
+									} );
+								} else {
+									Swal.fire( {
+										icon: 'error',
+										title: i18n.error_title,
+										text:
+											response.data && response.data.error
+												? response.data.error
+												: i18n.unexpected_error,
+									} );
+								}
+							},
+							error: function () {
+								Swal.close();
+								Swal.fire( {
+									icon: 'error',
+									title: i18n.error_title,
+									text: i18n.unexpected_error,
+								} );
+							},
+							complete: function () {
+								window.StoreSuite.storeSuiteLoader.unblock(
+									$( '.my-storesuite-wrapper' )
+								);
+							},
+						} );
+					} );
+				}
+			);
+		},
+
+		/**
+		 * Handle Attribute Term Add
+		 */
+		handleAttributeTermAdd: function () {
+			var self = this;
+
+			$( document ).on(
+				'submit',
+				'#storesuite-add-attribute-term',
+				function ( e ) {
+					e.preventDefault();
+
+					var $form = $( this );
+					var i18n = storeSuiteFormHandler.i18n;
+
+					var requiredFields = [
+						{
+							selector: '#term_name',
+							message: i18n.attribute_term_name_required,
+						},
+					];
+
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
+
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							if ( response.success ) {
+								self.showSuccess( response.data.message );
+								$form[ 0 ].reset();
+								self.appendTermRow( response.data );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function () {
+							Swal.fire( {
+								icon: 'error',
+								title: i18n.error_title,
+								text: i18n.unexpected_error,
+							} );
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
+				}
+			);
+		},
+
+		/**
+		 * Append a new term row to the attribute terms table.
+		 */
+		appendTermRow: function ( data ) {
+			var i18n = storeSuiteFormHandler.i18n;
+			var editUrl =
+				storeSuiteFormHandler.attribute_terms_url +
+				'?taxonomy=' +
+				encodeURIComponent( data.taxonomy ) +
+				'&term_id=' +
+				data.term_id;
+
+			var row =
+				'<tr id="term-row-' + data.term_id + '">' +
+					'<td>' + $( '<span>' ).text( data.name ).html() + '</td>' +
+					'<td>' + $( '<span>' ).text( data.slug ).html() + '</td>' +
+					'<td>' + data.count + '</td>' +
+					'<td class="text-right">' +
+						'<div class="storesuite-dropdown">' +
+							'<span class="storesuite-dropdown-icon">' +
+								'<svg width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-three-dots"></use></svg>' +
+							'</span>' +
+							'<ul class="storesuite-dropdown-menu">' +
+								'<li>' +
+									'<a href="' + editUrl + '" class="dropdown-link">' + $( '<span>' ).text( i18n.edit_label ).html() + '</a>' +
+								'</li>' +
+								'<li>' +
+									'<button type="button" class="inline-button dropdown-link storesuite-delete-attribute-term" data-term-id="' + data.term_id + '" data-taxonomy="' + $( '<span>' ).text( data.taxonomy ).html() + '">' +
+										$( '<span>' ).text( i18n.delete_label ).html() +
+									'</button>' +
+								'</li>' +
+							'</ul>' +
+						'</div>' +
+					'</td>' +
+				'</tr>';
+
+			var $table = $( '.storesuite-attribute-terms-table tbody' );
+			$table.find( 'tr td[colspan]' ).closest( 'tr' ).remove();
+			$table.append( row );
+		},
+
+		/**
+		 * Handle Attribute Term Edit (edit page form)
+		 */
+		handleAttributeTermEdit: function () {
+			var self = this;
+
+			$( document ).on(
+				'submit',
+				'#storesuite-edit-attribute-term',
+				function ( e ) {
+					e.preventDefault();
+
+					var $form = $( this );
+
+					var requiredFields = [
+						{
+							selector: '#term_name',
+							message:
+								storeSuiteFormHandler.i18n
+									.attribute_term_name_required,
+						},
+					];
+
+					if (
+						! self.validateRequiredFields( $form, requiredFields )
+					) {
+						return;
+					}
+
+					var formData = new FormData( this );
+					var $submitBtn = $form.find( 'button[type="submit"]' );
+					$submitBtn.prop( 'disabled', true );
+
+					window.StoreSuite.storeSuiteLoader.block(
+						$( '.my-storesuite-wrapper' )
+					);
+
+					$.ajax( {
+						url: storeSuiteFormHandler.ajax_url,
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function ( response ) {
+							Swal.close();
+
+							if ( response.success ) {
+								self.showSuccess(
+									response.data.message
+								).then( function () {
+									window.location.reload();
+								} );
+							} else {
+								self.showError( response.data.error );
+							}
+						},
+						error: function () {
+							Swal.close();
+							self.showError();
+						},
+						complete: function () {
+							$submitBtn.prop( 'disabled', false );
+							window.StoreSuite.storeSuiteLoader.unblock(
+								$( '.my-storesuite-wrapper' )
+							);
+						},
+					} );
+				}
+			);
+		},
+
+		/**
+		 * Handle Attribute Term Delete
+		 */
+		handleAttributeTermDelete: function () {
+			$( document ).on(
+				'click',
+				'.storesuite-delete-attribute-term',
+				function ( e ) {
+					e.preventDefault();
+
+					var termId = $( this ).data( 'term-id' );
+					var taxonomy = $( this ).data( 'taxonomy' );
+
+					if (
+						! termId ||
+						! taxonomy ||
+						typeof Swal === 'undefined' ||
+						typeof storeSuiteFormHandler === 'undefined'
+					) {
+						return;
+					}
+
+					var i18n = storeSuiteFormHandler.i18n;
+
+					Swal.fire( {
+						title: i18n.are_you_sure,
+						text: i18n.delete_attribute_term_warning,
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonText: i18n.yes_delete,
+						cancelButtonText: i18n.cancel_button,
+					} ).then( function ( result ) {
+						if ( ! result.isConfirmed ) {
+							return;
+						}
+
+						window.StoreSuite.storeSuiteLoader.block(
+							$( '.my-storesuite-wrapper' )
+						);
+
+						var formData = new FormData();
+						formData.append(
+							'action',
+							'storesuite_delete_attribute_term'
+						);
+						formData.append(
+							'storesuite_delete_attribute_term_nonce',
+							storeSuiteFormHandler.storesuite_woo_delete_nonce_
+						);
+						formData.append( 'id', termId );
+						formData.append( 'taxonomy', taxonomy );
+
+						$.ajax( {
+							url: storeSuiteFormHandler.ajax_url,
+							type: 'POST',
+							data: formData,
+							processData: false,
+							contentType: false,
+							success: function ( response ) {
+								if ( response.success ) {
+									Swal.fire( {
+										icon: 'success',
+										title: i18n.success_title,
+										text: response.data.message,
+									} );
+									$( '#term-row-' + termId ).fadeOut(
+										300,
+										function () {
+											$( this ).remove();
+										}
+									);
+								} else {
+									Swal.fire( {
+										icon: 'error',
+										title: i18n.error_title,
+										text:
+											response.data && response.data.error
+												? response.data.error
+												: i18n.unexpected_error,
+									} );
+								}
+							},
+							error: function () {
+								Swal.fire( {
+									icon: 'error',
+									title: i18n.error_title,
+									text: i18n.unexpected_error,
+								} );
+							},
+							complete: function () {
+								window.StoreSuite.storeSuiteLoader.unblock(
+									$( '.my-storesuite-wrapper' )
+								);
 							},
 						} );
 					} );
