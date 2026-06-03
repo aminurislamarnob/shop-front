@@ -278,11 +278,11 @@ class ProductAI {
 				return __( 'You are an expert e-commerce copywriter. Write ONE concise, compelling product title of at most 70 characters. Return only the title text with no quotation marks, labels, or extra commentary.', 'storesuite' );
 
 			case 'description':
-				return __( 'You are an expert e-commerce copywriter. Write an engaging product description as 2 to 3 short paragraphs using only <p> HTML tags. Do not include headings, lists, or a title. Focus on benefits and key features. Return only the HTML.', 'storesuite' );
+				return __( 'You are an expert e-commerce copywriter. Write an engaging product description as 4 to 5 short paragraphs using only <p> HTML tags. Do not include headings, lists, or a title. Focus on benefits and key features. Return only the HTML.', 'storesuite' );
 
 			case 'short_description':
 			default:
-				return __( 'You are an expert e-commerce copywriter. Write a punchy product summary of 1 to 2 sentences (at most 160 characters) as plain text. Return only the summary with no labels or quotation marks.', 'storesuite' );
+				return __( 'You are an expert e-commerce copywriter. Write a punchy product summary of 4 to 5 sentences (at most 160 characters) as plain text. Return only the summary with no labels or quotation marks.', 'storesuite' );
 		}
 	}
 
