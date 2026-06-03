@@ -561,7 +561,7 @@ class Assets {
 					'action'        => 'storesuite_generate_product_field',
 					'bundle_action' => 'storesuite_generate_product_bundle',
 					'image'         => array(
-						'enabled'         => \PluginizeLab\StoreSuite\Product\ProductAI::is_image_supported(),
+						'enabled'         => \PluginizeLab\StoreSuite\Product\ProductImageAI::is_supported(),
 						'generate_action' => 'storesuite_generate_product_image',
 						'insert_action'   => 'storesuite_insert_product_image',
 						'prompt_required' => __( 'Please describe the image you want to generate.', 'storesuite' ),

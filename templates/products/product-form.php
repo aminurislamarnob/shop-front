@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 $storesuite_ai_on = \PluginizeLab\StoreSuite\Product\ProductAI::is_text_supported();
 
 // Whether AI image generation is available (provider must support images).
-$storesuite_ai_image_on = \PluginizeLab\StoreSuite\Product\ProductAI::is_image_supported();
+$storesuite_ai_image_on = \PluginizeLab\StoreSuite\Product\ProductImageAI::is_supported();
 
 // Initialize variables with default values.
 $product_id      = 0;
