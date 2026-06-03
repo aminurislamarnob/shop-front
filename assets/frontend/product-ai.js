@@ -16,7 +16,8 @@
 	var aiConfig =
 		( typeof StoreSuite_Product !== 'undefined' && StoreSuite_Product.ai ) ||
 		null;
-	if ( ! aiConfig || ! aiConfig.enabled ) {
+	var imageEnabled = !! ( aiConfig && aiConfig.image && aiConfig.image.enabled );
+	if ( ! aiConfig || ( ! aiConfig.enabled && ! imageEnabled ) ) {
 		return;
 	}
 
@@ -603,5 +604,184 @@
 				sharedModal.close( $bundleModal );
 			}
 		} );
+
+		// --- Product image generation --------------------------------------
+		//
+		// A small button beside the Product Image label opens a modal: describe
+		// the image, Generate a preview, then Insert it (which side-loads it into
+		// the media library and sets it as the product image).
+
+		var imageConfig = aiConfig.image || null;
+		if ( imageConfig && imageConfig.enabled ) {
+			var $imageModal = $( '#storesuite-ai-image-modal' );
+			var $imagePrompt = $imageModal.find( '#storesuite-ai-image-prompt' );
+			var $imagePreview = $imageModal.find( '.storesuite-ai-image-preview' );
+			var $imagePreviewImg = $imagePreview.find( 'img' );
+			var $imageSubmit = $imageModal.find( '.storesuite-ai-image-submit' );
+			var $imageRegenerate = $imageModal.find(
+				'.storesuite-ai-image-regenerate'
+			);
+			var $imageInsert = $imageModal.find( '.storesuite-ai-image-insert' );
+			var imageToken = ''; // Server-side handle to the last generated image.
+
+			if ( sharedModal && $imageModal.length ) {
+				sharedModal.initOverlay( $imageModal, {
+					fade: true,
+					closeSelector: MODAL_CLOSE_SELECTOR,
+				} );
+			}
+
+			// Back to the prompt-entry state with no preview.
+			function resetImageModal() {
+				$imagePrompt.val( '' );
+				$imagePreviewImg.attr( 'src', '' );
+				$imagePreview.prop( 'hidden', true );
+				$imageRegenerate.prop( 'hidden', true );
+				$imageInsert.prop( 'hidden', true );
+				$imageSubmit.prop( 'hidden', false );
+				imageToken = '';
+			}
+
+			// Generate (or regenerate) an image preview from the typed prompt.
+			function generateImage( $button, busyLabel ) {
+				var prompt = $.trim( $imagePrompt.val() || '' );
+				if ( ! prompt ) {
+					showAlert( 'error', imageConfig.prompt_required );
+					return;
+				}
+				var originalText = $button.text();
+				$imageSubmit.prop( 'disabled', true );
+				$imageRegenerate.prop( 'disabled', true );
+				$imageInsert.prop( 'disabled', true );
+				$button.text( busyLabel );
+
+				$.post( StoreSuite_Product.ajax_url, {
+					action: imageConfig.generate_action,
+					nonce: aiConfig.nonce,
+					prompt: prompt,
+				} )
+					.done( function ( response ) {
+						if ( response && response.success && response.data ) {
+							imageToken = response.data.token || '';
+							$imagePreviewImg.attr(
+								'src',
+								response.data.preview || ''
+							);
+							$imagePreview.prop( 'hidden', false );
+							$imageSubmit.prop( 'hidden', true );
+							$imageRegenerate.prop( 'hidden', false );
+							$imageInsert.prop( 'hidden', false );
+						} else {
+							showAlert(
+								'error',
+								( response &&
+									response.data &&
+									response.data.message ) ||
+									commonStrings.unexpected_error
+							);
+						}
+					} )
+					.fail( function () {
+						showAlert( 'error', commonStrings.unexpected_error );
+					} )
+					.always( function () {
+						$imageSubmit.prop( 'disabled', false );
+						$imageRegenerate.prop( 'disabled', false );
+						$imageInsert.prop( 'disabled', false );
+						$button.text( originalText );
+					} );
+			}
+
+			// Wire the inserted attachment into the product image fields,
+			// mirroring the manual media-library upload flow.
+			function applyProductImage( attachmentId, url ) {
+				$( '#product_thumbnail_id' ).val( attachmentId );
+				$( '#product_thumbnail_url' ).val( url );
+				$( '#product_thumb_img' ).html(
+					'<img src="' + url + '" alt="" />'
+				);
+				var $container = $( '#product-single-image' );
+				$container.addClass( 'image-drop-bg' );
+				$container
+					.find( '.image-drop-text span' )
+					.text(
+						( typeof storeSuiteFrontScript !== 'undefined' &&
+							storeSuiteFrontScript.remove_image_text ) ||
+							''
+					);
+				// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+				$( '#product_thumbnail_id' ).trigger( 'change' );
+			}
+
+			// Label button: open the image modal fresh.
+			$( document ).on(
+				'click',
+				'.storesuite-ai-image-generate',
+				function ( event ) {
+					event.preventDefault();
+					event.stopPropagation();
+					if ( ! sharedModal || ! $imageModal.length ) {
+						return;
+					}
+					resetImageModal();
+					sharedModal.open( $imageModal );
+				}
+			);
+
+			$imageSubmit.on( 'click', function ( event ) {
+				event.preventDefault();
+				generateImage( $imageSubmit, strings.generating );
+			} );
+
+			$imageRegenerate.on( 'click', function ( event ) {
+				event.preventDefault();
+				generateImage( $imageRegenerate, strings.regenerating );
+			} );
+
+			// Side-load the generated image and set it as the product image.
+			$imageInsert.on( 'click', function ( event ) {
+				event.preventDefault();
+				if ( ! imageToken ) {
+					return;
+				}
+				var originalText = $imageInsert.text();
+				$imageInsert.prop( 'disabled', true ).text( imageConfig.inserting );
+				$imageRegenerate.prop( 'disabled', true );
+
+				$.post( StoreSuite_Product.ajax_url, {
+					action: imageConfig.insert_action,
+					nonce: aiConfig.nonce,
+					token: imageToken,
+				} )
+					.done( function ( response ) {
+						if ( response && response.success && response.data ) {
+							applyProductImage(
+								response.data.id,
+								response.data.url
+							);
+							if ( sharedModal && $imageModal.length ) {
+								sharedModal.close( $imageModal );
+							}
+						} else {
+							showAlert(
+								'error',
+								( response &&
+									response.data &&
+									response.data.message ) ||
+									commonStrings.unexpected_error
+							);
+						}
+					} )
+					.fail( function () {
+						showAlert( 'error', commonStrings.unexpected_error );
+					} )
+					.always( function () {
+						$imageInsert
+							.prop( 'disabled', false )
+							.text( originalText );
+						$imageRegenerate.prop( 'disabled', false );
+					} );
+			} );
+		}
 	} );
 } )( jQuery );

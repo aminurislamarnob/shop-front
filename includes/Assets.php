@@ -560,6 +560,13 @@ class Assets {
 					'nonce'         => wp_create_nonce( '_storesuite_ai_' ),
 					'action'        => 'storesuite_generate_product_field',
 					'bundle_action' => 'storesuite_generate_product_bundle',
+					'image'         => array(
+						'enabled'         => \PluginizeLab\StoreSuite\Product\ProductAI::is_image_supported(),
+						'generate_action' => 'storesuite_generate_product_image',
+						'insert_action'   => 'storesuite_insert_product_image',
+						'prompt_required' => __( 'Please describe the image you want to generate.', 'storesuite' ),
+						'inserting'       => __( 'Inserting…', 'storesuite' ),
+					),
 					'i18n'    => array(
 						'generate'       => __( 'Generate with AI', 'storesuite' ),
 						'generating'     => __( 'Generating…', 'storesuite' ),
