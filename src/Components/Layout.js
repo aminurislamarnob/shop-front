@@ -15,6 +15,7 @@ import {
 	CodeBracketSquareIcon,
 	GearIcon,
 	PaletteIcon,
+	PuzzlePieceIcon,
 	Squares2X2Icon,
 } from './icons';
 import SettingsHeader from './SettingsHeader';
@@ -31,9 +32,14 @@ const TABS = [
 		icon: CodeBracketSquareIcon,
 		label: __( 'Pagination', 'storesuite' ),
 	},
+	{
+		to: '/modules',
+		icon: PuzzlePieceIcon,
+		label: __( 'Modules', 'storesuite' ),
+	},
 ];
 
-const SKELETON_WIDTHS = [ 120, 110, 100 ];
+const SKELETON_WIDTHS = [ 120, 110, 100, 90 ];
 
 const Layout = () => {
 	const { isLoading } = useSettings();

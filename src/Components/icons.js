@@ -8,5 +8,6 @@ export {
 	CheckBadgeIcon,
 	CodeBracketSquareIcon,
 	ExclamationCircleIcon,
+	PuzzlePieceIcon,
 	Squares2X2Icon,
 } from '@heroicons/react/24/outline';
