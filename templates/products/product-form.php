@@ -878,3 +878,45 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 			</div>
 		</div>
 	</form>
+
+	<?php if ( $storesuite_ai_on ) : ?>
+	<div id="storesuite-ai-modal" class="storesuite-product-bulk-modal-overlay" hidden aria-hidden="true">
+		<div
+			class="storesuite-product-bulk-modal-dialog"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="storesuite-ai-modal-title"
+			tabindex="-1"
+		>
+			<div class="storesuite-product-bulk-modal-header">
+				<h2 id="storesuite-ai-modal-title" class="storesuite-product-bulk-modal-title">
+					<?php esc_html_e( 'AI suggestion', 'storesuite' ); ?>
+				</h2>
+				<button type="button" class="storesuite-product-bulk-modal-close my-storesuite-button storesuite-button-ghost" aria-label="<?php esc_attr_e( 'Close', 'storesuite' ); ?>">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+						<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
+					</svg>
+				</button>
+			</div>
+			<div class="storesuite-product-bulk-edit-scroll">
+				<p class="storesuite-ai-modal-subtitle"><?php esc_html_e( 'Review, edit and insert the suggestion or regenerate a new one.', 'storesuite' ); ?></p>
+				<div class="storesuite-ai-modal-pager" hidden>
+					<button type="button" class="storesuite-ai-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10.6,12.71a1,1,0,0,1,0-1.42l4.59-4.58a1,1,0,0,0,0-1.42,1,1,0,0,0-1.41,0L9.19,9.88a3,3,0,0,0,0,4.24l4.59,4.59a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.42Z"/></svg></button>
+					<span class="storesuite-ai-pager-status" aria-live="polite">1/1</span>
+					<button type="button" class="storesuite-ai-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.4,9.88,10.81,5.29a1,1,0,0,0-1.41,0,1,1,0,0,0,0,1.42L14,11.29a1,1,0,0,1,0,1.42L9.4,17.29a1,1,0,0,0,1.41,1.42l4.59-4.59A3,3,0,0,0,15.4,9.88Z"/></svg></button>
+				</div>
+				<div class="storesuite-form-group">
+					<textarea id="storesuite-ai-modal-text" class="storesuite-form-control" rows="3"></textarea>
+				</div>
+			</div>
+			<div class="storesuite-product-bulk-modal-footer">
+				<button type="button" class="my-storesuite-button storesuite-button-neutral-panel storesuite-ai-regenerate">
+					<?php esc_html_e( 'Regenerate', 'storesuite' ); ?>
+				</button>
+				<button type="button" class="my-storesuite-button storesuite-ai-insert">
+					<?php esc_html_e( 'Insert', 'storesuite' ); ?>
+				</button>
+			</div>
+		</div>
+	</div>
+	<?php endif; ?>

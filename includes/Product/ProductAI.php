@@ -137,6 +137,8 @@ class ProductAI {
 			// Existing long description is used only as prompt context, so strip markup.
 			'description'       => isset( $post['product_description'] ) ? wp_strip_all_tags( wp_unslash( $post['product_description'] ) ) : '',
 			'categories'        => array_values( $categories ),
+			// The current suggestion the user is regenerating away from, if any.
+			'previous'          => isset( $post['previous'] ) ? wp_strip_all_tags( wp_unslash( $post['previous'] ) ) : '',
 		);
 	}
 
@@ -191,7 +193,19 @@ class ProductAI {
 			'short_description' => 'Write a short product summary for the following item.',
 		);
 
-		return $intro[ $field ] . "\n\n<context>\n" . implode( "\n", $parts ) . "\n</context>";
+		$prompt = $intro[ $field ] . "\n\n<context>\n" . implode( "\n", $parts ) . "\n</context>";
+
+		// Encourage variety between requests. Without this, deterministic models
+		// return the same text for an identical prompt every time, which makes
+		// "Regenerate" appear broken. A random seed varies the input, and when
+		// regenerating we explicitly ask for something different from the
+		// previous suggestion.
+		if ( '' !== $context['previous'] ) {
+			$prompt .= "\n\n<avoid>\nDo not repeat or lightly reword this previous attempt. Produce a clearly different alternative with a fresh angle:\n" . $context['previous'] . "\n</avoid>";
+		}
+		$prompt .= "\n\nWrite a fresh, original variation. (seed: " . wp_rand( 100000, 999999 ) . ')';
+
+		return $prompt;
 	}
 
 	/**

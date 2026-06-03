@@ -1496,6 +1496,38 @@
 			}
 
 			var ai = StoreSuite_Product.ai;
+			var i18n = ai.i18n || {};
+			var commonI18n =
+				StoreSuite_Product.i18n || { unexpected_error: '', ok_button: '' };
+			var suiteModal =
+				window.StoreSuite && window.StoreSuite.storeSuiteModal
+					? window.StoreSuite.storeSuiteModal
+					: null;
+
+			var $modal = $( '#storesuite-ai-modal' );
+			var $modalText = $modal.find( '#storesuite-ai-modal-text' );
+			var $modalTitle = $modal.find( '#storesuite-ai-modal-title' );
+			var $modalSubtitle = $modal.find( '.storesuite-ai-modal-subtitle' );
+			var $insertBtn = $modal.find( '.storesuite-ai-insert' );
+			var $regenerateBtn = $modal.find( '.storesuite-ai-regenerate' );
+			var $pager = $modal.find( '.storesuite-ai-modal-pager' );
+			var $prevBtn = $modal.find( '.storesuite-ai-prev' );
+			var $nextBtn = $modal.find( '.storesuite-ai-next' );
+			var $pagerStatus = $modal.find( '.storesuite-ai-pager-status' );
+
+			// Field currently being generated/edited in the modal.
+			var activeField = null;
+			// History of suggestions for the current session and the index shown.
+			var suggestions = [];
+			var currentIndex = -1;
+
+			if ( suiteModal && $modal.length ) {
+				suiteModal.initOverlay( $modal, {
+					fade: true,
+					closeSelector:
+						'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close',
+				} );
+			}
 
 			// Read the long description from TinyMCE when the visual editor is
 			// active, otherwise from the raw textarea (Text tab / no TinyMCE).
@@ -1533,6 +1565,132 @@
 				return names;
 			}
 
+			function showError( message ) {
+				Swal.fire( {
+					icon: 'error',
+					title: i18n.error_title,
+					text: message || commonI18n.unexpected_error,
+					confirmButtonText: commonI18n.ok_button,
+				} );
+			}
+
+			// Descriptions need a title or keywords to work from.
+			function hasContext( field ) {
+				if ( field === 'title' ) {
+					return true;
+				}
+				return !! (
+					$.trim( $( '#product_title' ).val() || '' ) ||
+					$.trim( $( '#product_short_description' ).val() || '' )
+				);
+			}
+
+			// Request a suggestion for the given field. Calls onSuccess(content)
+			// or onError(message); onAlways() always runs. `previous` is the
+			// suggestion being regenerated away from, so the model can avoid it.
+			function requestGeneration(
+				field,
+				previous,
+				onSuccess,
+				onError,
+				onAlways
+			) {
+				$.post( StoreSuite_Product.ajax_url, {
+					action: ai.action,
+					nonce: ai.nonce,
+					field: field,
+					previous: previous || '',
+					product_title: $.trim( $( '#product_title' ).val() || '' ),
+					product_short_description: $.trim(
+						$( '#product_short_description' ).val() || ''
+					),
+					product_description: getDescription(),
+					categories: getCategories(),
+				} )
+					.done( function ( response ) {
+						if (
+							! response ||
+							! response.success ||
+							! response.data
+						) {
+							onError(
+								response &&
+									response.data &&
+									response.data.message
+									? response.data.message
+									: commonI18n.unexpected_error
+							);
+							return;
+						}
+						onSuccess( response.data.content || '' );
+					} )
+					.fail( function () {
+						onError( commonI18n.unexpected_error );
+					} )
+					.always( function () {
+						if ( onAlways ) {
+							onAlways();
+						}
+					} );
+			}
+
+			// Persist any edits the user made to the visible suggestion so they
+			// survive navigation/regeneration.
+			function saveCurrentEdit() {
+				if ( currentIndex > -1 ) {
+					suggestions[ currentIndex ] = $modalText.val() || '';
+				}
+			}
+
+			// Render the "‹ n/m ›" pager and show the suggestion at the index.
+			function showSuggestion( index ) {
+				if ( index < 0 || index >= suggestions.length ) {
+					return;
+				}
+				currentIndex = index;
+				$modalText.val( suggestions[ index ] );
+
+				$pagerStatus.text( index + 1 + '/' + suggestions.length );
+				$prevBtn.prop( 'disabled', index === 0 );
+				$nextBtn.prop( 'disabled', index === suggestions.length - 1 );
+				$pager.prop( 'hidden', suggestions.length < 2 );
+			}
+
+			// Open the suggestion modal for a field, falling back to a direct
+			// insert when the shared modal is unavailable.
+			function openSuggestion( field, content ) {
+				if ( ! suiteModal || ! $modal.length ) {
+					insertIntoField( field, content );
+					return;
+				}
+
+				activeField = field;
+				suggestions = [ content ];
+				currentIndex = -1;
+
+				var titles = i18n.modal_titles || {};
+				$modalTitle.text( titles[ field ] || $modalTitle.text() );
+				if ( i18n.subtitle ) {
+					$modalSubtitle.text( i18n.subtitle );
+				}
+				$modalText.attr( 'rows', field === 'description' ? 8 : 3 );
+				showSuggestion( 0 );
+				suiteModal.open( $modal );
+			}
+
+			function insertIntoField( field, content ) {
+				if ( field === 'title' ) {
+					$( '#product_title' ).val( content ).trigger( 'change' );
+				} else if ( field === 'short_description' ) {
+					$( '#product_short_description' )
+						.val( content )
+						.trigger( 'change' );
+				} else if ( field === 'description' ) {
+					setDescription( content );
+				}
+			}
+
+			// AI buttons next to each field: generate, then open the modal.
 			$( document ).on(
 				'click',
 				'.storesuite-ai-generate',
@@ -1545,18 +1703,13 @@
 					}
 
 					var field = $btn.data( 'field' );
-					var title = $.trim( $( '#product_title' ).val() || '' );
-					var shortDesc = $.trim(
-						$( '#product_short_description' ).val() || ''
-					);
 
-					// Descriptions need at least a title or keywords to work from.
-					if ( field !== 'title' && ! title && ! shortDesc ) {
+					if ( ! hasContext( field ) ) {
 						Swal.fire( {
 							icon: 'info',
-							title: ai.i18n.error_title,
-							text: ai.i18n.no_context,
-							confirmButtonText: StoreSuite_Product.i18n.ok_button,
+							title: i18n.error_title,
+							text: i18n.no_context,
+							confirmButtonText: commonI18n.ok_button,
 						} );
 						return;
 					}
@@ -1564,68 +1717,87 @@
 					var originalHtml = $btn.html();
 					$btn.prop( 'disabled', true ).html(
 						'<i class="las la-spinner la-spin"></i> ' +
-							ai.i18n.generating
+							i18n.generating
 					);
 
-					$.post( StoreSuite_Product.ajax_url, {
-						action: ai.action,
-						nonce: ai.nonce,
-						field: field,
-						product_title: title,
-						product_short_description: shortDesc,
-						product_description: getDescription(),
-						categories: getCategories(),
-					} )
-						.done( function ( response ) {
-							if (
-								! response ||
-								! response.success ||
-								! response.data
-							) {
-								var msg =
-									response &&
-									response.data &&
-									response.data.message
-										? response.data.message
-										: StoreSuite_Product.i18n
-												.unexpected_error;
-								Swal.fire( {
-									icon: 'error',
-									title: ai.i18n.error_title,
-									text: msg,
-									confirmButtonText:
-										StoreSuite_Product.i18n.ok_button,
-								} );
-								return;
-							}
-
-							var content = response.data.content || '';
-							if ( field === 'title' ) {
-								$( '#product_title' )
-									.val( content )
-									.trigger( 'change' );
-							} else if ( field === 'short_description' ) {
-								$( '#product_short_description' )
-									.val( content )
-									.trigger( 'change' );
-							} else if ( field === 'description' ) {
-								setDescription( content );
-							}
-						} )
-						.fail( function () {
-							Swal.fire( {
-								icon: 'error',
-								title: ai.i18n.error_title,
-								text: StoreSuite_Product.i18n.unexpected_error,
-								confirmButtonText:
-									StoreSuite_Product.i18n.ok_button,
-							} );
-						} )
-						.always( function () {
+					requestGeneration(
+						field,
+						'',
+						function ( content ) {
+							openSuggestion( field, content );
+						},
+						function ( message ) {
+							showError( message );
+						},
+						function () {
 							$btn.prop( 'disabled', false ).html( originalHtml );
-						} );
+						}
+					);
 				}
 			);
+
+			// Regenerate: request a fresh suggestion into the modal textarea.
+			$regenerateBtn.on( 'click', function ( e ) {
+				e.preventDefault();
+				if ( ! activeField || $regenerateBtn.prop( 'disabled' ) ) {
+					return;
+				}
+
+				if ( ! hasContext( activeField ) ) {
+					showError( i18n.no_context );
+					return;
+				}
+
+				// Keep the current (possibly edited) suggestion in history, and
+				// steer the model away from it.
+				saveCurrentEdit();
+				var originalText = $regenerateBtn.text();
+				var previous = $modalText.val() || '';
+				$regenerateBtn.prop( 'disabled', true ).text( i18n.regenerating );
+				$insertBtn.prop( 'disabled', true );
+
+				requestGeneration(
+					activeField,
+					previous,
+					function ( content ) {
+						suggestions.push( content );
+						showSuggestion( suggestions.length - 1 );
+					},
+					function ( message ) {
+						showError( message );
+					},
+					function () {
+						$regenerateBtn
+							.prop( 'disabled', false )
+							.text( originalText );
+						$insertBtn.prop( 'disabled', false );
+					}
+				);
+			} );
+
+			// Pager: navigate between previously generated suggestions.
+			$prevBtn.on( 'click', function ( e ) {
+				e.preventDefault();
+				saveCurrentEdit();
+				showSuggestion( currentIndex - 1 );
+			} );
+			$nextBtn.on( 'click', function ( e ) {
+				e.preventDefault();
+				saveCurrentEdit();
+				showSuggestion( currentIndex + 1 );
+			} );
+
+			// Insert: push the (possibly edited) modal text into the field.
+			$insertBtn.on( 'click', function ( e ) {
+				e.preventDefault();
+				if ( ! activeField ) {
+					return;
+				}
+				insertIntoField( activeField, $modalText.val() || '' );
+				if ( suiteModal && $modal.length ) {
+					suiteModal.close( $modal );
+				}
+			} );
 		},
 	};
 	StoreFrontProduct.init();

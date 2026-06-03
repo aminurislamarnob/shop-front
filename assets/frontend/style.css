@@ -5419,6 +5419,46 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   fill: currentColor;
   flex-shrink: 0;
 }
+.my-storesuite-container .storesuite-ai-modal-subtitle {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--storesuite-text-color-light);
+}
+.my-storesuite-container .storesuite-ai-modal-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.my-storesuite-container .storesuite-ai-modal-pager button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--storesuite-text-color);
+  background: #fff;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 4px;
+}
+.my-storesuite-container .storesuite-ai-modal-pager button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-pager-icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+.my-storesuite-container .storesuite-ai-pager-status {
+  min-width: 34px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--storesuite-text-color);
+}
 .my-storesuite-container .storesuite-ai-generate .la-spin {
   animation: storesuite-ai-spin 0.8s linear infinite;
 }
