@@ -550,6 +550,18 @@ class Assets {
 					'success_title'         => __( 'Product updated', 'storesuite' ),
 					'loading_text'          => __( 'Loading…', 'storesuite' ),
 				),
+				'ai'                         => array(
+					'enabled' => \PluginizeLab\StoreSuite\Product\ProductAI::is_text_supported(),
+					'nonce'   => wp_create_nonce( '_storesuite_ai_' ),
+					'action'  => 'storesuite_generate_product_field',
+					'i18n'    => array(
+						'generate'    => __( 'Generate with AI', 'storesuite' ),
+						'generating'  => __( 'Generating…', 'storesuite' ),
+						'error_title' => __( 'AI generation failed', 'storesuite' ),
+						'no_context'  => __( 'Add a product title or a few keywords first.', 'storesuite' ),
+						'unavailable' => __( 'AI generation is not available. Connect an AI provider to use this feature.', 'storesuite' ),
+					),
+				),
 			);
 
 			wp_localize_script(

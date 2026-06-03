@@ -18,6 +18,7 @@
 			this.handleProductDelete();
 			this.initProductBulkEditModal();
 			this.initProductQuickEditModal();
+			this.handleAiGenerate();
 		},
 
 		// Enhance .wc-product-search selects (Upsells / Cross-sells) with
@@ -1480,6 +1481,151 @@
 			$quickEditFieldRoot
 				.find( 'input[data-field-toggler]' )
 				.trigger( 'change' );
+		},
+
+		// AI copy generation for the title, description and short description
+		// fields. Buttons are only rendered server-side when a provider is
+		// configured, but we re-check the localized flag defensively.
+		handleAiGenerate: function () {
+			if (
+				typeof StoreSuite_Product === 'undefined' ||
+				! StoreSuite_Product.ai ||
+				! StoreSuite_Product.ai.enabled
+			) {
+				return;
+			}
+
+			var ai = StoreSuite_Product.ai;
+
+			// Read the long description from TinyMCE when the visual editor is
+			// active, otherwise from the raw textarea (Text tab / no TinyMCE).
+			function getDescription() {
+				if (
+					window.tinymce &&
+					tinymce.get( 'product_description' ) &&
+					! tinymce.get( 'product_description' ).isHidden()
+				) {
+					return tinymce.get( 'product_description' ).getContent();
+				}
+				return $( '#product_description' ).val() || '';
+			}
+
+			function setDescription( content ) {
+				if (
+					window.tinymce &&
+					tinymce.get( 'product_description' ) &&
+					! tinymce.get( 'product_description' ).isHidden()
+				) {
+					tinymce.get( 'product_description' ).setContent( content );
+				}
+				// Keep the underlying textarea in sync for the Text tab / submit.
+				$( '#product_description' ).val( content );
+			}
+
+			function getCategories() {
+				var names = [];
+				$( '#product_category option:selected' ).each( function () {
+					var text = $.trim( $( this ).text() );
+					if ( text ) {
+						names.push( text );
+					}
+				} );
+				return names;
+			}
+
+			$( document ).on(
+				'click',
+				'.storesuite-ai-generate',
+				function ( e ) {
+					e.preventDefault();
+
+					var $btn = $( this );
+					if ( $btn.prop( 'disabled' ) ) {
+						return;
+					}
+
+					var field = $btn.data( 'field' );
+					var title = $.trim( $( '#product_title' ).val() || '' );
+					var shortDesc = $.trim(
+						$( '#product_short_description' ).val() || ''
+					);
+
+					// Descriptions need at least a title or keywords to work from.
+					if ( field !== 'title' && ! title && ! shortDesc ) {
+						Swal.fire( {
+							icon: 'info',
+							title: ai.i18n.error_title,
+							text: ai.i18n.no_context,
+							confirmButtonText: StoreSuite_Product.i18n.ok_button,
+						} );
+						return;
+					}
+
+					var originalHtml = $btn.html();
+					$btn.prop( 'disabled', true ).html(
+						'<i class="las la-spinner la-spin"></i> ' +
+							ai.i18n.generating
+					);
+
+					$.post( StoreSuite_Product.ajax_url, {
+						action: ai.action,
+						nonce: ai.nonce,
+						field: field,
+						product_title: title,
+						product_short_description: shortDesc,
+						product_description: getDescription(),
+						categories: getCategories(),
+					} )
+						.done( function ( response ) {
+							if (
+								! response ||
+								! response.success ||
+								! response.data
+							) {
+								var msg =
+									response &&
+									response.data &&
+									response.data.message
+										? response.data.message
+										: StoreSuite_Product.i18n
+												.unexpected_error;
+								Swal.fire( {
+									icon: 'error',
+									title: ai.i18n.error_title,
+									text: msg,
+									confirmButtonText:
+										StoreSuite_Product.i18n.ok_button,
+								} );
+								return;
+							}
+
+							var content = response.data.content || '';
+							if ( field === 'title' ) {
+								$( '#product_title' )
+									.val( content )
+									.trigger( 'change' );
+							} else if ( field === 'short_description' ) {
+								$( '#product_short_description' )
+									.val( content )
+									.trigger( 'change' );
+							} else if ( field === 'description' ) {
+								setDescription( content );
+							}
+						} )
+						.fail( function () {
+							Swal.fire( {
+								icon: 'error',
+								title: ai.i18n.error_title,
+								text: StoreSuite_Product.i18n.unexpected_error,
+								confirmButtonText:
+									StoreSuite_Product.i18n.ok_button,
+							} );
+						} )
+						.always( function () {
+							$btn.prop( 'disabled', false ).html( originalHtml );
+						} );
+				}
+			);
 		},
 	};
 	StoreFrontProduct.init();

@@ -5382,3 +5382,48 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   font-size: 13px;
   color: #ef4444;
 }
+
+/* AI "Generate with AI" buttons on the product form. */
+.my-storesuite-container .storesuite-form-group label:has(.storesuite-ai-generate) {
+  display: flex;
+  align-items: center;
+}
+.my-storesuite-container .storesuite-ai-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  cursor: pointer;
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 10%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--storesuite-primary-bg) 30%, transparent);
+  border-radius: 4px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.my-storesuite-container .storesuite-ai-generate:hover:not(:disabled) {
+  color: var(--storesuite-button-text-color);
+  background: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-ai-generate:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-generate .storesuite-ai-icon {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+.my-storesuite-container .storesuite-ai-generate .la-spin {
+  animation: storesuite-ai-spin 0.8s linear infinite;
+}
+@keyframes storesuite-ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
