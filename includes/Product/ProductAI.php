@@ -220,7 +220,7 @@ class ProductAI {
 	 * Render the global "Generate with AI" launcher and bundle modal.
 	 *
 	 * Hooked on `storesuite_dashboard_title_after`; only renders on the Add New
-	 * Product page when text generation is available.
+	 * Product and Edit Product pages when text generation is available.
 	 */
 	public function render_bundle_launcher() {
 		if ( ! self::is_text_supported() ) {
@@ -228,7 +228,12 @@ class ProductAI {
 		}
 
 		$query = pluginizelab_storesuite()->get_storesuite_query();
-		if ( ! $query || 'add-new-product' !== $query->get_current_endpoint() ) {
+		if ( ! $query ) {
+			return;
+		}
+
+		$endpoint = $query->get_current_endpoint();
+		if ( 'add-new-product' !== $endpoint && 'edit-product' !== $endpoint ) {
 			return;
 		}
 

@@ -460,7 +460,9 @@
 				} );
 		}
 
-		// Header launcher: open the modal fresh.
+		// Header launcher: if the form already has any copy, skip the hint step
+		// and open straight to the editable fields pre-filled with it.
+		// Otherwise start on the hint step.
 		$( document ).on(
 			'click',
 			'.storesuite-ai-bundle-launch',
@@ -470,6 +472,23 @@
 					return;
 				}
 				resetBundleModal();
+
+				var title = trimmedValue( '#product_title' );
+				var short = $.trim(
+					$( '#product_short_description' ).val() || ''
+				);
+				var description = $.trim( getDescription() );
+
+				if ( title || short || description ) {
+					// Seed the (hidden) hint so Regenerate has something to work from.
+					$bundleHint.val( title || short );
+					showBundleResults( {
+						title: title,
+						short_description: short,
+						description: description,
+					} );
+				}
+
 				sharedModal.open( $bundleModal );
 			}
 		);
@@ -524,6 +543,9 @@
 				var fieldName = $button.data( 'field' );
 				var hint = $.trim( $bundleHint.val() || '' );
 				var title = $.trim( $bundleTitle.val() || '' );
+				var short = $bundleShort.val() || '';
+				// Keywords for a title: the hint, else fall back to what we have.
+				var titleSeed = hint || title || $.trim( short );
 				var originalHtml = $button.html();
 				$button
 					.prop( 'disabled', true )
@@ -534,8 +556,8 @@
 					nonce: aiConfig.nonce,
 					field: fieldName,
 					previous: bundleFieldValue( fieldName ),
-					// Title leans on the hint; the others lean on the title.
-					product_title: fieldName === 'title' ? hint : title,
+					// Title leans on its seed; the others lean on the title.
+					product_title: fieldName === 'title' ? titleSeed : title,
 					product_short_description:
 						fieldName === 'short_description'
 							? ''
