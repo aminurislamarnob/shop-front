@@ -39,7 +39,7 @@ Note: No PHP or JS test suite exists yet. PHPUnit is configured in `composer.jso
 
 `storesuite.php` is the entry point. It loads Composer autoload, then calls `pluginizelab_storesuite()` which initializes the singleton `StoreSuite` class. Initialization order:
 
-1. `plugins_loaded` — dependency check (WooCommerce must be active), then `includes()` + `init_hooks()`
+1. `plugins_loaded` — dependency check (WooCommerce must be active), then `includes()` + `init_hooks()`, then constructs `Module\Manager` into `$container['modules']` and fires the `storesuite_loaded` action (active modules boot off this)
 2. `rest_api_init` — registers REST routes via `SettingsController->register_routes()`
 3. `init` (priority 4) — `init_classes()` creates all service instances in `$container`
 4. `before_woocommerce_init` — declares HPOS compatibility
@@ -61,8 +61,20 @@ Note: No PHP or JS test suite exists yet. PHPUnit is configured in `composer.jso
   - `Cache.php` — static wrapper around transients/object cache with `storesuite_` prefix and `storesuite` group
   - `DashboardMenu.php` — builds the sidebar navigation via `storesuite_dashboard_navigation` hook; menu items are permission-gated
 - **Settings storage:** All plugin settings stored in a single `storesuite_settings` option (serialized array), accessed via `storesuite_get_option_by_key($key)` in `includes/functions.php`
-- **Abstract base:** `Abstracts/MyStoreSuiteShortcode.php` for shortcode-based pages
+- **Abstract bases:** `Abstracts/MyStoreSuiteShortcode.php` for shortcode-based pages; `Abstracts/Module.php` for the pluggable module system (see below)
 - **Global functions:** `includes/functions.php` — template loading (`storesuite_get_template_part()`), endpoint detection (`storesuite_is_endpoint_url()`), navigation URLs, page checks, logging via `storesuite_log()`, access control redirects
+
+### Module System (`modules/` + `includes/Module/`)
+
+Self-contained, independently activatable features (e.g. Staff Manager) live under `modules/<slug>/`. The system has three parts:
+
+- **`Abstracts/Module.php`** — base class every module extends. Defines the contract: abstract `get_slug()`, `get_name()`, `boot()`; overridable `get_description()`, `get_version()`, `get_requires()`; helpers `get_path()`/`get_url()` (derived from the bootstrap `$file` passed to the constructor); and no-op `activate()`/`deactivate()` lifecycle hooks for one-shot setup/teardown.
+- **`Module/Manager.php`** (`$container['modules']`) — discovers, tracks, and boots modules.
+  - **Discovery** is lazy (`discover()`, triggered by `get_all()`): globs `modules/*/module.php`, `include`s each bootstrap which must `return` a `Module` instance, keys them by slug. Third parties can inject more via the `storesuite_register_modules` filter; the modules dir is filterable via `storesuite_modules_dir`.
+  - **Active state** is persisted as a plain array of slugs in the `storesuite_active_modules` option. `get_active_slugs()` intersects stored slugs with on-disk modules (drops stale entries); `get_active()` maps those to instances; `is_active($slug)` checks membership.
+  - **Booting**: on `storesuite_loaded`, `boot_active()` calls `boot()` on each active module, firing `storesuite_module_{slug}_loaded` per module and `storesuite_modules_loaded` once at the end.
+  - **Activate/deactivate** (`activate($slug)`/`deactivate($slug)`) update the option, call the module's lifecycle hook, and fire `storesuite_module_activated` / `storesuite_module_deactivated`.
+- **Module layout** (`modules/staff-manager/` is the reference example): `module.php` is the bootstrap with a plugin-style header comment block (Module Name, Description, Version, Author); it `require`s and `return`s `new ...\Module( __FILE__ )`. The concrete `includes/Module.php` lives under namespace `PluginizeLab\StoreSuite\Modules\<Name>` and registers its behavior in `boot()` (e.g. adding a sidebar item via the `storesuite_dashboard_menus` filter).
 
 ### Two Separate Frontend Stacks
 
