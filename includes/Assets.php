@@ -87,6 +87,7 @@ class Assets {
 		$frontend_script              = STORESUITE_PLUGIN_ASSET . '/frontend/script.js';
 		$frontend_order_script        = STORESUITE_PLUGIN_ASSET . '/frontend/order.js';
 		$frontend_product_script      = STORESUITE_PLUGIN_ASSET . '/frontend/product.js';
+		$frontend_product_ai_script   = STORESUITE_PLUGIN_ASSET . '/frontend/product-ai.js';
 		$frontend_form_handler_script = STORESUITE_PLUGIN_ASSET . '/frontend/form-handler.js';
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 		$frontend_variation_script    = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
@@ -103,6 +104,9 @@ class Assets {
 		// Order scripts.
 		wp_register_script( 'storesuite_order_script', $frontend_order_script, array( 'storesuite_selectWoo' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_script', 'storesuite_form_handler_script', 'storesuite_selectWoo', 'jquery-ui-datepicker', 'jquery-ui-sortable', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
+		// AI copy generation, split from product.js. Depends on the product
+		// script so the localized StoreSuite_Product global is available.
+		wp_register_script( 'storesuite_product_ai_script', $frontend_product_ai_script, array( 'jquery', 'storesuite_product_script', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_selectWoo', WC()->plugin_url() . '/assets/js/selectWoo/selectWoo.full.js', array( 'jquery' ), '4.0.3', true );
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
@@ -515,6 +519,7 @@ class Assets {
 		if ( $is_products ) {
 			wp_enqueue_script( 'storesuite_selectWoo' );
 			wp_enqueue_script( 'storesuite_product_script' );
+			wp_enqueue_script( 'storesuite_product_ai_script' );
 
 			$product_script_data = array(
 				'i18n_global_unique_id_error' => __( 'Please enter only numbers and hyphens (-).', 'storesuite' ),
@@ -552,18 +557,22 @@ class Assets {
 				),
 				'ai'                         => array(
 					'enabled' => \PluginizeLab\StoreSuite\Product\ProductAI::is_text_supported(),
-					'nonce'   => wp_create_nonce( '_storesuite_ai_' ),
-					'action'  => 'storesuite_generate_product_field',
+					'nonce'         => wp_create_nonce( '_storesuite_ai_' ),
+					'action'        => 'storesuite_generate_product_field',
+					'bundle_action' => 'storesuite_generate_product_bundle',
 					'i18n'    => array(
-						'generate'     => __( 'Generate with AI', 'storesuite' ),
-						'generating'   => __( 'Generating…', 'storesuite' ),
-						'error_title'  => __( 'AI generation failed', 'storesuite' ),
-						'no_context'   => __( 'Add a product title or a few keywords first.', 'storesuite' ),
-						'unavailable'  => __( 'AI generation is not available. Connect an AI provider to use this feature.', 'storesuite' ),
-						'insert'       => __( 'Insert', 'storesuite' ),
-						'regenerate'   => __( 'Regenerate', 'storesuite' ),
-						'regenerating' => __( 'Regenerating…', 'storesuite' ),
-						'subtitle'     => __( 'Review, edit and insert the suggestion or regenerate a new one.', 'storesuite' ),
+						'generate'       => __( 'Generate with AI', 'storesuite' ),
+						'generating'     => __( 'Generating…', 'storesuite' ),
+						'error_title'    => __( 'AI generation failed', 'storesuite' ),
+						'no_context'     => __( 'Add a product title or a few keywords first.', 'storesuite' ),
+						'unavailable'    => __( 'AI generation is not available. Connect an AI provider to use this feature.', 'storesuite' ),
+						'insert'         => __( 'Insert', 'storesuite' ),
+						'regenerate'     => __( 'Regenerate', 'storesuite' ),
+						'regenerating'   => __( 'Regenerating…', 'storesuite' ),
+						'subtitle'       => __( 'Review, edit and insert the suggestion or regenerate a new one.', 'storesuite' ),
+						'prompt_required' => __( 'Please enter a few keywords first.', 'storesuite' ),
+						'hint_required'  => __( 'Please describe your product first.', 'storesuite' ),
+						'insert_all'     => __( 'Insert all', 'storesuite' ),
 						'modal_titles' => array(
 							'title'             => __( 'Title suggestion', 'storesuite' ),
 							'description'       => __( 'Description suggestion', 'storesuite' ),

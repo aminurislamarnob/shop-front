@@ -901,11 +901,13 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 				</button>
 			</div>
 			<div class="storesuite-product-bulk-edit-scroll">
-				<p class="storesuite-ai-modal-subtitle"><?php esc_html_e( 'Review, edit and insert the suggestion or regenerate a new one.', 'storesuite' ); ?></p>
-				<div class="storesuite-ai-modal-pager" hidden>
-					<button type="button" class="storesuite-ai-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
-					<span class="storesuite-ai-pager-status" aria-live="polite">1/1</span>
-					<button type="button" class="storesuite-ai-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
+				<div class="storesuite-ai-modal-subhead">
+					<p class="storesuite-ai-modal-subtitle"><?php esc_html_e( 'Review, edit and insert the suggestion or regenerate a new one.', 'storesuite' ); ?></p>
+					<div class="storesuite-ai-modal-pager" hidden>
+						<button type="button" class="storesuite-ai-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
+						<span class="storesuite-ai-pager-status" aria-live="polite">1/1</span>
+						<button type="button" class="storesuite-ai-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
+					</div>
 				</div>
 				<div class="storesuite-form-group">
 					<textarea id="storesuite-ai-modal-text" class="storesuite-form-control" rows="3"></textarea>
@@ -917,6 +919,43 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 				</button>
 				<button type="button" class="my-storesuite-button storesuite-ai-insert">
 					<?php esc_html_e( 'Insert', 'storesuite' ); ?>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="storesuite-ai-prompt-modal" class="storesuite-product-bulk-modal-overlay" hidden aria-hidden="true">
+		<div
+			class="storesuite-product-bulk-modal-dialog"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="storesuite-ai-prompt-title"
+			tabindex="-1"
+		>
+			<div class="storesuite-product-bulk-modal-header">
+				<h2 id="storesuite-ai-prompt-title" class="storesuite-product-bulk-modal-title">
+					<?php esc_html_e( 'Generate a product title', 'storesuite' ); ?>
+				</h2>
+				<button type="button" class="storesuite-product-bulk-modal-close my-storesuite-button storesuite-button-ghost" aria-label="<?php esc_attr_e( 'Close', 'storesuite' ); ?>">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+						<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
+					</svg>
+				</button>
+			</div>
+			<div class="storesuite-product-bulk-edit-scroll">
+				<div class="storesuite-ai-modal-subhead">
+					<p class="storesuite-ai-modal-subtitle"><?php esc_html_e( 'Describe your product with a few keywords to generate a title.', 'storesuite' ); ?></p>
+				</div>
+				<div class="storesuite-form-group">
+					<textarea id="storesuite-ai-prompt-text" class="storesuite-form-control" rows="3" placeholder="<?php esc_attr_e( 'e.g. handmade ceramic coffee mug, 350ml, matte black', 'storesuite' ); ?>"></textarea>
+				</div>
+			</div>
+			<div class="storesuite-product-bulk-modal-footer">
+				<button type="button" class="my-storesuite-button storesuite-button-neutral-panel storesuite-product-bulk-modal-cancel">
+					<?php esc_html_e( 'Cancel', 'storesuite' ); ?>
+				</button>
+				<button type="button" class="my-storesuite-button storesuite-ai-prompt-generate">
+					<?php esc_html_e( 'Generate', 'storesuite' ); ?>
 				</button>
 			</div>
 		</div>

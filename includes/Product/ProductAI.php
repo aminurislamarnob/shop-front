@@ -32,6 +32,8 @@ class ProductAI {
 	 */
 	public function __construct() {
 		add_action( 'wp_ajax_storesuite_generate_product_field', array( $this, 'handle_generate' ) );
+		add_action( 'wp_ajax_storesuite_generate_product_bundle', array( $this, 'handle_generate_bundle' ) );
+		add_action( 'storesuite_dashboard_title_after', array( $this, 'render_bundle_launcher' ) );
 	}
 
 	/**
@@ -93,12 +95,7 @@ class ProductAI {
 			);
 		}
 
-		// Note: temperature is intentionally not set. Some newer models (e.g.
-		// OpenAI reasoning models) reject a custom `temperature` with a 400
-		// error, so we rely on the model default for broad compatibility.
-		$result = wp_ai_client_prompt( $this->build_prompt( $field, $context ) )
-			->using_system_instruction( $this->get_system_instruction( $field ) )
-			->generate_text();
+		$result = $this->generate_one( $field, $context );
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
@@ -114,6 +111,128 @@ class ProductAI {
 				'content' => $this->sanitize_output( $field, $result ),
 			)
 		);
+	}
+
+	/**
+	 * Generate title, long description and short description in one request.
+	 *
+	 * Used by the global "Generate with AI" launcher on the Add New Product
+	 * page: the merchant types a short hint and gets all three fields drafted at
+	 * once. Each field is generated in turn, feeding the previous output forward
+	 * as context (hint -> title -> long description -> short description).
+	 */
+	public function handle_generate_bundle() {
+		check_ajax_referer( '_storesuite_ai_', 'nonce' );
+
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
+
+		if ( ! self::is_text_supported() ) {
+			wp_send_json_error(
+				array(
+					'reason'  => 'unavailable',
+					'message' => __( 'AI generation is not available. Connect an AI provider to use this feature.', 'storesuite' ),
+				)
+			);
+		}
+
+		$hint = isset( $_POST['hint'] ) ? sanitize_textarea_field( wp_unslash( $_POST['hint'] ) ) : '';
+		if ( '' === $hint ) {
+			wp_send_json_error( array( 'message' => __( 'Please describe your product first.', 'storesuite' ) ) );
+		}
+
+		// When regenerating, steer the title away from the previous attempt.
+		$previous_title = isset( $_POST['previous_title'] ) ? sanitize_text_field( wp_unslash( $_POST['previous_title'] ) ) : '';
+
+		$title = $this->generate_one(
+			'title',
+			array(
+				'title'             => $hint,
+				'short_description' => '',
+				'description'       => '',
+				'categories'        => array(),
+				'previous'          => $previous_title,
+			)
+		);
+		if ( is_wp_error( $title ) ) {
+			wp_send_json_error( array( 'message' => $title->get_error_message() ) );
+		}
+		$title = $this->sanitize_output( 'title', $title );
+
+		$description = $this->generate_one(
+			'description',
+			array(
+				'title'             => $title,
+				'short_description' => $hint,
+				'description'       => '',
+				'categories'        => array(),
+				'previous'          => '',
+			)
+		);
+		if ( is_wp_error( $description ) ) {
+			wp_send_json_error( array( 'message' => $description->get_error_message() ) );
+		}
+		$description = $this->sanitize_output( 'description', $description );
+
+		$short_description = $this->generate_one(
+			'short_description',
+			array(
+				'title'             => $title,
+				'short_description' => '',
+				'description'       => wp_strip_all_tags( $description ),
+				'categories'        => array(),
+				'previous'          => '',
+			)
+		);
+		if ( is_wp_error( $short_description ) ) {
+			wp_send_json_error( array( 'message' => $short_description->get_error_message() ) );
+		}
+		$short_description = $this->sanitize_output( 'short_description', $short_description );
+
+		wp_send_json_success(
+			array(
+				'title'             => $title,
+				'description'       => $description,
+				'short_description' => $short_description,
+			)
+		);
+	}
+
+	/**
+	 * Run a single field generation and return the raw model output.
+	 *
+	 * Note: temperature is intentionally not set. Some newer models (e.g. OpenAI
+	 * reasoning models) reject a custom `temperature` with a 400 error, so we
+	 * rely on the model default for broad compatibility.
+	 *
+	 * @param string $field   Field key.
+	 * @param array  $context Sanitized prompt context.
+	 * @return string|\WP_Error
+	 */
+	private function generate_one( $field, array $context ) {
+		return wp_ai_client_prompt( $this->build_prompt( $field, $context ) )
+			->using_system_instruction( $this->get_system_instruction( $field ) )
+			->generate_text();
+	}
+
+	/**
+	 * Render the global "Generate with AI" launcher and bundle modal.
+	 *
+	 * Hooked on `storesuite_dashboard_title_after`; only renders on the Add New
+	 * Product page when text generation is available.
+	 */
+	public function render_bundle_launcher() {
+		if ( ! self::is_text_supported() ) {
+			return;
+		}
+
+		$query = pluginizelab_storesuite()->get_storesuite_query();
+		if ( ! $query || 'add-new-product' !== $query->get_current_endpoint() ) {
+			return;
+		}
+
+		storesuite_get_template_part( 'products/ai-bundle-modal' );
 	}
 
 	/**
