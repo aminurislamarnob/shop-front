@@ -5519,6 +5519,21 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 12%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--storesuite-primary-bg) 24%,
+    transparent
+  );
+}
+.my-storesuite-container .storesuite-ai-bundle-launch:hover {
+  color: var(--storesuite-button-text-color);
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-ai-bundle-launch svg {
+  fill: currentColor;
 }
 .my-storesuite-container .storesuite-ai-bundle-launch .storesuite-ai-icon {
   width: 15px;
