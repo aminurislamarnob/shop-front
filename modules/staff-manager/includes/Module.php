@@ -65,8 +65,19 @@ class Module extends BaseModule {
 		Installer::maybe_upgrade();
 
 		add_action( 'init', array( $this, 'register_endpoint' ) );
+		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
 		add_filter( 'storesuite_query_var_filter', array( $this, 'register_query_var' ) );
 		add_filter( 'storesuite_dashboard_menus', array( $this, 'register_menu' ), 20 );
+	}
+
+	/**
+	 * Register the module's own REST routes. Demonstrates that a module can
+	 * extend the REST surface beyond what the core ModulesController exposes.
+	 *
+	 * @return void
+	 */
+	public function register_rest_routes() {
+		( new ScreenController() )->register_routes();
 	}
 
 	/**
