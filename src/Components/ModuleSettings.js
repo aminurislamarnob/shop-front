@@ -24,7 +24,7 @@ import { Link, useParams } from 'react-router-dom';
 /**
  * Internal dependencies
  */
-import { CheckBadgeIcon, ExclamationCircleIcon } from './icons';
+import { CheckBadgeIcon, ChevronLeftIcon, ExclamationCircleIcon } from './icons';
 
 const MODULES_PATH = '/storesuite/v1/modules';
 
@@ -224,13 +224,20 @@ const ModuleSettings = () => {
 			className="storesuite-section storesuite-section--narrow"
 			id="storesuite-module-settings"
 		>
-			<Link to="/modules" className="storesuite-module-settings-back">
-				{ __( '← Back to modules', 'storesuite' ) }
-			</Link>
 			<form onSubmit={ handleSubmit }>
 				<Card className="storesuite-form-header-card">
 					<CardBody className="storesuite-form-section-header">
 						<h3 className="storesuite-section-title">
+							<Link
+								to="/modules"
+								className="storesuite-module-settings-back"
+								aria-label={ __(
+									'Back to modules',
+									'storesuite'
+								) }
+							>
+								<ChevronLeftIcon />
+							</Link>
 							{ __( 'Module Settings', 'storesuite' ) }
 						</h3>
 						<p className="storesuite-section-description">
