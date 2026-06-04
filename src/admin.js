@@ -3,11 +3,13 @@
  */
 import { createRoot } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
+import { __ } from '@wordpress/i18n';
+import { Card, CardBody } from '@wordpress/components';
 
 /**
  * External dependencies
  */
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 /**
  * Internal dependencies
@@ -51,6 +53,56 @@ const collectModuleRoutes = () => {
 	);
 };
 
+/**
+ * Catch-all route shown when the URL hash doesn't match any built-in or
+ * module-contributed route. Common causes: navigating to a stale module URL
+ * after deactivating it, a module bundle that failed to enqueue, or running
+ * a stale bundle (`npm run build` hasn't been re-run after pulling).
+ */
+const NotFound = () => {
+	const { pathname } = useLocation();
+	return (
+		<div className="storesuite-section storesuite-section--narrow">
+			<Card className="storesuite-form-header-card">
+				<CardBody className="storesuite-form-section-header">
+					<h3 className="storesuite-section-title">
+						{ __( 'Page not found', 'storesuite' ) }
+					</h3>
+					<p className="storesuite-section-description">
+						{ __(
+							'No screen is registered for this URL.',
+							'storesuite'
+						) }{ ' ' }
+						<code>{ pathname }</code>
+					</p>
+				</CardBody>
+			</Card>
+			<Card>
+				<CardBody className="storesuite-form-section-body">
+					<p>
+						{ __(
+							'If you were expecting a module screen, check that the module is active on the',
+							'storesuite'
+						) }{ ' ' }
+						<a href="#/modules">
+							{ __( 'Modules tab', 'storesuite' ) }
+						</a>
+						{ __(
+							'. If you just pulled new code, run',
+							'storesuite'
+						) }{ ' ' }
+						<code>npm run build</code>{ ' ' }
+						{ __(
+							'and hard-refresh the page to clear cached bundles.',
+							'storesuite'
+						) }
+					</p>
+				</CardBody>
+			</Card>
+		</div>
+	);
+};
+
 const App = () => {
 	const moduleRoutes = collectModuleRoutes();
 
@@ -84,6 +136,7 @@ const App = () => {
 								/>
 							);
 						} ) }
+						<Route path="*" element={ <NotFound /> } />
 					</Route>
 				</Routes>
 			</Router>
