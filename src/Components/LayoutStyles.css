@@ -956,6 +956,7 @@
     height: 28px;
     margin-right: 6px;
     border-radius: 6px;
+    background: #f0f0f1;
     color: #1d2327;
     text-decoration: none;
     transition: background-color 0.15s ease;
@@ -964,7 +965,7 @@
 
 .storesuite-module-settings-back:hover,
 .storesuite-module-settings-back:focus {
-    background: #f0f0f1;
+    background: #dcdcde;
     color: #1d2327;
 }
 
