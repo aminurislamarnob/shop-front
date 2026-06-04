@@ -15,6 +15,11 @@ import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 
 /**
+ * External dependencies
+ */
+import { Link } from 'react-router-dom';
+
+/**
  * Internal dependencies
  */
 import {
@@ -227,11 +232,26 @@ const ModulesSettings = () => {
 											onChange={ () => toggle( module ) }
 											__nextHasNoMarginBottom
 										/>
-										{ isBusy && (
-											<Button variant="tertiary" disabled>
-												<Spinner />
-											</Button>
-										) }
+										<div className="storesuite-module-card__actions">
+											{ isBusy && <Spinner /> }
+											{ module.has_settings && (
+												<Link
+													to={ `/modules/${ module.slug }` }
+												>
+													<Button
+														variant="secondary"
+														disabled={
+															! module.active
+														}
+													>
+														{ __(
+															'Configure',
+															'storesuite'
+														) }
+													</Button>
+												</Link>
+											) }
+										</div>
 									</div>
 								</CardBody>
 							</Card>

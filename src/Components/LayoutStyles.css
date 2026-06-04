@@ -936,3 +936,32 @@
     padding-top: 4px;
     border-top: 1px solid #f0f0f1;
 }
+
+/* ========== Modules — per-card actions & settings page ========== */
+.storesuite-module-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.storesuite-module-card__actions a {
+    text-decoration: none;
+}
+
+.storesuite-module-settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.storesuite-module-settings-back {
+    font-size: 13px;
+    color: #2271b1;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.storesuite-module-settings-back:hover {
+    text-decoration: underline;
+}

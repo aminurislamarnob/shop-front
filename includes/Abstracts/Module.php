@@ -129,4 +129,57 @@ abstract class Module {
 	 * @return void
 	 */
 	public function deactivate() {}
+
+	/**
+	 * Does this module expose configurable settings on the admin Modules
+	 * screen? Modules with settings get a "Configure" action and their own
+	 * route at `#/modules/{slug}` in the React app.
+	 *
+	 * @return bool
+	 */
+	public function has_settings() {
+		return false;
+	}
+
+	/**
+	 * Schema describing the module's settings fields. Used by the React app
+	 * to render a form generically. Subclasses override this — see
+	 * `Modules\StaffManager\Settings::get_schema()` for an example.
+	 *
+	 * Each field is keyed by setting name with the shape:
+	 *   array(
+	 *       'type'        => 'toggle' | 'text' | 'number' | 'select',
+	 *       'label'       => 'Human label',
+	 *       'description' => 'Optional help text',
+	 *       'default'     => mixed,
+	 *       'options'     => array( value => label ),   // select only
+	 *       'min'         => int,                       // number only
+	 *       'max'         => int,                       // number only
+	 *   )
+	 *
+	 * @return array
+	 */
+	public function get_settings_schema() {
+		return array();
+	}
+
+	/**
+	 * Current setting values, merged with defaults from the schema.
+	 *
+	 * @return array
+	 */
+	public function get_settings() {
+		return array();
+	}
+
+	/**
+	 * Persist settings. Implementations should sanitize against the schema
+	 * and return the canonical post-save values.
+	 *
+	 * @param array $data Raw input.
+	 * @return array Saved values.
+	 */
+	public function update_settings( array $data ) {
+		return $this->get_settings();
+	}
 }

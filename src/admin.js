@@ -17,6 +17,7 @@ import Layout from './Components/Layout';
 import ColorsSettings from './Components/ColorsSettings';
 import GeneralSettings from './Components/GeneralSettings';
 import ModulesSettings from './Components/ModulesSettings';
+import ModuleSettings from './Components/ModuleSettings';
 import PaginationSettings from './Components/PaginationSettings';
 
 const App = () => (
@@ -34,6 +35,10 @@ const App = () => (
 						element={ <PaginationSettings /> }
 					/>
 					<Route path="modules" element={ <ModulesSettings /> } />
+					<Route
+						path="modules/:slug"
+						element={ <ModuleSettings /> }
+					/>
 				</Route>
 			</Routes>
 		</Router>

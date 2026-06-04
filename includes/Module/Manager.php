@@ -194,6 +194,7 @@ class Manager {
 			update_option( self::ACTIVE_OPTION, array_values( array_unique( $active ) ) );
 
 			$modules[ $slug ]->activate();
+			$this->flag_rewrite_flush();
 
 			do_action( 'storesuite_module_activated', $slug, $modules[ $slug ] );
 		}
@@ -218,10 +219,24 @@ class Manager {
 			update_option( self::ACTIVE_OPTION, array_values( $active ) );
 
 			$modules[ $slug ]->deactivate();
+			$this->flag_rewrite_flush();
 
 			do_action( 'storesuite_module_deactivated', $slug, $modules[ $slug ] );
 		}
 
 		return true;
+	}
+
+	/**
+	 * Ask StoreSuite to flush rewrite rules on the next request.
+	 *
+	 * Modules can register their own rewrite endpoints during `boot()`. Those
+	 * rules only become routable after `flush_rewrite_rules()` runs, so any
+	 * activation/deactivation toggles need to trigger one. We reuse the
+	 * existing `storesuite_flush_rewrite_rules` option that
+	 * `StoreSuite::maybe_flush_rewrite_rules()` handles on `init`.
+	 */
+	private function flag_rewrite_flush() {
+		update_option( 'storesuite_flush_rewrite_rules', 1 );
 	}
 }

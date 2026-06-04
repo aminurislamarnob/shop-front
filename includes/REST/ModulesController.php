@@ -86,6 +86,23 @@ class ModulesController extends WP_REST_Controller {
 				),
 			)
 		);
+
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/(?P<slug>[A-Za-z0-9_\-]+)/settings',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_settings' ),
+					'permission_callback' => array( $this, 'permissions_check' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'update_settings' ),
+					'permission_callback' => array( $this, 'permissions_check' ),
+				),
+			)
+		);
 	}
 
 	/**
@@ -98,16 +115,29 @@ class ModulesController extends WP_REST_Controller {
 		$items   = array();
 
 		foreach ( $manager->get_all() as $slug => $module ) {
-			$items[] = array(
-				'slug'        => $slug,
-				'name'        => $module->get_name(),
-				'description' => $module->get_description(),
-				'version'     => $module->get_version(),
-				'active'      => $manager->is_active( $slug ),
-			);
+			$items[] = $this->prepare_module( $slug, $module, $manager );
 		}
 
 		return rest_ensure_response( $items );
+	}
+
+	/**
+	 * Build the public representation of a module.
+	 *
+	 * @param string                                       $slug    Module slug.
+	 * @param \PluginizeLab\StoreSuite\Abstracts\Module    $module  Module instance.
+	 * @param \PluginizeLab\StoreSuite\Module\Manager      $manager Module manager.
+	 * @return array
+	 */
+	private function prepare_module( $slug, $module, $manager ) {
+		return array(
+			'slug'         => $slug,
+			'name'         => $module->get_name(),
+			'description'  => $module->get_description(),
+			'version'      => $module->get_version(),
+			'active'       => $manager->is_active( $slug ),
+			'has_settings' => (bool) $module->has_settings(),
+		);
 	}
 
 	/**
@@ -159,17 +189,85 @@ class ModulesController extends WP_REST_Controller {
 	private function item_response( $slug ) {
 		$manager = $this->get_manager();
 		$modules = $manager->get_all();
-		$module  = $modules[ $slug ];
+
+		return rest_ensure_response( $this->prepare_module( $slug, $modules[ $slug ], $manager ) );
+	}
+
+	/**
+	 * GET handler — return the module's settings schema and current values.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response|WP_Error
+	 */
+	public function get_settings( $request ) {
+		$module = $this->resolve_settings_module( (string) $request->get_param( 'slug' ) );
+		if ( is_wp_error( $module ) ) {
+			return $module;
+		}
 
 		return rest_ensure_response(
 			array(
-				'slug'        => $slug,
-				'name'        => $module->get_name(),
-				'description' => $module->get_description(),
-				'version'     => $module->get_version(),
-				'active'      => $manager->is_active( $slug ),
+				'schema' => $module->get_settings_schema(),
+				'values' => $module->get_settings(),
 			)
 		);
+	}
+
+	/**
+	 * POST handler — persist settings for a module that supports them.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response|WP_Error
+	 */
+	public function update_settings( $request ) {
+		$module = $this->resolve_settings_module( (string) $request->get_param( 'slug' ) );
+		if ( is_wp_error( $module ) ) {
+			return $module;
+		}
+
+		$params = $request->get_json_params();
+		if ( ! is_array( $params ) ) {
+			$params = $request->get_params();
+		}
+
+		$values = is_array( $params['values'] ?? null ) ? $params['values'] : array();
+
+		return rest_ensure_response(
+			array(
+				'schema' => $module->get_settings_schema(),
+				'values' => $module->update_settings( $values ),
+			)
+		);
+	}
+
+	/**
+	 * Look up a module by slug and ensure it exposes settings.
+	 *
+	 * @param string $slug Module slug.
+	 * @return \PluginizeLab\StoreSuite\Abstracts\Module|WP_Error
+	 */
+	private function resolve_settings_module( $slug ) {
+		$modules = $this->get_manager()->get_all();
+
+		if ( ! isset( $modules[ $slug ] ) ) {
+			return new WP_Error(
+				'storesuite_module_not_found',
+				__( 'Module not found.', 'storesuite' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		$module = $modules[ $slug ];
+
+		if ( ! $module->has_settings() ) {
+			return new WP_Error(
+				'storesuite_module_no_settings',
+				__( 'This module does not expose configurable settings.', 'storesuite' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		return $module;
 	}
 
 	/**

@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/includes/Installer.php';
+require_once __DIR__ . '/includes/Settings.php';
 require_once __DIR__ . '/includes/Module.php';
 
 return new \PluginizeLab\StoreSuite\Modules\StaffManager\Module( __FILE__ );
