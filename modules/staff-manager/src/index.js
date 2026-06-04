@@ -1,21 +1,28 @@
 /**
  * Staff Manager — module entry.
  *
- * Loaded by `wp_enqueue_script` after core's `storesuite-admin-page` bundle
- * has run (and therefore after `window.StoreSuite.registerScreens` exists).
- * Registers this module's React route(s) with the core router before
- * `DOMContentLoaded` fires and the App mounts.
+ * Loaded after the core `storesuite-admin-page` bundle. Contributes its
+ * route(s) by hooking the WordPress filter `storesuite_admin_routes`, the
+ * same pattern Dokan Pro uses for `dokan-dashboard-routes`. Core reads the
+ * filter at mount time and renders a `<Route>` per entry.
  *
  * @package StoreSuite
  */
 
+import { addFilter } from '@wordpress/hooks';
 import StaffManagerAdmin from './admin/StaffManagerAdmin';
 
-if (
-	window.StoreSuite &&
-	typeof window.StoreSuite.registerScreens === 'function'
-) {
-	window.StoreSuite.registerScreens( 'staff-manager', {
-		'/staff-manager': StaffManagerAdmin,
-	} );
-}
+addFilter(
+	'storesuite_admin_routes',
+	'storesuite/staff-manager',
+	( routes ) => {
+		if ( ! Array.isArray( routes ) ) {
+			return routes;
+		}
+		routes.push( {
+			path: '/staff-manager',
+			element: StaffManagerAdmin,
+		} );
+		return routes;
+	}
+);

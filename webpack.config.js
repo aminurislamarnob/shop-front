@@ -2,9 +2,15 @@ const path = require( 'path' );
 const glob = require( 'glob' );
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
-// Discover every module's React entry point at `modules/<slug>/src/index.js`.
-// Each is emitted to `assets/build/modules/<slug>/script.js`, parallel to
-// `assets/build/admin/script.js`, so PHP can enqueue it predictably.
+// Discover every module's React entry at `modules/<slug>/src/index.js`.
+//
+// The entry key intentionally uses `../../` so the build output escapes the
+// shared `assets/build/` directory and lands inside the module's own
+// `assets/build/`. With `output.path = assets/build`, an entry keyed
+// `../../modules/<slug>/assets/build/script` resolves to
+// `<plugin-root>/modules/<slug>/assets/build/script.js`, keeping each module
+// fully self-contained on disk. This mirrors Dokan Pro's webpack-entries
+// convention.
 const moduleEntries = glob
 	.sync( './modules/*/src/index.js' )
 	.reduce( ( acc, entry ) => {
@@ -13,7 +19,10 @@ const moduleEntries = glob
 			return acc;
 		}
 		const slug = match[ 1 ];
-		acc[ `modules/${ slug }/script` ] = path.resolve( __dirname, entry );
+		acc[ `../../modules/${ slug }/assets/build/script` ] = path.resolve(
+			__dirname,
+			entry
+		);
 		return acc;
 	}, {} );
 
@@ -52,8 +61,14 @@ module.exports = {
 		...defaultConfig.resolve,
 		alias: {
 			...( defaultConfig.resolve?.alias || {} ),
-			'analytics': path.resolve( __dirname, 'src/analytics' ),
-			'dashboard': path.resolve( __dirname, 'src/dashboard' ),
+			'analytics':              path.resolve( __dirname, 'src/analytics' ),
+			'dashboard':              path.resolve( __dirname, 'src/dashboard' ),
+			// Shared StoreSuite primitives — module bundles can `import` from
+			// `@storesuite/components` instead of relative paths into core.
+			// Today these resolve to core source and get bundled in each
+			// module that uses them; future work can flip them to externals
+			// without touching module code.
+			'@storesuite/components': path.resolve( __dirname, 'src/Components' ),
 		},
 	},
 };

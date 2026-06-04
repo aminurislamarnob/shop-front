@@ -415,7 +415,9 @@ class ScreenController extends WP_REST_Controller {
 
 Module React code lives **inside the module**, not in core `src/`. Webpack
 discovers every `modules/<slug>/src/index.js` at build time and emits a
-separate bundle to `assets/build/modules/<slug>/script.js`. The abstract
+separate bundle to `modules/<slug>/assets/build/script.js` — the build
+artifact lives in the module's own directory so the module is portable as a
+standalone unit (Dokan Pro convention). The abstract
 `Module::enqueue_admin_assets()` enqueues it when the module is active and
 the StoreSuite settings page is the current screen.
 
@@ -425,52 +427,68 @@ the StoreSuite settings page is the current screen.
 modules/customer-manager/
 ├── module.php
 ├── includes/                   # PHP
+├── assets/build/               # webpack output — gitignored
+│   ├── script.js
+│   └── script.asset.php
 └── src/
-    ├── index.js                # entry — registers React screens
+    ├── index.js                # entry — contributes routes via wp.hooks
     └── admin/
         └── CustomerManagerAdmin.js
 ```
 
-**`modules/customer-manager/src/index.js`:**
+**`modules/customer-manager/src/index.js`** — register routes via the
+`storesuite_admin_routes` `@wordpress/hooks` filter:
 
 ```js
+import { addFilter } from '@wordpress/hooks';
 import CustomerManagerAdmin from './admin/CustomerManagerAdmin';
 
-if (
-    window.StoreSuite &&
-    typeof window.StoreSuite.registerScreens === 'function'
-) {
-    window.StoreSuite.registerScreens( 'customer-manager', {
-        '/customer-manager': CustomerManagerAdmin,
-    } );
-}
+addFilter(
+    'storesuite_admin_routes',
+    'storesuite/customer-manager',
+    ( routes ) => {
+        if ( ! Array.isArray( routes ) ) {
+            return routes;
+        }
+        routes.push( {
+            path: '/customer-manager',
+            element: CustomerManagerAdmin,
+        } );
+        return routes;
+    }
+);
 ```
 
 **`modules/customer-manager/src/admin/CustomerManagerAdmin.js`** —
 standard React component. See `modules/staff-manager/src/admin/StaffManagerAdmin.js`
 for a complete reference (fetch on mount, form, snackbar on save).
 
-**Imports the module bundle may use freely:**
+**Imports the module bundle may use freely** (all externalized to
+`window.wp.*` or `window.React*` by `@wordpress/scripts`, so they don't
+inflate the bundle):
 
 - `@wordpress/element`, `@wordpress/i18n`, `@wordpress/components`,
-  `@wordpress/api-fetch`, `@wordpress/data`, `@wordpress/notices` — all
-  externalized to `window.wp.*` by `@wordpress/scripts`.
-- `@heroicons/react/24/outline` — bundled and tree-shaken (~1 KB per icon).
-- React, ReactDOM — externalized.
+  `@wordpress/api-fetch`, `@wordpress/data`, `@wordpress/notices`,
+  `@wordpress/hooks`, `@wordpress/dom-ready`
+- React, ReactDOM
+- `@storesuite/components` (alias to `src/Components`) — for shared
+  StoreSuite primitives. Today these are bundled; later they can be flipped
+  to externals without touching module source.
 
-**Imports to avoid** (they would bloat the bundle or break):
+**Imports to avoid** (they bloat the bundle):
 
+- `@heroicons/react/24/outline` — fine in small doses (~1 KB per icon,
+  tree-shaken) but each icon ships in every module that uses it.
 - `react-router-dom` — not externalized; use plain `<a href="#/path">` for
   intra-app navigation in module screens.
-- Anything from core `src/` — module bundles cannot import across the
-  boundary. Copy the snippet or expose what you need on `window.StoreSuite`.
 
 ### 3.7 React route registration
 
-**Not needed.** Module routes register themselves at runtime via
-`window.StoreSuite.registerScreens()`. Core `src/admin.js` reads the registry
-when the App mounts and renders a `<Route>` for each entry. Adding a new
-module never requires editing `src/admin.js`.
+**Not needed in core.** Module routes register themselves at runtime via the
+`storesuite_admin_routes` filter. Core `src/admin.js` calls
+`applyFilters( 'storesuite_admin_routes', [] )` at mount time and renders a
+`<Route>` for each entry. Adding a new module never requires editing
+`src/admin.js` or `webpack.config.js`.
 
 ---
 
@@ -484,8 +502,8 @@ module never requires editing `src/admin.js`.
   cross-cutting extension point.
 - `includes/Assets.php` — active modules' admin bundles are enqueued
   automatically via `Module::enqueue_admin_assets()`.
-- `src/admin.js` — module routes register themselves at runtime via
-  `window.StoreSuite.registerScreens()`.
+- `src/admin.js` — module routes register themselves at runtime via the
+  `storesuite_admin_routes` `@wordpress/hooks` filter.
 - `webpack.config.js` — `modules/*/src/index.js` is auto-discovered as a
   webpack entry.
 

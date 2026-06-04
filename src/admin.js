@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { createRoot } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * External dependencies
@@ -21,44 +22,37 @@ import ModuleSettings from './Components/ModuleSettings';
 import PaginationSettings from './Components/PaginationSettings';
 
 /**
- * Module registry — set up synchronously at the top of the core bundle so
- * module bundles (enqueued with this script as a dependency, therefore loaded
- * AFTER it but BEFORE DOMContentLoaded) can register their React screens
- * before the App mounts and reads the registry.
+ * Module routes are contributed via the `storesuite_admin_routes`
+ * `@wordpress/hooks` filter. Each module's entry bundle (enqueued after the
+ * core admin script via `wp_enqueue_script` dependencies, therefore loaded
+ * BEFORE `DOMContentLoaded` fires) calls `addFilter` to push its routes:
  *
- * Module bundles call `window.StoreSuite.registerScreens( slug, screens )`
- * where `screens` is `{ '/route-path': ReactComponent }`. The path becomes a
- * React Router route under the Layout outlet. Components registered this way
- * are rendered inside the same Layout/Router as the built-in routes, so they
- * inherit the snackbar host and module-aware top-nav for free.
+ *   addFilter( 'storesuite_admin_routes', 'staff-manager', ( routes ) => {
+ *       routes.push( { path: '/staff-manager', element: StaffManagerAdmin } );
+ *       return routes;
+ *   } );
+ *
+ * Using the WordPress hooks API instead of a bespoke `window.StoreSuite.*`
+ * registry matches Dokan Pro's pattern: no custom global surface, any script
+ * (bundled or inline) can contribute routes, and third-party modules
+ * integrate without learning a StoreSuite-specific API.
  */
-const moduleScreens = new Map();
-
-window.StoreSuite = window.StoreSuite || {};
-
-window.StoreSuite.registerScreens = ( slug, screens ) => {
-	if ( ! slug || typeof screens !== 'object' || screens === null ) {
-		return;
+const collectModuleRoutes = () => {
+	const routes = applyFilters( 'storesuite_admin_routes', [] );
+	if ( ! Array.isArray( routes ) ) {
+		return [];
 	}
-	Object.entries( screens ).forEach( ( [ path, Component ] ) => {
-		if (
-			typeof path !== 'string' ||
-			path.length === 0 ||
-			typeof Component !== 'function'
-		) {
-			return;
-		}
-		// Normalize: store without leading slash so it matches React Router
-		// child route paths. Strip duplicate slashes for safety.
-		const normalized = path.replace( /^\/+/, '' );
-		moduleScreens.set( normalized, { slug, Component } );
-	} );
+	return routes.filter(
+		( route ) =>
+			route &&
+			typeof route.path === 'string' &&
+			route.path.length > 0 &&
+			typeof route.element === 'function'
+	);
 };
 
-window.StoreSuite.getScreens = () => Array.from( moduleScreens.entries() );
-
 const App = () => {
-	const screens = window.StoreSuite.getScreens();
+	const moduleRoutes = collectModuleRoutes();
 
 	return (
 		<SettingsProvider>
@@ -79,13 +73,17 @@ const App = () => {
 							path="modules/:slug"
 							element={ <ModuleSettings /> }
 						/>
-						{ screens.map( ( [ path, { Component } ] ) => (
-							<Route
-								key={ path }
-								path={ path }
-								element={ <Component /> }
-							/>
-						) ) }
+						{ moduleRoutes.map( ( route ) => {
+							const Component = route.element;
+							const normalized = route.path.replace( /^\/+/, '' );
+							return (
+								<Route
+									key={ normalized }
+									path={ normalized }
+									element={ <Component /> }
+								/>
+							);
+						} ) }
 					</Route>
 				</Routes>
 			</Router>

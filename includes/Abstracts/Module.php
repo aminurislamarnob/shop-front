@@ -207,9 +207,12 @@ abstract class Module {
 	/**
 	 * Enqueue the module's admin React bundle on the StoreSuite settings page.
 	 *
-	 * Default behaviour: if `assets/build/modules/<slug>/script.js` exists,
-	 * enqueue it declaring `storesuite-admin-page` as a dependency so the core
-	 * registry (`window.StoreSuite`) is available when the module bundle runs.
+	 * Default behaviour: if `modules/<slug>/assets/build/script.js` exists,
+	 * enqueue it declaring `storesuite-admin-page` as a dependency so the
+	 * `storesuite_admin_routes` hooks filter is wired before the module bundle
+	 * runs `addFilter`. The build artifact lives inside the module's own
+	 * directory (not under the top-level `assets/build/`) so a module is
+	 * portable as a standalone unit — matches Dokan Pro's distribution model.
 	 *
 	 * Subclasses can override to add CSS, change handles, or skip when the
 	 * module has no admin React surface. The Assets class invokes this on
@@ -219,9 +222,9 @@ abstract class Module {
 	 * @return void
 	 */
 	public function enqueue_admin_assets() {
-		$relative   = '/assets/build/modules/' . $this->get_slug() . '/script.js';
-		$file       = STORESUITE_DIR . $relative;
-		$asset_file = STORESUITE_DIR . '/assets/build/modules/' . $this->get_slug() . '/script.asset.php';
+		$relative   = 'modules/' . $this->get_slug() . '/assets/build/script.js';
+		$file       = STORESUITE_DIR . '/' . $relative;
+		$asset_file = STORESUITE_DIR . '/modules/' . $this->get_slug() . '/assets/build/script.asset.php';
 
 		if ( ! file_exists( $file ) ) {
 			return;
@@ -237,7 +240,7 @@ abstract class Module {
 		$deps = array_values(
 			array_unique(
 				array_merge(
-					array( 'storesuite-admin-page' ),
+					array( 'storesuite-admin-page', 'wp-hooks' ),
 					(array) ( $asset['dependencies'] ?? array() )
 				)
 			)
@@ -245,7 +248,7 @@ abstract class Module {
 
 		wp_enqueue_script(
 			'storesuite-module-' . $this->get_slug(),
-			STORESUITE_PLUGIN_ASSET . '/build/modules/' . $this->get_slug() . '/script.js',
+			STORESUITE_PLUGIN_URL . $relative,
 			$deps,
 			$asset['version'] ?? null,
 			true
