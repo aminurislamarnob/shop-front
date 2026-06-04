@@ -948,18 +948,12 @@
     text-decoration: none;
 }
 
-.storesuite-module-settings-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
-
 .storesuite-module-settings-back {
+    display: inline-block;
+    margin-bottom: 12px;
     font-size: 13px;
     color: #2271b1;
     text-decoration: none;
-    white-space: nowrap;
 }
 
 .storesuite-module-settings-back:hover {

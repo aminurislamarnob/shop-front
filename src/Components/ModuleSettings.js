@@ -224,26 +224,21 @@ const ModuleSettings = () => {
 			className="storesuite-section storesuite-section--narrow"
 			id="storesuite-module-settings"
 		>
+			<Link to="/modules" className="storesuite-module-settings-back">
+				{ __( '← Back to modules', 'storesuite' ) }
+			</Link>
 			<form onSubmit={ handleSubmit }>
 				<Card className="storesuite-form-header-card">
-					<CardBody className="storesuite-form-section-header storesuite-module-settings-header">
-						<div>
-							<h3 className="storesuite-section-title">
-								{ __( 'Module Settings', 'storesuite' ) }
-							</h3>
-							<p className="storesuite-section-description">
-								{ __(
-									'Configure how this module behaves on your store.',
-									'storesuite'
-								) }
-							</p>
-						</div>
-						<Link
-							to="/modules"
-							className="storesuite-module-settings-back"
-						>
-							{ __( '← Back to modules', 'storesuite' ) }
-						</Link>
+					<CardBody className="storesuite-form-section-header">
+						<h3 className="storesuite-section-title">
+							{ __( 'Module Settings', 'storesuite' ) }
+						</h3>
+						<p className="storesuite-section-description">
+							{ __(
+								'Configure how this module behaves on your store.',
+								'storesuite'
+							) }
+						</p>
 					</CardBody>
 				</Card>
 				<Card>
