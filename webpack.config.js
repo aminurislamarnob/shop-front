@@ -1,5 +1,21 @@
 const path = require( 'path' );
+const glob = require( 'glob' );
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
+
+// Discover every module's React entry point at `modules/<slug>/src/index.js`.
+// Each is emitted to `assets/build/modules/<slug>/script.js`, parallel to
+// `assets/build/admin/script.js`, so PHP can enqueue it predictably.
+const moduleEntries = glob
+	.sync( './modules/*/src/index.js' )
+	.reduce( ( acc, entry ) => {
+		const match = entry.match( /^\.\/modules\/([^/]+)\// );
+		if ( ! match ) {
+			return acc;
+		}
+		const slug = match[ 1 ];
+		acc[ `modules/${ slug }/script` ] = path.resolve( __dirname, entry );
+		return acc;
+	}, {} );
 
 module.exports = {
 	...defaultConfig,
@@ -7,6 +23,7 @@ module.exports = {
 		'admin/script':    './src/admin.js',
 		'analytics/index': './src/analytics/index.js',
 		'dashboard/index': './src/dashboard/index.js',
+		...moduleEntries,
 	},
 	output: {
 		...defaultConfig.output,

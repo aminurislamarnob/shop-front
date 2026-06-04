@@ -1,6 +1,18 @@
 /**
- * WordPress dependencies
+ * Staff Manager — top-level admin screen.
+ *
+ * Lives inside the module (not in core `src/`) so the React surface is
+ * colocated with the PHP that powers it. Deactivating the module also
+ * prevents this bundle from being enqueued, so deactivated modules ship zero
+ * JS to the browser.
+ *
+ * Imports avoid `react-router-dom` and `Components/icons` so the module
+ * bundle stays small — react-router-dom would otherwise be duplicated, and
+ * core's `icons.js` lives outside the module.
+ *
+ * @package StoreSuite
  */
+
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
@@ -15,12 +27,10 @@ import {
 import apiFetch from '@wordpress/api-fetch';
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
-import { Link } from 'react-router-dom';
-
-/**
- * Internal dependencies
- */
-import { CheckBadgeIcon, ExclamationCircleIcon } from './icons';
+import {
+	CheckBadgeIcon,
+	ExclamationCircleIcon,
+} from '@heroicons/react/24/outline';
 
 const SCREEN_PATH = '/storesuite/v1/staff-manager/screen';
 
@@ -133,9 +143,9 @@ const StaffManagerAdmin = () => {
 							'These options control the dedicated Staff workspace. The tab itself appears in the top nav whenever the Staff Manager module is active — toggle it from the',
 							'storesuite'
 						) }{ ' ' }
-						<Link to="/modules">
+						<a href="#/modules">
 							{ __( 'Modules tab', 'storesuite' ) }
-						</Link>
+						</a>
 						.
 					</p>
 				</CardBody>

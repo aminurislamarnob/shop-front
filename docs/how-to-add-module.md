@@ -25,7 +25,7 @@ plugin. The pieces a fully-featured module can use:
 | Dashboard sidebar menu item | `storesuite_dashboard_menus` filter | optional |
 | Top-level admin tab | `get_admin_tabs()` + React route | optional |
 | Module-owned REST routes | dedicated controller registered on `rest_api_init` | optional |
-| Module-owned React screen | `src/Components/<Name>Admin.js` + route in `src/admin.js` | optional |
+| Module-owned React screen | `modules/<slug>/src/index.js` + `modules/<slug>/src/admin/<Name>Admin.js` | optional |
 
 Skip any piece the module doesn't need. None of them — except the bootstrap
 and the `Module` class — are mandatory.
@@ -411,30 +411,66 @@ class ScreenController extends WP_REST_Controller {
 }
 ```
 
-### 3.6 React top-level screen — `src/Components/CustomerManagerAdmin.js`
+### 3.6 React screen (module-isolated)
 
-Skip if the module doesn't inject a top-level tab. Standard shape: fetch on
-mount, render a form, POST on submit, snackbar on success/error.
+Module React code lives **inside the module**, not in core `src/`. Webpack
+discovers every `modules/<slug>/src/index.js` at build time and emits a
+separate bundle to `assets/build/modules/<slug>/script.js`. The abstract
+`Module::enqueue_admin_assets()` enqueues it when the module is active and
+the StoreSuite settings page is the current screen.
 
-See `src/Components/StaffManagerAdmin.js` for a complete reference. Match its
-structure for consistency — two `Card`s (header + body), `useState` for the
-form values, `apiFetch` against the module's REST endpoint, `useDispatch(
-noticesStore )` for snackbars.
+**Layout on disk:**
 
-### 3.7 React route registration — `src/admin.js`
-
-Add the import and the `<Route>` inside the existing `<Routes>` block.
-
-```jsx
-import CustomerManagerAdmin from './Components/CustomerManagerAdmin';
-
-// inside <Route path="/" element={ <Layout /> }>
-<Route path="customer-manager" element={ <CustomerManagerAdmin /> } />
+```
+modules/customer-manager/
+├── module.php
+├── includes/                   # PHP
+└── src/
+    ├── index.js                # entry — registers React screens
+    └── admin/
+        └── CustomerManagerAdmin.js
 ```
 
-The route is always registered, but the corresponding tab only renders while
-the module is active — `Layout.js` fetches the modules list and merges every
-active module's `admin_tabs` into the nav.
+**`modules/customer-manager/src/index.js`:**
+
+```js
+import CustomerManagerAdmin from './admin/CustomerManagerAdmin';
+
+if (
+    window.StoreSuite &&
+    typeof window.StoreSuite.registerScreens === 'function'
+) {
+    window.StoreSuite.registerScreens( 'customer-manager', {
+        '/customer-manager': CustomerManagerAdmin,
+    } );
+}
+```
+
+**`modules/customer-manager/src/admin/CustomerManagerAdmin.js`** —
+standard React component. See `modules/staff-manager/src/admin/StaffManagerAdmin.js`
+for a complete reference (fetch on mount, form, snackbar on save).
+
+**Imports the module bundle may use freely:**
+
+- `@wordpress/element`, `@wordpress/i18n`, `@wordpress/components`,
+  `@wordpress/api-fetch`, `@wordpress/data`, `@wordpress/notices` — all
+  externalized to `window.wp.*` by `@wordpress/scripts`.
+- `@heroicons/react/24/outline` — bundled and tree-shaken (~1 KB per icon).
+- React, ReactDOM — externalized.
+
+**Imports to avoid** (they would bloat the bundle or break):
+
+- `react-router-dom` — not externalized; use plain `<a href="#/path">` for
+  intra-app navigation in module screens.
+- Anything from core `src/` — module bundles cannot import across the
+  boundary. Copy the snippet or expose what you need on `window.StoreSuite`.
+
+### 3.7 React route registration
+
+**Not needed.** Module routes register themselves at runtime via
+`window.StoreSuite.registerScreens()`. Core `src/admin.js` reads the registry
+when the App mounts and renders a `<Route>` for each entry. Adding a new
+module never requires editing `src/admin.js`.
 
 ---
 
@@ -446,6 +482,12 @@ active module's `admin_tabs` into the nav.
   activate/deactivate and the schema-driven Configure form.
 - `includes/Abstracts/Module.php` — only edit if you're proposing a new
   cross-cutting extension point.
+- `includes/Assets.php` — active modules' admin bundles are enqueued
+  automatically via `Module::enqueue_admin_assets()`.
+- `src/admin.js` — module routes register themselves at runtime via
+  `window.StoreSuite.registerScreens()`.
+- `webpack.config.js` — `modules/*/src/index.js` is auto-discovered as a
+  webpack entry.
 
 If you find yourself editing any of those for a single module, stop and
 reconsider — there is almost certainly a hook you can use instead.

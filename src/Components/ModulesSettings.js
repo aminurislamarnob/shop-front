@@ -91,6 +91,16 @@ const ModulesSettings = () => {
 				// module-injected entries appear or disappear immediately.
 				window.dispatchEvent( new CustomEvent( MODULES_CHANGED_EVENT ) );
 
+				// Module bundles are enqueued by PHP on page load, so newly
+				// activated modules' React screens aren't registered with the
+				// router yet. Reload after a brief delay so the snackbar gets
+				// to render and any newly-routable tab actually works on
+				// first click. Deactivation also reloads — pages may still
+				// link to a screen whose bundle is no longer present.
+				if ( module.has_settings || ( module.admin_tabs?.length ?? 0 ) > 0 ) {
+					window.setTimeout( () => window.location.reload(), 600 );
+				}
+
 				createSuccessNotice(
 					nextActive
 						? sprintf(

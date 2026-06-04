@@ -203,4 +203,52 @@ abstract class Module {
 	public function get_admin_tabs() {
 		return array();
 	}
+
+	/**
+	 * Enqueue the module's admin React bundle on the StoreSuite settings page.
+	 *
+	 * Default behaviour: if `assets/build/modules/<slug>/script.js` exists,
+	 * enqueue it declaring `storesuite-admin-page` as a dependency so the core
+	 * registry (`window.StoreSuite`) is available when the module bundle runs.
+	 *
+	 * Subclasses can override to add CSS, change handles, or skip when the
+	 * module has no admin React surface. The Assets class invokes this on
+	 * `admin_enqueue_scripts` only when the StoreSuite settings page is the
+	 * current screen AND the module is active.
+	 *
+	 * @return void
+	 */
+	public function enqueue_admin_assets() {
+		$relative   = '/assets/build/modules/' . $this->get_slug() . '/script.js';
+		$file       = STORESUITE_DIR . $relative;
+		$asset_file = STORESUITE_DIR . '/assets/build/modules/' . $this->get_slug() . '/script.asset.php';
+
+		if ( ! file_exists( $file ) ) {
+			return;
+		}
+
+		$asset = file_exists( $asset_file )
+			? include $asset_file
+			: array(
+				'dependencies' => array(),
+				'version'      => filemtime( $file ),
+			);
+
+		$deps = array_values(
+			array_unique(
+				array_merge(
+					array( 'storesuite-admin-page' ),
+					(array) ( $asset['dependencies'] ?? array() )
+				)
+			)
+		);
+
+		wp_enqueue_script(
+			'storesuite-module-' . $this->get_slug(),
+			STORESUITE_PLUGIN_ASSET . '/build/modules/' . $this->get_slug() . '/script.js',
+			$deps,
+			$asset['version'] ?? null,
+			true
+		);
+	}
 }
