@@ -180,6 +180,7 @@ abstract class Module {
 	 * @return array Saved values.
 	 */
 	public function update_settings( array $data ) {
+		unset( $data );
 		return $this->get_settings();
 	}
 
@@ -187,6 +188,7 @@ abstract class Module {
 	 * Top-level navigation tabs the module wants to inject into the StoreSuite
 	 * admin app while it is active. Each entry has the shape:
 	 *
+	 * Array shape:
 	 *   array(
 	 *       'to'    => '/staff-manager',          // React Router path
 	 *       'label' => __( 'Staff', 'storesuite' ),
