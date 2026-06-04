@@ -27,6 +27,7 @@ import {
 	ExclamationCircleIcon,
 	PuzzlePieceIcon,
 } from './icons';
+import { MODULES_CHANGED_EVENT } from './Layout';
 
 const MODULES_PATH = '/storesuite/v1/modules';
 
@@ -85,6 +86,10 @@ const ModulesSettings = () => {
 							: item
 					)
 				);
+
+				// Tell the Layout to refresh its dynamic top-nav tabs so any
+				// module-injected entries appear or disappear immediately.
+				window.dispatchEvent( new CustomEvent( MODULES_CHANGED_EVENT ) );
 
 				createSuccessNotice(
 					nextActive

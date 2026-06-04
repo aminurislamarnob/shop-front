@@ -973,3 +973,31 @@
     width: 14px;
     height: 14px;
 }
+
+/* ========== Staff Manager admin landing ========== */
+.storesuite-staff-admin-intro {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.storesuite-staff-admin-intro svg {
+    width: 32px;
+    height: 32px;
+    color: #2271b1;
+    flex-shrink: 0;
+}
+
+.storesuite-staff-admin-intro h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.storesuite-staff-admin-intro p {
+    margin: 0;
+    font-size: 13px;
+    color: #50575e;
+    line-height: 1.5;
+}

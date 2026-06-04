@@ -137,6 +137,7 @@ class ModulesController extends WP_REST_Controller {
 			'version'      => $module->get_version(),
 			'active'       => $manager->is_active( $slug ),
 			'has_settings' => (bool) $module->has_settings(),
+			'admin_tabs'   => array_values( (array) $module->get_admin_tabs() ),
 		);
 	}
 

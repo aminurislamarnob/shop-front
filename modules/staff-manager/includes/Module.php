@@ -140,4 +140,20 @@ class Module extends BaseModule {
 	public function update_settings( array $data ) {
 		return Settings::update( $data );
 	}
+
+	/**
+	 * Inject a top-level "Staff" tab into the StoreSuite admin navigation
+	 * while this module is active. The matching React route lives in
+	 * `src/admin.js` and renders `StaffManagerAdmin`.
+	 *
+	 * @return array
+	 */
+	public function get_admin_tabs() {
+		return array(
+			array(
+				'to'    => '/staff-manager',
+				'label' => __( 'Staff', 'storesuite' ),
+			),
+		);
+	}
 }

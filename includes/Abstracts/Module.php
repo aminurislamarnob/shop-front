@@ -182,4 +182,23 @@ abstract class Module {
 	public function update_settings( array $data ) {
 		return $this->get_settings();
 	}
+
+	/**
+	 * Top-level navigation tabs the module wants to inject into the StoreSuite
+	 * admin app while it is active. Each entry has the shape:
+	 *
+	 *   array(
+	 *       'to'    => '/staff-manager',          // React Router path
+	 *       'label' => __( 'Staff', 'storesuite' ),
+	 *   )
+	 *
+	 * The React app fetches the modules list, picks up active modules' tabs,
+	 * and renders them after the built-in tabs. The matching React route must
+	 * be registered in `admin.js`.
+	 *
+	 * @return array
+	 */
+	public function get_admin_tabs() {
+		return array();
+	}
 }

@@ -19,6 +19,7 @@ import GeneralSettings from './Components/GeneralSettings';
 import ModulesSettings from './Components/ModulesSettings';
 import ModuleSettings from './Components/ModuleSettings';
 import PaginationSettings from './Components/PaginationSettings';
+import StaffManagerAdmin from './Components/StaffManagerAdmin';
 
 const App = () => (
 	<SettingsProvider>
@@ -38,6 +39,10 @@ const App = () => (
 					<Route
 						path="modules/:slug"
 						element={ <ModuleSettings /> }
+					/>
+					<Route
+						path="staff-manager"
+						element={ <StaffManagerAdmin /> }
 					/>
 				</Route>
 			</Routes>
