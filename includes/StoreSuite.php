@@ -87,6 +87,22 @@ final class StoreSuite {
 	}
 
 	/**
+	 * Report whether a container service is set.
+	 *
+	 * Companion to `__get()`: PHP never consults `__get()` for `isset()`, so
+	 * without this method `isset( pluginizelab_storesuite()->foo )` always
+	 * returns false for container services. Backing it here lets callers guard
+	 * on a service before reading it.
+	 *
+	 * @param string $prop Container key.
+	 *
+	 * @return bool
+	 */
+	public function __isset( $prop ) {
+		return array_key_exists( $prop, $this->container );
+	}
+
+	/**
 	 * Placeholder for activation function
 	 *
 	 * Nothing is being called here yet.
