@@ -93,7 +93,19 @@ const Layout = () => {
 		};
 	}, [ refreshModuleTabs ] );
 
-	const tabs = [ ...BUILT_IN_TABS, ...moduleTabs ];
+	// Insert module-injected tabs immediately before the Modules tab so the
+	// Modules entry stays anchored to the right edge of the nav.
+	const modulesIndex = BUILT_IN_TABS.findIndex(
+		( tab ) => tab.to === '/modules'
+	);
+	const tabs =
+		modulesIndex === -1
+			? [ ...BUILT_IN_TABS, ...moduleTabs ]
+			: [
+					...BUILT_IN_TABS.slice( 0, modulesIndex ),
+					...moduleTabs,
+					...BUILT_IN_TABS.slice( modulesIndex ),
+			  ];
 
 	return (
 		<div className="storesuite-admin-app">
