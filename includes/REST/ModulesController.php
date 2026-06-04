@@ -137,8 +137,68 @@ class ModulesController extends WP_REST_Controller {
 			'version'      => $module->get_version(),
 			'active'       => $manager->is_active( $slug ),
 			'has_settings' => (bool) $module->has_settings(),
-			'admin_tabs'   => array_values( (array) $module->get_admin_tabs() ),
+			'admin_tabs'   => $this->sanitize_admin_tabs( $module->get_admin_tabs() ),
 		);
+	}
+
+	/**
+	 * Whitelist module-provided admin tab entries before they cross the
+	 * REST boundary into the React app.
+	 *
+	 * Third-party modules can return arbitrary shapes from `get_admin_tabs()`.
+	 * Anything that isn't a `{ to, label }` pair with safe values is dropped
+	 * silently so the nav can never render junk or be tricked into routing to
+	 * an external URL.
+	 *
+	 * Rules per entry:
+	 *  - Must be an array with non-empty string `to` and `label`.
+	 *  - `to` must start with a single `/` (React Router relative path); paths
+	 *    starting with `//` are rejected to prevent protocol-relative escapes.
+	 *  - `to` must not contain HTML-sensitive characters (`<`, `>`, `"`, `'`).
+	 *  - Only the `to` and `label` keys survive — any extras are dropped.
+	 *
+	 * @param mixed $tabs Raw value returned by `Module::get_admin_tabs()`.
+	 * @return array Sanitized list of `{ to, label }` entries.
+	 */
+	private function sanitize_admin_tabs( $tabs ) {
+		if ( ! is_array( $tabs ) ) {
+			return array();
+		}
+
+		$clean = array();
+
+		foreach ( $tabs as $tab ) {
+			if ( ! is_array( $tab ) ) {
+				continue;
+			}
+
+			$to    = isset( $tab['to'] ) ? trim( (string) $tab['to'] ) : '';
+			$label = isset( $tab['label'] ) ? trim( (string) $tab['label'] ) : '';
+
+			if ( '' === $to || '' === $label ) {
+				continue;
+			}
+
+			// React Router paths must be relative and rooted. Reject
+			// protocol-relative (`//evil.example`), absolute URLs, fragments,
+			// and queries — the SPA owns the hash, not the path.
+			if ( '/' !== $to[0] || 0 === strpos( $to, '//' ) ) {
+				continue;
+			}
+
+			// Defense in depth — labels are React-escaped on render, but a
+			// `to` value embedded in markup elsewhere shouldn't carry HTML.
+			if ( preg_match( '#[<>"\']#', $to ) ) {
+				continue;
+			}
+
+			$clean[] = array(
+				'to'    => $to,
+				'label' => $label,
+			);
+		}
+
+		return array_values( $clean );
 	}
 
 	/**
