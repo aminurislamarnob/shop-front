@@ -261,7 +261,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 									<label for="product_thumbnail_id" class="storesuite-ai-image-label">
 										<?php esc_html_e( 'Prouduct Image', 'storesuite' ); ?>
 										<?php if ( $storesuite_ai_image_on ) : ?>
-											<button type="button" class="storesuite-ai-image-generate" title="<?php esc_attr_e( 'Generate image with AI', 'storesuite' ); ?>" aria-label="<?php esc_attr_e( 'Generate image with AI', 'storesuite' ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'AI', 'storesuite' ); ?></button>
+											<button type="button" class="storesuite-ai-image-generate" data-target="featured" title="<?php esc_attr_e( 'Generate image with AI', 'storesuite' ); ?>" aria-label="<?php esc_attr_e( 'Generate image with AI', 'storesuite' ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'AI', 'storesuite' ); ?></button>
 										<?php endif; ?>
 									</label>
 									<?php
@@ -289,7 +289,12 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 									</div>
 								</div>
 								<div class="col-md-9">
-									<label for="product_image_gallery"><?php esc_html_e( 'Prouduct Gallery Images', 'storesuite' ); ?></label>
+									<label for="product_image_gallery" class="storesuite-ai-image-label">
+										<?php esc_html_e( 'Prouduct Gallery Images', 'storesuite' ); ?>
+										<?php if ( $storesuite_ai_image_on ) : ?>
+											<button type="button" class="storesuite-ai-image-generate" data-target="gallery" title="<?php esc_attr_e( 'Generate gallery image with AI', 'storesuite' ); ?>" aria-label="<?php esc_attr_e( 'Generate gallery image with AI', 'storesuite' ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'AI', 'storesuite' ); ?></button>
+										<?php endif; ?>
+									</label>
 									<?php
 									$gallery_ids_string = '';
 									$gallery_urls       = array();

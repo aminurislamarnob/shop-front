@@ -5473,14 +5473,14 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
 }
 /* Small "AI" image button beside the Product Image label. */
 .my-storesuite-container label.storesuite-ai-image-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  gap: 10px;
 }
 .my-storesuite-container .storesuite-ai-image-generate {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-left: auto;
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 500;

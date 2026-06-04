@@ -623,6 +623,7 @@
 			);
 			var $imageInsert = $imageModal.find( '.storesuite-ai-image-insert' );
 			var imageToken = ''; // Server-side handle to the last generated image.
+			var imageTarget = 'featured'; // Where Insert puts it: featured or gallery.
 
 			if ( sharedModal && $imageModal.length ) {
 				sharedModal.initOverlay( $imageModal, {
@@ -713,7 +714,50 @@
 				$( '#product_thumbnail_id' ).trigger( 'change' );
 			}
 
-			// Label button: open the image modal fresh.
+			// Append the inserted attachment to the product gallery, mirroring the
+			// manual gallery upload flow.
+			function appendGalleryImage( attachmentId, url ) {
+				var idStr = String( attachmentId );
+				var ids = $.map(
+					( $( '#product_image_gallery' ).val() || '' ).split( ',' ),
+					function ( value ) {
+						value = $.trim( value );
+						return value ? value : null;
+					}
+				);
+				var urls = $.map(
+					( $( '#product_image_gallery_url' ).val() || '' ).split(
+						','
+					),
+					function ( value ) {
+						value = $.trim( value );
+						return value ? value : null;
+					}
+				);
+				if ( $.inArray( idStr, ids ) !== -1 ) {
+					return;
+				}
+				ids.push( idStr );
+				urls.push( url );
+				$( '#product_gallery_img' ).append(
+					'<div class="preview-image-box"><a href="#" class="remove-gallery-image" data-id="' +
+						idStr +
+						'">×</a><img src="' +
+						url +
+						'" alt="" /></div>'
+				);
+				$( '#product_image_gallery' ).val( ids.join( ',' ) );
+				$( '#product_image_gallery_url' ).val( urls.join( ',' ) );
+				$( '#product_image_gallery' ).trigger( 'change' );
+				$( '#product-gallery-images' ).addClass(
+					'sm-gallery-image-uploader'
+				);
+				$( '.product-gallery-images-wrapper' ).removeClass(
+					'gallery-has-no-image'
+				);
+			}
+
+			// Label button: open the image modal fresh for the clicked target.
 			$( document ).on(
 				'click',
 				'.storesuite-ai-image-generate',
@@ -723,6 +767,10 @@
 					if ( ! sharedModal || ! $imageModal.length ) {
 						return;
 					}
+					imageTarget =
+						$( this ).data( 'target' ) === 'gallery'
+							? 'gallery'
+							: 'featured';
 					resetImageModal();
 					sharedModal.open( $imageModal );
 				}
@@ -755,10 +803,17 @@
 				} )
 					.done( function ( response ) {
 						if ( response && response.success && response.data ) {
-							applyProductImage(
-								response.data.id,
-								response.data.url
-							);
+							if ( 'gallery' === imageTarget ) {
+								appendGalleryImage(
+									response.data.id,
+									response.data.url
+								);
+							} else {
+								applyProductImage(
+									response.data.id,
+									response.data.url
+								);
+							}
 							if ( sharedModal && $imageModal.length ) {
 								sharedModal.close( $imageModal );
 							}
