@@ -33,6 +33,45 @@ class ProductImageAI {
 	public function __construct() {
 		add_action( 'wp_ajax_storesuite_generate_product_image', array( $this, 'handle_generate' ) );
 		add_action( 'wp_ajax_storesuite_insert_product_image', array( $this, 'handle_insert' ) );
+		add_action( 'storesuite_product_form_field_label', array( $this, 'render_field_button' ) );
+		add_action( 'storesuite_product_form_after', array( $this, 'render_modal' ) );
+	}
+
+	/**
+	 * Render the AI image generation modal for the product form.
+	 *
+	 * Hooked on `storesuite_product_form_after`; only outputs when image
+	 * generation is available, so the template need not gate it.
+	 */
+	public function render_modal() {
+		if ( ! self::is_supported() ) {
+			return;
+		}
+
+		storesuite_get_template_part( 'products/ai-image-modal' );
+	}
+
+	/**
+	 * Render the inline "AI" image button inside a product image field label.
+	 *
+	 * Hooked on `storesuite_product_form_field_label`. Only renders for the image
+	 * targets this class supports and only when image generation is available, so
+	 * the template does not need to know whether AI is configured.
+	 *
+	 * @param string $field Field key passed by the template.
+	 */
+	public function render_field_button( $field ) {
+		$labels = array(
+			'featured' => __( 'Generate image with AI', 'storesuite' ),
+			'gallery'  => __( 'Generate gallery image with AI', 'storesuite' ),
+		);
+
+		if ( ! isset( $labels[ $field ] ) || ! self::is_supported() ) {
+			return;
+		}
+		?>
+		<button type="button" class="storesuite-ai-image-generate" data-target="<?php echo esc_attr( $field ); ?>" title="<?php echo esc_attr( $labels[ $field ] ); ?>" aria-label="<?php echo esc_attr( $labels[ $field ] ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'AI', 'storesuite' ); ?></button>
+		<?php
 	}
 
 	/**

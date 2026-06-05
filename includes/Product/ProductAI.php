@@ -34,6 +34,40 @@ class ProductAI {
 		add_action( 'wp_ajax_storesuite_generate_product_field', array( $this, 'handle_generate' ) );
 		add_action( 'wp_ajax_storesuite_generate_product_bundle', array( $this, 'handle_generate_bundle' ) );
 		add_action( 'storesuite_dashboard_title_after', array( $this, 'render_bundle_launcher' ) );
+		add_action( 'storesuite_product_form_field_label', array( $this, 'render_field_button' ) );
+		add_action( 'storesuite_product_form_after', array( $this, 'render_modals' ) );
+	}
+
+	/**
+	 * Render the AI suggestion and prompt modals for the product form.
+	 *
+	 * Hooked on `storesuite_product_form_after`; only outputs when text
+	 * generation is available, so the template need not gate it.
+	 */
+	public function render_modals() {
+		if ( ! self::is_text_supported() ) {
+			return;
+		}
+
+		storesuite_get_template_part( 'products/ai-text-modals' );
+	}
+
+	/**
+	 * Render the inline "Generate with AI" button inside a product field label.
+	 *
+	 * Hooked on `storesuite_product_form_field_label`. Only renders for the text
+	 * fields this class supports and only when text generation is available, so
+	 * the template does not need to know whether AI is configured.
+	 *
+	 * @param string $field Field key passed by the template.
+	 */
+	public function render_field_button( $field ) {
+		if ( ! isset( self::FIELDS[ $field ] ) || ! self::is_text_supported() ) {
+			return;
+		}
+		?>
+		<button type="button" class="storesuite-ai-generate" data-field="<?php echo esc_attr( $field ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Generate with AI', 'storesuite' ); ?></button>
+		<?php
 	}
 
 	/**

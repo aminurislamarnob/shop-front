@@ -12,12 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Whether AI copy generation is available (core AI Client + a configured provider).
-$storesuite_ai_on = \PluginizeLab\StoreSuite\Product\ProductAI::is_text_supported();
-
-// Whether AI image generation is available (provider must support images).
-$storesuite_ai_image_on = \PluginizeLab\StoreSuite\Product\ProductImageAI::is_supported();
-
 // Initialize variables with default values.
 $product_id      = 0;
 $product         = null;
@@ -203,10 +197,8 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 				<div class="storesuite-card storesuite-mb-24">
 					<div class="storesuite-card-content">
 					<div class="storesuite-form-group">
-						<label for="product_title"><?php esc_html_e( 'Product Title', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></strong>
-							<?php if ( $storesuite_ai_on ) : ?>
-								<button type="button" class="storesuite-ai-generate" data-field="title"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Generate with AI', 'storesuite' ); ?></button>
-							<?php endif; ?>
+						<label for="product_title"><?php esc_html_e( 'Product Title', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span>
+							<?php do_action( 'storesuite_product_form_field_label', 'title' ); ?>
 						</label>
 						<input type="text" class="storesuite-form-control" id="product_title" name="product_title" placeholder="<?php echo esc_attr__( 'Product name', 'storesuite' ); ?>" value="<?php echo esc_attr( $product_title ); ?>">
 					</div>
@@ -224,10 +216,8 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 						<small class="storesuite-form-text"><?php esc_html_e( 'It is usually all lowercase and contains only letters, numbers, and hyphens.', 'storesuite' ); ?></small>
 					</div>
 					<div class="storesuite-form-group">
-						<label for="product_description"><?php esc_html_e( 'Product Description', 'storesuite' ); ?></strong>
-							<?php if ( $storesuite_ai_on ) : ?>
-								<button type="button" class="storesuite-ai-generate" data-field="description"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Generate with AI', 'storesuite' ); ?></button>
-							<?php endif; ?>
+						<label for="product_description"><?php esc_html_e( 'Product Description', 'storesuite' ); ?>
+							<?php do_action( 'storesuite_product_form_field_label', 'description' ); ?>
 						</label>
 							<?php
 							$editor_id = 'product_description';
@@ -248,10 +238,8 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 							?>
 						</div>
 						<div class="storesuite-form-group">
-							<label for="product_short_description"><?php esc_html_e( 'Prduct Short Description', 'storesuite' ); ?></strong>
-								<?php if ( $storesuite_ai_on ) : ?>
-									<button type="button" class="storesuite-ai-generate" data-field="short_description"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Generate with AI', 'storesuite' ); ?></button>
-								<?php endif; ?>
+							<label for="product_short_description"><?php esc_html_e( 'Product Short Description', 'storesuite' ); ?>
+								<?php do_action( 'storesuite_product_form_field_label', 'short_description' ); ?>
 							</label>
 							<textarea class="storesuite-form-control" id="product_short_description" name="product_short_description" placeholder="<?php echo esc_attr__( 'Product short description', 'storesuite' ); ?>" rows="4"><?php echo esc_textarea( $product_excerpt ); ?></textarea>
 						</div>
@@ -260,9 +248,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 								<div class="col-md-3">
 									<label for="product_thumbnail_id" class="storesuite-ai-image-label">
 										<?php esc_html_e( 'Prouduct Image', 'storesuite' ); ?>
-										<?php if ( $storesuite_ai_image_on ) : ?>
-											<button type="button" class="storesuite-ai-image-generate" data-target="featured" title="<?php esc_attr_e( 'Generate image with AI', 'storesuite' ); ?>" aria-label="<?php esc_attr_e( 'Generate image with AI', 'storesuite' ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'AI', 'storesuite' ); ?></button>
-										<?php endif; ?>
+										<?php do_action( 'storesuite_product_form_field_label', 'featured' ); ?>
 									</label>
 									<?php
 									$thumbnail_url = '';
@@ -291,9 +277,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 								<div class="col-md-9">
 									<label for="product_image_gallery" class="storesuite-ai-image-label">
 										<?php esc_html_e( 'Prouduct Gallery Images', 'storesuite' ); ?>
-										<?php if ( $storesuite_ai_image_on ) : ?>
-											<button type="button" class="storesuite-ai-image-generate" data-target="gallery" title="<?php esc_attr_e( 'Generate gallery image with AI', 'storesuite' ); ?>" aria-label="<?php esc_attr_e( 'Generate gallery image with AI', 'storesuite' ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'AI', 'storesuite' ); ?></button>
-										<?php endif; ?>
+										<?php do_action( 'storesuite_product_form_field_label', 'gallery' ); ?>
 									</label>
 									<?php
 									$gallery_ids_string = '';
@@ -768,7 +752,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 							<?php endif; ?>
 							<div class="col-md-12 hide_if_external hide_if_grouped">
 								<div class="storesuite-form-group">
-									<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'storesuite' ); ?></strong></label>
+									<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'storesuite' ); ?></label>
 									<textarea class="storesuite-form-control" id="_purchase_note" name="_purchase_note" rows="2" cols="20"><?php echo esc_textarea( $purchase_note ); ?></textarea>
 								</div>
 							</div>
@@ -894,128 +878,12 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 		</div>
 	</form>
 
-	<?php if ( $storesuite_ai_on ) : ?>
-	<div id="storesuite-ai-modal" class="storesuite-product-bulk-modal-overlay" hidden aria-hidden="true">
-		<div
-			class="storesuite-product-bulk-modal-dialog"
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="storesuite-ai-modal-title"
-			tabindex="-1"
-		>
-			<div class="storesuite-product-bulk-modal-header">
-				<h2 id="storesuite-ai-modal-title" class="storesuite-product-bulk-modal-title">
-					<?php esc_html_e( 'AI suggestion', 'storesuite' ); ?>
-				</h2>
-				<button type="button" class="storesuite-product-bulk-modal-close my-storesuite-button storesuite-button-ghost" aria-label="<?php esc_attr_e( 'Close', 'storesuite' ); ?>">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-						<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
-					</svg>
-				</button>
-			</div>
-			<div class="storesuite-product-bulk-edit-scroll">
-				<div class="storesuite-ai-modal-subhead">
-					<p class="storesuite-ai-modal-subtitle"><?php esc_html_e( 'Review, edit and insert the suggestion or regenerate a new one.', 'storesuite' ); ?></p>
-					<div class="storesuite-ai-modal-pager" hidden>
-						<button type="button" class="storesuite-ai-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
-						<span class="storesuite-ai-pager-status" aria-live="polite">1/1</span>
-						<button type="button" class="storesuite-ai-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
-					</div>
-				</div>
-				<div class="storesuite-form-group">
-					<textarea id="storesuite-ai-modal-text" class="storesuite-form-control" rows="3"></textarea>
-				</div>
-			</div>
-			<div class="storesuite-product-bulk-modal-footer">
-				<button type="button" class="my-storesuite-button storesuite-button-neutral-panel storesuite-ai-regenerate">
-					<?php esc_html_e( 'Regenerate', 'storesuite' ); ?>
-				</button>
-				<button type="button" class="my-storesuite-button storesuite-ai-insert">
-					<?php esc_html_e( 'Insert', 'storesuite' ); ?>
-				</button>
-			</div>
-		</div>
-	</div>
-
-	<div id="storesuite-ai-prompt-modal" class="storesuite-product-bulk-modal-overlay" hidden aria-hidden="true">
-		<div
-			class="storesuite-product-bulk-modal-dialog"
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="storesuite-ai-prompt-title"
-			tabindex="-1"
-		>
-			<div class="storesuite-product-bulk-modal-header">
-				<h2 id="storesuite-ai-prompt-title" class="storesuite-product-bulk-modal-title">
-					<?php esc_html_e( 'Generate a product title', 'storesuite' ); ?>
-				</h2>
-				<button type="button" class="storesuite-product-bulk-modal-close my-storesuite-button storesuite-button-ghost" aria-label="<?php esc_attr_e( 'Close', 'storesuite' ); ?>">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-						<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
-					</svg>
-				</button>
-			</div>
-			<div class="storesuite-product-bulk-edit-scroll">
-				<div class="storesuite-ai-modal-subhead">
-					<p class="storesuite-ai-modal-subtitle"><?php esc_html_e( 'Describe your product with a few keywords to generate a title.', 'storesuite' ); ?></p>
-				</div>
-				<div class="storesuite-form-group">
-					<textarea id="storesuite-ai-prompt-text" class="storesuite-form-control" rows="3" placeholder="<?php esc_attr_e( 'e.g. handmade ceramic coffee mug, 350ml, matte black', 'storesuite' ); ?>"></textarea>
-				</div>
-			</div>
-			<div class="storesuite-product-bulk-modal-footer">
-				<button type="button" class="my-storesuite-button storesuite-button-neutral-panel storesuite-product-bulk-modal-cancel">
-					<?php esc_html_e( 'Cancel', 'storesuite' ); ?>
-				</button>
-				<button type="button" class="my-storesuite-button storesuite-ai-prompt-generate">
-					<?php esc_html_e( 'Generate', 'storesuite' ); ?>
-				</button>
-			</div>
-		</div>
-	</div>
-	<?php endif; ?>
-
-	<?php if ( $storesuite_ai_image_on ) : ?>
-	<div id="storesuite-ai-image-modal" class="storesuite-product-bulk-modal-overlay" hidden aria-hidden="true">
-		<div
-			class="storesuite-product-bulk-modal-dialog"
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="storesuite-ai-image-title"
-			tabindex="-1"
-		>
-			<div class="storesuite-product-bulk-modal-header">
-				<h2 id="storesuite-ai-image-title" class="storesuite-product-bulk-modal-title">
-					<?php esc_html_e( 'Generate product image with AI', 'storesuite' ); ?>
-				</h2>
-				<button type="button" class="storesuite-product-bulk-modal-close my-storesuite-button storesuite-button-ghost" aria-label="<?php esc_attr_e( 'Close', 'storesuite' ); ?>">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-						<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
-					</svg>
-				</button>
-			</div>
-			<div class="storesuite-product-bulk-edit-scroll">
-				<div class="storesuite-ai-modal-subhead">
-					<p class="storesuite-ai-modal-subtitle"><?php esc_html_e( 'Describe the product image you want and AI will create it. Review it, then insert it as the product image.', 'storesuite' ); ?></p>
-				</div>
-				<div class="storesuite-form-group">
-					<textarea id="storesuite-ai-image-prompt" class="storesuite-form-control" rows="3" placeholder="<?php esc_attr_e( 'e.g. a matte black ceramic coffee mug on a light wooden table', 'storesuite' ); ?>"></textarea>
-				</div>
-				<div class="storesuite-ai-image-preview" hidden>
-					<img src="" alt="<?php esc_attr_e( 'AI generated product image preview', 'storesuite' ); ?>" />
-				</div>
-			</div>
-			<div class="storesuite-product-bulk-modal-footer">
-				<button type="button" class="my-storesuite-button storesuite-button-neutral-panel storesuite-ai-image-regenerate" hidden>
-					<?php esc_html_e( 'Regenerate', 'storesuite' ); ?>
-				</button>
-				<button type="button" class="my-storesuite-button storesuite-ai-image-submit">
-					<?php esc_html_e( 'Generate', 'storesuite' ); ?>
-				</button>
-				<button type="button" class="my-storesuite-button storesuite-ai-image-insert" hidden>
-					<?php esc_html_e( 'Insert', 'storesuite' ); ?>
-				</button>
-			</div>
-		</div>
-	</div>
-	<?php endif; ?>
+	<?php
+	/**
+	 * Fires after the product add/edit form.
+	 *
+	 * Use this to render markup that belongs at the page level rather than inside
+	 * the form, such as dialogs or modals.
+	 */
+	do_action( 'storesuite_product_form_after' );
+	?>
