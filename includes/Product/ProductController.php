@@ -18,6 +18,7 @@ class ProductController {
 		add_action( 'storesuite_load_edit_product_template', array( $this, 'load_edit_product_template' ) );
 		add_action( 'storesuite_dashboard_product_add_form', array( $this, 'load_product_form' ) );
 		add_action( 'storesuite_dashboard_product_edit_form', array( $this, 'load_product_edit_form' ) );
+		add_action( 'storesuite_product_icons', array( $this, 'load_product_icons' ) );
 		add_action( 'wp_ajax_storesuite_add_product_action', array( $this, 'handle_add_product' ) );
 		add_action( 'wp_ajax_storesuite_edit_product_action', array( $this, 'handle_edit_product' ) );
 		add_action( 'wp_ajax_storesuite_delete_product', array( $this, 'handle_delete_product' ) );
@@ -78,6 +79,18 @@ class ProductController {
 			'template_type' => 'edit-product',
 		);
 		storesuite_get_template_part( 'products/product-form', '', $template_args );
+	}
+
+	/**
+	 * Render the reusable product SVG icon sprite.
+	 *
+	 * Hooked on `storesuite_product_icons`. The sprite is referenced via
+	 * <use href="#..."> from the product form and its modals.
+	 *
+	 * @return void
+	 */
+	public function load_product_icons() {
+		storesuite_get_template_part( 'products/product-icons' );
 	}
 
 	/**
