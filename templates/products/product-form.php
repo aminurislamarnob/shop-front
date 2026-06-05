@@ -177,13 +177,6 @@ if ( $cogs_is_enabled ) {
 $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 ?>
 <form id="storesuite-add-product" method="POST">
-	<?php
-	/**
-	 * Render the reusable product SVG icon sprite (defined once, referenced via
-	 * <use href="#..."> from the form, its modals and the attribute/variation rows).
-	 */
-	do_action( 'storesuite_product_icons' );
-	?>
 		<div class="row">
 			<div class="col-md-8">
 				<div class="storesuite-card storesuite-mb-24">

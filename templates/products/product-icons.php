@@ -4,8 +4,8 @@
  *
  * Defined once and referenced via <use href="#..."> from the product form,
  * its modals, and the attribute/variation rows, so the (potentially long) icon
- * paths are not repeated per use. Rendered through the `storesuite_product_icons`
- * action hook.
+ * paths are not repeated per use. Loaded by ProductController on the add/edit
+ * product pages via storesuite_get_template_part().
  *
  * @package StoreSuite
  */
