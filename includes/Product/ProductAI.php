@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class ProductAI {
 
+	use AiRequestTrait;
+
 	/**
 	 * Supported fields and how their generated output is sanitized.
 	 *
@@ -79,18 +81,7 @@ class ProductAI {
 	 * @return bool
 	 */
 	public static function is_text_supported() {
-		static $supported = null;
-
-		if ( null !== $supported ) {
-			return $supported;
-		}
-
-		$supported = function_exists( 'wp_ai_client_prompt' )
-			&& function_exists( 'wp_supports_ai' )
-			&& wp_supports_ai()
-			&& wp_ai_client_prompt()->is_supported_for_text_generation();
-
-		return $supported;
+		return self::is_ai_capability_supported( 'is_supported_for_text_generation' );
 	}
 
 	/**
@@ -98,19 +89,10 @@ class ProductAI {
 	 */
 	public function handle_generate() {
 		check_ajax_referer( '_storesuite_ai_', 'nonce' );
-
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
-		}
-
-		if ( ! self::is_text_supported() ) {
-			wp_send_json_error(
-				array(
-					'reason'  => 'unavailable',
-					'message' => __( 'AI generation is not available. Connect an AI provider to use this feature.', 'storesuite' ),
-				)
-			);
-		}
+		$this->guard_ai_request(
+			self::is_text_supported(),
+			__( 'AI generation is not available. Connect an AI provider to use this feature.', 'storesuite' )
+		);
 
 		$field = isset( $_POST['field'] ) ? sanitize_key( wp_unslash( $_POST['field'] ) ) : '';
 		if ( ! isset( self::FIELDS[ $field ] ) ) {
@@ -157,19 +139,10 @@ class ProductAI {
 	 */
 	public function handle_generate_bundle() {
 		check_ajax_referer( '_storesuite_ai_', 'nonce' );
-
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
-		}
-
-		if ( ! self::is_text_supported() ) {
-			wp_send_json_error(
-				array(
-					'reason'  => 'unavailable',
-					'message' => __( 'AI generation is not available. Connect an AI provider to use this feature.', 'storesuite' ),
-				)
-			);
-		}
+		$this->guard_ai_request(
+			self::is_text_supported(),
+			__( 'AI generation is not available. Connect an AI provider to use this feature.', 'storesuite' )
+		);
 
 		$hint = isset( $_POST['hint'] ) ? sanitize_textarea_field( wp_unslash( $_POST['hint'] ) ) : '';
 		if ( '' === $hint ) {

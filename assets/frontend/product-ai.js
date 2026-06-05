@@ -31,6 +31,28 @@
 	var MODAL_CLOSE_SELECTOR =
 		'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close';
 
+	// POST to admin-ajax and normalize the WP JSON envelope: the returned promise
+	// resolves with response.data on success and rejects with a human-readable
+	// message on failure (server error message, or the generic fallback). Rejected
+	// deferreds are returned explicitly so the chain stays rejected under jQuery
+	// 3.x Promises/A+ semantics.
+	function aiPost( data ) {
+		return $.post( StoreSuite_Product.ajax_url, data ).then(
+			function ( response ) {
+				if ( response && response.success && response.data ) {
+					return response.data;
+				}
+				return $.Deferred().reject(
+					( response && response.data && response.data.message ) ||
+						commonStrings.unexpected_error
+				);
+			},
+			function () {
+				return $.Deferred().reject( commonStrings.unexpected_error );
+			}
+		);
+	}
+
 	$( function () {
 		// Suggestion modal.
 		var $modal = $( '#storesuite-ai-modal' );
@@ -142,8 +164,7 @@
 
 		// Resolves with the generated content, or rejects with a message.
 		function generateSuggestion( fieldName, previousSuggestion ) {
-			var deferred = $.Deferred();
-			$.post( StoreSuite_Product.ajax_url, {
+			return aiPost( {
 				action: aiConfig.action,
 				nonce: aiConfig.nonce,
 				field: fieldName,
@@ -156,23 +177,9 @@
 				),
 				product_description: getDescription(),
 				categories: getSelectedCategories(),
-			} )
-				.done( function ( response ) {
-					if ( response && response.success && response.data ) {
-						deferred.resolve( response.data.content || '' );
-					} else {
-						deferred.reject(
-							( response &&
-								response.data &&
-								response.data.message ) ||
-								commonStrings.unexpected_error
-						);
-					}
-				} )
-				.fail( function () {
-					deferred.reject( commonStrings.unexpected_error );
-				} );
-			return deferred.promise();
+			} ).then( function ( data ) {
+				return data.content || '';
+			} );
 		}
 
 		// Persist edits to the visible suggestion so they survive navigation.
@@ -529,29 +536,12 @@
 		// object { title, short_description, description }, or rejects with a
 		// message.
 		function generateBundle( previousTitle ) {
-			var deferred = $.Deferred();
-			$.post( StoreSuite_Product.ajax_url, {
+			return aiPost( {
 				action: aiConfig.bundle_action,
 				nonce: aiConfig.nonce,
 				hint: $.trim( $bundleHint.val() || '' ),
 				previous_title: previousTitle || '',
-			} )
-				.done( function ( response ) {
-					if ( response && response.success && response.data ) {
-						deferred.resolve( response.data );
-					} else {
-						deferred.reject(
-							( response &&
-								response.data &&
-								response.data.message ) ||
-								commonStrings.unexpected_error
-						);
-					}
-				} )
-				.fail( function () {
-					deferred.reject( commonStrings.unexpected_error );
-				} );
-			return deferred.promise();
+			} );
 		}
 
 		// Fill the editable result fields and reveal the result step. Each value
@@ -699,7 +689,7 @@
 				toggleBundleFieldSkeleton( fieldName, true );
 				$button.html( SPINNER_ICON + strings.regenerating );
 
-				$.post( StoreSuite_Product.ajax_url, {
+				aiPost( {
 					action: aiConfig.action,
 					nonce: aiConfig.nonce,
 					field: fieldName,
@@ -716,23 +706,13 @@
 							: $bundleDescription.val() || '',
 					categories: [],
 				} )
-					.done( function ( response ) {
-						if ( response && response.success && response.data ) {
-							var content = response.data.content || '';
-							setBundleField( fieldName, content );
-							pushFieldSuggestion( fieldName, content );
-						} else {
-							showAlert(
-								'error',
-								( response &&
-									response.data &&
-									response.data.message ) ||
-									commonStrings.unexpected_error
-							);
-						}
+					.done( function ( data ) {
+						var content = data.content || '';
+						setBundleField( fieldName, content );
+						pushFieldSuggestion( fieldName, content );
 					} )
-					.fail( function () {
-						showAlert( 'error', commonStrings.unexpected_error );
+					.fail( function ( message ) {
+						showAlert( 'error', message );
 					} )
 					.always( function () {
 						setBundleBusy( false );
@@ -836,34 +816,21 @@
 				$imagePreview.prop( 'hidden', true );
 				$imageSkeleton.prop( 'hidden', false );
 
-				$.post( StoreSuite_Product.ajax_url, {
+				aiPost( {
 					action: imageConfig.generate_action,
 					nonce: aiConfig.nonce,
 					prompt: prompt,
 				} )
-					.done( function ( response ) {
-						if ( response && response.success && response.data ) {
-							imageToken = response.data.token || '';
-							$imagePreviewImg.attr(
-								'src',
-								response.data.preview || ''
-							);
-							$imagePreview.prop( 'hidden', false );
-							$imageSubmit.prop( 'hidden', true );
-							$imageRegenerate.prop( 'hidden', false );
-							$imageInsert.prop( 'hidden', false );
-						} else {
-							showAlert(
-								'error',
-								( response &&
-									response.data &&
-									response.data.message ) ||
-									commonStrings.unexpected_error
-							);
-						}
+					.done( function ( data ) {
+						imageToken = data.token || '';
+						$imagePreviewImg.attr( 'src', data.preview || '' );
+						$imagePreview.prop( 'hidden', false );
+						$imageSubmit.prop( 'hidden', true );
+						$imageRegenerate.prop( 'hidden', false );
+						$imageInsert.prop( 'hidden', false );
 					} )
-					.fail( function () {
-						showAlert( 'error', commonStrings.unexpected_error );
+					.fail( function ( message ) {
+						showAlert( 'error', message );
 					} )
 					.always( function () {
 						$imageSkeleton.prop( 'hidden', true );
@@ -981,39 +948,23 @@
 				$imagePrompt.prop( 'readonly', true );
 				$imageDismissButtons.prop( 'disabled', true );
 
-				$.post( StoreSuite_Product.ajax_url, {
+				aiPost( {
 					action: imageConfig.insert_action,
 					nonce: aiConfig.nonce,
 					token: imageToken,
 				} )
-					.done( function ( response ) {
-						if ( response && response.success && response.data ) {
-							if ( 'gallery' === imageTarget ) {
-								appendGalleryImage(
-									response.data.id,
-									response.data.url
-								);
-							} else {
-								applyProductImage(
-									response.data.id,
-									response.data.url
-								);
-							}
-							if ( sharedModal && $imageModal.length ) {
-								sharedModal.close( $imageModal );
-							}
+					.done( function ( data ) {
+						if ( 'gallery' === imageTarget ) {
+							appendGalleryImage( data.id, data.url );
 						} else {
-							showAlert(
-								'error',
-								( response &&
-									response.data &&
-									response.data.message ) ||
-									commonStrings.unexpected_error
-							);
+							applyProductImage( data.id, data.url );
+						}
+						if ( sharedModal && $imageModal.length ) {
+							sharedModal.close( $imageModal );
 						}
 					} )
-					.fail( function () {
-						showAlert( 'error', commonStrings.unexpected_error );
+					.fail( function ( message ) {
+						showAlert( 'error', message );
 					} )
 					.always( function () {
 						$imagePrompt.prop( 'readonly', false );

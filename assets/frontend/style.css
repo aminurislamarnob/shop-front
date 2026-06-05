@@ -5399,11 +5399,15 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   display: flex;
   align-items: center;
 }
-.my-storesuite-container .storesuite-ai-generate {
+/* Shared styling for the small AI action buttons (field label, per-field
+   regenerate, and image). Keep them visually identical; per-button deltas live
+   in their own rules below. */
+.my-storesuite-container .storesuite-ai-generate,
+.my-storesuite-container .storesuite-ai-field-regenerate,
+.my-storesuite-container .storesuite-ai-image-generate {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-left: auto;
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 500;
@@ -5416,19 +5420,29 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   border-radius: 4px;
   transition: background 0.15s ease, color 0.15s ease;
 }
-.my-storesuite-container .storesuite-ai-generate:hover:not(:disabled) {
+.my-storesuite-container .storesuite-ai-generate:hover:not(:disabled),
+.my-storesuite-container .storesuite-ai-field-regenerate:hover:not(:disabled),
+.my-storesuite-container .storesuite-ai-image-generate:hover:not(:disabled) {
   color: var(--storesuite-button-text-color);
   background: var(--storesuite-primary-bg);
 }
-.my-storesuite-container .storesuite-ai-generate:disabled {
+.my-storesuite-container .storesuite-ai-generate:disabled,
+.my-storesuite-container .storesuite-ai-field-regenerate:disabled,
+.my-storesuite-container .storesuite-ai-image-generate:disabled {
   opacity: 0.6;
   cursor: default;
 }
-.my-storesuite-container .storesuite-ai-generate .storesuite-ai-icon {
+.my-storesuite-container .storesuite-ai-generate .storesuite-ai-icon,
+.my-storesuite-container .storesuite-ai-field-regenerate .storesuite-ai-icon,
+.my-storesuite-container .storesuite-ai-image-generate .storesuite-ai-icon {
   width: 13px;
   height: 13px;
   fill: currentColor;
   flex-shrink: 0;
+}
+/* The field-label "Generate with AI" button pushes to the row's trailing edge. */
+.my-storesuite-container .storesuite-ai-generate {
+  margin-left: auto;
 }
 /* The explicit display on buttons overrides the UA [hidden] rule, so restore it. */
 .my-storesuite-container .my-storesuite-button[hidden],
@@ -5479,36 +5493,6 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   text-align: center;
   color: var(--storesuite-text-color);
 }
-.my-storesuite-container .storesuite-ai-field-regenerate {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.6;
-  cursor: pointer;
-  color: var(--storesuite-primary-bg);
-  background: color-mix(in srgb, var(--storesuite-primary-bg) 10%, transparent);
-  border: 1px solid
-    color-mix(in srgb, var(--storesuite-primary-bg) 30%, transparent);
-  border-radius: 4px;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.my-storesuite-container .storesuite-ai-field-regenerate:hover:not(:disabled) {
-  color: var(--storesuite-button-text-color);
-  background: var(--storesuite-primary-bg);
-}
-.my-storesuite-container .storesuite-ai-field-regenerate:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-.my-storesuite-container .storesuite-ai-field-regenerate .storesuite-ai-icon {
-  width: 13px;
-  height: 13px;
-  fill: currentColor;
-  flex-shrink: 0;
-}
 .my-storesuite-container .storesuite-ai-field-regenerate .la-spin {
   animation: storesuite-ai-spin 0.8s linear infinite;
 }
@@ -5517,32 +5501,6 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-}
-.my-storesuite-container .storesuite-ai-image-generate {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.6;
-  cursor: pointer;
-  color: var(--storesuite-primary-bg);
-  background: color-mix(in srgb, var(--storesuite-primary-bg) 10%, transparent);
-  border: 1px solid
-    color-mix(in srgb, var(--storesuite-primary-bg) 30%, transparent);
-  border-radius: 4px;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.my-storesuite-container .storesuite-ai-image-generate:hover {
-  color: var(--storesuite-button-text-color);
-  background: var(--storesuite-primary-bg);
-}
-.my-storesuite-container .storesuite-ai-image-generate .storesuite-ai-icon {
-  width: 13px;
-  height: 13px;
-  fill: currentColor;
-  flex-shrink: 0;
 }
 /* Generated image preview inside the image modal. */
 .my-storesuite-container .storesuite-ai-image-preview {

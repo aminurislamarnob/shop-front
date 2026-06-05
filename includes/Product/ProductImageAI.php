@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class ProductImageAI {
 
+	use AiRequestTrait;
+
 	/**
 	 * Transient key prefix for a pending generated image.
 	 *
@@ -83,18 +85,7 @@ class ProductImageAI {
 	 * @return bool
 	 */
 	public static function is_supported() {
-		static $supported = null;
-
-		if ( null !== $supported ) {
-			return $supported;
-		}
-
-		$supported = function_exists( 'wp_ai_client_prompt' )
-			&& function_exists( 'wp_supports_ai' )
-			&& wp_supports_ai()
-			&& wp_ai_client_prompt()->is_supported_for_image_generation();
-
-		return $supported;
+		return self::is_ai_capability_supported( 'is_supported_for_image_generation' );
 	}
 
 	/**
@@ -106,19 +97,10 @@ class ProductImageAI {
 	 */
 	public function handle_generate() {
 		check_ajax_referer( '_storesuite_ai_', 'nonce' );
-
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
-		}
-
-		if ( ! self::is_supported() ) {
-			wp_send_json_error(
-				array(
-					'reason'  => 'unavailable',
-					'message' => __( 'AI image generation is not available. Connect an AI provider that supports images to use this feature.', 'storesuite' ),
-				)
-			);
-		}
+		$this->guard_ai_request(
+			self::is_supported(),
+			__( 'AI image generation is not available. Connect an AI provider that supports images to use this feature.', 'storesuite' )
+		);
 
 		$prompt = isset( $_POST['prompt'] ) ? sanitize_textarea_field( wp_unslash( $_POST['prompt'] ) ) : '';
 		if ( '' === $prompt ) {
@@ -181,10 +163,7 @@ class ProductImageAI {
 	 */
 	public function handle_insert() {
 		check_ajax_referer( '_storesuite_ai_', 'nonce' );
-
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
-		}
+		$this->guard_ai_request();
 
 		$token = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
 		if ( '' === $token ) {

@@ -14,9 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <button type="button" class="my-storesuite-button storesuite-ai-bundle-launch">
-	<svg class="storesuite-ai-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-		<path d="M19.5,24a1,1,0,0,1-.929-.628l-.844-2.113-2.116-.891a1.007,1.007,0,0,1,.035-1.857l2.088-.791.837-2.092a1.008,1.008,0,0,1,1.858,0l.841,2.1,2.1.841a1.007,1.007,0,0,1,0,1.858l-2.1.841-.841,2.1A1,1,0,0,1,19.5,24ZM10,21a2,2,0,0,1-1.936-1.413L6.45,14.54,1.387,12.846a2.032,2.032,0,0,1,.052-3.871L6.462,7.441,8.154,2.387A1.956,1.956,0,0,1,10.108,1a2,2,0,0,1,1.917,1.439l1.532,5.015,5.03,1.61a2.042,2.042,0,0,1,0,3.872h0l-5.039,1.612-1.612,5.039A2,2,0,0,1,10,21Zm.112-17.977L8.2,8.564a1,1,0,0,1-.656.64L2.023,10.888l5.541,1.917a1,1,0,0,1,.636.643l1.77,5.53,1.83-5.53a1,1,0,0,1,.648-.648l5.53-1.769a.072.072,0,0,0,.02-.009L12.448,9.2a1,1,0,0,1-.652-.661Zm8.17,8.96h0ZM20.5,7a1,1,0,0,1-.97-.757l-.357-1.43L17.74,4.428a1,1,0,0,1,.034-1.94l1.4-.325L19.53.757a1,1,0,0,1,1.94,0l.354,1.418,1.418.355a1,1,0,0,1,0,1.94l-1.418.355L21.47,6.243A1,1,0,0,1,20.5,7Z"/>
-	</svg>
+	<svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg>
 	<?php esc_html_e( 'Generate with AI', 'storesuite' ); ?>
 </button>
 
@@ -33,9 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php esc_html_e( 'Generate product with AI', 'storesuite' ); ?>
 			</h2>
 			<button type="button" class="storesuite-product-bulk-modal-close my-storesuite-button storesuite-button-ghost" aria-label="<?php esc_attr_e( 'Close', 'storesuite' ); ?>">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-					<path d="M18,6h0a1,1,0,0,0-1.414,0L12,10.586,7.414,6A1,1,0,0,0,6,6H6a1,1,0,0,0,0,1.414L10.586,12,6,16.586A1,1,0,0,0,6,18h0a1,1,0,0,0,1.414,0L12,13.414,16.586,18A1,1,0,0,0,18,18h0a1,1,0,0,0,0-1.414L13.414,12,18,7.414A1,1,0,0,0,18,6Z"/>
-				</svg>
+				<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><use href="#storesuite-icon-close"></use></svg>
 			</button>
 		</div>
 		<div class="storesuite-product-bulk-edit-scroll">
@@ -49,64 +45,62 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 
 			<div class="storesuite-ai-bundle-step storesuite-ai-bundle-result-step" hidden>
-				<div class="storesuite-form-group">
-					<label class="storesuite-form-label" for="storesuite-ai-bundle-result-title">
-						<?php esc_html_e( 'Product Title', 'storesuite' ); ?>
-						<span class="storesuite-ai-field-actions">
-							<span class="storesuite-ai-field-pager" data-field="title" hidden>
-								<button type="button" class="storesuite-ai-field-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
-								<span class="storesuite-ai-field-pager-status" aria-live="polite">1/1</span>
-								<button type="button" class="storesuite-ai-field-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
+				<?php
+				/*
+				 * The three drafted fields share the same label + pager + regenerate +
+				 * skeleton structure, differing only by key, control, row count and the
+				 * number of skeleton lines. The ids/data-field keys below are referenced
+				 * by product-ai.js, so keep them stable.
+				 */
+				$storesuite_ai_bundle_fields = array(
+					'title'             => array(
+						'id'             => 'storesuite-ai-bundle-result-title',
+						'label'          => __( 'Product Title', 'storesuite' ),
+						'control'        => 'input',
+						'rows'           => 0,
+						'skeleton_lines' => 1,
+					),
+					'short_description' => array(
+						'id'             => 'storesuite-ai-bundle-result-short',
+						'label'          => __( 'Short Description', 'storesuite' ),
+						'control'        => 'textarea',
+						'rows'           => 3,
+						'skeleton_lines' => 3,
+					),
+					'description'       => array(
+						'id'             => 'storesuite-ai-bundle-result-description',
+						'label'          => __( 'Product Description', 'storesuite' ),
+						'control'        => 'textarea',
+						'rows'           => 8,
+						'skeleton_lines' => 6,
+					),
+				);
+				foreach ( $storesuite_ai_bundle_fields as $storesuite_ai_field_key => $storesuite_ai_field ) :
+					?>
+					<div class="storesuite-form-group">
+						<label class="storesuite-form-label" for="<?php echo esc_attr( $storesuite_ai_field['id'] ); ?>">
+							<?php echo esc_html( $storesuite_ai_field['label'] ); ?>
+							<span class="storesuite-ai-field-actions">
+								<span class="storesuite-ai-field-pager" data-field="<?php echo esc_attr( $storesuite_ai_field_key ); ?>" hidden>
+									<button type="button" class="storesuite-ai-field-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
+									<span class="storesuite-ai-field-pager-status" aria-live="polite">1/1</span>
+									<button type="button" class="storesuite-ai-field-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
+								</span>
+								<button type="button" class="storesuite-ai-field-regenerate" data-field="<?php echo esc_attr( $storesuite_ai_field_key ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
 							</span>
-							<button type="button" class="storesuite-ai-field-regenerate" data-field="title"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
-						</span>
-					</label>
-					<input type="text" id="storesuite-ai-bundle-result-title" class="storesuite-form-control" />
-					<div class="storesuite-ai-skeleton storesuite-skeleton-lines" data-field="title" hidden aria-hidden="true">
-						<div class="storesuite-skeleton"></div>
+						</label>
+						<?php if ( 'input' === $storesuite_ai_field['control'] ) : ?>
+							<input type="text" id="<?php echo esc_attr( $storesuite_ai_field['id'] ); ?>" class="storesuite-form-control" />
+						<?php else : ?>
+							<textarea id="<?php echo esc_attr( $storesuite_ai_field['id'] ); ?>" class="storesuite-form-control" rows="<?php echo esc_attr( $storesuite_ai_field['rows'] ); ?>"></textarea>
+						<?php endif; ?>
+						<div class="storesuite-ai-skeleton storesuite-skeleton-lines" data-field="<?php echo esc_attr( $storesuite_ai_field_key ); ?>" hidden aria-hidden="true">
+							<?php for ( $storesuite_ai_line = 0; $storesuite_ai_line < $storesuite_ai_field['skeleton_lines']; $storesuite_ai_line++ ) : ?>
+								<div class="storesuite-skeleton"></div>
+							<?php endfor; ?>
+						</div>
 					</div>
-				</div>
-				<div class="storesuite-form-group">
-					<label class="storesuite-form-label" for="storesuite-ai-bundle-result-short">
-						<?php esc_html_e( 'Short Description', 'storesuite' ); ?>
-						<span class="storesuite-ai-field-actions">
-							<span class="storesuite-ai-field-pager" data-field="short_description" hidden>
-								<button type="button" class="storesuite-ai-field-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
-								<span class="storesuite-ai-field-pager-status" aria-live="polite">1/1</span>
-								<button type="button" class="storesuite-ai-field-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
-							</span>
-							<button type="button" class="storesuite-ai-field-regenerate" data-field="short_description"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
-						</span>
-					</label>
-					<textarea id="storesuite-ai-bundle-result-short" class="storesuite-form-control" rows="3"></textarea>
-					<div class="storesuite-ai-skeleton storesuite-skeleton-lines" data-field="short_description" hidden aria-hidden="true">
-						<div class="storesuite-skeleton"></div>
-						<div class="storesuite-skeleton"></div>
-						<div class="storesuite-skeleton"></div>
-					</div>
-				</div>
-				<div class="storesuite-form-group">
-					<label class="storesuite-form-label" for="storesuite-ai-bundle-result-description">
-						<?php esc_html_e( 'Product Description', 'storesuite' ); ?>
-						<span class="storesuite-ai-field-actions">
-							<span class="storesuite-ai-field-pager" data-field="description" hidden>
-								<button type="button" class="storesuite-ai-field-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
-								<span class="storesuite-ai-field-pager-status" aria-live="polite">1/1</span>
-								<button type="button" class="storesuite-ai-field-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
-							</span>
-							<button type="button" class="storesuite-ai-field-regenerate" data-field="description"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
-						</span>
-					</label>
-					<textarea id="storesuite-ai-bundle-result-description" class="storesuite-form-control" rows="8"></textarea>
-					<div class="storesuite-ai-skeleton storesuite-skeleton-lines" data-field="description" hidden aria-hidden="true">
-						<div class="storesuite-skeleton"></div>
-						<div class="storesuite-skeleton"></div>
-						<div class="storesuite-skeleton"></div>
-						<div class="storesuite-skeleton"></div>
-						<div class="storesuite-skeleton"></div>
-						<div class="storesuite-skeleton"></div>
-					</div>
-				</div>
+				<?php endforeach; ?>
 			</div>
 		</div>
 		<div class="storesuite-product-bulk-modal-footer">
