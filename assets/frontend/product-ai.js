@@ -42,6 +42,7 @@
 		var $previousButton = $modal.find( '.storesuite-ai-prev' );
 		var $nextButton = $modal.find( '.storesuite-ai-next' );
 		var $pagerStatus = $modal.find( '.storesuite-ai-pager-status' );
+		var $modalSkeleton = $modal.find( '.storesuite-ai-skeleton' );
 
 		// Prompt-input modal.
 		var $promptModal = $( '#storesuite-ai-prompt-modal' );
@@ -49,6 +50,7 @@
 		var $promptGenerateButton = $promptModal.find(
 			'.storesuite-ai-prompt-generate'
 		);
+		var $promptDismissButtons = $promptModal.find( MODAL_CLOSE_SELECTOR );
 
 		var activeField = null; // Field currently being generated.
 		var suggestions = []; // Suggestions generated this session.
@@ -286,6 +288,9 @@
 			activeField = 'title';
 			var originalText = $promptGenerateButton.text();
 			$promptGenerateButton.prop( 'disabled', true ).text( strings.generating );
+			// Lock the prompt and dismiss controls while the title is generated.
+			$promptText.prop( 'readonly', true );
+			$promptDismissButtons.prop( 'disabled', true );
 
 			generateSuggestion( 'title', '' )
 				.done( function ( content ) {
@@ -296,6 +301,8 @@
 					showAlert( 'error', message );
 				} )
 				.always( function () {
+					$promptText.prop( 'readonly', false );
+					$promptDismissButtons.prop( 'disabled', false );
 					$promptGenerateButton
 						.prop( 'disabled', false )
 						.text( originalText );
@@ -313,6 +320,10 @@
 			var previousSuggestion = $modalText.val() || '';
 			$regenerateButton.prop( 'disabled', true ).text( strings.regenerating );
 			$insertButton.prop( 'disabled', true );
+			// Swap the current text for a skeleton while the new one is generated.
+			$modalText.prop( 'hidden', true );
+			$pager.prop( 'hidden', true );
+			$modalSkeleton.prop( 'hidden', false );
 
 			generateSuggestion( activeField, previousSuggestion )
 				.done( function ( content ) {
@@ -323,6 +334,9 @@
 					showAlert( 'error', message );
 				} )
 				.always( function () {
+					$modalSkeleton.prop( 'hidden', true );
+					$modalText.prop( 'hidden', false );
+					$pager.prop( 'hidden', suggestions.length < 2 );
 					$regenerateButton
 						.prop( 'disabled', false )
 						.text( strings.regenerate );
@@ -376,6 +390,11 @@
 			'.storesuite-ai-bundle-regenerate'
 		);
 		var $bundleInsert = $bundleModal.find( '.storesuite-ai-bundle-insert' );
+		var $bundleFields = $bundleHint
+			.add( $bundleTitle )
+			.add( $bundleShort )
+			.add( $bundleDescription );
+		var $bundleDismissButtons = $bundleModal.find( MODAL_CLOSE_SELECTOR );
 
 		if ( sharedModal && $bundleModal.length ) {
 			sharedModal.initOverlay( $bundleModal, {
@@ -384,8 +403,117 @@
 			} );
 		}
 
+		// Lock every field and control in the bundle modal while a request is in
+		// flight. The calling handler restores the busy button's own label.
+		function setBundleBusy( isBusy ) {
+			$bundleFields.prop( 'readonly', isBusy );
+			$bundleDismissButtons.prop( 'disabled', isBusy );
+			$bundleGenerate.prop( 'disabled', isBusy );
+			$bundleRegenerate.prop( 'disabled', isBusy );
+			$bundleInsert.prop( 'disabled', isBusy );
+			$bundleModal
+				.find( '.storesuite-ai-field-regenerate' )
+				.prop( 'disabled', isBusy );
+		}
+
+		// The editable result control for a field key.
+		function bundleField( fieldName ) {
+			if ( fieldName === 'title' ) {
+				return $bundleTitle;
+			}
+			if ( fieldName === 'short_description' ) {
+				return $bundleShort;
+			}
+			return $bundleDescription;
+		}
+
+		// Swap a result field for its shimmer skeleton (or back) while it
+		// regenerates, so the placeholder appears exactly where the new copy
+		// will land.
+		function toggleBundleFieldSkeleton( fieldName, show ) {
+			bundleField( fieldName ).prop( 'hidden', show );
+			$bundleResultStep
+				.find(
+					'.storesuite-ai-skeleton[data-field="' + fieldName + '"]'
+				)
+				.prop( 'hidden', ! show );
+		}
+
+		function toggleBundleSkeletons( show ) {
+			toggleBundleFieldSkeleton( 'title', show );
+			toggleBundleFieldSkeleton( 'short_description', show );
+			toggleBundleFieldSkeleton( 'description', show );
+		}
+
+		// Per-field suggestion history so each field gets its own "‹ n/m ›"
+		// pager: every generated/regenerated value is appended and navigable.
+		var bundleHistory = { title: [], short_description: [], description: [] };
+		var bundleIndex = { title: -1, short_description: -1, description: -1 };
+
+		// Reflect a field's history into its pager (count, position, arrows).
+		function renderFieldPager( fieldName ) {
+			var history = bundleHistory[ fieldName ];
+			var index = bundleIndex[ fieldName ];
+			var $pager = $bundleResultStep.find(
+				'.storesuite-ai-field-pager[data-field="' + fieldName + '"]'
+			);
+			if ( ! history.length ) {
+				$pager.prop( 'hidden', true );
+				return;
+			}
+			$pager.prop( 'hidden', false );
+			$pager
+				.find( '.storesuite-ai-field-pager-status' )
+				.text( index + 1 + '/' + history.length );
+			$pager
+				.find( '.storesuite-ai-field-prev' )
+				.prop( 'disabled', index <= 0 );
+			$pager
+				.find( '.storesuite-ai-field-next' )
+				.prop( 'disabled', index >= history.length - 1 );
+		}
+
+		// Persist any manual edit to the visible value before navigating away.
+		function saveFieldEdit( fieldName ) {
+			var index = bundleIndex[ fieldName ];
+			if ( index > -1 ) {
+				bundleHistory[ fieldName ][ index ] =
+					bundleField( fieldName ).val() || '';
+			}
+		}
+
+		// Append a freshly generated value and jump the pager to it.
+		function pushFieldSuggestion( fieldName, value ) {
+			bundleHistory[ fieldName ].push( value );
+			bundleIndex[ fieldName ] = bundleHistory[ fieldName ].length - 1;
+			renderFieldPager( fieldName );
+		}
+
+		// Show the suggestion at the given index in its field.
+		function showFieldSuggestion( fieldName, index ) {
+			var history = bundleHistory[ fieldName ];
+			if ( index < 0 || index >= history.length ) {
+				return;
+			}
+			bundleIndex[ fieldName ] = index;
+			bundleField( fieldName ).val( history[ index ] );
+			renderFieldPager( fieldName );
+		}
+
+		// Clear all per-field history and hide every pager.
+		function resetFieldHistory() {
+			bundleHistory = { title: [], short_description: [], description: [] };
+			bundleIndex = { title: -1, short_description: -1, description: -1 };
+			renderFieldPager( 'title' );
+			renderFieldPager( 'short_description' );
+			renderFieldPager( 'description' );
+		}
+
 		// Return the modal to the hint-entry step with everything cleared.
 		function resetBundleModal() {
+			setBundleBusy( false );
+			toggleBundleSkeletons( false );
+			resetFieldHistory();
 			$bundleHint.val( '' );
 			$bundleTitle.val( '' );
 			$bundleShort.val( '' );
@@ -426,11 +554,16 @@
 			return deferred.promise();
 		}
 
-		// Fill the editable result fields and reveal the result step.
+		// Fill the editable result fields and reveal the result step. Each value
+		// is appended to its field's history so the pager advances on every
+		// (re)generation of the full set.
 		function showBundleResults( data ) {
 			$bundleTitle.val( data.title || '' );
 			$bundleShort.val( data.short_description || '' );
 			$bundleDescription.val( data.description || '' );
+			pushFieldSuggestion( 'title', data.title || '' );
+			pushFieldSuggestion( 'short_description', data.short_description || '' );
+			pushFieldSuggestion( 'description', data.description || '' );
 			$bundleHintStep.prop( 'hidden', true );
 			$bundleResultStep.prop( 'hidden', false );
 			$bundleGenerate.prop( 'hidden', true );
@@ -445,8 +578,18 @@
 				return;
 			}
 			var originalText = $button.text();
-			$bundleGenerate.prop( 'disabled', true );
-			$bundleRegenerate.prop( 'disabled', true );
+			// Regenerating means the result step is already on screen; show
+			// skeletons over the fields. First generation has nothing to cover.
+			var isRegenerate = ! $bundleResultStep.prop( 'hidden' );
+			setBundleBusy( true );
+			if ( isRegenerate ) {
+				// Preserve any manual edits at their current history positions
+				// before the new set is appended.
+				saveFieldEdit( 'title' );
+				saveFieldEdit( 'short_description' );
+				saveFieldEdit( 'description' );
+				toggleBundleSkeletons( true );
+			}
 			$button.text( busyLabel );
 
 			generateBundle( previousTitle )
@@ -455,8 +598,10 @@
 					showAlert( 'error', message );
 				} )
 				.always( function () {
-					$bundleGenerate.prop( 'disabled', false );
-					$bundleRegenerate.prop( 'disabled', false );
+					setBundleBusy( false );
+					if ( isRegenerate ) {
+						toggleBundleSkeletons( false );
+					}
 					$button.text( originalText );
 				} );
 		}
@@ -548,9 +693,11 @@
 				// Keywords for a title: the hint, else fall back to what we have.
 				var titleSeed = hint || title || $.trim( short );
 				var originalHtml = $button.html();
-				$button
-					.prop( 'disabled', true )
-					.html( SPINNER_ICON + strings.regenerating );
+				// Keep any manual edit in history before the new one is appended.
+				saveFieldEdit( fieldName );
+				setBundleBusy( true );
+				toggleBundleFieldSkeleton( fieldName, true );
+				$button.html( SPINNER_ICON + strings.regenerating );
 
 				$.post( StoreSuite_Product.ajax_url, {
 					action: aiConfig.action,
@@ -571,10 +718,9 @@
 				} )
 					.done( function ( response ) {
 						if ( response && response.success && response.data ) {
-							setBundleField(
-								fieldName,
-								response.data.content || ''
-							);
+							var content = response.data.content || '';
+							setBundleField( fieldName, content );
+							pushFieldSuggestion( fieldName, content );
 						} else {
 							showAlert(
 								'error',
@@ -589,8 +735,35 @@
 						showAlert( 'error', commonStrings.unexpected_error );
 					} )
 					.always( function () {
-						$button.prop( 'disabled', false ).html( originalHtml );
+						setBundleBusy( false );
+						toggleBundleFieldSkeleton( fieldName, false );
+						$button.html( originalHtml );
 					} );
+			}
+		);
+
+		// Per-field pager: step through that field's generated suggestions.
+		$bundleResultStep.on(
+			'click',
+			'.storesuite-ai-field-prev, .storesuite-ai-field-next',
+			function ( event ) {
+				event.preventDefault();
+				var $button = $( this );
+				if ( $button.prop( 'disabled' ) ) {
+					return;
+				}
+				var fieldName = $button
+					.closest( '.storesuite-ai-field-pager' )
+					.data( 'field' );
+				// Ignore while this field is mid-regeneration (skeleton shown).
+				if ( bundleField( fieldName ).prop( 'hidden' ) ) {
+					return;
+				}
+				saveFieldEdit( fieldName );
+				var delta = $button.hasClass( 'storesuite-ai-field-next' )
+					? 1
+					: -1;
+				showFieldSuggestion( fieldName, bundleIndex[ fieldName ] + delta );
 			}
 		);
 
@@ -617,11 +790,13 @@
 			var $imagePrompt = $imageModal.find( '#storesuite-ai-image-prompt' );
 			var $imagePreview = $imageModal.find( '.storesuite-ai-image-preview' );
 			var $imagePreviewImg = $imagePreview.find( 'img' );
+			var $imageSkeleton = $imageModal.find( '.storesuite-ai-image-skeleton' );
 			var $imageSubmit = $imageModal.find( '.storesuite-ai-image-submit' );
 			var $imageRegenerate = $imageModal.find(
 				'.storesuite-ai-image-regenerate'
 			);
 			var $imageInsert = $imageModal.find( '.storesuite-ai-image-insert' );
+			var $imageDismissButtons = $imageModal.find( MODAL_CLOSE_SELECTOR );
 			var imageToken = ''; // Server-side handle to the last generated image.
 			var imageTarget = 'featured'; // Where Insert puts it: featured or gallery.
 
@@ -634,9 +809,10 @@
 
 			// Back to the prompt-entry state with no preview.
 			function resetImageModal() {
-				$imagePrompt.val( '' );
+				$imagePrompt.val( '' ).prop( 'readonly', false );
 				$imagePreviewImg.attr( 'src', '' );
 				$imagePreview.prop( 'hidden', true );
+				$imageSkeleton.prop( 'hidden', true );
 				$imageRegenerate.prop( 'hidden', true );
 				$imageInsert.prop( 'hidden', true );
 				$imageSubmit.prop( 'hidden', false );
@@ -655,6 +831,10 @@
 				$imageRegenerate.prop( 'disabled', true );
 				$imageInsert.prop( 'disabled', true );
 				$button.text( busyLabel );
+				// Lock the prompt and show a skeleton while the image is generated.
+				$imagePrompt.prop( 'readonly', true );
+				$imagePreview.prop( 'hidden', true );
+				$imageSkeleton.prop( 'hidden', false );
 
 				$.post( StoreSuite_Product.ajax_url, {
 					action: imageConfig.generate_action,
@@ -686,6 +866,8 @@
 						showAlert( 'error', commonStrings.unexpected_error );
 					} )
 					.always( function () {
+						$imageSkeleton.prop( 'hidden', true );
+						$imagePrompt.prop( 'readonly', false );
 						$imageSubmit.prop( 'disabled', false );
 						$imageRegenerate.prop( 'disabled', false );
 						$imageInsert.prop( 'disabled', false );
@@ -795,6 +977,9 @@
 				var originalText = $imageInsert.text();
 				$imageInsert.prop( 'disabled', true ).text( imageConfig.inserting );
 				$imageRegenerate.prop( 'disabled', true );
+				// Lock the prompt and dismiss controls while the image is inserted.
+				$imagePrompt.prop( 'readonly', true );
+				$imageDismissButtons.prop( 'disabled', true );
 
 				$.post( StoreSuite_Product.ajax_url, {
 					action: imageConfig.insert_action,
@@ -831,6 +1016,8 @@
 						showAlert( 'error', commonStrings.unexpected_error );
 					} )
 					.always( function () {
+						$imagePrompt.prop( 'readonly', false );
+						$imageDismissButtons.prop( 'disabled', false );
 						$imageInsert
 							.prop( 'disabled', false )
 							.text( originalText );

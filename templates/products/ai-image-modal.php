@@ -41,6 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="storesuite-ai-image-preview" hidden>
 				<img src="" alt="<?php esc_attr_e( 'AI generated product image preview', 'storesuite' ); ?>" />
 			</div>
+			<div class="storesuite-ai-image-skeleton storesuite-skeleton storesuite-skeleton-image" hidden aria-hidden="true"></div>
 		</div>
 		<div class="storesuite-product-bulk-modal-footer">
 			<button type="button" class="my-storesuite-button storesuite-button-neutral-panel storesuite-ai-image-regenerate" hidden>

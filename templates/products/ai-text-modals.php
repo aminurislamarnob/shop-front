@@ -43,6 +43,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 			<div class="storesuite-form-group">
 				<textarea id="storesuite-ai-modal-text" class="storesuite-form-control" rows="3"></textarea>
+				<div class="storesuite-ai-skeleton storesuite-skeleton-lines" hidden aria-hidden="true">
+					<div class="storesuite-skeleton"></div>
+					<div class="storesuite-skeleton"></div>
+					<div class="storesuite-skeleton"></div>
+				</div>
 			</div>
 		</div>
 		<div class="storesuite-product-bulk-modal-footer">

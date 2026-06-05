@@ -52,23 +52,60 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="storesuite-form-group">
 					<label class="storesuite-form-label" for="storesuite-ai-bundle-result-title">
 						<?php esc_html_e( 'Product Title', 'storesuite' ); ?>
-						<button type="button" class="storesuite-ai-field-regenerate" data-field="title"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
+						<span class="storesuite-ai-field-actions">
+							<span class="storesuite-ai-field-pager" data-field="title" hidden>
+								<button type="button" class="storesuite-ai-field-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
+								<span class="storesuite-ai-field-pager-status" aria-live="polite">1/1</span>
+								<button type="button" class="storesuite-ai-field-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
+							</span>
+							<button type="button" class="storesuite-ai-field-regenerate" data-field="title"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
+						</span>
 					</label>
 					<input type="text" id="storesuite-ai-bundle-result-title" class="storesuite-form-control" />
+					<div class="storesuite-ai-skeleton storesuite-skeleton-lines" data-field="title" hidden aria-hidden="true">
+						<div class="storesuite-skeleton"></div>
+					</div>
 				</div>
 				<div class="storesuite-form-group">
 					<label class="storesuite-form-label" for="storesuite-ai-bundle-result-short">
 						<?php esc_html_e( 'Short Description', 'storesuite' ); ?>
-						<button type="button" class="storesuite-ai-field-regenerate" data-field="short_description"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
+						<span class="storesuite-ai-field-actions">
+							<span class="storesuite-ai-field-pager" data-field="short_description" hidden>
+								<button type="button" class="storesuite-ai-field-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
+								<span class="storesuite-ai-field-pager-status" aria-live="polite">1/1</span>
+								<button type="button" class="storesuite-ai-field-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
+							</span>
+							<button type="button" class="storesuite-ai-field-regenerate" data-field="short_description"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
+						</span>
 					</label>
 					<textarea id="storesuite-ai-bundle-result-short" class="storesuite-form-control" rows="3"></textarea>
+					<div class="storesuite-ai-skeleton storesuite-skeleton-lines" data-field="short_description" hidden aria-hidden="true">
+						<div class="storesuite-skeleton"></div>
+						<div class="storesuite-skeleton"></div>
+						<div class="storesuite-skeleton"></div>
+					</div>
 				</div>
 				<div class="storesuite-form-group">
 					<label class="storesuite-form-label" for="storesuite-ai-bundle-result-description">
 						<?php esc_html_e( 'Product Description', 'storesuite' ); ?>
-						<button type="button" class="storesuite-ai-field-regenerate" data-field="description"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
+						<span class="storesuite-ai-field-actions">
+							<span class="storesuite-ai-field-pager" data-field="description" hidden>
+								<button type="button" class="storesuite-ai-field-prev" aria-label="<?php esc_attr_e( 'Previous suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-left"></use></svg></button>
+								<span class="storesuite-ai-field-pager-status" aria-live="polite">1/1</span>
+								<button type="button" class="storesuite-ai-field-next" aria-label="<?php esc_attr_e( 'Next suggestion', 'storesuite' ); ?>"><svg class="storesuite-ai-pager-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-chevron-right"></use></svg></button>
+							</span>
+							<button type="button" class="storesuite-ai-field-regenerate" data-field="description"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Regenerate', 'storesuite' ); ?></button>
+						</span>
 					</label>
 					<textarea id="storesuite-ai-bundle-result-description" class="storesuite-form-control" rows="8"></textarea>
+					<div class="storesuite-ai-skeleton storesuite-skeleton-lines" data-field="description" hidden aria-hidden="true">
+						<div class="storesuite-skeleton"></div>
+						<div class="storesuite-skeleton"></div>
+						<div class="storesuite-skeleton"></div>
+						<div class="storesuite-skeleton"></div>
+						<div class="storesuite-skeleton"></div>
+						<div class="storesuite-skeleton"></div>
+					</div>
 				</div>
 			</div>
 		</div>
