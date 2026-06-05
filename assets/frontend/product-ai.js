@@ -11,221 +11,234 @@
  * Reads the localized StoreSuite_Product global enqueued on the product script.
  */
 ( function ( $ ) {
-	'use strict';
+	var StoreFrontProductAI = {
+		SPINNER_ICON: '<i class="las la-spinner la-spin"></i> ',
+		MODAL_CLOSE_SELECTOR:
+			'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close',
 
-	var aiConfig =
-		( typeof StoreSuite_Product !== 'undefined' && StoreSuite_Product.ai ) ||
-		null;
-	var imageEnabled = !! ( aiConfig && aiConfig.image && aiConfig.image.enabled );
-	if ( ! aiConfig || ( ! aiConfig.enabled && ! imageEnabled ) ) {
-		return;
-	}
-
-	var strings = aiConfig.i18n || {};
-	var commonStrings =
-		( typeof StoreSuite_Product !== 'undefined' && StoreSuite_Product.i18n ) ||
-		{};
-	var sharedModal =
-		( window.StoreSuite && window.StoreSuite.storeSuiteModal ) || null;
-	var SPINNER_ICON = '<i class="las la-spinner la-spin"></i> ';
-	var MODAL_CLOSE_SELECTOR =
-		'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close';
-
-	// POST to admin-ajax and normalize the WP JSON envelope: the returned promise
-	// resolves with response.data on success and rejects with a human-readable
-	// message on failure (server error message, or the generic fallback). Throwing
-	// inside the .then() handlers rejects the chained jQuery promise under the
-	// Promises/A+ semantics of jQuery 3.x, which WP 7.0 ships and this AI feature
-	// requires.
-	function aiPost( data ) {
-		return $.post( StoreSuite_Product.ajax_url, data ).then(
-			function ( response ) {
-				if ( response && response.success && response.data ) {
-					return response.data;
-				}
-				throw ( response && response.data && response.data.message ) ||
-					commonStrings.unexpected_error;
-			},
-			function () {
-				throw commonStrings.unexpected_error;
+		init: function () {
+			this.aiConfig =
+				( typeof StoreSuite_Product !== 'undefined' &&
+					StoreSuite_Product.ai ) ||
+				null;
+			var imageEnabled = !! (
+				this.aiConfig &&
+				this.aiConfig.image &&
+				this.aiConfig.image.enabled
+			);
+			if (
+				! this.aiConfig ||
+				( ! this.aiConfig.enabled && ! imageEnabled )
+			) {
+				return;
 			}
-		);
-	}
 
-	$( function () {
-		// Suggestion modal.
-		var $modal = $( '#storesuite-ai-modal' );
-		var $modalText = $modal.find( '#storesuite-ai-modal-text' );
-		var $modalTitle = $modal.find( '#storesuite-ai-modal-title' );
-		var $insertButton = $modal.find( '.storesuite-ai-insert' );
-		var $regenerateButton = $modal.find( '.storesuite-ai-regenerate' );
-		var $pager = $modal.find( '.storesuite-ai-modal-pager' );
-		var $previousButton = $modal.find( '.storesuite-ai-prev' );
-		var $nextButton = $modal.find( '.storesuite-ai-next' );
-		var $pagerStatus = $modal.find( '.storesuite-ai-pager-status' );
-		var $modalSkeleton = $modal.find( '.storesuite-ai-skeleton' );
+			this.strings = this.aiConfig.i18n || {};
+			this.commonStrings =
+				( typeof StoreSuite_Product !== 'undefined' &&
+					StoreSuite_Product.i18n ) ||
+				{};
+			this.sharedModal =
+				( window.StoreSuite && window.StoreSuite.storeSuiteModal ) ||
+				null;
 
-		// Prompt-input modal.
-		var $promptModal = $( '#storesuite-ai-prompt-modal' );
-		var $promptText = $promptModal.find( '#storesuite-ai-prompt-text' );
-		var $promptGenerateButton = $promptModal.find(
-			'.storesuite-ai-prompt-generate'
-		);
-		var $promptDismissButtons = $promptModal.find( MODAL_CLOSE_SELECTOR );
+			// Shared suggestion state.
+			this.activeField = null; // Field currently being generated.
+			this.suggestions = []; // Suggestions generated this session.
+			this.currentIndex = -1; // Index of the suggestion on screen.
+			this.promptSeed = ''; // Prompt-entry keywords (kept for regeneration).
 
-		var activeField = null; // Field currently being generated.
-		var suggestions = []; // Suggestions generated this session.
-		var currentIndex = -1; // Index of the suggestion on screen.
-		var promptSeed = ''; // Prompt-entry keywords (kept for regeneration).
+			// Per-field bundle suggestion history.
+			this.bundleHistory = {
+				title: [],
+				short_description: [],
+				description: [],
+			};
+			this.bundleIndex = {
+				title: -1,
+				short_description: -1,
+				description: -1,
+			};
 
-		if ( sharedModal && $modal.length ) {
-			sharedModal.initOverlay( $modal, {
-				fade: true,
-				closeSelector: MODAL_CLOSE_SELECTOR,
-			} );
-		}
-		if ( sharedModal && $promptModal.length ) {
-			sharedModal.initOverlay( $promptModal, {
-				fade: true,
-				closeSelector: MODAL_CLOSE_SELECTOR,
-			} );
-		}
+			this.initTextModals();
+			this.initBundleModal();
+			this.initImageModal();
+		},
 
 		// --- Helpers -------------------------------------------------------
 
-		function trimmedValue( selector ) {
+		// POST to admin-ajax and normalize the WP JSON envelope: the returned
+		// promise resolves with response.data on success and rejects with a
+		// human-readable message on failure (server error message, or the generic
+		// fallback). Throwing inside the .then() handlers rejects the chained
+		// jQuery promise under the Promises/A+ semantics of jQuery 3.x, which WP
+		// 7.0 ships and this AI feature requires.
+		aiPost: function ( data ) {
+			var commonStrings = this.commonStrings;
+			return $.post( StoreSuite_Product.ajax_url, data ).then(
+				function ( response ) {
+					if ( response && response.success && response.data ) {
+						return response.data;
+					}
+					throw (
+						( response &&
+							response.data &&
+							response.data.message ) ||
+						commonStrings.unexpected_error
+					);
+				},
+				function () {
+					throw commonStrings.unexpected_error;
+				}
+			);
+		},
+
+		trimmedValue: function ( selector ) {
 			return $.trim( $( selector ).val() || '' );
-		}
+		},
 
 		// Active visual TinyMCE editor for the description, or null.
-		function getDescriptionEditor() {
+		getDescriptionEditor: function () {
 			var editor = window.tinymce && tinymce.get( 'product_description' );
 			return editor && ! editor.isHidden() ? editor : null;
-		}
+		},
 
-		function getDescription() {
-			var editor = getDescriptionEditor();
+		getDescription: function () {
+			var editor = this.getDescriptionEditor();
 			return editor
 				? editor.getContent()
 				: $( '#product_description' ).val() || '';
-		}
+		},
 
-		function setDescription( html ) {
-			var editor = getDescriptionEditor();
+		setDescription: function ( html ) {
+			var editor = this.getDescriptionEditor();
 			if ( editor ) {
 				editor.setContent( html );
 			}
 			// Keep the underlying textarea in sync for the Text tab / submit.
 			$( '#product_description' ).val( html );
-		}
+		},
 
-		function getSelectedCategories() {
+		getSelectedCategories: function () {
 			return $( '#product_category option:selected' )
 				.map( function () {
 					return $.trim( $( this ).text() );
 				} )
 				.get()
 				.filter( Boolean );
-		}
+		},
 
-		function showAlert( icon, message ) {
+		showAlert: function ( icon, message ) {
 			Swal.fire( {
 				icon: icon,
-				title: strings.error_title,
-				text: message || commonStrings.unexpected_error,
-				confirmButtonText: commonStrings.ok_button,
+				title: this.strings.error_title,
+				text: message || this.commonStrings.unexpected_error,
+				confirmButtonText: this.commonStrings.ok_button,
 			} );
-		}
+		},
 
-		function modalTitleFor( fieldName ) {
-			return ( strings.modal_titles || {} )[ fieldName ] || $modalTitle.text();
-		}
+		modalTitleFor: function ( fieldName ) {
+			return (
+				( this.strings.modal_titles || {} )[ fieldName ] ||
+				this.$modalTitle.text()
+			);
+		},
 
 		// Descriptions need a title or keywords to work from.
-		function hasContext( fieldName ) {
+		hasContext: function ( fieldName ) {
 			return (
 				fieldName === 'title' ||
 				!! (
-					trimmedValue( '#product_title' ) ||
-					trimmedValue( '#product_short_description' )
+					this.trimmedValue( '#product_title' ) ||
+					this.trimmedValue( '#product_short_description' )
 				)
 			);
-		}
+		},
 
 		// True when title, description and short description are all empty.
-		function isTitleFormEmpty() {
+		isTitleFormEmpty: function () {
 			return (
-				! trimmedValue( '#product_title' ) &&
-				! trimmedValue( '#product_short_description' ) &&
-				! $.trim( getDescription() )
+				! this.trimmedValue( '#product_title' ) &&
+				! this.trimmedValue( '#product_short_description' ) &&
+				! $.trim( this.getDescription() )
 			);
-		}
+		},
 
 		// Resolves with the generated content, or rejects with a message.
-		function generateSuggestion( fieldName, previousSuggestion ) {
-			return aiPost( {
-				action: aiConfig.action,
-				nonce: aiConfig.nonce,
+		generateSuggestion: function ( fieldName, previousSuggestion ) {
+			return this.aiPost( {
+				action: this.aiConfig.action,
+				nonce: this.aiConfig.nonce,
 				field: fieldName,
 				previous: previousSuggestion || '',
 				// Fall back to the typed seed when the title field is empty
 				// (prompt flow), so the seed survives regeneration.
-				product_title: trimmedValue( '#product_title' ) || promptSeed,
-				product_short_description: trimmedValue(
+				product_title:
+					this.trimmedValue( '#product_title' ) || this.promptSeed,
+				product_short_description: this.trimmedValue(
 					'#product_short_description'
 				),
-				product_description: getDescription(),
-				categories: getSelectedCategories(),
+				product_description: this.getDescription(),
+				categories: this.getSelectedCategories(),
 			} ).then( function ( data ) {
 				return data.content || '';
 			} );
-		}
+		},
 
 		// Persist edits to the visible suggestion so they survive navigation.
-		function saveCurrentEdit() {
-			if ( currentIndex > -1 ) {
-				suggestions[ currentIndex ] = $modalText.val() || '';
+		saveCurrentEdit: function () {
+			if ( this.currentIndex > -1 ) {
+				this.suggestions[ this.currentIndex ] =
+					this.$modalText.val() || '';
 			}
-		}
+		},
 
 		// Show the suggestion at the index and render the "‹ n/m ›" pager.
-		function showSuggestion( suggestionIndex ) {
-			if ( suggestionIndex < 0 || suggestionIndex >= suggestions.length ) {
+		showSuggestion: function ( suggestionIndex ) {
+			if (
+				suggestionIndex < 0 ||
+				suggestionIndex >= this.suggestions.length
+			) {
 				return;
 			}
-			currentIndex = suggestionIndex;
-			$modalText.val( suggestions[ suggestionIndex ] );
-			$pagerStatus.text( suggestionIndex + 1 + '/' + suggestions.length );
-			$previousButton.prop( 'disabled', suggestionIndex === 0 );
-			$nextButton.prop(
-				'disabled',
-				suggestionIndex === suggestions.length - 1
+			this.currentIndex = suggestionIndex;
+			this.$modalText.val( this.suggestions[ suggestionIndex ] );
+			this.$pagerStatus.text(
+				suggestionIndex + 1 + '/' + this.suggestions.length
 			);
-			$pager.prop( 'hidden', suggestions.length < 2 );
-		}
+			this.$previousButton.prop( 'disabled', suggestionIndex === 0 );
+			this.$nextButton.prop(
+				'disabled',
+				suggestionIndex === this.suggestions.length - 1
+			);
+			this.$pager.prop( 'hidden', this.suggestions.length < 2 );
+		},
 
 		// Show a fresh suggestion in the suggestion modal (or insert directly
 		// when the shared modal is unavailable).
-		function openSuggestionModal( content ) {
-			if ( ! sharedModal || ! $modal.length ) {
-				insertIntoField( activeField, content );
+		openSuggestionModal: function ( content ) {
+			if ( ! this.sharedModal || ! this.$modal.length ) {
+				this.insertIntoField( this.activeField, content );
 				return;
 			}
-			suggestions = [ content ];
-			currentIndex = -1;
-			$modalTitle.text( modalTitleFor( activeField ) );
-			$modalText.attr( 'rows', activeField === 'description' ? 8 : 3 );
-			showSuggestion( 0 );
-			sharedModal.open( $modal );
-		}
+			this.suggestions = [ content ];
+			this.currentIndex = -1;
+			this.$modalTitle.text( this.modalTitleFor( this.activeField ) );
+			this.$modalText.attr(
+				'rows',
+				this.activeField === 'description' ? 8 : 3
+			);
+			this.showSuggestion( 0 );
+			this.sharedModal.open( this.$modal );
+		},
 
 		// Open the prompt-input modal to collect seed keywords for a title.
-		function openPromptModal() {
-			$promptText.val( '' );
-			sharedModal.open( $promptModal );
-		}
+		openPromptModal: function () {
+			this.$promptText.val( '' );
+			this.sharedModal.open( this.$promptModal );
+		},
 
-		function insertIntoField( fieldName, content ) {
+		insertIntoField: function ( fieldName, content ) {
 			if ( fieldName === 'title' ) {
 				$( '#product_title' ).val( content ).trigger( 'change' );
 			} else if ( fieldName === 'short_description' ) {
@@ -233,146 +246,214 @@
 					.val( content )
 					.trigger( 'change' );
 			} else if ( fieldName === 'description' ) {
-				setDescription( content );
+				this.setDescription( content );
 			}
-		}
+		},
 
-		// --- Events --------------------------------------------------------
+		// --- Suggestion + prompt modals ------------------------------------
 
-		// Field buttons: generate, then open the suggestion modal.
-		$( document ).on( 'click', '.storesuite-ai-generate', function ( event ) {
-			event.preventDefault();
-			var $button = $( this );
-			if ( $button.prop( 'disabled' ) ) {
-				return;
-			}
-			activeField = $button.data( 'field' );
+		initTextModals: function () {
+			var self = this;
 
-			// Title on an empty form: collect seed keywords first.
-			if (
-				activeField === 'title' &&
-				isTitleFormEmpty() &&
-				sharedModal &&
-				$promptModal.length
-			) {
-				openPromptModal();
-				return;
-			}
+			// Suggestion modal.
+			this.$modal = $( '#storesuite-ai-modal' );
+			this.$modalText = this.$modal.find( '#storesuite-ai-modal-text' );
+			this.$modalTitle = this.$modal.find( '#storesuite-ai-modal-title' );
+			this.$insertButton = this.$modal.find( '.storesuite-ai-insert' );
+			this.$regenerateButton = this.$modal.find(
+				'.storesuite-ai-regenerate'
+			);
+			this.$pager = this.$modal.find( '.storesuite-ai-modal-pager' );
+			this.$previousButton = this.$modal.find( '.storesuite-ai-prev' );
+			this.$nextButton = this.$modal.find( '.storesuite-ai-next' );
+			this.$pagerStatus = this.$modal.find(
+				'.storesuite-ai-pager-status'
+			);
+			this.$modalSkeleton = this.$modal.find( '.storesuite-ai-skeleton' );
 
-			if ( ! hasContext( activeField ) ) {
-				showAlert( 'info', strings.no_context );
-				return;
-			}
+			// Prompt-input modal.
+			this.$promptModal = $( '#storesuite-ai-prompt-modal' );
+			this.$promptText = this.$promptModal.find(
+				'#storesuite-ai-prompt-text'
+			);
+			this.$promptGenerateButton = this.$promptModal.find(
+				'.storesuite-ai-prompt-generate'
+			);
+			this.$promptDismissButtons = this.$promptModal.find(
+				this.MODAL_CLOSE_SELECTOR
+			);
 
-			promptSeed = ''; // Real form context drives this request.
-			var originalHtml = $button.html();
-			$button.prop( 'disabled', true ).html( SPINNER_ICON + strings.generating );
-
-			generateSuggestion( activeField, '' )
-				.done( openSuggestionModal )
-				.fail( function ( message ) {
-					showAlert( 'error', message );
-				} )
-				.always( function () {
-					$button.prop( 'disabled', false ).html( originalHtml );
+			if ( this.sharedModal && this.$modal.length ) {
+				this.sharedModal.initOverlay( this.$modal, {
+					fade: true,
+					closeSelector: this.MODAL_CLOSE_SELECTOR,
 				} );
-		} );
-
-		// Prompt modal: generate a title from the typed keywords.
-		$promptGenerateButton.on( 'click', function ( event ) {
-			event.preventDefault();
-			if ( $promptGenerateButton.prop( 'disabled' ) ) {
-				return;
 			}
-
-			promptSeed = $.trim( $promptText.val() || '' );
-			if ( ! promptSeed ) {
-				showAlert( 'error', strings.prompt_required );
-				return;
-			}
-
-			activeField = 'title';
-			var originalText = $promptGenerateButton.text();
-			$promptGenerateButton.prop( 'disabled', true ).text( strings.generating );
-			// Lock the prompt and dismiss controls while the title is generated.
-			$promptText.prop( 'readonly', true );
-			$promptDismissButtons.prop( 'disabled', true );
-
-			generateSuggestion( 'title', '' )
-				.done( function ( content ) {
-					sharedModal.close( $promptModal );
-					openSuggestionModal( content );
-				} )
-				.fail( function ( message ) {
-					showAlert( 'error', message );
-				} )
-				.always( function () {
-					$promptText.prop( 'readonly', false );
-					$promptDismissButtons.prop( 'disabled', false );
-					$promptGenerateButton
-						.prop( 'disabled', false )
-						.text( originalText );
+			if ( this.sharedModal && this.$promptModal.length ) {
+				this.sharedModal.initOverlay( this.$promptModal, {
+					fade: true,
+					closeSelector: this.MODAL_CLOSE_SELECTOR,
 				} );
-		} );
-
-		// Regenerate: append a fresh suggestion, steering away from the current.
-		$regenerateButton.on( 'click', function ( event ) {
-			event.preventDefault();
-			if ( ! activeField || $regenerateButton.prop( 'disabled' ) ) {
-				return;
 			}
 
-			saveCurrentEdit();
-			var previousSuggestion = $modalText.val() || '';
-			$regenerateButton.prop( 'disabled', true ).text( strings.regenerating );
-			$insertButton.prop( 'disabled', true );
-			// Swap the current text for a skeleton while the new one is generated.
-			$modalText.prop( 'hidden', true );
-			$pager.prop( 'hidden', true );
-			$modalSkeleton.prop( 'hidden', false );
+			// Field buttons: generate, then open the suggestion modal.
+			$( document ).on(
+				'click',
+				'.storesuite-ai-generate',
+				function ( event ) {
+					event.preventDefault();
+					var $button = $( this );
+					if ( $button.prop( 'disabled' ) ) {
+						return;
+					}
+					self.activeField = $button.data( 'field' );
 
-			generateSuggestion( activeField, previousSuggestion )
-				.done( function ( content ) {
-					suggestions.push( content );
-					showSuggestion( suggestions.length - 1 );
-				} )
-				.fail( function ( message ) {
-					showAlert( 'error', message );
-				} )
-				.always( function () {
-					$modalSkeleton.prop( 'hidden', true );
-					$modalText.prop( 'hidden', false );
-					$pager.prop( 'hidden', suggestions.length < 2 );
-					$regenerateButton
-						.prop( 'disabled', false )
-						.text( strings.regenerate );
-					$insertButton.prop( 'disabled', false );
-				} );
-		} );
+					// Title on an empty form: collect seed keywords first.
+					if (
+						self.activeField === 'title' &&
+						self.isTitleFormEmpty() &&
+						self.sharedModal &&
+						self.$promptModal.length
+					) {
+						self.openPromptModal();
+						return;
+					}
 
-		// Pager: navigate between previously generated suggestions.
-		$previousButton.on( 'click', function ( event ) {
-			event.preventDefault();
-			saveCurrentEdit();
-			showSuggestion( currentIndex - 1 );
-		} );
-		$nextButton.on( 'click', function ( event ) {
-			event.preventDefault();
-			saveCurrentEdit();
-			showSuggestion( currentIndex + 1 );
-		} );
+					if ( ! self.hasContext( self.activeField ) ) {
+						self.showAlert( 'info', self.strings.no_context );
+						return;
+					}
 
-		// Insert the (possibly edited) modal text into the field.
-		$insertButton.on( 'click', function ( event ) {
-			event.preventDefault();
-			if ( ! activeField ) {
-				return;
-			}
-			insertIntoField( activeField, $modalText.val() || '' );
-			if ( sharedModal && $modal.length ) {
-				sharedModal.close( $modal );
-			}
-		} );
+					self.promptSeed = ''; // Real form context drives this request.
+					var originalHtml = $button.html();
+					$button
+						.prop( 'disabled', true )
+						.html( self.SPINNER_ICON + self.strings.generating );
+
+					self.generateSuggestion( self.activeField, '' )
+						.done( function ( content ) {
+							self.openSuggestionModal( content );
+						} )
+						.fail( function ( message ) {
+							self.showAlert( 'error', message );
+						} )
+						.always( function () {
+							$button
+								.prop( 'disabled', false )
+								.html( originalHtml );
+						} );
+				}
+			);
+
+			// Prompt modal: generate a title from the typed keywords.
+			this.$promptGenerateButton.on( 'click', function ( event ) {
+				event.preventDefault();
+				if ( self.$promptGenerateButton.prop( 'disabled' ) ) {
+					return;
+				}
+
+				self.promptSeed = $.trim( self.$promptText.val() || '' );
+				if ( ! self.promptSeed ) {
+					self.showAlert( 'error', self.strings.prompt_required );
+					return;
+				}
+
+				self.activeField = 'title';
+				var originalText = self.$promptGenerateButton.text();
+				self.$promptGenerateButton
+					.prop( 'disabled', true )
+					.text( self.strings.generating );
+				// Lock the prompt and dismiss controls while the title is generated.
+				self.$promptText.prop( 'readonly', true );
+				self.$promptDismissButtons.prop( 'disabled', true );
+
+				self.generateSuggestion( 'title', '' )
+					.done( function ( content ) {
+						self.sharedModal.close( self.$promptModal );
+						self.openSuggestionModal( content );
+					} )
+					.fail( function ( message ) {
+						self.showAlert( 'error', message );
+					} )
+					.always( function () {
+						self.$promptText.prop( 'readonly', false );
+						self.$promptDismissButtons.prop( 'disabled', false );
+						self.$promptGenerateButton
+							.prop( 'disabled', false )
+							.text( originalText );
+					} );
+			} );
+
+			// Regenerate: append a fresh suggestion, steering away from the current.
+			this.$regenerateButton.on( 'click', function ( event ) {
+				event.preventDefault();
+				if (
+					! self.activeField ||
+					self.$regenerateButton.prop( 'disabled' )
+				) {
+					return;
+				}
+
+				self.saveCurrentEdit();
+				var previousSuggestion = self.$modalText.val() || '';
+				self.$regenerateButton
+					.prop( 'disabled', true )
+					.text( self.strings.regenerating );
+				self.$insertButton.prop( 'disabled', true );
+				// Swap the current text for a skeleton while the new one is generated.
+				self.$modalText.prop( 'hidden', true );
+				self.$pager.prop( 'hidden', true );
+				self.$modalSkeleton.prop( 'hidden', false );
+
+				self.generateSuggestion( self.activeField, previousSuggestion )
+					.done( function ( content ) {
+						self.suggestions.push( content );
+						self.showSuggestion( self.suggestions.length - 1 );
+					} )
+					.fail( function ( message ) {
+						self.showAlert( 'error', message );
+					} )
+					.always( function () {
+						self.$modalSkeleton.prop( 'hidden', true );
+						self.$modalText.prop( 'hidden', false );
+						self.$pager.prop(
+							'hidden',
+							self.suggestions.length < 2
+						);
+						self.$regenerateButton
+							.prop( 'disabled', false )
+							.text( self.strings.regenerate );
+						self.$insertButton.prop( 'disabled', false );
+					} );
+			} );
+
+			// Pager: navigate between previously generated suggestions.
+			this.$previousButton.on( 'click', function ( event ) {
+				event.preventDefault();
+				self.saveCurrentEdit();
+				self.showSuggestion( self.currentIndex - 1 );
+			} );
+			this.$nextButton.on( 'click', function ( event ) {
+				event.preventDefault();
+				self.saveCurrentEdit();
+				self.showSuggestion( self.currentIndex + 1 );
+			} );
+
+			// Insert the (possibly edited) modal text into the field.
+			this.$insertButton.on( 'click', function ( event ) {
+				event.preventDefault();
+				if ( ! self.activeField ) {
+					return;
+				}
+				self.insertIntoField(
+					self.activeField,
+					self.$modalText.val() || ''
+				);
+				if ( self.sharedModal && self.$modal.length ) {
+					self.sharedModal.close( self.$modal );
+				}
+			} );
+		},
 
 		// --- Bundle modal (global "Generate with AI") ----------------------
 		//
@@ -380,87 +461,53 @@
 		// one hint and AI drafts title, short description and long description
 		// together for review before they're inserted into the form.
 
-		var $bundleModal = $( '#storesuite-ai-bundle-modal' );
-		var $bundleHint = $bundleModal.find( '#storesuite-ai-bundle-hint' );
-		var $bundleHintStep = $bundleModal.find( '.storesuite-ai-bundle-hint-step' );
-		var $bundleResultStep = $bundleModal.find(
-			'.storesuite-ai-bundle-result-step'
-		);
-		var $bundleTitle = $bundleModal.find( '#storesuite-ai-bundle-result-title' );
-		var $bundleShort = $bundleModal.find( '#storesuite-ai-bundle-result-short' );
-		var $bundleDescription = $bundleModal.find(
-			'#storesuite-ai-bundle-result-description'
-		);
-		var $bundleGenerate = $bundleModal.find( '.storesuite-ai-bundle-generate' );
-		var $bundleRegenerate = $bundleModal.find(
-			'.storesuite-ai-bundle-regenerate'
-		);
-		var $bundleInsert = $bundleModal.find( '.storesuite-ai-bundle-insert' );
-		var $bundleFields = $bundleHint
-			.add( $bundleTitle )
-			.add( $bundleShort )
-			.add( $bundleDescription );
-		var $bundleDismissButtons = $bundleModal.find( MODAL_CLOSE_SELECTOR );
-
-		if ( sharedModal && $bundleModal.length ) {
-			sharedModal.initOverlay( $bundleModal, {
-				fade: true,
-				closeSelector: MODAL_CLOSE_SELECTOR,
-			} );
-		}
-
 		// Lock every field and control in the bundle modal while a request is in
 		// flight. The calling handler restores the busy button's own label.
-		function setBundleBusy( isBusy ) {
-			$bundleFields.prop( 'readonly', isBusy );
-			$bundleDismissButtons.prop( 'disabled', isBusy );
-			$bundleGenerate.prop( 'disabled', isBusy );
-			$bundleRegenerate.prop( 'disabled', isBusy );
-			$bundleInsert.prop( 'disabled', isBusy );
-			$bundleModal
+		setBundleBusy: function ( isBusy ) {
+			this.$bundleFields.prop( 'readonly', isBusy );
+			this.$bundleDismissButtons.prop( 'disabled', isBusy );
+			this.$bundleGenerate.prop( 'disabled', isBusy );
+			this.$bundleRegenerate.prop( 'disabled', isBusy );
+			this.$bundleInsert.prop( 'disabled', isBusy );
+			this.$bundleModal
 				.find( '.storesuite-ai-field-regenerate' )
 				.prop( 'disabled', isBusy );
-		}
+		},
 
 		// The editable result control for a field key.
-		function bundleField( fieldName ) {
+		bundleField: function ( fieldName ) {
 			if ( fieldName === 'title' ) {
-				return $bundleTitle;
+				return this.$bundleTitle;
 			}
 			if ( fieldName === 'short_description' ) {
-				return $bundleShort;
+				return this.$bundleShort;
 			}
-			return $bundleDescription;
-		}
+			return this.$bundleDescription;
+		},
 
 		// Swap a result field for its shimmer skeleton (or back) while it
 		// regenerates, so the placeholder appears exactly where the new copy
 		// will land.
-		function toggleBundleFieldSkeleton( fieldName, show ) {
-			bundleField( fieldName ).prop( 'hidden', show );
-			$bundleResultStep
+		toggleBundleFieldSkeleton: function ( fieldName, show ) {
+			this.bundleField( fieldName ).prop( 'hidden', show );
+			this.$bundleResultStep
 				.find(
 					'.storesuite-ai-skeleton[data-field="' + fieldName + '"]'
 				)
 				.prop( 'hidden', ! show );
-		}
+		},
 
-		function toggleBundleSkeletons( show ) {
-			toggleBundleFieldSkeleton( 'title', show );
-			toggleBundleFieldSkeleton( 'short_description', show );
-			toggleBundleFieldSkeleton( 'description', show );
-		}
-
-		// Per-field suggestion history so each field gets its own "‹ n/m ›"
-		// pager: every generated/regenerated value is appended and navigable.
-		var bundleHistory = { title: [], short_description: [], description: [] };
-		var bundleIndex = { title: -1, short_description: -1, description: -1 };
+		toggleBundleSkeletons: function ( show ) {
+			this.toggleBundleFieldSkeleton( 'title', show );
+			this.toggleBundleFieldSkeleton( 'short_description', show );
+			this.toggleBundleFieldSkeleton( 'description', show );
+		},
 
 		// Reflect a field's history into its pager (count, position, arrows).
-		function renderFieldPager( fieldName ) {
-			var history = bundleHistory[ fieldName ];
-			var index = bundleIndex[ fieldName ];
-			var $pager = $bundleResultStep.find(
+		renderFieldPager: function ( fieldName ) {
+			var history = this.bundleHistory[ fieldName ];
+			var index = this.bundleIndex[ fieldName ];
+			var $pager = this.$bundleResultStep.find(
 				'.storesuite-ai-field-pager[data-field="' + fieldName + '"]'
 			);
 			if ( ! history.length ) {
@@ -477,285 +524,362 @@
 			$pager
 				.find( '.storesuite-ai-field-next' )
 				.prop( 'disabled', index >= history.length - 1 );
-		}
+		},
 
 		// Persist any manual edit to the visible value before navigating away.
-		function saveFieldEdit( fieldName ) {
-			var index = bundleIndex[ fieldName ];
+		saveFieldEdit: function ( fieldName ) {
+			var index = this.bundleIndex[ fieldName ];
 			if ( index > -1 ) {
-				bundleHistory[ fieldName ][ index ] =
-					bundleField( fieldName ).val() || '';
+				this.bundleHistory[ fieldName ][ index ] =
+					this.bundleField( fieldName ).val() || '';
 			}
-		}
+		},
 
 		// Append a freshly generated value and jump the pager to it.
-		function pushFieldSuggestion( fieldName, value ) {
-			bundleHistory[ fieldName ].push( value );
-			bundleIndex[ fieldName ] = bundleHistory[ fieldName ].length - 1;
-			renderFieldPager( fieldName );
-		}
+		pushFieldSuggestion: function ( fieldName, value ) {
+			this.bundleHistory[ fieldName ].push( value );
+			this.bundleIndex[ fieldName ] =
+				this.bundleHistory[ fieldName ].length - 1;
+			this.renderFieldPager( fieldName );
+		},
 
 		// Show the suggestion at the given index in its field.
-		function showFieldSuggestion( fieldName, index ) {
-			var history = bundleHistory[ fieldName ];
+		showFieldSuggestion: function ( fieldName, index ) {
+			var history = this.bundleHistory[ fieldName ];
 			if ( index < 0 || index >= history.length ) {
 				return;
 			}
-			bundleIndex[ fieldName ] = index;
-			bundleField( fieldName ).val( history[ index ] );
-			renderFieldPager( fieldName );
-		}
+			this.bundleIndex[ fieldName ] = index;
+			this.bundleField( fieldName ).val( history[ index ] );
+			this.renderFieldPager( fieldName );
+		},
 
 		// Clear all per-field history and hide every pager.
-		function resetFieldHistory() {
-			bundleHistory = { title: [], short_description: [], description: [] };
-			bundleIndex = { title: -1, short_description: -1, description: -1 };
-			renderFieldPager( 'title' );
-			renderFieldPager( 'short_description' );
-			renderFieldPager( 'description' );
-		}
+		resetFieldHistory: function () {
+			this.bundleHistory = {
+				title: [],
+				short_description: [],
+				description: [],
+			};
+			this.bundleIndex = {
+				title: -1,
+				short_description: -1,
+				description: -1,
+			};
+			this.renderFieldPager( 'title' );
+			this.renderFieldPager( 'short_description' );
+			this.renderFieldPager( 'description' );
+		},
 
 		// Return the modal to the hint-entry step with everything cleared.
-		function resetBundleModal() {
-			setBundleBusy( false );
-			toggleBundleSkeletons( false );
-			resetFieldHistory();
-			$bundleHint.val( '' );
-			$bundleTitle.val( '' );
-			$bundleShort.val( '' );
-			$bundleDescription.val( '' );
-			$bundleResultStep.prop( 'hidden', true );
-			$bundleHintStep.prop( 'hidden', false );
-			$bundleRegenerate.prop( 'hidden', true );
-			$bundleInsert.prop( 'hidden', true );
-			$bundleGenerate.prop( 'hidden', false );
-		}
+		resetBundleModal: function () {
+			this.setBundleBusy( false );
+			this.toggleBundleSkeletons( false );
+			this.resetFieldHistory();
+			this.$bundleHint.val( '' );
+			this.$bundleTitle.val( '' );
+			this.$bundleShort.val( '' );
+			this.$bundleDescription.val( '' );
+			this.$bundleResultStep.prop( 'hidden', true );
+			this.$bundleHintStep.prop( 'hidden', false );
+			this.$bundleRegenerate.prop( 'hidden', true );
+			this.$bundleInsert.prop( 'hidden', true );
+			this.$bundleGenerate.prop( 'hidden', false );
+		},
 
 		// Request all three fields for the typed hint. Resolves with the data
 		// object { title, short_description, description }, or rejects with a
 		// message.
-		function generateBundle( previousTitle ) {
-			return aiPost( {
-				action: aiConfig.bundle_action,
-				nonce: aiConfig.nonce,
-				hint: $.trim( $bundleHint.val() || '' ),
+		generateBundle: function ( previousTitle ) {
+			return this.aiPost( {
+				action: this.aiConfig.bundle_action,
+				nonce: this.aiConfig.nonce,
+				hint: $.trim( this.$bundleHint.val() || '' ),
 				previous_title: previousTitle || '',
 			} );
-		}
+		},
 
 		// Fill the editable result fields and reveal the result step. Each value
 		// is appended to its field's history so the pager advances on every
 		// (re)generation of the full set.
-		function showBundleResults( data ) {
-			$bundleTitle.val( data.title || '' );
-			$bundleShort.val( data.short_description || '' );
-			$bundleDescription.val( data.description || '' );
-			pushFieldSuggestion( 'title', data.title || '' );
-			pushFieldSuggestion( 'short_description', data.short_description || '' );
-			pushFieldSuggestion( 'description', data.description || '' );
-			$bundleHintStep.prop( 'hidden', true );
-			$bundleResultStep.prop( 'hidden', false );
-			$bundleGenerate.prop( 'hidden', true );
-			$bundleRegenerate.prop( 'hidden', false );
-			$bundleInsert.prop( 'hidden', false );
-		}
+		showBundleResults: function ( data ) {
+			this.$bundleTitle.val( data.title || '' );
+			this.$bundleShort.val( data.short_description || '' );
+			this.$bundleDescription.val( data.description || '' );
+			this.pushFieldSuggestion( 'title', data.title || '' );
+			this.pushFieldSuggestion(
+				'short_description',
+				data.short_description || ''
+			);
+			this.pushFieldSuggestion( 'description', data.description || '' );
+			this.$bundleHintStep.prop( 'hidden', true );
+			this.$bundleResultStep.prop( 'hidden', false );
+			this.$bundleGenerate.prop( 'hidden', true );
+			this.$bundleRegenerate.prop( 'hidden', false );
+			this.$bundleInsert.prop( 'hidden', false );
+		},
 
 		// Shared runner for Generate and Regenerate.
-		function runBundle( $button, busyLabel, previousTitle ) {
-			if ( ! $.trim( $bundleHint.val() || '' ) ) {
-				showAlert( 'error', strings.hint_required );
+		runBundle: function ( $button, busyLabel, previousTitle ) {
+			var self = this;
+			if ( ! $.trim( this.$bundleHint.val() || '' ) ) {
+				this.showAlert( 'error', this.strings.hint_required );
 				return;
 			}
 			var originalText = $button.text();
 			// Regenerating means the result step is already on screen; show
 			// skeletons over the fields. First generation has nothing to cover.
-			var isRegenerate = ! $bundleResultStep.prop( 'hidden' );
-			setBundleBusy( true );
+			var isRegenerate = ! this.$bundleResultStep.prop( 'hidden' );
+			this.setBundleBusy( true );
 			if ( isRegenerate ) {
 				// Preserve any manual edits at their current history positions
 				// before the new set is appended.
-				saveFieldEdit( 'title' );
-				saveFieldEdit( 'short_description' );
-				saveFieldEdit( 'description' );
-				toggleBundleSkeletons( true );
+				this.saveFieldEdit( 'title' );
+				this.saveFieldEdit( 'short_description' );
+				this.saveFieldEdit( 'description' );
+				this.toggleBundleSkeletons( true );
 			}
 			$button.text( busyLabel );
 
-			generateBundle( previousTitle )
-				.done( showBundleResults )
+			this.generateBundle( previousTitle )
+				.done( function ( data ) {
+					self.showBundleResults( data );
+				} )
 				.fail( function ( message ) {
-					showAlert( 'error', message );
+					self.showAlert( 'error', message );
 				} )
 				.always( function () {
-					setBundleBusy( false );
+					self.setBundleBusy( false );
 					if ( isRegenerate ) {
-						toggleBundleSkeletons( false );
+						self.toggleBundleSkeletons( false );
 					}
 					$button.text( originalText );
 				} );
-		}
-
-		// Header launcher: if the form already has any copy, skip the hint step
-		// and open straight to the editable fields pre-filled with it.
-		// Otherwise start on the hint step.
-		$( document ).on(
-			'click',
-			'.storesuite-ai-bundle-launch',
-			function ( event ) {
-				event.preventDefault();
-				if ( ! sharedModal || ! $bundleModal.length ) {
-					return;
-				}
-				resetBundleModal();
-
-				var title = trimmedValue( '#product_title' );
-				var short = $.trim(
-					$( '#product_short_description' ).val() || ''
-				);
-				var description = $.trim( getDescription() );
-
-				if ( title || short || description ) {
-					// Seed the (hidden) hint so Regenerate has something to work from.
-					$bundleHint.val( title || short );
-					showBundleResults( {
-						title: title,
-						short_description: short,
-						description: description,
-					} );
-				}
-
-				sharedModal.open( $bundleModal );
-			}
-		);
-
-		$bundleGenerate.on( 'click', function ( event ) {
-			event.preventDefault();
-			runBundle( $bundleGenerate, strings.generating, '' );
-		} );
-
-		$bundleRegenerate.on( 'click', function ( event ) {
-			event.preventDefault();
-			runBundle(
-				$bundleRegenerate,
-				strings.regenerating,
-				$.trim( $bundleTitle.val() || '' )
-			);
-		} );
+		},
 
 		// Current value of a single bundle result field.
-		function bundleFieldValue( fieldName ) {
+		bundleFieldValue: function ( fieldName ) {
 			if ( fieldName === 'title' ) {
-				return $.trim( $bundleTitle.val() || '' );
+				return $.trim( this.$bundleTitle.val() || '' );
 			}
 			if ( fieldName === 'short_description' ) {
-				return $bundleShort.val() || '';
+				return this.$bundleShort.val() || '';
 			}
-			return $bundleDescription.val() || '';
-		}
+			return this.$bundleDescription.val() || '';
+		},
 
 		// Write a regenerated value back into its bundle result field.
-		function setBundleField( fieldName, content ) {
+		setBundleField: function ( fieldName, content ) {
 			if ( fieldName === 'title' ) {
-				$bundleTitle.val( content );
+				this.$bundleTitle.val( content );
 			} else if ( fieldName === 'short_description' ) {
-				$bundleShort.val( content );
+				this.$bundleShort.val( content );
 			} else {
-				$bundleDescription.val( content );
+				this.$bundleDescription.val( content );
 			}
-		}
+		},
 
-		// Regenerate a single field from the other fields' current values,
-		// steering away from the value on screen.
-		$bundleModal.on(
-			'click',
-			'.storesuite-ai-field-regenerate',
-			function ( event ) {
+		initBundleModal: function () {
+			var self = this;
+
+			this.$bundleModal = $( '#storesuite-ai-bundle-modal' );
+			this.$bundleHint = this.$bundleModal.find(
+				'#storesuite-ai-bundle-hint'
+			);
+			this.$bundleHintStep = this.$bundleModal.find(
+				'.storesuite-ai-bundle-hint-step'
+			);
+			this.$bundleResultStep = this.$bundleModal.find(
+				'.storesuite-ai-bundle-result-step'
+			);
+			this.$bundleTitle = this.$bundleModal.find(
+				'#storesuite-ai-bundle-result-title'
+			);
+			this.$bundleShort = this.$bundleModal.find(
+				'#storesuite-ai-bundle-result-short'
+			);
+			this.$bundleDescription = this.$bundleModal.find(
+				'#storesuite-ai-bundle-result-description'
+			);
+			this.$bundleGenerate = this.$bundleModal.find(
+				'.storesuite-ai-bundle-generate'
+			);
+			this.$bundleRegenerate = this.$bundleModal.find(
+				'.storesuite-ai-bundle-regenerate'
+			);
+			this.$bundleInsert = this.$bundleModal.find(
+				'.storesuite-ai-bundle-insert'
+			);
+			this.$bundleFields = this.$bundleHint
+				.add( this.$bundleTitle )
+				.add( this.$bundleShort )
+				.add( this.$bundleDescription );
+			this.$bundleDismissButtons = this.$bundleModal.find(
+				this.MODAL_CLOSE_SELECTOR
+			);
+
+			if ( this.sharedModal && this.$bundleModal.length ) {
+				this.sharedModal.initOverlay( this.$bundleModal, {
+					fade: true,
+					closeSelector: this.MODAL_CLOSE_SELECTOR,
+				} );
+			}
+
+			// Header launcher: if the form already has any copy, skip the hint
+			// step and open straight to the editable fields pre-filled with it.
+			// Otherwise start on the hint step.
+			$( document ).on(
+				'click',
+				'.storesuite-ai-bundle-launch',
+				function ( event ) {
+					event.preventDefault();
+					if ( ! self.sharedModal || ! self.$bundleModal.length ) {
+						return;
+					}
+					self.resetBundleModal();
+
+					var title = self.trimmedValue( '#product_title' );
+					var short = $.trim(
+						$( '#product_short_description' ).val() || ''
+					);
+					var description = $.trim( self.getDescription() );
+
+					if ( title || short || description ) {
+						// Seed the (hidden) hint so Regenerate has something to work from.
+						self.$bundleHint.val( title || short );
+						self.showBundleResults( {
+							title: title,
+							short_description: short,
+							description: description,
+						} );
+					}
+
+					self.sharedModal.open( self.$bundleModal );
+				}
+			);
+
+			this.$bundleGenerate.on( 'click', function ( event ) {
 				event.preventDefault();
-				var $button = $( this );
-				if ( $button.prop( 'disabled' ) ) {
-					return;
-				}
-				var fieldName = $button.data( 'field' );
-				var hint = $.trim( $bundleHint.val() || '' );
-				var title = $.trim( $bundleTitle.val() || '' );
-				var short = $bundleShort.val() || '';
-				// Keywords for a title: the hint, else fall back to what we have.
-				var titleSeed = hint || title || $.trim( short );
-				var originalHtml = $button.html();
-				// Keep any manual edit in history before the new one is appended.
-				saveFieldEdit( fieldName );
-				setBundleBusy( true );
-				toggleBundleFieldSkeleton( fieldName, true );
-				$button.html( SPINNER_ICON + strings.regenerating );
+				self.runBundle( self.$bundleGenerate, self.strings.generating, '' );
+			} );
 
-				aiPost( {
-					action: aiConfig.action,
-					nonce: aiConfig.nonce,
-					field: fieldName,
-					previous: bundleFieldValue( fieldName ),
-					// Title leans on its seed; the others lean on the title.
-					product_title: fieldName === 'title' ? titleSeed : title,
-					product_short_description:
-						fieldName === 'short_description'
-							? ''
-							: $bundleShort.val() || '',
-					product_description:
-						fieldName === 'description'
-							? ''
-							: $bundleDescription.val() || '',
-					categories: [],
-				} )
-					.done( function ( data ) {
-						var content = data.content || '';
-						setBundleField( fieldName, content );
-						pushFieldSuggestion( fieldName, content );
-					} )
-					.fail( function ( message ) {
-						showAlert( 'error', message );
-					} )
-					.always( function () {
-						setBundleBusy( false );
-						toggleBundleFieldSkeleton( fieldName, false );
-						$button.html( originalHtml );
-					} );
-			}
-		);
-
-		// Per-field pager: step through that field's generated suggestions.
-		$bundleResultStep.on(
-			'click',
-			'.storesuite-ai-field-prev, .storesuite-ai-field-next',
-			function ( event ) {
+			this.$bundleRegenerate.on( 'click', function ( event ) {
 				event.preventDefault();
-				var $button = $( this );
-				if ( $button.prop( 'disabled' ) ) {
-					return;
-				}
-				var fieldName = $button
-					.closest( '.storesuite-ai-field-pager' )
-					.data( 'field' );
-				// Ignore while this field is mid-regeneration (skeleton shown).
-				if ( bundleField( fieldName ).prop( 'hidden' ) ) {
-					return;
-				}
-				saveFieldEdit( fieldName );
-				var delta = $button.hasClass( 'storesuite-ai-field-next' )
-					? 1
-					: -1;
-				showFieldSuggestion( fieldName, bundleIndex[ fieldName ] + delta );
-			}
-		);
+				self.runBundle(
+					self.$bundleRegenerate,
+					self.strings.regenerating,
+					$.trim( self.$bundleTitle.val() || '' )
+				);
+			} );
 
-		// Insert all three drafted fields into the product form.
-		$bundleInsert.on( 'click', function ( event ) {
-			event.preventDefault();
-			insertIntoField( 'title', $.trim( $bundleTitle.val() || '' ) );
-			insertIntoField( 'short_description', $bundleShort.val() || '' );
-			insertIntoField( 'description', $bundleDescription.val() || '' );
-			if ( sharedModal && $bundleModal.length ) {
-				sharedModal.close( $bundleModal );
-			}
-		} );
+			// Regenerate a single field from the other fields' current values,
+			// steering away from the value on screen.
+			this.$bundleModal.on(
+				'click',
+				'.storesuite-ai-field-regenerate',
+				function ( event ) {
+					event.preventDefault();
+					var $button = $( this );
+					if ( $button.prop( 'disabled' ) ) {
+						return;
+					}
+					var fieldName = $button.data( 'field' );
+					var hint = $.trim( self.$bundleHint.val() || '' );
+					var title = $.trim( self.$bundleTitle.val() || '' );
+					var short = self.$bundleShort.val() || '';
+					// Keywords for a title: the hint, else fall back to what we have.
+					var titleSeed = hint || title || $.trim( short );
+					var originalHtml = $button.html();
+					// Keep any manual edit in history before the new one is appended.
+					self.saveFieldEdit( fieldName );
+					self.setBundleBusy( true );
+					self.toggleBundleFieldSkeleton( fieldName, true );
+					$button.html(
+						self.SPINNER_ICON + self.strings.regenerating
+					);
+
+					self.aiPost( {
+						action: self.aiConfig.action,
+						nonce: self.aiConfig.nonce,
+						field: fieldName,
+						previous: self.bundleFieldValue( fieldName ),
+						// Title leans on its seed; the others lean on the title.
+						product_title:
+							fieldName === 'title' ? titleSeed : title,
+						product_short_description:
+							fieldName === 'short_description'
+								? ''
+								: self.$bundleShort.val() || '',
+						product_description:
+							fieldName === 'description'
+								? ''
+								: self.$bundleDescription.val() || '',
+						categories: [],
+					} )
+						.done( function ( data ) {
+							var content = data.content || '';
+							self.setBundleField( fieldName, content );
+							self.pushFieldSuggestion( fieldName, content );
+						} )
+						.fail( function ( message ) {
+							self.showAlert( 'error', message );
+						} )
+						.always( function () {
+							self.setBundleBusy( false );
+							self.toggleBundleFieldSkeleton( fieldName, false );
+							$button.html( originalHtml );
+						} );
+				}
+			);
+
+			// Per-field pager: step through that field's generated suggestions.
+			this.$bundleResultStep.on(
+				'click',
+				'.storesuite-ai-field-prev, .storesuite-ai-field-next',
+				function ( event ) {
+					event.preventDefault();
+					var $button = $( this );
+					if ( $button.prop( 'disabled' ) ) {
+						return;
+					}
+					var fieldName = $button
+						.closest( '.storesuite-ai-field-pager' )
+						.data( 'field' );
+					// Ignore while this field is mid-regeneration (skeleton shown).
+					if ( self.bundleField( fieldName ).prop( 'hidden' ) ) {
+						return;
+					}
+					self.saveFieldEdit( fieldName );
+					var delta = $button.hasClass( 'storesuite-ai-field-next' )
+						? 1
+						: -1;
+					self.showFieldSuggestion(
+						fieldName,
+						self.bundleIndex[ fieldName ] + delta
+					);
+				}
+			);
+
+			// Insert all three drafted fields into the product form.
+			this.$bundleInsert.on( 'click', function ( event ) {
+				event.preventDefault();
+				self.insertIntoField(
+					'title',
+					$.trim( self.$bundleTitle.val() || '' )
+				);
+				self.insertIntoField(
+					'short_description',
+					self.$bundleShort.val() || ''
+				);
+				self.insertIntoField(
+					'description',
+					self.$bundleDescription.val() || ''
+				);
+				if ( self.sharedModal && self.$bundleModal.length ) {
+					self.sharedModal.close( self.$bundleModal );
+				}
+			} );
+		},
 
 		// --- Product image generation --------------------------------------
 		//
@@ -763,146 +887,163 @@
 		// the image, Generate a preview, then Insert it (which side-loads it into
 		// the media library and sets it as the product image).
 
-		var imageConfig = aiConfig.image || null;
-		if ( imageConfig && imageConfig.enabled ) {
-			var $imageModal = $( '#storesuite-ai-image-modal' );
-			var $imagePrompt = $imageModal.find( '#storesuite-ai-image-prompt' );
-			var $imagePreview = $imageModal.find( '.storesuite-ai-image-preview' );
-			var $imagePreviewImg = $imagePreview.find( 'img' );
-			var $imageSkeleton = $imageModal.find( '.storesuite-ai-image-skeleton' );
-			var $imageSubmit = $imageModal.find( '.storesuite-ai-image-submit' );
-			var $imageRegenerate = $imageModal.find(
+		// Back to the prompt-entry state with no preview.
+		resetImageModal: function () {
+			this.$imagePrompt.val( '' ).prop( 'readonly', false );
+			this.$imagePreviewImg.attr( 'src', '' );
+			this.$imagePreview.prop( 'hidden', true );
+			this.$imageSkeleton.prop( 'hidden', true );
+			this.$imageRegenerate.prop( 'hidden', true );
+			this.$imageInsert.prop( 'hidden', true );
+			this.$imageSubmit.prop( 'hidden', false );
+			this.imageToken = '';
+		},
+
+		// Generate (or regenerate) an image preview from the typed prompt.
+		generateImage: function ( $button, busyLabel ) {
+			var self = this;
+			var prompt = $.trim( this.$imagePrompt.val() || '' );
+			if ( ! prompt ) {
+				this.showAlert( 'error', this.imageConfig.prompt_required );
+				return;
+			}
+			var originalText = $button.text();
+			this.$imageSubmit.prop( 'disabled', true );
+			this.$imageRegenerate.prop( 'disabled', true );
+			this.$imageInsert.prop( 'disabled', true );
+			$button.text( busyLabel );
+			// Lock the prompt and show a skeleton while the image is generated.
+			this.$imagePrompt.prop( 'readonly', true );
+			this.$imagePreview.prop( 'hidden', true );
+			this.$imageSkeleton.prop( 'hidden', false );
+
+			this.aiPost( {
+				action: this.imageConfig.generate_action,
+				nonce: this.aiConfig.nonce,
+				prompt: prompt,
+			} )
+				.done( function ( data ) {
+					self.imageToken = data.token || '';
+					self.$imagePreviewImg.attr( 'src', data.preview || '' );
+					self.$imagePreview.prop( 'hidden', false );
+					self.$imageSubmit.prop( 'hidden', true );
+					self.$imageRegenerate.prop( 'hidden', false );
+					self.$imageInsert.prop( 'hidden', false );
+				} )
+				.fail( function ( message ) {
+					self.showAlert( 'error', message );
+				} )
+				.always( function () {
+					self.$imageSkeleton.prop( 'hidden', true );
+					self.$imagePrompt.prop( 'readonly', false );
+					self.$imageSubmit.prop( 'disabled', false );
+					self.$imageRegenerate.prop( 'disabled', false );
+					self.$imageInsert.prop( 'disabled', false );
+					$button.text( originalText );
+				} );
+		},
+
+		// Wire the inserted attachment into the product image fields,
+		// mirroring the manual media-library upload flow.
+		applyProductImage: function ( attachmentId, url ) {
+			$( '#product_thumbnail_id' ).val( attachmentId );
+			$( '#product_thumbnail_url' ).val( url );
+			$( '#product_thumb_img' ).html(
+				'<img src="' + url + '" alt="" />'
+			);
+			var $container = $( '#product-single-image' );
+			$container.addClass( 'image-drop-bg' );
+			$container
+				.find( '.image-drop-text span' )
+				.text(
+					( typeof storeSuiteFrontScript !== 'undefined' &&
+						storeSuiteFrontScript.remove_image_text ) ||
+						''
+				);
+			// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+			$( '#product_thumbnail_id' ).trigger( 'change' );
+		},
+
+		// Append the inserted attachment to the product gallery, mirroring the
+		// manual gallery upload flow.
+		appendGalleryImage: function ( attachmentId, url ) {
+			var idStr = String( attachmentId );
+			var ids = $.map(
+				( $( '#product_image_gallery' ).val() || '' ).split( ',' ),
+				function ( value ) {
+					value = $.trim( value );
+					return value ? value : null;
+				}
+			);
+			var urls = $.map(
+				( $( '#product_image_gallery_url' ).val() || '' ).split( ',' ),
+				function ( value ) {
+					value = $.trim( value );
+					return value ? value : null;
+				}
+			);
+			if ( $.inArray( idStr, ids ) !== -1 ) {
+				return;
+			}
+			ids.push( idStr );
+			urls.push( url );
+			$( '#product_gallery_img' ).append(
+				'<div class="preview-image-box"><a href="#" class="remove-gallery-image" data-id="' +
+					idStr +
+					'">×</a><img src="' +
+					url +
+					'" alt="" /></div>'
+			);
+			$( '#product_image_gallery' ).val( ids.join( ',' ) );
+			$( '#product_image_gallery_url' ).val( urls.join( ',' ) );
+			$( '#product_image_gallery' ).trigger( 'change' );
+			$( '#product-gallery-images' ).addClass(
+				'sm-gallery-image-uploader'
+			);
+			$( '.product-gallery-images-wrapper' ).removeClass(
+				'gallery-has-no-image'
+			);
+		},
+
+		initImageModal: function () {
+			var self = this;
+
+			this.imageConfig = this.aiConfig.image || null;
+			if ( ! this.imageConfig || ! this.imageConfig.enabled ) {
+				return;
+			}
+
+			this.$imageModal = $( '#storesuite-ai-image-modal' );
+			this.$imagePrompt = this.$imageModal.find(
+				'#storesuite-ai-image-prompt'
+			);
+			this.$imagePreview = this.$imageModal.find(
+				'.storesuite-ai-image-preview'
+			);
+			this.$imagePreviewImg = this.$imagePreview.find( 'img' );
+			this.$imageSkeleton = this.$imageModal.find(
+				'.storesuite-ai-image-skeleton'
+			);
+			this.$imageSubmit = this.$imageModal.find(
+				'.storesuite-ai-image-submit'
+			);
+			this.$imageRegenerate = this.$imageModal.find(
 				'.storesuite-ai-image-regenerate'
 			);
-			var $imageInsert = $imageModal.find( '.storesuite-ai-image-insert' );
-			var $imageDismissButtons = $imageModal.find( MODAL_CLOSE_SELECTOR );
-			var imageToken = ''; // Server-side handle to the last generated image.
-			var imageTarget = 'featured'; // Where Insert puts it: featured or gallery.
+			this.$imageInsert = this.$imageModal.find(
+				'.storesuite-ai-image-insert'
+			);
+			this.$imageDismissButtons = this.$imageModal.find(
+				this.MODAL_CLOSE_SELECTOR
+			);
+			this.imageToken = ''; // Server-side handle to the last generated image.
+			this.imageTarget = 'featured'; // Where Insert puts it: featured or gallery.
 
-			if ( sharedModal && $imageModal.length ) {
-				sharedModal.initOverlay( $imageModal, {
+			if ( this.sharedModal && this.$imageModal.length ) {
+				this.sharedModal.initOverlay( this.$imageModal, {
 					fade: true,
-					closeSelector: MODAL_CLOSE_SELECTOR,
+					closeSelector: this.MODAL_CLOSE_SELECTOR,
 				} );
-			}
-
-			// Back to the prompt-entry state with no preview.
-			function resetImageModal() {
-				$imagePrompt.val( '' ).prop( 'readonly', false );
-				$imagePreviewImg.attr( 'src', '' );
-				$imagePreview.prop( 'hidden', true );
-				$imageSkeleton.prop( 'hidden', true );
-				$imageRegenerate.prop( 'hidden', true );
-				$imageInsert.prop( 'hidden', true );
-				$imageSubmit.prop( 'hidden', false );
-				imageToken = '';
-			}
-
-			// Generate (or regenerate) an image preview from the typed prompt.
-			function generateImage( $button, busyLabel ) {
-				var prompt = $.trim( $imagePrompt.val() || '' );
-				if ( ! prompt ) {
-					showAlert( 'error', imageConfig.prompt_required );
-					return;
-				}
-				var originalText = $button.text();
-				$imageSubmit.prop( 'disabled', true );
-				$imageRegenerate.prop( 'disabled', true );
-				$imageInsert.prop( 'disabled', true );
-				$button.text( busyLabel );
-				// Lock the prompt and show a skeleton while the image is generated.
-				$imagePrompt.prop( 'readonly', true );
-				$imagePreview.prop( 'hidden', true );
-				$imageSkeleton.prop( 'hidden', false );
-
-				aiPost( {
-					action: imageConfig.generate_action,
-					nonce: aiConfig.nonce,
-					prompt: prompt,
-				} )
-					.done( function ( data ) {
-						imageToken = data.token || '';
-						$imagePreviewImg.attr( 'src', data.preview || '' );
-						$imagePreview.prop( 'hidden', false );
-						$imageSubmit.prop( 'hidden', true );
-						$imageRegenerate.prop( 'hidden', false );
-						$imageInsert.prop( 'hidden', false );
-					} )
-					.fail( function ( message ) {
-						showAlert( 'error', message );
-					} )
-					.always( function () {
-						$imageSkeleton.prop( 'hidden', true );
-						$imagePrompt.prop( 'readonly', false );
-						$imageSubmit.prop( 'disabled', false );
-						$imageRegenerate.prop( 'disabled', false );
-						$imageInsert.prop( 'disabled', false );
-						$button.text( originalText );
-					} );
-			}
-
-			// Wire the inserted attachment into the product image fields,
-			// mirroring the manual media-library upload flow.
-			function applyProductImage( attachmentId, url ) {
-				$( '#product_thumbnail_id' ).val( attachmentId );
-				$( '#product_thumbnail_url' ).val( url );
-				$( '#product_thumb_img' ).html(
-					'<img src="' + url + '" alt="" />'
-				);
-				var $container = $( '#product-single-image' );
-				$container.addClass( 'image-drop-bg' );
-				$container
-					.find( '.image-drop-text span' )
-					.text(
-						( typeof storeSuiteFrontScript !== 'undefined' &&
-							storeSuiteFrontScript.remove_image_text ) ||
-							''
-					);
-				// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
-				$( '#product_thumbnail_id' ).trigger( 'change' );
-			}
-
-			// Append the inserted attachment to the product gallery, mirroring the
-			// manual gallery upload flow.
-			function appendGalleryImage( attachmentId, url ) {
-				var idStr = String( attachmentId );
-				var ids = $.map(
-					( $( '#product_image_gallery' ).val() || '' ).split( ',' ),
-					function ( value ) {
-						value = $.trim( value );
-						return value ? value : null;
-					}
-				);
-				var urls = $.map(
-					( $( '#product_image_gallery_url' ).val() || '' ).split(
-						','
-					),
-					function ( value ) {
-						value = $.trim( value );
-						return value ? value : null;
-					}
-				);
-				if ( $.inArray( idStr, ids ) !== -1 ) {
-					return;
-				}
-				ids.push( idStr );
-				urls.push( url );
-				$( '#product_gallery_img' ).append(
-					'<div class="preview-image-box"><a href="#" class="remove-gallery-image" data-id="' +
-						idStr +
-						'">×</a><img src="' +
-						url +
-						'" alt="" /></div>'
-				);
-				$( '#product_image_gallery' ).val( ids.join( ',' ) );
-				$( '#product_image_gallery_url' ).val( urls.join( ',' ) );
-				$( '#product_image_gallery' ).trigger( 'change' );
-				$( '#product-gallery-images' ).addClass(
-					'sm-gallery-image-uploader'
-				);
-				$( '.product-gallery-images-wrapper' ).removeClass(
-					'gallery-has-no-image'
-				);
 			}
 
 			// Label button: open the image modal fresh for the clicked target.
@@ -912,68 +1053,74 @@
 				function ( event ) {
 					event.preventDefault();
 					event.stopPropagation();
-					if ( ! sharedModal || ! $imageModal.length ) {
+					if ( ! self.sharedModal || ! self.$imageModal.length ) {
 						return;
 					}
-					imageTarget =
+					self.imageTarget =
 						$( this ).data( 'target' ) === 'gallery'
 							? 'gallery'
 							: 'featured';
-					resetImageModal();
-					sharedModal.open( $imageModal );
+					self.resetImageModal();
+					self.sharedModal.open( self.$imageModal );
 				}
 			);
 
-			$imageSubmit.on( 'click', function ( event ) {
+			this.$imageSubmit.on( 'click', function ( event ) {
 				event.preventDefault();
-				generateImage( $imageSubmit, strings.generating );
+				self.generateImage( self.$imageSubmit, self.strings.generating );
 			} );
 
-			$imageRegenerate.on( 'click', function ( event ) {
+			this.$imageRegenerate.on( 'click', function ( event ) {
 				event.preventDefault();
-				generateImage( $imageRegenerate, strings.regenerating );
+				self.generateImage(
+					self.$imageRegenerate,
+					self.strings.regenerating
+				);
 			} );
 
 			// Side-load the generated image and set it as the product image.
-			$imageInsert.on( 'click', function ( event ) {
+			this.$imageInsert.on( 'click', function ( event ) {
 				event.preventDefault();
-				if ( ! imageToken ) {
+				if ( ! self.imageToken ) {
 					return;
 				}
-				var originalText = $imageInsert.text();
-				$imageInsert.prop( 'disabled', true ).text( imageConfig.inserting );
-				$imageRegenerate.prop( 'disabled', true );
+				var originalText = self.$imageInsert.text();
+				self.$imageInsert
+					.prop( 'disabled', true )
+					.text( self.imageConfig.inserting );
+				self.$imageRegenerate.prop( 'disabled', true );
 				// Lock the prompt and dismiss controls while the image is inserted.
-				$imagePrompt.prop( 'readonly', true );
-				$imageDismissButtons.prop( 'disabled', true );
+				self.$imagePrompt.prop( 'readonly', true );
+				self.$imageDismissButtons.prop( 'disabled', true );
 
-				aiPost( {
-					action: imageConfig.insert_action,
-					nonce: aiConfig.nonce,
-					token: imageToken,
+				self.aiPost( {
+					action: self.imageConfig.insert_action,
+					nonce: self.aiConfig.nonce,
+					token: self.imageToken,
 				} )
 					.done( function ( data ) {
-						if ( 'gallery' === imageTarget ) {
-							appendGalleryImage( data.id, data.url );
+						if ( 'gallery' === self.imageTarget ) {
+							self.appendGalleryImage( data.id, data.url );
 						} else {
-							applyProductImage( data.id, data.url );
+							self.applyProductImage( data.id, data.url );
 						}
-						if ( sharedModal && $imageModal.length ) {
-							sharedModal.close( $imageModal );
+						if ( self.sharedModal && self.$imageModal.length ) {
+							self.sharedModal.close( self.$imageModal );
 						}
 					} )
 					.fail( function ( message ) {
-						showAlert( 'error', message );
+						self.showAlert( 'error', message );
 					} )
 					.always( function () {
-						$imagePrompt.prop( 'readonly', false );
-						$imageDismissButtons.prop( 'disabled', false );
-						$imageInsert
+						self.$imagePrompt.prop( 'readonly', false );
+						self.$imageDismissButtons.prop( 'disabled', false );
+						self.$imageInsert
 							.prop( 'disabled', false )
 							.text( originalText );
-						$imageRegenerate.prop( 'disabled', false );
+						self.$imageRegenerate.prop( 'disabled', false );
 					} );
 			} );
-		}
-	} );
+		},
+	};
+	StoreFrontProductAI.init();
 } )( jQuery );
