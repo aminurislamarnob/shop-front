@@ -97,6 +97,14 @@
 			return $.trim( $( selector ).val() || '' );
 		},
 
+		// Split a comma-separated string into a clean list (trimmed, no blanks).
+		splitCsv: function ( value ) {
+			return $.map( ( value || '' ).split( ',' ), function ( item ) {
+				item = $.trim( item );
+				return item ? item : null;
+			} );
+		},
+
 		// Active visual TinyMCE editor for the description, or null.
 		getDescriptionEditor: function () {
 			var editor = window.tinymce && tinymce.get( 'product_description' );
@@ -146,13 +154,19 @@
 
 		// Descriptions need a title or keywords to work from.
 		hasContext: function ( fieldName ) {
-			return (
-				fieldName === 'title' ||
-				!! (
-					this.trimmedValue( '#product_title' ) ||
-					this.trimmedValue( '#product_short_description' )
-				)
-			);
+			// Generating the title itself never needs prior context.
+			if ( fieldName === 'title' ) {
+				return true;
+			}
+
+			var hasTitle = this.trimmedValue( '#product_title' ) ? true : false;
+			var hasShortDescription = this.trimmedValue(
+				'#product_short_description'
+			)
+				? true
+				: false;
+
+			return hasTitle || hasShortDescription;
 		},
 
 		// True when title, description and short description are all empty.
@@ -659,24 +673,14 @@
 
 		// Current value of a single bundle result field.
 		bundleFieldValue: function ( fieldName ) {
-			if ( fieldName === 'title' ) {
-				return $.trim( this.$bundleTitle.val() || '' );
-			}
-			if ( fieldName === 'short_description' ) {
-				return this.$bundleShort.val() || '';
-			}
-			return this.$bundleDescription.val() || '';
+			var value = this.bundleField( fieldName ).val() || '';
+			// Only the title is trimmed; descriptions keep their whitespace.
+			return fieldName === 'title' ? $.trim( value ) : value;
 		},
 
 		// Write a regenerated value back into its bundle result field.
 		setBundleField: function ( fieldName, content ) {
-			if ( fieldName === 'title' ) {
-				this.$bundleTitle.val( content );
-			} else if ( fieldName === 'short_description' ) {
-				this.$bundleShort.val( content );
-			} else {
-				this.$bundleDescription.val( content );
-			}
+			this.bundleField( fieldName ).val( content );
 		},
 
 		initBundleModal: function () {
@@ -968,20 +972,8 @@
 		// manual gallery upload flow.
 		appendGalleryImage: function ( attachmentId, url ) {
 			var idStr = String( attachmentId );
-			var ids = $.map(
-				( $( '#product_image_gallery' ).val() || '' ).split( ',' ),
-				function ( value ) {
-					value = $.trim( value );
-					return value ? value : null;
-				}
-			);
-			var urls = $.map(
-				( $( '#product_image_gallery_url' ).val() || '' ).split( ',' ),
-				function ( value ) {
-					value = $.trim( value );
-					return value ? value : null;
-				}
-			);
+			var ids = this.splitCsv( $( '#product_image_gallery' ).val() );
+			var urls = this.splitCsv( $( '#product_image_gallery_url' ).val() );
 			if ( $.inArray( idStr, ids ) !== -1 ) {
 				return;
 			}
