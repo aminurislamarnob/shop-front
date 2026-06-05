@@ -33,22 +33,21 @@
 
 	// POST to admin-ajax and normalize the WP JSON envelope: the returned promise
 	// resolves with response.data on success and rejects with a human-readable
-	// message on failure (server error message, or the generic fallback). Rejected
-	// deferreds are returned explicitly so the chain stays rejected under jQuery
-	// 3.x Promises/A+ semantics.
+	// message on failure (server error message, or the generic fallback). Throwing
+	// inside the .then() handlers rejects the chained jQuery promise under the
+	// Promises/A+ semantics of jQuery 3.x, which WP 7.0 ships and this AI feature
+	// requires.
 	function aiPost( data ) {
 		return $.post( StoreSuite_Product.ajax_url, data ).then(
 			function ( response ) {
 				if ( response && response.success && response.data ) {
 					return response.data;
 				}
-				return $.Deferred().reject(
-					( response && response.data && response.data.message ) ||
-						commonStrings.unexpected_error
-				);
+				throw ( response && response.data && response.data.message ) ||
+					commonStrings.unexpected_error;
 			},
 			function () {
-				return $.Deferred().reject( commonStrings.unexpected_error );
+				throw commonStrings.unexpected_error;
 			}
 		);
 	}
