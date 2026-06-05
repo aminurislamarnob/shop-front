@@ -5498,8 +5498,10 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
 }
 /* Small "AI" image button beside the Product Image label. */
 .my-storesuite-container label.storesuite-ai-image-label {
-  display: inline-flex;
+  display: flex;
+  width: 100%;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
 }
 /* Generated image preview inside the image modal. */
