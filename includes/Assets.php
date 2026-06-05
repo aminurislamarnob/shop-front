@@ -165,7 +165,12 @@ class Assets {
 				'storesuite-admin-page',
 				'storeSuiteAdmin',
 				array(
-					'logoUrl' => STORESUITE_PLUGIN_ASSET . '/frontend/images/storesuite-logo-dark.png',
+					'logoUrl'                    => STORESUITE_PLUGIN_ASSET . '/frontend/images/storesuite-logo-dark.png',
+					'aiDefaultInstructions'      => \PluginizeLab\StoreSuite\Product\ProductAI::default_system_instructions(),
+					'aiDefaultImageInstruction'  => \PluginizeLab\StoreSuite\Product\ProductImageAI::default_image_instruction(),
+					// Whether at least one AI provider is connected (text or image).
+					'aiConnected'                => \PluginizeLab\StoreSuite\Product\ProductAI::is_text_supported() || \PluginizeLab\StoreSuite\Product\ProductImageAI::is_supported(),
+					'connectorsUrl'              => admin_url( 'options-connectors.php' ),
 				)
 			);
 

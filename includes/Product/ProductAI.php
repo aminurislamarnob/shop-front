@@ -64,7 +64,7 @@ class ProductAI {
 	 * @param string $field Field key passed by the template.
 	 */
 	public function render_field_button( $field ) {
-		if ( ! isset( self::FIELDS[ $field ] ) || ! self::is_text_supported() ) {
+		if ( ! isset( self::FIELDS[ $field ] ) || ! self::is_text_supported() || ! storesuite_is_ai_field_enabled( $field ) ) {
 			return;
 		}
 		?>
@@ -85,6 +85,19 @@ class ProductAI {
 	}
 
 	/**
+	 * Whether the all-in-one "Generate with AI" bundle launcher is available.
+	 *
+	 * The bundle drafts the title, long description and short description
+	 * together. It has its own toggle on the AI settings page so it can be
+	 * offered (or hidden) independently of the per-field buttons.
+	 *
+	 * @return bool
+	 */
+	public static function is_bundle_enabled() {
+		return storesuite_is_ai_field_enabled( 'bundle' );
+	}
+
+	/**
 	 * Handle the AJAX request to generate a product field with AI.
 	 */
 	public function handle_generate() {
@@ -97,6 +110,10 @@ class ProductAI {
 		$field = isset( $_POST['field'] ) ? sanitize_key( wp_unslash( $_POST['field'] ) ) : '';
 		if ( ! isset( self::FIELDS[ $field ] ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid field.', 'storesuite' ) ) );
+		}
+
+		if ( ! storesuite_is_ai_field_enabled( $field ) ) {
+			wp_send_json_error( array( 'message' => __( 'AI generation is disabled for this field.', 'storesuite' ) ) );
 		}
 
 		$context = $this->get_context_from_request( $_POST );
@@ -140,7 +157,7 @@ class ProductAI {
 	public function handle_generate_bundle() {
 		check_ajax_referer( '_storesuite_ai_', 'nonce' );
 		$this->guard_ai_request(
-			self::is_text_supported(),
+			self::is_text_supported() && self::is_bundle_enabled(),
 			__( 'AI generation is not available. Connect an AI provider to use this feature.', 'storesuite' )
 		);
 
@@ -230,7 +247,7 @@ class ProductAI {
 	 * Product and Edit Product pages when text generation is available.
 	 */
 	public function render_bundle_launcher() {
-		if ( ! self::is_text_supported() ) {
+		if ( ! self::is_text_supported() || ! self::is_bundle_enabled() ) {
 			return;
 		}
 
@@ -274,23 +291,48 @@ class ProductAI {
 	}
 
 	/**
+	 * Default per-field system instructions.
+	 *
+	 * The single source of truth for the built-in prompts. These are used as the
+	 * fallback whenever a merchant has not saved a custom instruction on the AI
+	 * settings page, and are also exposed there to prefill the textareas.
+	 *
+	 * @return array<string, string> Map of field key to default instruction.
+	 */
+	public static function default_system_instructions() {
+		return array(
+			'title'             => __( 'You are an expert e-commerce copywriter. Write ONE concise, compelling product title of at most 70 characters. Return only the title text with no quotation marks, labels, or extra commentary.', 'storesuite' ),
+			'description'       => __( 'You are an expert e-commerce copywriter. Write an engaging product description as 4 to 5 short paragraphs using only <p> HTML tags. Do not include headings, lists, or a title. Focus on benefits and key features. Return only the HTML.', 'storesuite' ),
+			'short_description' => __( 'You are an expert e-commerce copywriter. Write a punchy product summary of 4 to 5 sentences (at most 160 characters) as plain text. Return only the summary with no labels or quotation marks.', 'storesuite' ),
+		);
+	}
+
+	/**
+	 * Option key holding the custom system instruction for a field.
+	 *
+	 * @param string $field Field key.
+	 * @return string
+	 */
+	private static function instruction_option_key( $field ) {
+		return 'storesuite_ai_instruction_' . $field;
+	}
+
+	/**
 	 * Per-field system instruction.
+	 *
+	 * Returns the merchant's custom instruction when one has been saved on the AI
+	 * settings page, otherwise falls back to the built-in default.
 	 *
 	 * @param string $field Field key.
 	 * @return string
 	 */
 	private function get_system_instruction( $field ) {
-		switch ( $field ) {
-			case 'title':
-				return __( 'You are an expert e-commerce copywriter. Write ONE concise, compelling product title of at most 70 characters. Return only the title text with no quotation marks, labels, or extra commentary.', 'storesuite' );
+		$defaults = self::default_system_instructions();
+		$default  = isset( $defaults[ $field ] ) ? $defaults[ $field ] : $defaults['short_description'];
 
-			case 'description':
-				return __( 'You are an expert e-commerce copywriter. Write an engaging product description as 4 to 5 short paragraphs using only <p> HTML tags. Do not include headings, lists, or a title. Focus on benefits and key features. Return only the HTML.', 'storesuite' );
+		$custom = trim( (string) storesuite_get_option_by_key( self::instruction_option_key( $field ) ) );
 
-			case 'short_description':
-			default:
-				return __( 'You are an expert e-commerce copywriter. Write a punchy product summary of 4 to 5 sentences (at most 160 characters) as plain text. Return only the summary with no labels or quotation marks.', 'storesuite' );
-		}
+		return '' !== $custom ? $custom : $default;
 	}
 
 	/**

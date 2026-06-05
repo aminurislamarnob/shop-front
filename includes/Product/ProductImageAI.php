@@ -68,7 +68,7 @@ class ProductImageAI {
 			'gallery'  => __( 'Generate gallery image with AI', 'storesuite' ),
 		);
 
-		if ( ! isset( $labels[ $field ] ) || ! self::is_supported() ) {
+		if ( ! isset( $labels[ $field ] ) || ! self::is_supported() || ! storesuite_is_ai_field_enabled( $field ) ) {
 			return;
 		}
 		?>
@@ -89,6 +89,19 @@ class ProductImageAI {
 	}
 
 	/**
+	 * Default styling guidance appended to every image prompt.
+	 *
+	 * Single source of truth for the built-in image instruction. Used as the
+	 * fallback when a merchant has not saved a custom instruction on the AI
+	 * settings page, and exposed there to prefill the textarea.
+	 *
+	 * @return string
+	 */
+	public static function default_image_instruction() {
+		return __( 'professional e-commerce product photograph, clean uncluttered background, soft studio lighting, high detail', 'storesuite' );
+	}
+
+	/**
 	 * Handle the AJAX request to generate a product image with AI.
 	 *
 	 * The generated image is held server-side in a short-lived transient keyed
@@ -97,8 +110,9 @@ class ProductImageAI {
 	 */
 	public function handle_generate() {
 		check_ajax_referer( '_storesuite_ai_', 'nonce' );
+		$image_enabled = storesuite_is_ai_field_enabled( 'featured' ) || storesuite_is_ai_field_enabled( 'gallery' );
 		$this->guard_ai_request(
-			self::is_supported(),
+			self::is_supported() && $image_enabled,
 			__( 'AI image generation is not available. Connect an AI provider that supports images to use this feature.', 'storesuite' )
 		);
 
@@ -107,8 +121,15 @@ class ProductImageAI {
 			wp_send_json_error( array( 'message' => __( 'Please describe the image you want to generate.', 'storesuite' ) ) );
 		}
 
-		// Nudge the model toward clean, usable e-commerce imagery.
-		$prompt .= ', professional e-commerce product photograph, clean uncluttered background, soft studio lighting, high detail';
+		// Nudge the model toward clean, usable e-commerce imagery. Merchants can
+		// override the styling guidance from the AI settings page.
+		$instruction = trim( (string) storesuite_get_option_by_key( 'storesuite_ai_image_instruction' ) );
+		if ( '' === $instruction ) {
+			$instruction = self::default_image_instruction();
+		}
+		if ( '' !== $instruction ) {
+			$prompt .= ', ' . $instruction;
+		}
 
 		// Image generation is slower than text; raise the 30s default request
 		// timeout (and the PHP limit) just for this call.

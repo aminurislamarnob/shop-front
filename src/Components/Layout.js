@@ -15,6 +15,7 @@ import {
 	CodeBracketSquareIcon,
 	GearIcon,
 	PaletteIcon,
+	SparklesIcon,
 	Squares2X2Icon,
 } from './icons';
 import SettingsHeader from './SettingsHeader';
@@ -30,6 +31,11 @@ const TABS = [
 		to: '/pagination-settings',
 		icon: CodeBracketSquareIcon,
 		label: __( 'Pagination', 'storesuite' ),
+	},
+	{
+		to: '/ai-settings',
+		icon: SparklesIcon,
+		label: __( 'AI', 'storesuite' ),
 	},
 ];
 
