@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php echo esc_html( $page_title ); ?>
 		</h3>
 	</div>
+	<?php do_action( 'storesuite_dashboard_title_after' ); ?>
 
 	<?php if ( ! empty( $parent_endpoint_title ) && ! empty( $parent_endpoint_url ) ) : ?>
 		<div class="storesuite-dashboard-braedcrumb">

@@ -202,6 +202,7 @@
 		 * @param {string} [options.dialogSelector]
 		 * @param {string} [options.closeSelector] Delegated selector for close controls.
 		 * @param {boolean} [options.fade] Opacity fade (requires .storesuite-modal-fade CSS on overlay).
+		 * @param {boolean} [options.closeOnOverlayClick] Close when the backdrop is clicked. Defaults to true.
 		 */
 		initOverlay: function ( $overlay, options ) {
 			options = options || {};
@@ -209,6 +210,7 @@
 			var closeSelector =
 				options.closeSelector ||
 				'.storesuite-modal-cancel, .storesuite-modal-close';
+			var closeOnOverlayClick = options.closeOnOverlayClick !== false;
 
 			if ( $overlay.data( 'storesuite-modal-a11y-bound' ) ) {
 				return;
@@ -254,11 +256,13 @@
 				}
 			} );
 
-			$overlay.on( 'click.storesuiteModal', function ( e ) {
-				if ( e.target === $overlay[ 0 ] ) {
-					self.close( $overlay );
-				}
-			} );
+			if ( closeOnOverlayClick ) {
+				$overlay.on( 'click.storesuiteModal', function ( e ) {
+					if ( e.target === $overlay[ 0 ] ) {
+						self.close( $overlay );
+					}
+				} );
+			}
 
 			$overlay.on(
 				'click.storesuiteModal',
