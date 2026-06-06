@@ -301,12 +301,14 @@
 				this.sharedModal.initOverlay( this.$modal, {
 					fade: true,
 					closeSelector: this.MODAL_CLOSE_SELECTOR,
+					closeOnOverlayClick: false,
 				} );
 			}
 			if ( this.sharedModal && this.$promptModal.length ) {
 				this.sharedModal.initOverlay( this.$promptModal, {
 					fade: true,
 					closeSelector: this.MODAL_CLOSE_SELECTOR,
+					closeOnOverlayClick: false,
 				} );
 			}
 
@@ -726,6 +728,7 @@
 				this.sharedModal.initOverlay( this.$bundleModal, {
 					fade: true,
 					closeSelector: this.MODAL_CLOSE_SELECTOR,
+					closeOnOverlayClick: false,
 				} );
 			}
 
