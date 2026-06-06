@@ -2193,6 +2193,24 @@ span.storesuite-sidebar-trigger svg {
   font-size: 20px;
   color: var(--storesuite-text-color);
 }
+.storesuite-title-view-link {
+  display: inline-flex;
+  align-items: center;
+  /* Hug the page title; let space-between push other header items right. */
+  margin-left: 8px;
+  margin-right: auto;
+  color: var(--storesuite-primary-bg);
+  transition: color 0.2s ease;
+}
+.storesuite-title-view-link:hover {
+  color: var(--storesuite-text-color);
+}
+.storesuite-title-view-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;
+}
 .storesuite-dashboard-braedcrumb ul {
   display: flex;
   align-items: center;
