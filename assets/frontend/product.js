@@ -317,6 +317,11 @@
 										.find( '.storesuite-select2' )
 										.val( null )
 										.trigger( 'change' );
+
+									// Native form reset leaves the image/gallery
+									// previews (DOM markup + state classes) intact,
+									// so clear them back to their empty state.
+									self.resetProductImageFields();
 								}
 
 								// Update permalink and slug field if editing product
@@ -362,6 +367,39 @@
 						},
 					} );
 				}
+			);
+		},
+
+		/**
+		 * Reset the featured image and gallery back to their empty state after a
+		 * successful add. Mirrors the manual remove handlers in script.js: the
+		 * hidden inputs, preview markup and the state classes/placeholder text
+		 * that `form.reset()` does not touch.
+		 */
+		resetProductImageFields: function () {
+			var uploadText =
+				( typeof storeSuiteFrontScript !== 'undefined' &&
+					storeSuiteFrontScript.upload_image_text ) ||
+				'';
+
+			// Featured image.
+			$( '#product_thumbnail_id' ).val( '' );
+			$( '#product_thumbnail_url' ).val( '' );
+			$( '#product_thumb_img' ).html( '' );
+			$( '#product-single-image' )
+				.removeClass( 'image-drop-bg' )
+				.find( '.image-drop-text span' )
+				.text( uploadText );
+
+			// Gallery.
+			$( '#product_image_gallery' ).val( '' );
+			$( '#product_image_gallery_url' ).val( '' );
+			$( '#product_gallery_img' ).empty();
+			$( '#product-gallery-images' ).removeClass(
+				'sm-gallery-image-uploader'
+			);
+			$( '.product-gallery-images-wrapper' ).addClass(
+				'gallery-has-no-image'
 			);
 		},
 
