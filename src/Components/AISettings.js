@@ -215,7 +215,7 @@ const AISettings = () => {
 							</h3>
 							<p className="storesuite-section-description">
 								{ __(
-									'Choose which product fields offer AI-assisted generation on the frontend product form.',
+									'Choose which product fields offer AI-assisted generation on the storesuite frontend product form.',
 									'storesuite'
 								) }
 							</p>
@@ -251,7 +251,7 @@ const AISettings = () => {
 							</h3>
 							<p className="storesuite-section-description">
 								{ __(
-									'Customize how AI writes each product field. Leave a field empty to use the built-in default instruction.',
+									'Customize how AI generates each product fields response.',
 									'storesuite'
 								) }
 							</p>
