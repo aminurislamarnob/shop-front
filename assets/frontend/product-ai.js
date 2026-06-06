@@ -15,6 +15,12 @@
 		SPINNER_ICON: '<i class="las la-spinner la-spin"></i> ',
 		MODAL_CLOSE_SELECTOR:
 			'.storesuite-product-bulk-modal-cancel, .storesuite-product-bulk-modal-close',
+		// Every on-form AI launcher. While one generation request is pending
+		// these are disabled together so a second one can't be started
+		// mid-flight (which would corrupt the shared activeField / suggestion
+		// state, or stack a second modal over the form).
+		LAUNCHER_SELECTOR:
+			'.storesuite-ai-generate, .storesuite-ai-bundle-launch, .storesuite-ai-image-generate',
 
 		init: function () {
 			this.aiConfig =
@@ -134,6 +140,12 @@
 				} )
 				.get()
 				.filter( Boolean );
+		},
+
+		// Lock or release every AI launcher button on the form at once, so only
+		// the in-flight generation can run until it settles.
+		setLaunchersBusy: function ( isBusy ) {
+			$( this.LAUNCHER_SELECTOR ).prop( 'disabled', !! isBusy );
 		},
 
 		showAlert: function ( icon, message ) {
@@ -345,6 +357,8 @@
 					$button
 						.prop( 'disabled', true )
 						.html( self.SPINNER_ICON + self.strings.generating );
+					// Lock every other AI launcher until this request settles.
+					self.setLaunchersBusy( true );
 
 					self.generateSuggestion( self.activeField, '' )
 						.done( function ( content ) {
@@ -354,9 +368,8 @@
 							self.showAlert( 'error', message );
 						} )
 						.always( function () {
-							$button
-								.prop( 'disabled', false )
-								.html( originalHtml );
+							self.setLaunchersBusy( false );
+							$button.html( originalHtml );
 						} );
 				}
 			);
