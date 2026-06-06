@@ -2,7 +2,7 @@
 /**
  * Plugin Name: StoreSuite
  * Plugin URI:  https://wordpress.org/plugins/storesuite/
- * Description: Manage your WooCommerce store easily from a front-end dashboard.
+ * Description: AI-assisted frontend dashboard to manage your WooCommerce store — products, orders, coupons, categories, and analytics in one place.
  * Version: 1.1.1
  * Author: Aminur Islam Arnob
  * Author URI: https://github.com/aminurislamarnob/
