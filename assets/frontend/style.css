@@ -554,9 +554,11 @@ template {
 .my-storesuite-container .storesuite-permalink-prefix {
   display: inline-flex;
   align-items: center;
-  padding: 8px 0 8px 12px;
+  padding: 8px 12px;
   font-size: 14px;
   color: #6c757d;
+  background-color: #f5f5f5;
+  border-right: 1px solid var(--storesuite-border-color);
   white-space: nowrap;
   user-select: none;
 }
@@ -566,8 +568,8 @@ template {
   min-width: 0;
   border: 0;
   border-radius: 0;
-  padding-left: 0;
   background-color: transparent;
+  box-shadow: none;
 }
 
 .my-storesuite-container .storesuite-password-field {
