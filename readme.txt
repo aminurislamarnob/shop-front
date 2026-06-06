@@ -14,32 +14,25 @@ AI-assisted frontend dashboard to manage your WooCommerce store — products, or
 
 StoreSuite adds a frontend store management dashboard for WooCommerce. Give store managers one place to run the day-to-day: products, categories, tags, brands, coupons, orders, and key metrics—without switching between multiple admin screens.
 
-= Key Features =
+= 🚀 Key Features =
 
-* **Manage WooCommerce store easily** – Single dashboard for store operations
-* **AI content generation** – Draft product titles and descriptions with regenerate and history
-* **AI all-in-one generator** – One hint drafts the title, short, and long description together
-* **AI image generation** – Create featured and gallery images from a text prompt
-* **AI settings** – Toggle AI per field and set custom instructions
-* **Products** – List, add, and edit all WooCommerce product types: simple, variable, grouped, and external/affiliate
-* **Variable products** – Manage attributes and variations with bulk actions and generate-all-variations
-* **Product attributes** – Manage attributes and their terms (add, edit, list)
-* **Product export** – Export products to CSV with a configurable export modal
-* **Categories** – Manage product categories (add, edit, list)
-* **Tags** – Manage product tags (add, edit, list)
-* **Brands** – Manage product brands
-* **Coupons** – Create, edit, and manage WooCommerce coupons
-* **Orders** – View, create, and edit orders with customer and item details
-* **Dashboard quick analytics** – Store performance KPIs and leaderboards:
-  * Total sales, gross sales, net sales
-  * Orders count and average order value
-  * Products sold and variations sold
-  * Returns, discounted orders, net discount amount
-  * Tax and shipping totals, download counts
-  * Top products by items sold
-  * Top categories by items sold
-  * Top customers by total spend
-  * Top coupons by order count
+* 🖥️ **Manage WooCommerce store easily** – Single dashboard for store operations
+* 🤖 **AI content generation** – Draft product titles and descriptions with regenerate and history
+* 🪄 **AI all-in-one generator** – One hint drafts the title, short, and long description together
+* 🎨 **AI image generation** – Create featured and gallery images from a text prompt
+* 🧠 **AI settings** – Toggle AI per field and set custom instructions
+* 📦 **Products** – List, add, and edit all WooCommerce product types: simple, variable, grouped, and external/affiliate
+* 🧩 **Variable products** – Manage attributes and variations with bulk actions and generate-all-variations
+* 📋 **Product attributes** – Manage attributes and their terms (add, edit, list)
+* 📤 **CSV export** – Export product lists to CSV for reporting, accounting, or migration, with a configurable export modal
+* 🗂️ **Categories** – Manage product categories (add, edit, list)
+* 🏷️ **Tags** – Manage product tags (add, edit, list)
+* 🏢 **Brands** – Manage product brands
+* 🎟️ **Coupons** – Create, edit, and manage WooCommerce coupons
+* 🛒 **Orders** – View, create, and edit orders with customer and item details
+* 📊 **Real-time dashboard analytics** – Sales KPIs, net sales chart, top products, recent orders, and quick actions
+* 🔑 **Bring your own AI** – Built on the WordPress 7.0 central AI connector; generation runs on the provider and keys you configure in WordPress
+* ⚡ **Built for WooCommerce HPOS** – Fully compatible with High-Performance Order Storage
 
 = How It Works =
 
