@@ -14,6 +14,17 @@ AI-assisted frontend dashboard to manage your WooCommerce store — products, or
 
 StoreSuite adds a frontend store management dashboard for WooCommerce. Give store managers one place to run the day-to-day: products, categories, tags, brands, coupons, orders, and key metrics—without switching between multiple admin screens.
 
+= 💎 Premium-grade features, completely free =
+
+StoreSuite includes capabilities that other store-management dashboards often lock behind a Pro plan — at no cost:
+
+* 🤖 AI product content, image, and all-in-one generation
+* 🧩 Full variable products, attributes, and variations (with generate-all-variations)
+* 📊 Real-time analytics, KPIs, and leaderboards
+* 📤 CSV product export
+
+No feature gates. No trial limits. No upsell.
+
 = 🚀 Key Features =
 
 * 🖥️ **Manage WooCommerce store easily** – Single dashboard for store operations
