@@ -188,16 +188,24 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 						<input type="text" class="storesuite-form-control" id="product_title" name="product_title" placeholder="<?php echo esc_attr__( 'Product name', 'storesuite' ); ?>" value="<?php echo esc_attr( $product_title ); ?>">
 					</div>
 					<div class="storesuite-form-group">
-						<label for="product_slug">
-							<?php esc_html_e( 'Product Slug', 'storesuite' ); ?>
-							<?php if ( $is_edit_mode && $product ) : ?>
-								<?php
-								$product_permalink = get_permalink( $product_id );
-								?>
-								<small>(<?php esc_html_e( 'Permalink: ', 'storesuite' ); ?><a href="<?php echo esc_url( $product_permalink ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $product_permalink ); ?></a>)</small>
+						<label for="product_slug"><?php esc_html_e( 'Permalink', 'storesuite' ); ?></label>
+						<?php
+						// Static URL base shown before the editable slug, e.g. http://site.test/product/.
+						$product_permalink_base = '';
+						if ( function_exists( 'wc_get_permalink_structure' ) ) {
+							$wc_permalinks = wc_get_permalink_structure();
+							$product_base  = isset( $wc_permalinks['product_base'] ) ? $wc_permalinks['product_base'] : '';
+							// Drop dynamic rewrite tags (e.g. %product_cat%) so only the static path remains.
+							$product_base           = trim( preg_replace( '#%[^%]+%#', '', $product_base ), '/' );
+							$product_permalink_base = trailingslashit( home_url( $product_base ? '/' . $product_base : '/' ) );
+						}
+						?>
+						<div class="storesuite-permalink-group">
+							<?php if ( $product_permalink_base ) : ?>
+								<span class="storesuite-permalink-prefix"><?php echo esc_html( $product_permalink_base ); ?></span>
 							<?php endif; ?>
-						</label>
-						<input type="text" class="storesuite-form-control" id="product_slug" name="product_slug" placeholder="<?php echo esc_attr__( 'Product slug', 'storesuite' ); ?>" value="<?php echo esc_attr( $product_slug ); ?>">
+							<input type="text" class="storesuite-form-control" id="product_slug" name="product_slug" placeholder="<?php echo esc_attr__( 'Enter product slug...', 'storesuite' ); ?>" value="<?php echo esc_attr( $product_slug ); ?>">
+						</div>
 						<small class="storesuite-form-text"><?php esc_html_e( 'It is usually all lowercase and contains only letters, numbers, and hyphens.', 'storesuite' ); ?></small>
 					</div>
 					<div class="storesuite-form-group">

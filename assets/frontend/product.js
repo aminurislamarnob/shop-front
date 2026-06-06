@@ -324,26 +324,11 @@
 									self.resetProductImageFields();
 								}
 
-								// Update permalink and slug field if editing product
+								// Reflect the server-sanitized slug when editing.
 								if (
 									response.data.context === 'edit' &&
-									response.data.permalink &&
 									response.data.slug
 								) {
-									var $permalinkLink = $(
-										'label[for="product_slug"] small a'
-									);
-									if ( $permalinkLink.length ) {
-										$permalinkLink.attr(
-											'href',
-											response.data.permalink
-										);
-										$permalinkLink.text(
-											response.data.permalink
-										);
-									}
-
-									// Update slug field value
 									var $slugField = $( '#product_slug' );
 									if ( $slugField.length ) {
 										$slugField.val( response.data.slug );

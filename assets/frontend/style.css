@@ -537,6 +537,39 @@ template {
   border: 1px solid var(--storesuite-primary-bg);
 }
 
+/* Permalink field: a static URL-base prefix joined to the editable slug input. */
+.my-storesuite-container .storesuite-permalink-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  background-color: #fff;
+  overflow: hidden;
+  transition: .3s;
+}
+.my-storesuite-container .storesuite-permalink-group:focus-within {
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-permalink-prefix {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 0 8px 12px;
+  font-size: 14px;
+  color: #6c757d;
+  white-space: nowrap;
+  user-select: none;
+}
+.my-storesuite-container .storesuite-permalink-group .storesuite-form-control,
+.my-storesuite-container .storesuite-permalink-group .storesuite-form-control:focus {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  padding-left: 0;
+  background-color: transparent;
+}
+
 .my-storesuite-container .storesuite-password-field {
   position: relative;
 }
