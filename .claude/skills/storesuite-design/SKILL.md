@@ -394,6 +394,29 @@ When adding a new page that needs interactivity, prefer **extending `form-handle
 - Keep `<label for>` paired with form control `id`s — never rely on visual order alone
 - All decorative SVGs: `aria-hidden="true" focusable="false"`
 
+## Responsive styles
+
+All responsive (mobile/tablet) CSS lives in **`assets/frontend/responsive.css`** — never add media queries to `style.css`. It is registered as `storesuite_responsive_style` (depends on `storesuite_style`) and enqueued right after it in `includes/Assets.php`, so it overrides the desktop shell.
+
+**Breakpoints — use only these two, and never repeat one:**
+- `@media ( max-width: 767px )` — mobile + tablet. Matches the sidebar collapse logic in `global.js`, which activates at `>= 768px`.
+- `@media ( max-width: 575px )` — phone-only refinements.
+
+Put **every** rule for a breakpoint inside a **single** `@media` block. Do not open the same `@media ( max-width: 767px )` (or `575px`) more than once in the file. Don't invent other ad-hoc breakpoints for new work.
+
+**Selectors:**
+- Prefer a **unique, semantic class** over ID selectors or generic Bootstrap chains. If the markup only offers `#some-id`, `.row.justify-content-end`, or `.col-md-*` to hook onto, **add a purpose class to the template first** (e.g. `storesuite-products-toolbar`, `storesuite-toolbar-actions` / `-search` / `-bulk`) and style that.
+- For rules shared across several modals, target the **common** `.storesuite-product-bulk-modal-overlay` / `.storesuite-product-bulk-modal-*` classes — not per-modal IDs like `#storesuite-product-bulk-edit-modal`.
+- Reuse existing classes and design tokens, same as global CSS.
+
+**Keep it lean:**
+- Very few comments — short section labels only; skip comments where the selector is self-explanatory.
+- When multiple selectors in the same media query share one identical declaration (e.g. `display: none`), **merge them into a single comma-separated selector list**.
+
+**JS parity:** any JS that branches on viewport width must read `document.documentElement.clientWidth` (the layout viewport) so it matches the CSS media queries — not `window.innerWidth`. The sidebar threshold is `768`.
+
+**Mobile list tables:** list tables collapse to **stacked cards** (hide `thead`, set `table/tr/td` to `display:block`, surface each cell's label via `td[data-title]::before`). Ensure every data `<td>` in the row template carries a `data-title`.
+
 ## Critical rules
 
 1. **Use design tokens** — never hardcode `#2d5bdb`, `rgb(226 232 240)`, etc. Reference `var(--storesuite-*)`.
@@ -405,7 +428,7 @@ When adding a new page that needs interactivity, prefer **extending `form-handle
 7. **Inline SVG, never `<i>` icon fonts.**
 8. **Templates are themable** — load via `storesuite_get_template_part( $template, null, $args )` so the theme's `my-storesuite/` directory can override them.
 9. **Don't import this design system into the React bundles** — `src/dashboard/` and `src/analytics/` use WooCommerce components and Heroicons; only the shared CSS variables (`--storesuite-*`) are available there since `style.css` is also loaded.
-10. **Test at `≥1536px` and ≤768px** — page content caps at `1536px`; mobile collapses card columns to full-width via the `@media (max-width: 768px)` block.
+10. **Test at `≥1536px`, `≤767px`, and `≤575px`** — page content caps at `1536px`. All responsive rules go in `assets/frontend/responsive.css` using the `≤767px` (mobile/tablet) and `≤575px` (phone) breakpoints only — see the **Responsive styles** section.
 
 ## Adding a new page (recipe)
 

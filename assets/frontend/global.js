@@ -43,7 +43,7 @@
 
 		handleSidebarCollapseToggle: function () {
 			var collapsedPreferenceStorageKey = 'storesuite_sidebar_collapsed';
-			var minViewportWidthForCollapsedSidebar = 783;
+			var minViewportWidthForCollapsedSidebar = 768;
 			var $dashboardContainer = $( '.my-storesuite-container' );
 			var $sidebarCollapseToggle = $( '.storesuite-sidebar-trigger' );
 

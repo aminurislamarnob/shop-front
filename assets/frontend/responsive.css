@@ -1,13 +1,13 @@
 /**
  * StoreSuite — Responsive styles. Loaded after style.css.
- * Sidebar collapse logic (global.js) activates at >= 783px, so mobile rules use <= 782px.
+ * Sidebar collapse logic (global.js) activates at >= 768px, so mobile rules use <= 767px.
  */
 
 .storesuite-search-toggle-col {
 	display: none;
 }
 
-@media ( max-width: 782px ) {
+@media ( max-width: 767px ) {
 	/* Off-canvas sidebar */
 	.my-storesuite-container .my-storesuite-sidebar {
 		--storesuite-sidebar-current-width: var( --storesuite-sidebar-width-expanded );
@@ -59,12 +59,10 @@
 		padding: 16px;
 	}
 
-	.storesuite-dashboard-braedcrumb {
-		display: none;
-	}
-
+	.storesuite-dashboard-braedcrumb,
 	.storesuite-products-toolbar .storesuite-export-toggle .storesuite-button-label,
-	.storesuite-products-toolbar .storesuite-filter-toggle .storesuite-button-label {
+	.storesuite-products-toolbar .storesuite-filter-toggle .storesuite-button-label,
+	.my-storesuite-product-list-table thead {
 		display: none;
 	}
 
@@ -126,10 +124,6 @@
 	/* Products list → stacked cards (each cell's data-title becomes its label) */
 	.storesuite-table-responsive:has( .my-storesuite-product-list-table ) {
 		overflow: visible;
-	}
-
-	.my-storesuite-product-list-table thead {
-		display: none;
 	}
 
 	table.my-storesuite-tbl > tbody {
