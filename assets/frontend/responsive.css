@@ -1,5 +1,5 @@
 /**
- * StoreSuite — Responsive styles. Loaded after style.css.
+ * StoreSuite — Responsive & breakpoint styles. Loaded after style.css.
  * Sidebar collapse logic (global.js) activates at >= 768px, so mobile rules use <= 767px.
  */
 
@@ -101,6 +101,14 @@
 	.storesuite-table-search-input {
 		max-width: none;
 		width: 100%;
+	}
+
+	.storesuite-filter-offcanvas {
+		max-width: 100vw;
+	}
+
+	.storesuite-filter-toggle {
+		display: inline-flex !important;
 	}
 
 	.storesuite-toolbar-bulk {
@@ -244,5 +252,96 @@
 	.storesuite-product-bulk-modal-footer .my-storesuite-button {
 		width: 100%;
 		justify-content: center;
+	}
+	.storesuite-kpi-summary .col .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:last-child .storesuite-kpi-card {
+		border-bottom: none;
+	}
+}
+
+/* Dashboard home — KPI summary card grid (progressive column borders).
+   Breakpoints must stay in ascending order; the 768px block also carries the
+   desktop layout rules (account / address / bulk-edit) to avoid repeating it. */
+@media ( min-width: 576px ) {
+	.storesuite-kpi-summary .col .storesuite-kpi-card {
+		border-right: 1px solid var( --storesuite-border-color );
+	}
+
+	.storesuite-kpi-summary .col:nth-child( 2n ) .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:nth-last-child( -n + 2 ) .storesuite-kpi-card {
+		border-bottom: none;
+	}
+}
+
+@media ( min-width: 768px ) {
+	.storesuite-kpi-summary .col:nth-child( 2n ) .storesuite-kpi-card {
+		border-right: 1px solid var( --storesuite-border-color );
+	}
+
+	.storesuite-kpi-summary .col:nth-child( 3n ) .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:nth-last-child( -n + 3 ) .storesuite-kpi-card {
+		border-bottom: none;
+	}
+
+	.storesuite-account-layout > .col-md-3 {
+		flex: 0 0 305px;
+		max-width: 305px;
+	}
+
+	.storesuite-account-layout > .col-md-9 {
+		flex: 1 1 0;
+		max-width: 100%;
+	}
+
+	.storesuite-address-grid .form-row-first,
+	.storesuite-address-grid .form-row-last {
+		width: 50%;
+	}
+
+	.storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-dimensions-row .storesuite-form-control {
+		margin-bottom: 0;
+	}
+}
+
+@media ( min-width: 992px ) {
+	.storesuite-kpi-summary .col:nth-child( 3n ) .storesuite-kpi-card {
+		border-right: 1px solid var( --storesuite-border-color );
+	}
+
+	.storesuite-kpi-summary .col:nth-child( 4n ) .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:nth-last-child( -n + 4 ) .storesuite-kpi-card {
+		border-bottom: none;
+	}
+}
+
+@media ( min-width: 1200px ) {
+	.storesuite-kpi-summary .col:nth-child( 4n ) .storesuite-kpi-card {
+		border-right: 1px solid var( --storesuite-border-color );
+	}
+
+	.storesuite-kpi-summary .col:nth-child( 5n ) .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:nth-last-child( -n + 5 ) .storesuite-kpi-card {
+		border-bottom: none;
+	}
+}
+
+@media ( min-width: 1920px ) {
+	.my-storesuite-page-content {
+		max-width: 1920px;
 	}
 }
