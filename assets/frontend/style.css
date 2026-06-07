@@ -963,6 +963,8 @@ form.storesuite-filters-form .row {
 .my-storesuite-tick {
   position: absolute;
   top: 0;
+  left: 0;
+  bottom: 0;
   color: #fff;
   transition: .3s;
   opacity: 0;
@@ -2112,7 +2114,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   align-items: center;
 }
 span.storesuite-sidebar-trigger {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   cursor: pointer;
 }
@@ -4512,8 +4514,8 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-filter-offcanvas {
   position: fixed;
   top: 0;
-  right: -100%;
-  width: 100%;
+  right: -100vw;
+  width: 100vw;
   max-width: 400px;
   height: 100vh;
   background-color: #fff;
@@ -4599,7 +4601,7 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 /* Responsive Design */
 @media (max-width: 768px) {
   .storesuite-filter-offcanvas {
-    max-width: 100%;
+    max-width: 100vw;
   }
 
   .storesuite-filter-toggle {

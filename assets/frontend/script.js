@@ -295,6 +295,25 @@
 			this.handleFilterOffcanvas(); // Handle filter off-canvas
 			this.handleOrderFilterOffcanvas(); // Handle order filter off-canvas
 			this.handleBulkActionCheckbox(); // Handle bulk action checkbox
+			this.handleSearchToggle(); // Toggle the search box on mobile
+		},
+		handleSearchToggle: function () {
+			var searchToggle = $( '#storesuite-search-toggle' );
+			var toolbar = $( '.storesuite-products-toolbar' );
+
+			searchToggle.on( 'click', function ( event ) {
+				event.preventDefault();
+				var isOpen = toolbar
+					.toggleClass( 'storesuite-search-open' )
+					.hasClass( 'storesuite-search-open' );
+				searchToggle.attr(
+					'aria-expanded',
+					isOpen ? 'true' : 'false'
+				);
+				if ( isOpen ) {
+					toolbar.find( '#search_by' ).trigger( 'focus' );
+				}
+			} );
 		},
 		handleBulkActionCheckbox: function () {
 			$( '#cb-select-all-orders' ).on( 'click', function () {
