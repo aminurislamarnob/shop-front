@@ -19,7 +19,16 @@ function storesuite_get_template_part( $slug, $name = '', $args = array() ) {
 	$args = wp_parse_args( $args, $defaults );
 
 	if ( $args && is_array( $args ) ) {
-        extract( $args ); // phpcs:ignore
+		// Keys that would override the loader's own variables (and thereby which file gets included) must not become template variables.
+		$reserved_keys = array( 'slug', 'name', 'args', 'defaults', 'template', 'template_path' );
+
+		foreach ( $args as $arg_key => $arg_value ) {
+			if ( in_array( $arg_key, $reserved_keys, true ) || ! preg_match( '/^[a-zA-Z_][a-zA-Z0-9_]*$/', (string) $arg_key ) ) {
+				continue;
+			}
+
+			${ $arg_key } = $arg_value;
+		}
 	}
 
 	$template = '';
