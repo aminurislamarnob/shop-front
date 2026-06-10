@@ -103,7 +103,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
 										<path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
 									</svg>
-									<?php esc_html_e( 'Filter', 'storesuite' ); ?>
+									<span class="storesuite-button-label"><?php esc_html_e( 'Filter', 'storesuite' ); ?></span>
 								</button>
 							</div>
 						</div>
@@ -115,7 +115,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			<form id="storesuite-order-bulk-actions" method="post">
 				<?php wp_nonce_field( 'storesuite_order_bulk_action', 'storesuite_bulk_action_nonce' ); ?>
 				<div class="storesuite-table-responsive">
-				<table class="my-storesuite-tbl my-storesuite-product-list-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-list-table">
 					<thead>
 						<tr>
 							<th class="check-column">
@@ -138,7 +138,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<th><?php echo esc_html__( 'Date', 'storesuite' ); ?></th>
 							<th class="text-right"><?php echo esc_html__( 'Actions', 'storesuite' ); ?></th>
 						</tr>
-						<tbody>
+					</thead>
+					<tbody>
 							<?php
 							$current_page    = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
 							$orders_per_page = apply_filters( 'storesuite_orders_per_page', 10 );
@@ -170,7 +171,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							} else {
 								foreach ( $orders->orders as $order ) { // phpcs:ignore
 									?>
-								<tr>
+								<tr class="storesuite-list-row">
 									<td class="check-column">
 										<label class="my-storesuite-checkbox">
 											<input type="checkbox" name="bulk_order_ids[]" value="<?php echo esc_attr( $order->get_id() ); ?>" class="my-storesuite-checkbox-input">
@@ -231,8 +232,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								}
 							}
 							?>
-						</tbody>
-					</thead>
+					</tbody>
 				</table>
 				<?php
 				if ( $orders->max_num_pages > 1 ) {

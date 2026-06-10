@@ -187,7 +187,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 
 				if ( $product_query->found_posts > 0 ) {
 					?>
-				<table class="my-storesuite-tbl my-storesuite-product-list-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-list-table">
 					<thead>
 						<tr>
 							<th class="check-column">

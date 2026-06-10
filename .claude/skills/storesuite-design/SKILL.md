@@ -246,15 +246,17 @@ Wrap the toolbar/container — the skill auto-styles `.wp-editor-container` with
 
 ```html
 <div class="storesuite-table-responsive">
-    <table class="my-storesuite-tbl my-storesuite-product-list-table">
+    <table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-list-table">
         <thead><tr><th>…</th></tr></thead>
-        <tbody><tr class="single-product-item"><td>…</td></tr></tbody>
+        <tbody><tr class="single-product-item storesuite-list-row"><td data-title="…">…</td></tr></tbody>
     </table>
 </div>
 ```
 
 - `.storesuite-table-responsive` — `overflow-x: auto`, radius `4px`
 - `.my-storesuite-tbl` — collapsed borders, white thead/tbody, no cell borders by default
+- **Every list table** must also carry `storesuite-list-table` on the `<table>` and `storesuite-list-row` on each data `<tr>` (not on "not found" rows) — these drive the responsive stacked-card layout and tablet `min-width` scrolling
+- Checkbox cells use class `check-column` (no `data-title`); all other data `<td>`s carry a `data-title` matching their column header
 - `th`: `padding: 10px`, uppercase, `font-weight: 600`, slate text
 - `td`: `padding: 12px`, top-border `1px solid var(--storesuite-border-color)`
 - First-column anchors: primary blue, underline on hover
@@ -417,7 +419,7 @@ Put **every** rule for a breakpoint inside a **single** `@media` block. Do not o
 
 **JS parity:** any JS that branches on viewport width must read `document.documentElement.clientWidth` (the layout viewport) so it matches the CSS media queries — not `window.innerWidth`. The sidebar threshold is `768`.
 
-**Mobile list tables:** list tables collapse to **stacked cards** (hide `thead`, set `table/tr/td` to `display:block`, surface each cell's label via `td[data-title]::before`). Ensure every data `<td>` in the row template carries a `data-title`.
+**Mobile list tables:** list tables collapse to **stacked cards** (hide `thead`, set `table/tr/td` to `display:block`, surface each cell's label via `td[data-title]::before`). The card rules key on the shared `storesuite-list-table` (table) and `storesuite-list-row` (data row) classes — add both to any new list table, and ensure every data `<td>` carries a `data-title` (checkbox cells use `check-column` instead).
 
 ## Critical rules
 

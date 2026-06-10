@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<tr id="brand-row-<?php echo esc_attr( $brand->term_id ); ?>">
+<tr class="storesuite-list-row" id="brand-row-<?php echo esc_attr( $brand->term_id ); ?>">
 	<td class="brand-image" data-title="<?php esc_attr_e( 'Image', 'storesuite' ); ?>">
 		<?php
 		$thumbnail_id = absint( get_term_meta( $brand->term_id, 'thumbnail_id', true ) );
@@ -32,19 +32,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 		}
 		?>
 	</td>
-	<td class="brand-name">
+	<td class="brand-name" data-title="<?php esc_attr_e( 'Name', 'storesuite' ); ?>">
 		<?php echo wp_kses_post( $dash_prefix ); ?><a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-brand' ) . '%s', $brand->term_id ) ); ?>"><?php echo esc_html( $brand->name ); ?></a>
 	</td>
-	<td class="brand-description">
+	<td class="brand-description" data-title="<?php esc_attr_e( 'Description', 'storesuite' ); ?>">
 		<?php echo esc_html( wp_trim_words( $brand->description, 10, '...' ) ); ?>
 	</td>
-	<td class="brand-parent">
+	<td class="brand-parent" data-title="<?php esc_attr_e( 'Parent', 'storesuite' ); ?>">
 		<?php echo esc_html( $parent ? $parent->name : '-' ); ?>
 	</td>
-	<td class="brand-slug">
+	<td class="brand-slug" data-title="<?php esc_attr_e( 'Slug', 'storesuite' ); ?>">
 		<?php echo esc_html( $brand->slug ); ?>
 	</td>
-	<td class="brand-count">
+	<td class="brand-count" data-title="<?php esc_attr_e( 'Count', 'storesuite' ); ?>">
 		<?php echo esc_html( $brand->count ); ?>
 	</td>
 	<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">

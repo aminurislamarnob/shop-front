@@ -53,7 +53,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			$categories_data     = $product_categories->get_paginated_categories_with_children( $categories_per_page, $current_page, $search_term );
 			?>
 			<div class="storesuite-table-responsive">
-				<table class="my-storesuite-tbl my-storesuite-product-list-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-list-table">
 					<thead>
 						<tr>
 							<th width="60"><?php echo esc_html__( 'Image', 'storesuite' ); ?></th>
@@ -64,7 +64,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<th width="70"><?php echo esc_html__( 'Count', 'storesuite' ); ?></th>
 							<th class="text-right"><?php echo esc_html__( 'Actions', 'storesuite' ); ?></th>
 						</tr>
-						<tbody>
+					</thead>
+					<tbody>
 							<?php
 							if ( empty( $categories_data->categories ) ) {
 								echo '<tr id="tag-category-not-found"><td colspan="7">';
@@ -93,8 +94,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								}
 							}
 							?>
-						</tbody>
-					</thead>
+					</tbody>
 				</table>
 				<?php
 				if ( $categories_data->max_num_pages > 1 ) {

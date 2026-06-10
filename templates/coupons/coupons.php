@@ -62,10 +62,10 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 				$coupon_query = new WP_Query( $query );
 				if ( $coupon_query->found_posts > 0 ) {
 					?>
-				<table class="my-storesuite-tbl my-storesuite-coupon-list-table">
+				<table class="my-storesuite-tbl my-storesuite-coupon-list-table storesuite-list-table">
 					<thead>
 						<tr>
-							<th>
+							<th class="check-column">
 								<label class="my-storesuite-checkbox">
 									<input type="checkbox" name="" id="" class="my-storesuite-checkbox-input">
 									<span class="my-storesuite-checkbox-back"></span>
@@ -93,8 +93,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							$coupon_id = get_the_ID();
 							$coupon    = new WC_Coupon( $coupon_id );
 							?>
-							<tr class="single-coupon-item">
-								<td>
+							<tr class="single-coupon-item storesuite-list-row">
+								<td class="check-column">
 									<label class="my-storesuite-checkbox">
 										<input type="checkbox" name="" id="" class="my-storesuite-checkbox-input">
 										<span class="my-storesuite-checkbox-back"></span>

@@ -118,7 +118,7 @@ $terms = get_terms(
 					<div class="storesuite-card">
 						<div class="storesuite-card-content">
 							<div class="storesuite-table-responsive">
-								<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-attribute-terms-table">
+								<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-attribute-terms-table storesuite-list-table">
 									<thead>
 										<tr>
 											<th><?php esc_html_e( 'Name', 'storesuite' ); ?></th>
@@ -145,8 +145,8 @@ $terms = get_terms(
 											</tr>
 										<?php else : ?>
 											<?php foreach ( $terms as $term ) : ?>
-												<tr id="term-row-<?php echo esc_attr( $term->term_id ); ?>">
-													<td><a href="
+												<tr class="storesuite-list-row" id="term-row-<?php echo esc_attr( $term->term_id ); ?>">
+													<td data-title="<?php esc_attr_e( 'Name', 'storesuite' ); ?>"><a href="
                                                     <?php
                                                     echo esc_url(
                                                         add_query_arg(
@@ -158,9 +158,9 @@ $terms = get_terms(
                                                     );
 													?>
                                                                     "><?php echo esc_html( $term->name ); ?></a></td>
-													<td><?php echo esc_html( $term->slug ); ?></td>
-													<td><?php echo esc_html( $term->count ); ?></td>
-													<td class="text-right">
+													<td data-title="<?php esc_attr_e( 'Slug', 'storesuite' ); ?>"><?php echo esc_html( $term->slug ); ?></td>
+													<td data-title="<?php esc_attr_e( 'Count', 'storesuite' ); ?>"><?php echo esc_html( $term->count ); ?></td>
+													<td class="text-right" data-title="<?php esc_attr_e( 'Action', 'storesuite' ); ?>">
 														<div class="storesuite-dropdown">
 															<span class="storesuite-dropdown-icon">
 																<svg width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-three-dots"></use></svg>

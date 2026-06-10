@@ -53,7 +53,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			$brands_data     = $product_brands->get_paginated_brands_with_children( $brands_per_page, $current_page, $search_term );
 			?>
 			<div class="storesuite-table-responsive">
-				<table class="my-storesuite-tbl my-storesuite-product-list-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-list-table">
 					<thead>
 						<tr>
 							<th width="60"><?php esc_html_e( 'Image', 'storesuite' ); ?></th>
