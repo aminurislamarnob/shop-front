@@ -1,6 +1,8 @@
 /**
  * StoreSuite — Responsive & breakpoint styles. Loaded after style.css.
  * Sidebar collapse logic (global.js) activates at >= 768px, so mobile rules use <= 767px.
+ * Tablet rules (768–1024px) also cover landscape phones; global.js defaults the
+ * sidebar to collapsed in that range.
  */
 
 .storesuite-search-toggle-col {
@@ -259,6 +261,61 @@
 
 	.storesuite-kpi-summary .col:last-child .storesuite-kpi-card {
 		border-bottom: none;
+	}
+}
+
+/* Tablet + landscape phones ≥768px: compact toolbar, horizontally scrollable list table */
+@media ( min-width: 768px ) and ( max-width: 1024px ) {
+	.my-storesuite-page-content {
+		padding: 20px;
+	}
+
+	.storesuite-products-toolbar .storesuite-export-toggle .storesuite-button-label,
+	.storesuite-products-toolbar .storesuite-filter-toggle .storesuite-button-label {
+		display: none;
+	}
+
+	.storesuite-products-toolbar .storesuite-export-toggle svg,
+	.storesuite-products-toolbar .storesuite-filter-toggle svg {
+		margin-right: 0;
+	}
+
+	.storesuite-toolbar-actions .storesuite-export-toggle,
+	.storesuite-toolbar-actions .storesuite-filter-toggle {
+		width: 45px;
+		height: 38px;
+		padding: 5px;
+	}
+
+	.storesuite-toolbar-search .storesuite-table-search-input {
+		min-width: 200px;
+	}
+
+	.storesuite-table-responsive {
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.my-storesuite-product-list-table {
+		min-width: 900px;
+	}
+
+	table.my-storesuite-product-list-table tbody tr td.tbl-product-name {
+		width: 220px;
+	}
+}
+
+/* Landscape phones (wide angle): reclaim the short viewport height */
+@media ( min-width: 768px ) and ( max-width: 1024px ) and ( orientation: landscape ) and ( max-height: 500px ) {
+	.my-storesuite-page-content {
+		padding: 16px;
+	}
+
+	.storesuite-product-bulk-modal-overlay {
+		padding: 0.5rem;
+	}
+
+	.storesuite-product-bulk-modal-dialog {
+		max-height: calc( 100vh - 1rem );
 	}
 }
 

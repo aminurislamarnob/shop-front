@@ -44,6 +44,7 @@
 		handleSidebarCollapseToggle: function () {
 			var collapsedPreferenceStorageKey = 'storesuite_sidebar_collapsed';
 			var minViewportWidthForCollapsedSidebar = 768;
+			var maxTabletViewportWidth = 1024;
 			var $dashboardContainer = $( '.my-storesuite-container' );
 			var $sidebarCollapseToggle = $( '.storesuite-sidebar-trigger' );
 
@@ -75,31 +76,40 @@
 				);
 			}
 
+			function isTabletViewport() {
+				var viewportWidth = document.documentElement.clientWidth;
+				return (
+					viewportWidth >= minViewportWidthForCollapsedSidebar &&
+					viewportWidth <= maxTabletViewportWidth
+				);
+			}
+
 			function persistCollapsedPreference( isCollapsed ) {
 				try {
-					if ( isCollapsed ) {
-						localStorage.setItem(
-							collapsedPreferenceStorageKey,
-							'1'
-						);
-					} else {
-						localStorage.removeItem(
-							collapsedPreferenceStorageKey
-						);
-					}
+					// '0' is stored explicitly (instead of removing the key) so an
+					// expanded choice survives the collapsed-by-default tablet range.
+					localStorage.setItem(
+						collapsedPreferenceStorageKey,
+						isCollapsed ? '1' : '0'
+					);
 				} catch ( storageError ) {}
 			}
 
 			function readCollapsedPreferenceFromStorage() {
+				var storedPreference = null;
 				try {
-					return (
-						localStorage.getItem(
-							collapsedPreferenceStorageKey
-						) === '1'
+					storedPreference = localStorage.getItem(
+						collapsedPreferenceStorageKey
 					);
-				} catch ( storageError ) {
+				} catch ( storageError ) {}
+				if ( '1' === storedPreference ) {
+					return true;
+				}
+				if ( '0' === storedPreference ) {
 					return false;
 				}
+				// No explicit choice: collapse on tablets, expand on desktop.
+				return isTabletViewport();
 			}
 
 			function applyMobileOpenState( isOpen ) {

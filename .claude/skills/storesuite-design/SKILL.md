@@ -398,11 +398,13 @@ When adding a new page that needs interactivity, prefer **extending `form-handle
 
 All responsive (mobile/tablet) CSS lives in **`assets/frontend/responsive.css`** — never add media queries to `style.css`. It is registered as `storesuite_responsive_style` (depends on `storesuite_style`) and enqueued right after it in `includes/Assets.php`, so it overrides the desktop shell.
 
-**Breakpoints — use only these two, and never repeat one:**
-- `@media ( max-width: 767px )` — mobile + tablet. Matches the sidebar collapse logic in `global.js`, which activates at `>= 768px`.
+**Breakpoints — use only these, and never repeat one:**
+- `@media ( max-width: 767px )` — mobile. Matches the sidebar collapse logic in `global.js`, which goes off-canvas below `768px`.
 - `@media ( max-width: 575px )` — phone-only refinements.
+- `@media ( min-width: 768px ) and ( max-width: 1024px )` — tablet, which also catches landscape phones ≥768px wide. The sidebar defaults to collapsed in this range (`global.js`), list tables get a `min-width` and scroll horizontally inside `.storesuite-table-responsive`, and toolbar toggles go icon-only.
+- `@media ( min-width: 768px ) and ( max-width: 1024px ) and ( orientation: landscape ) and ( max-height: 500px )` — landscape-phone (short viewport) refinements only: tighter page padding, near-full-height modals.
 
-Put **every** rule for a breakpoint inside a **single** `@media` block. Do not open the same `@media ( max-width: 767px )` (or `575px`) more than once in the file. Don't invent other ad-hoc breakpoints for new work.
+Put **every** rule for a breakpoint inside a **single** `@media` block. Do not open the same `@media` more than once in the file. Don't invent other ad-hoc breakpoints for new work.
 
 **Selectors:**
 - Prefer a **unique, semantic class** over ID selectors or generic Bootstrap chains. If the markup only offers `#some-id`, `.row.justify-content-end`, or `.col-md-*` to hook onto, **add a purpose class to the template first** (e.g. `storesuite-products-toolbar`, `storesuite-toolbar-actions` / `-search` / `-bulk`) and style that.
@@ -428,7 +430,7 @@ Put **every** rule for a breakpoint inside a **single** `@media` block. Do not o
 7. **Inline SVG, never `<i>` icon fonts.**
 8. **Templates are themable** — load via `storesuite_get_template_part( $template, null, $args )` so the theme's `my-storesuite/` directory can override them.
 9. **Don't import this design system into the React bundles** — `src/dashboard/` and `src/analytics/` use WooCommerce components and Heroicons; only the shared CSS variables (`--storesuite-*`) are available there since `style.css` is also loaded.
-10. **Test at `≥1536px`, `≤767px`, and `≤575px`** — page content caps at `1536px`. All responsive rules go in `assets/frontend/responsive.css` using the `≤767px` (mobile/tablet) and `≤575px` (phone) breakpoints only — see the **Responsive styles** section.
+10. **Test at `≥1536px`, `768–1024px` (portrait + landscape), `≤767px`, and `≤575px`** — page content caps at `1536px`. All responsive rules go in `assets/frontend/responsive.css` using only the breakpoints listed in the **Responsive styles** section.
 
 ## Adding a new page (recipe)
 
