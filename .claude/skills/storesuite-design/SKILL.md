@@ -130,6 +130,8 @@ This produces:
 - `.storesuite-page-main-title` (`h3`, `20px / 600`, slate)
 - `.storesuite-dashboard-braedcrumb` (note legacy spelling) — inline list with chevron SVG separators, breadcrumb anchors in primary blue, current item in slate
 
+**Title actions:** to surface a page's primary button beside the title on mobile/tablet, hook `storesuite_dashboard_title_after` (fires inside the wrapper, after the title) and render a `.my-storesuite-button.storesuite-title-action`, gated to the page's endpoint (see `CouponController::render_title_add_coupon_button()`). The button is hidden on desktop; on ≤1024px it appears and the toolbar's counterpart (`.storesuite-toolbar-add` column) is hidden, along with the breadcrumb on title bars that have an action.
+
 ## Cards
 
 Two card variants:

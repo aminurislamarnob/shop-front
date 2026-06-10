@@ -5,7 +5,8 @@
  * sidebar to collapsed in that range.
  */
 
-.storesuite-search-toggle-col {
+.storesuite-search-toggle-col,
+.storesuite-title-action {
 	display: none;
 }
 
@@ -64,8 +65,14 @@
 	.storesuite-dashboard-braedcrumb,
 	.storesuite-table-header-part .storesuite-export-toggle .storesuite-button-label,
 	.storesuite-table-header-part .storesuite-filter-toggle .storesuite-button-label,
-	.storesuite-list-table thead {
+	.storesuite-list-table thead,
+	.storesuite-toolbar-add {
 		display: none;
+	}
+
+	/* Primary "Add" action moves up beside the page title */
+	.storesuite-title-action {
+		display: inline-flex;
 	}
 
 	.storesuite-table-header-part .storesuite-search-toggle svg,
@@ -279,8 +286,15 @@
 	}
 
 	.storesuite-table-header-part .storesuite-export-toggle .storesuite-button-label,
-	.storesuite-table-header-part .storesuite-filter-toggle .storesuite-button-label {
+	.storesuite-table-header-part .storesuite-filter-toggle .storesuite-button-label,
+	.storesuite-toolbar-add,
+	.storesuite-dashboard-title-wrapper:has( .storesuite-title-action ) .storesuite-dashboard-braedcrumb {
 		display: none;
+	}
+
+	/* Primary "Add" action moves up beside the page title */
+	.storesuite-title-action {
+		display: inline-flex;
 	}
 
 	.storesuite-table-header-part .storesuite-export-toggle svg,

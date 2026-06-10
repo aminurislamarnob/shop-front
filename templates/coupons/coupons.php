@@ -32,7 +32,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-6 text-right">
+					<div class="col-md-6 text-right storesuite-toolbar-add">
 						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-coupon' ) ); ?>" class="my-storesuite-button">
 							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
