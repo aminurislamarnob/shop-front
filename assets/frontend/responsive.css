@@ -66,6 +66,7 @@
 	.storesuite-table-header-part .storesuite-export-toggle .storesuite-button-label,
 	.storesuite-table-header-part .storesuite-filter-toggle .storesuite-button-label,
 	.storesuite-list-table thead,
+	.woocommerce-table--order-downloads thead,
 	.storesuite-toolbar-add {
 		display: none;
 	}
@@ -154,12 +155,17 @@
 	.storesuite-list-table,
 	.storesuite-list-table tbody,
 	.storesuite-list-table tr,
-	.storesuite-list-table td {
+	.storesuite-list-table td,
+	.woocommerce-table--order-downloads,
+	.woocommerce-table--order-downloads tbody,
+	.woocommerce-table--order-downloads tr,
+	.woocommerce-table--order-downloads td {
 		display: block;
 		width: 100%;
 	}
 
-	.storesuite-list-table tr.storesuite-list-row {
+	.storesuite-list-table tr.storesuite-list-row,
+	.woocommerce-table--order-downloads tbody tr {
 		margin-bottom: 16px;
 		padding: 8px 16px;
 		border: 1px solid var( --storesuite-border-color );
@@ -167,7 +173,8 @@
 		background: #fff;
 	}
 
-	.storesuite-list-table tr.storesuite-list-row td {
+	.storesuite-list-table tr.storesuite-list-row td,
+	.woocommerce-table--order-downloads tbody tr td {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -177,11 +184,13 @@
 		text-align: right;
 	}
 
-	.storesuite-list-table tr.storesuite-list-row td:first-child {
+	.storesuite-list-table tr.storesuite-list-row td:first-child,
+	.woocommerce-table--order-downloads tbody tr td:first-child {
 		border-top: 0;
 	}
 
-	.storesuite-list-table tr.storesuite-list-row td[data-title]::before {
+	.storesuite-list-table tr.storesuite-list-row td[data-title]::before,
+	.woocommerce-table--order-downloads tbody tr td[data-title]::before {
 		content: attr( data-title );
 		flex: 0 0 auto;
 		font-weight: 600;
@@ -215,6 +224,39 @@
 		box-shadow: none;
 	}
 
+	/* Product form: sticky save bar spans the viewport (sidebar is off-canvas) */
+	.storesuite-sticky-actions {
+		left: 0;
+	}
+
+	.storesuite-variation-attrs select {
+		max-width: 100%;
+	}
+
+	.my-storesuite-container .select2-container {
+		max-width: 100%;
+	}
+
+	/* Order items (view + edit): scroll horizontally instead of squishing */
+	#woocommerce-order-items {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.storesuite-dashboard-order-details .storesuite-table.order-items {
+		min-width: 480px;
+	}
+
+	.storesuite-dashboard-order-details .storesuite-table th,
+	.storesuite-dashboard-order-details .storesuite-table td {
+		padding: 8px;
+	}
+
+	.storesuite-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 {
+		flex-direction: column;
+		gap: 12px;
+	}
+
 	.storesuite-pagination-wrap {
 		flex-direction: column;
 		align-items: center;
@@ -245,6 +287,24 @@
 }
 
 @media ( max-width: 575px ) {
+	/* Header: icon-only Visit Home button */
+	.storesuite-header-right {
+		gap: 10px;
+	}
+
+	.storesuite-header-right a.my-storesuite-button .storesuite-button-label {
+		display: none;
+	}
+
+	.storesuite-header-right a.my-storesuite-button svg {
+		margin-right: 0;
+	}
+
+	.storesuite-button-group {
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
 	.storesuite-product-bulk-modal-overlay {
 		padding: 0;
 	}
@@ -329,6 +389,13 @@
 
 	table.my-storesuite-product-list-table tbody tr td.tbl-product-name {
 		width: 220px;
+	}
+
+	/* Account: stack the nav above the panels (305px desktop nav crushes forms here) */
+	.row.storesuite-account-layout > .col-md-3,
+	.row.storesuite-account-layout > .col-md-9 {
+		flex: 0 0 100%;
+		max-width: 100%;
 	}
 }
 
