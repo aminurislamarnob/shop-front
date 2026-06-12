@@ -4,7 +4,7 @@ Tags: woocommerce, store management, shop manager, store suite, front-end shop m
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -122,6 +122,9 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.1.3 =
+* Fix the Brands and Categories lists showing stale data on the frontend dashboard after brands or categories were added, edited, or deleted outside StoreSuite — for example from the WordPress admin, the WooCommerce REST API, WP-CLI, or a product import. The cached list now refreshes immediately regardless of where the change is made.
 
 = 1.1.2 =
 * Add AI product generation: per-field "Generate with AI" buttons for the product title, short description, and long description, with an editable suggestion modal, regenerate, and a history pager to step through suggestions.
