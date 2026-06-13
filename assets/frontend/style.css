@@ -2020,6 +2020,13 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   padding: 24px;
 }
 
+/* Dashboard home mounts a React layout (.woocommerce-layout__main) that already
+   supplies its own 24px gutter. Drop the outer page padding here so the
+   left/right (and top/bottom) gap isn't doubled to 48px. */
+.storesuite-main-dashboard {
+  padding: 0;
+}
+
 /*Header design*/
 .storesuite-dashboard-header {
   background: var(--storesuite-sidebar-bg-color);
