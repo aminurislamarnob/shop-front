@@ -113,6 +113,7 @@
 	}
 
 	.storesuite-table-search-input {
+		min-width: 0;
 		max-width: none;
 		width: 100%;
 	}
@@ -396,6 +397,23 @@
 	.row.storesuite-account-layout > .col-md-9 {
 		flex: 0 0 100%;
 		max-width: 100%;
+	}
+
+	/* Order details/edit: stack main + sidebar so the line-item table gets full width */
+	.storesuite-dashboard-order-details .col-md-8,
+	.storesuite-dashboard-order-details .col-md-4 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+
+	/* Order items table still needs horizontal scroll on tablet (cells are nowrap) */
+	#woocommerce-order-items {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.storesuite-dashboard-order-details .storesuite-table.order-items {
+		min-width: 480px;
 	}
 }
 
