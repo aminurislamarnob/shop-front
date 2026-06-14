@@ -65,13 +65,8 @@ class CouponBulkEdit {
 			);
 		}
 
-		if ( ! function_exists( 'wp_check_post_lock' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/post.php';
-		}
-
 		$updated = 0;
 		$skipped = 0;
-		$locked  = 0;
 
 		foreach ( $coupon_ids as $coupon_id ) {
 			if ( 'shop_coupon' !== get_post_type( $coupon_id ) ) {
@@ -81,11 +76,6 @@ class CouponBulkEdit {
 
 			if ( ! current_user_can( 'edit_post', $coupon_id ) ) {
 				++$skipped;
-				continue;
-			}
-
-			if ( wp_check_post_lock( $coupon_id ) ) {
-				++$locked;
 				continue;
 			}
 
@@ -108,10 +98,9 @@ class CouponBulkEdit {
 
 		wp_send_json_success(
 			array(
-				'message' => $this->format_bulk_edit_result_message( $updated, $skipped, $locked ),
+				'message' => $this->format_bulk_edit_result_message( $updated, $skipped ),
 				'updated' => $updated,
 				'skipped' => $skipped,
-				'locked'  => $locked,
 			)
 		);
 	}
@@ -147,14 +136,9 @@ class CouponBulkEdit {
 			);
 		}
 
-		if ( ! function_exists( 'wp_check_post_lock' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/post.php';
-		}
-
 		// Use CouponManager so the storesuite_coupon_deleted hook fires consistently.
 		$manager = new CouponManager();
 		$trashed = 0;
-		$locked  = 0;
 
 		foreach ( $coupon_ids as $coupon_id ) {
 			if ( 'shop_coupon' !== get_post_type( $coupon_id ) ) {
@@ -162,11 +146,6 @@ class CouponBulkEdit {
 			}
 
 			if ( ! current_user_can( 'delete_post', $coupon_id ) ) {
-				continue;
-			}
-
-			if ( wp_check_post_lock( $coupon_id ) ) {
-				++$locked;
 				continue;
 			}
 
@@ -178,9 +157,12 @@ class CouponBulkEdit {
 
 		wp_send_json_success(
 			array(
-				'message' => $this->format_bulk_trash_result_message( $trashed, $locked ),
+				'message' => sprintf(
+					/* translators: %d: number of coupons moved to trash */
+					_n( '%d coupon moved to trash.', '%d coupons moved to trash.', $trashed, 'storesuite' ),
+					$trashed
+				),
 				'trashed' => $trashed,
-				'locked'  => $locked,
 			)
 		);
 	}
@@ -190,10 +172,9 @@ class CouponBulkEdit {
 	 *
 	 * @param int $updated Number of coupons updated.
 	 * @param int $skipped Number of coupons skipped (permission or invalid data).
-	 * @param int $locked  Number of coupons skipped because another user holds the edit lock.
 	 * @return string
 	 */
-	private function format_bulk_edit_result_message( $updated, $skipped, $locked = 0 ) {
+	private function format_bulk_edit_result_message( $updated, $skipped ) {
 		$parts = array();
 
 		if ( $updated > 0 ) {
@@ -214,57 +195,6 @@ class CouponBulkEdit {
 					'storesuite'
 				),
 				$skipped
-			);
-		}
-
-		if ( $locked > 0 ) {
-			$parts[] = sprintf(
-				/* translators: %d: number of coupons locked by another user */
-				_n(
-					'%d coupon not updated, currently being edited by another user.',
-					'%d coupons not updated, currently being edited by another user.',
-					$locked,
-					'storesuite'
-				),
-				$locked
-			);
-		}
-
-		if ( empty( $parts ) ) {
-			return __( 'No changes were applied.', 'storesuite' );
-		}
-
-		return implode( "\n", $parts );
-	}
-
-	/**
-	 * Human-readable summary for bulk trash counts.
-	 *
-	 * @param int $trashed Number of coupons moved to trash.
-	 * @param int $locked  Number of coupons skipped because another user holds the edit lock.
-	 * @return string
-	 */
-	private function format_bulk_trash_result_message( $trashed, $locked = 0 ) {
-		$parts = array();
-
-		if ( $trashed > 0 ) {
-			$parts[] = sprintf(
-				/* translators: %d: number of coupons moved to trash */
-				_n( '%d coupon moved to trash.', '%d coupons moved to trash.', $trashed, 'storesuite' ),
-				$trashed
-			);
-		}
-
-		if ( $locked > 0 ) {
-			$parts[] = sprintf(
-				/* translators: %d: number of coupons not trashed because another user holds the edit lock */
-				_n(
-					'%d coupon was not moved to trash (another user is editing it).',
-					'%d coupons were not moved to trash (another user is editing them).',
-					$locked,
-					'storesuite'
-				),
-				$locked
 			);
 		}
 
