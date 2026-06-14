@@ -1795,11 +1795,12 @@
 		handleCouponDelete: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '.delete-coupon-form', function ( e ) {
+			$( document ).on( 'click', '.storesuite-delete-coupon', function ( e ) {
 				e.preventDefault();
 
-				var $form = $( this );
-				var couponId = $form.find( 'input[name="coupon_id"]' ).val();
+				var $button = $( this );
+				var couponId = $button.data( 'coupon-id' );
+				var couponNonce = $button.data( 'nonce' );
 
 				if ( ! couponId ) {
 					return;
@@ -1817,7 +1818,13 @@
 						return;
 					}
 
-					var formData = new FormData( $form[ 0 ] );
+					var formData = new FormData();
+					formData.append( 'action', 'storesuite_delete_coupon' );
+					formData.append( 'coupon_id', couponId );
+					formData.append(
+						'storesuite_delete_coupon_nonce',
+						couponNonce
+					);
 
 					$.ajax( {
 						url: storeSuiteFormHandler.ajax_url,
@@ -1830,7 +1837,7 @@
 
 							if ( response.success ) {
 								self.showSuccess( response.data.message );
-								$form
+								$button
 									.closest( 'tr' )
 									.fadeOut( 300, function () {
 										$( this ).remove();
