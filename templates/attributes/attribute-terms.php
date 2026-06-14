@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 do_action( 'storesuite_dashboard_wrapper_start' );
 
-$taxonomy = isset( $_GET['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_GET['taxonomy'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only.
+$storesuite_taxonomy = isset( $_GET['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_GET['taxonomy'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only.
 
-if ( empty( $taxonomy ) || ! taxonomy_exists( $taxonomy ) ) {
+if ( empty( $storesuite_taxonomy ) || ! taxonomy_exists( $storesuite_taxonomy ) ) {
 	echo '<div class="my-storesuite-container"><div class="my-storesuite-wrapper"><main class="my-storesuite-page-content">';
 	wp_kses_post( esc_html_e( 'Invalid attribute.', 'storesuite' ) );
 	echo '</main></div></div>';
@@ -28,7 +28,7 @@ $taxonomies = wc_get_attribute_taxonomies();
 if ( ! empty( $taxonomies ) ) {
 	foreach ( $taxonomies as $attr ) {
 		$attr_taxonomy = wc_attribute_taxonomy_name( $attr->attribute_name );
-		if ( $attr_taxonomy === $taxonomy ) {
+		if ( $attr_taxonomy === $storesuite_taxonomy ) {
 			$attribute_label = $attr->attribute_label;
 			break;
 		}
@@ -41,7 +41,7 @@ $is_edit   = $term_id > 0;
 $edit_term = null;
 
 if ( $is_edit ) {
-	$edit_term = get_term( $term_id, $taxonomy );
+	$edit_term = get_term( $term_id, $storesuite_taxonomy );
 	if ( ! $edit_term || is_wp_error( $edit_term ) ) {
 		$is_edit   = false;
 		$edit_term = null;
@@ -50,7 +50,7 @@ if ( $is_edit ) {
 
 $terms = get_terms(
 	array(
-		'taxonomy'   => $taxonomy,
+		'taxonomy'   => $storesuite_taxonomy,
 		'hide_empty' => false,
 	)
 );
@@ -94,13 +94,13 @@ $terms = get_terms(
 										<?php wp_nonce_field( '_storesuite_add_attribute_term_', 'storesuite_add_attribute_term_nonce' ); ?>
 										<input type="hidden" name="action" value="storesuite_add_attribute_term">
 									<?php endif; ?>
-									<input type="hidden" name="taxonomy" value="<?php echo esc_attr( $taxonomy ); ?>">
+									<input type="hidden" name="taxonomy" value="<?php echo esc_attr( $storesuite_taxonomy ); ?>">
 									<div class="storesuite-button-group">
 										<button class="my-storesuite-button" type="submit">
 											<?php echo $is_edit ? esc_html__( 'Update term', 'storesuite' ) : esc_html__( 'Add term', 'storesuite' ); ?>
 										</button>
 										<?php if ( $is_edit ) : ?>
-										<a href="<?php echo esc_url( add_query_arg( array( 'taxonomy' => $taxonomy ), storesuite_get_navigation_url( 'attribute-terms' ) ) ); ?>" class="my-storesuite-button my-storesuite-button-light">
+										<a href="<?php echo esc_url( add_query_arg( array( 'taxonomy' => $storesuite_taxonomy ), storesuite_get_navigation_url( 'attribute-terms' ) ) ); ?>" class="my-storesuite-button my-storesuite-button-light">
 											<?php esc_html_e( 'Back to terms', 'storesuite' ); ?>
 										</a>
 									<?php else : ?>
@@ -124,7 +124,7 @@ $terms = get_terms(
 									'',
 									array(
 										'object_type' => 'attribute_term',
-										'taxonomy'    => $taxonomy,
+										'taxonomy'    => $storesuite_taxonomy,
 									)
 								);
 								?>
@@ -159,14 +159,14 @@ $terms = get_terms(
 												</td>
 											</tr>
 										<?php else : ?>
-											<?php foreach ( $terms as $term ) : ?>
+											<?php foreach ( $terms as $storesuite_term ) : ?>
 															<?php
 															storesuite_get_template_part(
 																'attributes/attribute-term-row',
 																'',
 																array(
-																	'term'     => $term,
-																	'taxonomy' => $taxonomy,
+																	'term'     => $storesuite_term,
+																	'taxonomy' => $storesuite_taxonomy,
 																)
 															);
 															?>
