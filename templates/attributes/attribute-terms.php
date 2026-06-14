@@ -51,7 +51,7 @@ if ( $is_edit ) {
 $storesuite_search_term = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change.
 
 $storesuite_current_page   = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
-$storesuite_terms_per_page = apply_filters( 'storesuite_attribute_terms_per_page', 10 );
+$storesuite_terms_per_page = apply_filters( 'storesuite_attribute_terms_per_page', 5 );
 
 $storesuite_term_args = array(
 	'taxonomy'   => $storesuite_taxonomy,

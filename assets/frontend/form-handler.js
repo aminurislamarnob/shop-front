@@ -1392,9 +1392,14 @@
 						contentType: false,
 						success: function ( response ) {
 							if ( response.success ) {
-								self.showSuccess( response.data.message );
 								$form[ 0 ].reset();
-								self.appendTermRow( response.data );
+								self.showSuccess(
+									response.data.message
+								).then( function () {
+									// Reload so the new term shows in the
+									// correct sorted/paginated position.
+									window.location.reload();
+								} );
 							} else {
 								self.showError( response.data.error );
 							}
@@ -1415,23 +1420,6 @@
 					} );
 				}
 			);
-		},
-
-		/**
-		 * Append a new term row to the attribute terms table.
-		 *
-		 * The row markup is rendered server-side (see the attribute-term-row
-		 * template) and returned as data.row_html, so it always matches the
-		 * initial server-rendered rows.
-		 */
-		appendTermRow: function ( data ) {
-			if ( ! data || ! data.row_html ) {
-				return;
-			}
-
-			var $table = $( '.storesuite-attribute-terms-table tbody' );
-			$table.find( 'tr td[colspan]' ).closest( 'tr' ).remove();
-			$table.append( data.row_html );
 		},
 
 		/**

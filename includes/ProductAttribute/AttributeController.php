@@ -225,23 +225,11 @@ class AttributeController {
 
 		$term = get_term( $result['term_id'], $taxonomy );
 
-		ob_start();
-		storesuite_get_template_part(
-			'attributes/attribute-term-row',
-			'',
-			array(
-				'term'     => $term,
-				'taxonomy' => $taxonomy,
-			)
-		);
-		$row_html = ob_get_clean();
-
 		wp_send_json_success(
 			array(
 				'message'  => __( 'Term successfully created.', 'storesuite' ),
 				'term_id'  => $term->term_id,
 				'taxonomy' => $taxonomy,
-				'row_html' => $row_html,
 			)
 		);
 	}
