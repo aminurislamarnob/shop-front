@@ -48,10 +48,13 @@ if ( $is_edit ) {
 	}
 }
 
+$storesuite_search_term = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change.
+
 $terms = get_terms(
 	array(
 		'taxonomy'   => $storesuite_taxonomy,
 		'hide_empty' => false,
+		'search'     => $storesuite_search_term,
 	)
 );
 
@@ -128,6 +131,19 @@ $terms = get_terms(
 									)
 								);
 								?>
+							</div>
+							<div class="col-md">
+								<form action="" method="get">
+									<input type="hidden" name="taxonomy" value="<?php echo esc_attr( $storesuite_taxonomy ); ?>" />
+									<div class="storesuite-table-search-input">
+										<div class="storesuite-table-search-icon">
+											<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
+												<path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/>
+											</svg>
+										</div>
+										<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Term', 'storesuite' ); ?>" value="<?php echo esc_attr( $storesuite_search_term ); ?>" />
+									</div>
+								</form>
 							</div>
 						</div>
 					</div>
