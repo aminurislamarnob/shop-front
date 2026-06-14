@@ -6,6 +6,10 @@
  *
  * @var bool   $is_all Whether this is the header "select all" checkbox.
  * @var string $value  Row value (term/item ID) for per-row checkboxes.
+ *
+ * NOTE: When updating this markup, also update the inline checkbox string built
+ * in assets/frontend/form-handler.js (newly-added attribute-term rows), which
+ * mirrors this output but cannot render a PHP template part.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,9 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 $storesuite_cb_is_all = ! empty( $is_all );
 $storesuite_cb_class  = $storesuite_cb_is_all ? 'storesuite-bulk-select-all' : 'storesuite-bulk-cb';
 $storesuite_cb_value  = isset( $value ) ? (string) $value : '';
+$storesuite_cb_label  = $storesuite_cb_is_all ? __( 'Select all', 'storesuite' ) : __( 'Select item', 'storesuite' );
 ?>
 <label class="my-storesuite-checkbox">
-	<input type="checkbox" class="my-storesuite-checkbox-input <?php echo esc_attr( $storesuite_cb_class ); ?>"<?php echo $storesuite_cb_is_all ? '' : ' value="' . esc_attr( $storesuite_cb_value ) . '"'; ?>>
+	<input type="checkbox" class="my-storesuite-checkbox-input <?php echo esc_attr( $storesuite_cb_class ); ?>" aria-label="<?php echo esc_attr( $storesuite_cb_label ); ?>"<?php echo $storesuite_cb_is_all ? '' : ' value="' . esc_attr( $storesuite_cb_value ) . '"'; ?>>
 	<span class="my-storesuite-checkbox-back"></span>
 	<span class="my-storesuite-tick">
 		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">

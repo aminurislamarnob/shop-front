@@ -394,6 +394,7 @@ class Assets {
 						'edit_label'                            => __( 'Edit', 'storesuite' ),
 						'quick_edit_label'                      => __( 'Quick edit', 'storesuite' ),
 						'delete_label'                          => __( 'Delete', 'storesuite' ),
+						'select_item_label'                     => __( 'Select item', 'storesuite' ),
 
 						// Product messages.
 						'product_title_required'         => __( 'Please enter product title.', 'storesuite' ),
@@ -448,16 +449,16 @@ class Assets {
 					'load_form_nonce' => wp_create_nonce( 'storesuite_list_quick_edit_form' ),
 					'save_nonce'      => wp_create_nonce( 'storesuite_list_quick_edit' ),
 					'i18n'            => array(
-						'success_title'       => __( 'Success!', 'storesuite' ),
-						'error_title'         => __( 'Error!', 'storesuite' ),
-						'ok_button'           => __( 'OK', 'storesuite' ),
-						'cancel_button'       => __( 'Cancel', 'storesuite' ),
-						'are_you_sure'        => __( 'Are you sure?', 'storesuite' ),
-						'yes_delete'          => __( 'Yes, delete it!', 'storesuite' ),
-						'unexpected_error'    => __( 'An unexpected error occurred. Please try again.', 'storesuite' ),
-						'select_items_title'  => __( 'Select items', 'storesuite' ),
+						'success_title'        => __( 'Success!', 'storesuite' ),
+						'error_title'          => __( 'Error!', 'storesuite' ),
+						'ok_button'            => __( 'OK', 'storesuite' ),
+						'cancel_button'        => __( 'Cancel', 'storesuite' ),
+						'are_you_sure'         => __( 'Are you sure?', 'storesuite' ),
+						'yes_delete'           => __( 'Yes, delete it!', 'storesuite' ),
+						'unexpected_error'     => __( 'An unexpected error occurred. Please try again.', 'storesuite' ),
+						'select_items_title'   => __( 'Select items', 'storesuite' ),
 						'select_items_message' => __( 'Choose at least one item first.', 'storesuite' ),
-						'bulk_delete_warning' => __( 'Do you want to delete the selected items? This action cannot be undone.', 'storesuite' ),
+						'bulk_delete_warning'  => __( 'Do you want to delete the selected items? This action cannot be undone.', 'storesuite' ),
 					),
 				)
 			);

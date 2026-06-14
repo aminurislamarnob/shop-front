@@ -156,20 +156,9 @@ class ListActions {
 			return '';
 		}
 
-		$template_map = array(
-			'category'       => 'categories/category-quick-edit-form',
-			'tag'            => 'tags/tag-quick-edit-form',
-			'brand'          => 'brands/brand-quick-edit-form',
-			'attribute_term' => 'attributes/attribute-term-quick-edit-form',
-		);
-
-		if ( ! isset( $template_map[ $object_type ] ) ) {
-			return '';
-		}
-
 		ob_start();
 		storesuite_get_template_part(
-			$template_map[ $object_type ],
+			'shared/list-quick-edit-term-form',
 			'',
 			array(
 				'object_type' => $object_type,
