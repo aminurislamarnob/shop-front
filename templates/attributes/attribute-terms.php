@@ -147,54 +147,52 @@ $terms = get_terms(
 							</div>
 						</div>
 					</div>
-					<div class="storesuite-card">
-						<div class="storesuite-card-content">
-							<div class="storesuite-table-responsive">
-								<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-attribute-terms-table">
-									<thead>
+					<div class="storesuite-card-content">
+						<div class="storesuite-table-responsive">
+							<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-attribute-terms-table">
+								<thead>
+									<tr>
+										<th class="check-column">
+											<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'is_all' => true ) ); ?>
+										</th>
+										<th><?php esc_html_e( 'Name', 'storesuite' ); ?></th>
+										<th><?php esc_html_e( 'Slug', 'storesuite' ); ?></th>
+										<th><?php esc_html_e( 'Count', 'storesuite' ); ?></th>
+										<th class="text-right"><?php esc_html_e( 'Action', 'storesuite' ); ?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php if ( empty( $terms ) || is_wp_error( $terms ) ) : ?>
 										<tr>
-											<th class="check-column">
-												<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'is_all' => true ) ); ?>
-											</th>
-											<th><?php esc_html_e( 'Name', 'storesuite' ); ?></th>
-											<th><?php esc_html_e( 'Slug', 'storesuite' ); ?></th>
-											<th><?php esc_html_e( 'Count', 'storesuite' ); ?></th>
-											<th class="text-right"><?php esc_html_e( 'Action', 'storesuite' ); ?></th>
+											<td colspan="5">
+												<?php
+												storesuite_get_template_part(
+													'not-found',
+													'',
+													array(
+														'title' => esc_html__( 'No terms found!', 'storesuite' ),
+														'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a term.', 'storesuite' ),
+													)
+												);
+												?>
+											</td>
 										</tr>
-									</thead>
-									<tbody>
-										<?php if ( empty( $terms ) || is_wp_error( $terms ) ) : ?>
-											<tr>
-												<td colspan="5">
-													<?php
-													storesuite_get_template_part(
-														'not-found',
-														'',
-														array(
-															'title' => esc_html__( 'No terms found!', 'storesuite' ),
-															'desc'  => esc_html__( 'There is nothing to display at the moment. Please try adding a term.', 'storesuite' ),
-														)
-													);
-													?>
-												</td>
-											</tr>
-										<?php else : ?>
-											<?php foreach ( $terms as $storesuite_term ) : ?>
-															<?php
-															storesuite_get_template_part(
-																'attributes/attribute-term-row',
-																'',
-																array(
-																	'term'     => $storesuite_term,
-																	'taxonomy' => $storesuite_taxonomy,
-																)
-															);
-															?>
-											<?php endforeach; ?>
-										<?php endif; ?>
-									</tbody>
-								</table>
-							</div>
+									<?php else : ?>
+										<?php foreach ( $terms as $storesuite_term ) : ?>
+														<?php
+														storesuite_get_template_part(
+															'attributes/attribute-term-row',
+															'',
+															array(
+																'term'     => $storesuite_term,
+																'taxonomy' => $storesuite_taxonomy,
+															)
+														);
+														?>
+										<?php endforeach; ?>
+									<?php endif; ?>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
