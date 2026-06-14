@@ -115,9 +115,9 @@ $terms = get_terms(
 					</div>
 				</div>
 				<div class="col-md-8">
-					<div class="storesuite-card">
-						<div class="storesuite-card-content">
-							<div class="storesuite-table-header-part">
+					<div class="storesuite-table-header-part">
+						<div class="row align-items-center">
+							<div class="col-md-auto">
 								<?php
 								storesuite_get_template_part(
 									'shared/list-bulk-actions',
@@ -129,6 +129,10 @@ $terms = get_terms(
 								);
 								?>
 							</div>
+						</div>
+					</div>
+					<div class="storesuite-card">
+						<div class="storesuite-card-content">
 							<div class="storesuite-table-responsive">
 								<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-attribute-terms-table">
 									<thead>
