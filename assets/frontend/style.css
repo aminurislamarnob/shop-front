@@ -4074,10 +4074,9 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .my-storesuite-wrapper .storesuite-form-group.storesuite-bulk-order-actions {
     gap: 10px;
 }
-.storesuite-bulk-order-actions select.storesuite-form-control{
-  width: 255px;
+.storesuite-bulk-order-actions{
+  max-width: 250px;
 }
-
 
 /* Hide the default checkbox */
 .storesuite-form-group.storesuite-form-switch input[type="checkbox"] {
@@ -4843,7 +4842,9 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 }
 
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost {
   flex-shrink: 0;
   box-sizing: border-box;
   width: 30px;
@@ -4867,14 +4868,20 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
 .storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
   color: #fff;
   background-color: rgb(244, 63, 94);
   border-color: rgb(244, 63, 94);
 }
 
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg {
   display: block;
   width: 20px;
   height: 20px;
@@ -5066,6 +5073,11 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 /* Product quick edit modal: wider dialog than bulk edit */
 .storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
   max-width: 920px;
+}
+
+/* The taxonomy/attribute quick edit forms are single column, so use a narrower dialog. */
+.storesuite-list-quick-edit-modal .storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
+  max-width: 480px;
 }
 
 .storesuite-product-quick-edit-modal-scroll {

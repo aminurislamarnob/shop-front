@@ -22,8 +22,11 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="storesuite-table-header-part">
-				<div class="row">
-					<div class="col-md-6">
+				<div class="row align-items-center">
+					<div class="col-md-auto">
+						<?php storesuite_get_template_part( 'shared/list-bulk-actions', '', array( 'object_type' => 'category' ) ); ?>
+					</div>
+					<div class="col-md">
 						<form action="" method="get">
 							<div class="storesuite-table-search-input">
 								<div class="storesuite-table-search-icon">
@@ -35,7 +38,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-6 text-right">
+					<div class="col-md-auto text-right">
 						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-category' ) ); ?>" class="my-storesuite-button">
 							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
@@ -56,6 +59,9 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 				<table class="my-storesuite-tbl my-storesuite-product-list-table">
 					<thead>
 						<tr>
+							<th class="check-column">
+								<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'is_all' => true ) ); ?>
+							</th>
 							<th width="60"><?php echo esc_html__( 'Image', 'storesuite' ); ?></th>
 							<th width="210"><?php echo esc_html__( 'Name', 'storesuite' ); ?></th>
 							<th><?php echo esc_html__( 'Description', 'storesuite' ); ?></th>
@@ -67,7 +73,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 						<tbody>
 							<?php
 							if ( empty( $categories_data->categories ) ) {
-								echo '<tr id="tag-category-not-found"><td colspan="7">';
+								echo '<tr id="tag-category-not-found"><td colspan="8">';
 								storesuite_get_template_part(
 									'not-found',
 									'',
@@ -111,6 +117,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 				}
 				?>
 			</div>
+			<?php storesuite_get_template_part( 'shared/list-quick-edit-modal' ); ?>
 		</main>
 	</div>
 </div>

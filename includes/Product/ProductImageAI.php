@@ -227,7 +227,14 @@ class ProductImageAI {
 	 */
 	private function get_image_bytes( $file ) {
 		if ( method_exists( $file, 'isRemote' ) && $file->isRemote() ) {
-			$response = wp_remote_get( $file->getUrl() );
+			$url = $file->getUrl();
+
+			// Guard against SSRF: only fetch validated http(s) URLs that don't resolve to internal hosts.
+			if ( ! wp_http_validate_url( $url ) ) {
+				return new \WP_Error( 'storesuite_ai_invalid_image_url', __( 'The generated image URL is not valid.', 'storesuite' ) );
+			}
+
+			$response = wp_remote_get( $url, array( 'reject_unsafe_urls' => true ) );
 			if ( is_wp_error( $response ) ) {
 				return $response;
 			}

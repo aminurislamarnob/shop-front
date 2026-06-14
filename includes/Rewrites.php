@@ -163,6 +163,13 @@ class Rewrites {
 			'top'
 		);
 
+		// Add rewrite rule for attribute terms list pagination.
+		add_rewrite_rule(
+			$this->store_front_base . '/attribute-terms/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&attribute-terms=1&paged=$matches[1]',
+			'top'
+		);
+
 		// Add rewrite rule for coupon list pagination.
 		add_rewrite_rule(
 			$this->store_front_base . '/coupons/page/([^/]+)/?$',

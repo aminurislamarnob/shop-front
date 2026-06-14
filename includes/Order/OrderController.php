@@ -86,7 +86,12 @@ class OrderController {
 		}
 
 		if ( $order_id > 0 ) {
-			$order      = wc_get_order( $order_id );
+			$order = wc_get_order( $order_id );
+
+			if ( ! $order instanceof \WC_Order ) {
+				wp_send_json_error( array( 'error' => __( 'Invalid order.', 'storesuite' ) ) );
+			}
+
 			$comment_id = $order->add_order_note( $order_note, $is_customer_note, true );
 			$note       = wc_get_order_note( $comment_id );
 
@@ -150,13 +155,16 @@ class OrderController {
 
 		$note_id = isset( $_POST['note_id'] ) ? absint( $_POST['note_id'] ) : 0;
 
-		$is_deleted = false;
-		if ( $note_id > 0 ) {
-			$is_deleted = wc_delete_order_note( $note_id );
+		// Only comments that are actual order notes may be deleted through this handler.
+		$note = $note_id > 0 ? get_comment( $note_id ) : null;
+		if ( ! $note || 'order_note' !== $note->comment_type ) {
+			wp_send_json_error( array( 'error' => __( 'Invalid order note.', 'storesuite' ) ) );
 		}
 
+		$is_deleted = wc_delete_order_note( $note_id );
+
 		if ( ! $is_deleted ) {
-			wp_send_json_error( array( 'error' => __( 'Failed to delete brand', 'storesuite' ) ) );
+			wp_send_json_error( array( 'error' => __( 'Failed to delete order note', 'storesuite' ) ) );
 		} else {
 			wp_send_json_success( array( 'message' => __( 'Note successfully deleted', 'storesuite' ) ) );
 		}

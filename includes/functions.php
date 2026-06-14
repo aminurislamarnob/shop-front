@@ -19,7 +19,7 @@ function storesuite_get_template_part( $slug, $name = '', $args = array() ) {
 	$args = wp_parse_args( $args, $defaults );
 
 	if ( $args && is_array( $args ) ) {
-        extract( $args ); // phpcs:ignore
+		extract( $args ); // phpcs:ignore
 	}
 
 	$template = '';

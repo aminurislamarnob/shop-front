@@ -185,7 +185,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 						<tr>
 							<th class="check-column">
 								<label class="my-storesuite-checkbox">
-									<input type="checkbox" id="cb-select-all-products" class="my-storesuite-checkbox-input">
+									<input type="checkbox" id="cb-select-all-products" class="my-storesuite-checkbox-input" aria-label="<?php esc_attr_e( 'Select all', 'storesuite' ); ?>">
 									<span class="my-storesuite-checkbox-back"></span>
 									<span class="my-storesuite-tick">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
