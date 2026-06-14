@@ -5072,6 +5072,11 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   max-width: 920px;
 }
 
+/* The taxonomy/attribute quick edit forms are single column, so use a narrower dialog. */
+.storesuite-list-quick-edit-modal .storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
+  max-width: 480px;
+}
+
 .storesuite-product-quick-edit-modal-scroll {
   min-height: 4rem;
 }
