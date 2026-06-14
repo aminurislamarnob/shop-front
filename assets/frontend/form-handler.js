@@ -1571,8 +1571,26 @@
 										text: response.data.message,
 										confirmButtonText: i18n.ok_button,
 									} ).then( function () {
-										// Reload to pull the latest terms (and
-										// correct pagination) from the server.
+										// Pull the latest terms (and correct
+										// pagination) from the server. If the
+										// deleted term was the only item left on
+										// this page, go to the previous page
+										// instead of landing on an empty one.
+										var $remaining = $(
+											'.storesuite-attribute-terms-table tbody tr[id^="term-row-"]'
+										);
+										var $prevPage = $(
+											'.storesuite-pagination a.prev'
+										);
+										if (
+											$remaining.length <= 1 &&
+											$prevPage.length
+										) {
+											window.location.assign(
+												$prevPage.attr( 'href' )
+											);
+											return;
+										}
 										window.location.reload();
 									} );
 								} else {
