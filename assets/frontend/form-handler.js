@@ -1569,13 +1569,12 @@
 										icon: 'success',
 										title: i18n.success_title,
 										text: response.data.message,
+										confirmButtonText: i18n.ok_button,
+									} ).then( function () {
+										// Reload to pull the latest terms (and
+										// correct pagination) from the server.
+										window.location.reload();
 									} );
-									$( '#term-row-' + termId ).fadeOut(
-										300,
-										function () {
-											$( this ).remove();
-										}
-									);
 								} else {
 									Swal.fire( {
 										icon: 'error',
