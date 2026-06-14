@@ -92,6 +92,7 @@ class Assets {
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 		$frontend_variation_script    = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
 		$frontend_product_export      = STORESUITE_PLUGIN_ASSET . '/frontend/product-export.js';
+		$frontend_taxonomy_list       = STORESUITE_PLUGIN_ASSET . '/frontend/taxonomy-list.js';
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_global_script', STORESUITE_PLUGIN_ASSET . '/frontend/global.js', array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
@@ -111,6 +112,9 @@ class Assets {
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_product_export_script', $frontend_product_export, array( 'jquery', 'storesuite_product_script', 'storesuite_selectWoo', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
+
+		// Shared bulk delete + quick edit behaviour for the taxonomy/attribute list pages.
+		wp_register_script( 'storesuite_taxonomy_list_script', $frontend_taxonomy_list, array( 'jquery', 'storesuite_script', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 	}
 
 	/**
@@ -238,6 +242,13 @@ class Assets {
 			|| storesuite_is_endpoint_url( 'edit-attribute' )
 			|| storesuite_is_endpoint_url( 'attribute-terms' );
 		$is_account = storesuite_is_endpoint_url( 'edit-account-details' );
+
+		// List pages that get the shared bulk delete + quick edit behaviour.
+		$is_taxonomy_list = storesuite_is_endpoint_url( 'categories' )
+			|| storesuite_is_endpoint_url( 'tags' )
+			|| storesuite_is_endpoint_url( 'brands' )
+			|| storesuite_is_endpoint_url( 'attributes' )
+			|| storesuite_is_endpoint_url( 'attribute-terms' );
 
 		$needs_media        = $is_products || $is_categories || $is_brands || $is_account;
 		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_attributes || $is_account;
@@ -381,6 +392,7 @@ class Assets {
 						'attribute_term_slug_placeholder'       => __( 'Term slug (optional)', 'storesuite' ),
 						'attribute_term_description_placeholder' => __( 'Optional term description', 'storesuite' ),
 						'edit_label'                            => __( 'Edit', 'storesuite' ),
+						'quick_edit_label'                      => __( 'Quick edit', 'storesuite' ),
 						'delete_label'                          => __( 'Delete', 'storesuite' ),
 
 						// Product messages.
@@ -421,6 +433,32 @@ class Assets {
 					),
 					'coupons_url'                  => storesuite_get_navigation_url( 'coupons' ),
 					'attribute_terms_url'          => storesuite_get_navigation_url( 'attribute-terms' ),
+				)
+			);
+		}
+
+		if ( $is_taxonomy_list ) {
+			wp_enqueue_script( 'storesuite_taxonomy_list_script' );
+			wp_localize_script(
+				'storesuite_taxonomy_list_script',
+				'StoreSuiteTaxonomyList',
+				array(
+					'ajax_url'        => admin_url( 'admin-ajax.php' ),
+					'delete_nonce'    => wp_create_nonce( '_storesuite_delete_nonce_' ),
+					'load_form_nonce' => wp_create_nonce( 'storesuite_list_quick_edit_form' ),
+					'save_nonce'      => wp_create_nonce( 'storesuite_list_quick_edit' ),
+					'i18n'            => array(
+						'success_title'       => __( 'Success!', 'storesuite' ),
+						'error_title'         => __( 'Error!', 'storesuite' ),
+						'ok_button'           => __( 'OK', 'storesuite' ),
+						'cancel_button'       => __( 'Cancel', 'storesuite' ),
+						'are_you_sure'        => __( 'Are you sure?', 'storesuite' ),
+						'yes_delete'          => __( 'Yes, delete it!', 'storesuite' ),
+						'unexpected_error'    => __( 'An unexpected error occurred. Please try again.', 'storesuite' ),
+						'select_items_title'  => __( 'Select items', 'storesuite' ),
+						'select_items_message' => __( 'Choose at least one item first.', 'storesuite' ),
+						'bulk_delete_warning' => __( 'Do you want to delete the selected items? This action cannot be undone.', 'storesuite' ),
+					),
 				)
 			);
 		}

@@ -117,10 +117,25 @@ $terms = get_terms(
 				<div class="col-md-8">
 					<div class="storesuite-card">
 						<div class="storesuite-card-content">
+							<div class="storesuite-table-header-part">
+								<?php
+								storesuite_get_template_part(
+									'shared/list-bulk-actions',
+									'',
+									array(
+										'object_type' => 'attribute_term',
+										'taxonomy'    => $taxonomy,
+									)
+								);
+								?>
+							</div>
 							<div class="storesuite-table-responsive">
 								<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-attribute-terms-table">
 									<thead>
 										<tr>
+											<th class="check-column">
+												<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'is_all' => true ) ); ?>
+											</th>
 											<th><?php esc_html_e( 'Name', 'storesuite' ); ?></th>
 											<th><?php esc_html_e( 'Slug', 'storesuite' ); ?></th>
 											<th><?php esc_html_e( 'Count', 'storesuite' ); ?></th>
@@ -130,7 +145,7 @@ $terms = get_terms(
 									<tbody>
 										<?php if ( empty( $terms ) || is_wp_error( $terms ) ) : ?>
 											<tr>
-												<td colspan="4">
+												<td colspan="5">
 													<?php
 													storesuite_get_template_part(
 														'not-found',
@@ -146,6 +161,9 @@ $terms = get_terms(
 										<?php else : ?>
 											<?php foreach ( $terms as $term ) : ?>
 												<tr id="term-row-<?php echo esc_attr( $term->term_id ); ?>">
+													<td class="check-column">
+														<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'value' => $term->term_id ) ); ?>
+													</td>
 													<td><a href="
                                                     <?php
                                                     echo esc_url(
@@ -183,6 +201,11 @@ $terms = get_terms(
 																	</a>
 																</li>
 																<li>
+																	<button type="button" class="inline-button dropdown-link storesuite-item-quick-edit" data-object-type="attribute_term" data-id="<?php echo esc_attr( $term->term_id ); ?>" data-taxonomy="<?php echo esc_attr( $taxonomy ); ?>">
+																		<?php esc_html_e( 'Quick edit', 'storesuite' ); ?>
+																	</button>
+																</li>
+																<li>
 																	<button type="button" class="inline-button dropdown-link storesuite-delete-attribute-term" data-term-id="<?php echo esc_attr( $term->term_id ); ?>" data-taxonomy="<?php echo esc_attr( $taxonomy ); ?>">
 																		<?php esc_html_e( 'Delete', 'storesuite' ); ?>
 																	</button>
@@ -200,6 +223,7 @@ $terms = get_terms(
 					</div>
 				</div>
 			</div>
+			<?php storesuite_get_template_part( 'shared/list-quick-edit-modal' ); ?>
 		</main>
 	</div>
 </div>

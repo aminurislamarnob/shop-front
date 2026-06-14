@@ -1429,8 +1429,22 @@
 				'&term_id=' +
 				data.term_id;
 
+			var checkboxCell =
+				'<td class="check-column">' +
+					'<label class="my-storesuite-checkbox">' +
+						'<input type="checkbox" class="my-storesuite-checkbox-input storesuite-bulk-cb" value="' + data.term_id + '">' +
+						'<span class="my-storesuite-checkbox-back"></span>' +
+						'<span class="my-storesuite-tick">' +
+							'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/></svg>' +
+						'</span>' +
+					'</label>' +
+				'</td>';
+
+			var taxonomyAttr = $( '<span>' ).text( data.taxonomy ).html();
+
 			var row =
 				'<tr id="term-row-' + data.term_id + '">' +
+					checkboxCell +
 					'<td>' + $( '<span>' ).text( data.name ).html() + '</td>' +
 					'<td>' + $( '<span>' ).text( data.slug ).html() + '</td>' +
 					'<td>' + data.count + '</td>' +
@@ -1444,7 +1458,12 @@
 									'<a href="' + editUrl + '" class="dropdown-link">' + $( '<span>' ).text( i18n.edit_label ).html() + '</a>' +
 								'</li>' +
 								'<li>' +
-									'<button type="button" class="inline-button dropdown-link storesuite-delete-attribute-term" data-term-id="' + data.term_id + '" data-taxonomy="' + $( '<span>' ).text( data.taxonomy ).html() + '">' +
+									'<button type="button" class="inline-button dropdown-link storesuite-item-quick-edit" data-object-type="attribute_term" data-id="' + data.term_id + '" data-taxonomy="' + taxonomyAttr + '">' +
+										$( '<span>' ).text( i18n.quick_edit_label ).html() +
+									'</button>' +
+								'</li>' +
+								'<li>' +
+									'<button type="button" class="inline-button dropdown-link storesuite-delete-attribute-term" data-term-id="' + data.term_id + '" data-taxonomy="' + taxonomyAttr + '">' +
 										$( '<span>' ).text( i18n.delete_label ).html() +
 									'</button>' +
 								'</li>' +
