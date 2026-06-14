@@ -160,60 +160,16 @@ $terms = get_terms(
 											</tr>
 										<?php else : ?>
 											<?php foreach ( $terms as $term ) : ?>
-												<tr id="term-row-<?php echo esc_attr( $term->term_id ); ?>">
-													<td class="check-column">
-														<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'value' => $term->term_id ) ); ?>
-													</td>
-													<td><a href="
-                                                    <?php
-                                                    echo esc_url(
-                                                        add_query_arg(
-                                                            array(
-																'taxonomy' => $taxonomy,
-																'term_id' => $term->term_id,
-                                                            ), storesuite_get_navigation_url( 'attribute-terms' )
-                                                        )
-                                                    );
-													?>
-                                                                    "><?php echo esc_html( $term->name ); ?></a></td>
-													<td><?php echo esc_html( $term->slug ); ?></td>
-													<td><?php echo esc_html( $term->count ); ?></td>
-													<td class="text-right">
-														<div class="storesuite-dropdown">
-															<span class="storesuite-dropdown-icon">
-																<svg width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-three-dots"></use></svg>
-															</span>
-															<ul class="storesuite-dropdown-menu">
-																<li>
-																	<a href="
-                                                                    <?php
-                                                                    echo esc_url(
-                                                                        add_query_arg(
-                                                                            array(
-																				'taxonomy' => $taxonomy,
-																				'term_id' => $term->term_id,
-                                                                            ), storesuite_get_navigation_url( 'attribute-terms' )
-                                                                        )
-                                                                    );
-																	?>
-                                                                                " class="dropdown-link">
-																		<?php esc_html_e( 'Edit', 'storesuite' ); ?>
-																	</a>
-																</li>
-																<li>
-																	<button type="button" class="inline-button dropdown-link storesuite-item-quick-edit" data-object-type="attribute_term" data-id="<?php echo esc_attr( $term->term_id ); ?>" data-taxonomy="<?php echo esc_attr( $taxonomy ); ?>">
-																		<?php esc_html_e( 'Quick edit', 'storesuite' ); ?>
-																	</button>
-																</li>
-																<li>
-																	<button type="button" class="inline-button dropdown-link storesuite-delete-attribute-term" data-term-id="<?php echo esc_attr( $term->term_id ); ?>" data-taxonomy="<?php echo esc_attr( $taxonomy ); ?>">
-																		<?php esc_html_e( 'Delete', 'storesuite' ); ?>
-																	</button>
-																</li>
-															</ul>
-														</div>
-													</td>
-												</tr>
+															<?php
+															storesuite_get_template_part(
+																'attributes/attribute-term-row',
+																'',
+																array(
+																	'term'     => $term,
+																	'taxonomy' => $taxonomy,
+																)
+															);
+															?>
 											<?php endforeach; ?>
 										<?php endif; ?>
 									</tbody>

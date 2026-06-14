@@ -6,10 +6,6 @@
  *
  * @var bool   $is_all Whether this is the header "select all" checkbox.
  * @var string $value  Row value (term/item ID) for per-row checkboxes.
- *
- * NOTE: When updating this markup, also update the inline checkbox string built
- * in assets/frontend/form-handler.js (newly-added attribute-term rows), which
- * mirrors this output but cannot render a PHP template part.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

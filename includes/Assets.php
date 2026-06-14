@@ -392,9 +392,7 @@ class Assets {
 						'attribute_term_slug_placeholder'       => __( 'Term slug (optional)', 'storesuite' ),
 						'attribute_term_description_placeholder' => __( 'Optional term description', 'storesuite' ),
 						'edit_label'                            => __( 'Edit', 'storesuite' ),
-						'quick_edit_label'                      => __( 'Quick edit', 'storesuite' ),
 						'delete_label'                          => __( 'Delete', 'storesuite' ),
-						'select_item_label'                     => __( 'Select item', 'storesuite' ),
 
 						// Product messages.
 						'product_title_required'         => __( 'Please enter product title.', 'storesuite' ),
