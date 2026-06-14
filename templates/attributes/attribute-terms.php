@@ -50,13 +50,30 @@ if ( $is_edit ) {
 
 $storesuite_search_term = isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change.
 
-$terms = get_terms(
-	array(
-		'taxonomy'   => $storesuite_taxonomy,
-		'hide_empty' => false,
-		'search'     => $storesuite_search_term,
-	)
+$storesuite_current_page   = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
+$storesuite_terms_per_page = apply_filters( 'storesuite_attribute_terms_per_page', 10 );
+
+$storesuite_term_args = array(
+	'taxonomy'   => $storesuite_taxonomy,
+	'hide_empty' => false,
+	'orderby'    => 'name',
+	'order'      => 'ASC',
 );
+
+if ( '' !== $storesuite_search_term ) {
+	$storesuite_term_args['search'] = $storesuite_search_term;
+}
+
+// Total count (for pagination) before applying limits.
+$storesuite_total_terms = wp_count_terms( $storesuite_term_args );
+$storesuite_total_terms = is_wp_error( $storesuite_total_terms ) ? 0 : (int) $storesuite_total_terms;
+$storesuite_max_pages   = (int) ceil( $storesuite_total_terms / $storesuite_terms_per_page );
+
+$storesuite_term_args['number'] = $storesuite_terms_per_page;
+$storesuite_term_args['offset'] = ( $storesuite_current_page - 1 ) * $storesuite_terms_per_page;
+
+$terms = get_terms( $storesuite_term_args );
+$terms = is_wp_error( $terms ) ? array() : $terms;
 
 ?>
 <div class="my-storesuite-container">
@@ -193,6 +210,20 @@ $terms = get_terms(
 									<?php endif; ?>
 								</tbody>
 							</table>
+							<?php
+							if ( $storesuite_max_pages > 1 ) {
+								storesuite_get_template_part(
+									'pagination',
+									'',
+									array(
+										'total_items'  => $storesuite_total_terms,
+										'total_pages'  => $storesuite_max_pages,
+										'current_page' => $storesuite_current_page,
+										'per_page'     => $storesuite_terms_per_page,
+									)
+								);
+							}
+							?>
 						</div>
 					</div>
 				</div>
