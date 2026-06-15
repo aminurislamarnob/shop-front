@@ -20,7 +20,7 @@ if ( empty( $storesuite_wfm_thumb ) ) {
 <tr class="single-product-item storesuite-list-row" id="product-row-<?php echo esc_attr( (string) $product_id ); ?>">
 	<td class="check-column">
 		<label class="my-storesuite-checkbox">
-			<input type="checkbox" name="bulk_product_ids[]" id="cb-select-<?php echo esc_attr( (string) $product_id ); ?>" value="<?php echo esc_attr( (string) $product_id ); ?>" class="my-storesuite-checkbox-input">
+			<input type="checkbox" name="bulk_product_ids[]" id="cb-select-<?php echo esc_attr( (string) $product_id ); ?>" value="<?php echo esc_attr( (string) $product_id ); ?>" class="my-storesuite-checkbox-input" aria-label="<?php esc_attr_e( 'Select item', 'storesuite' ); ?>">
 			<span class="my-storesuite-checkbox-back"></span>
 			<span class="my-storesuite-tick">
 				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">

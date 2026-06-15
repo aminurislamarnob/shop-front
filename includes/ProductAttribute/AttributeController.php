@@ -229,9 +229,6 @@ class AttributeController {
 			array(
 				'message'  => __( 'Term successfully created.', 'storesuite' ),
 				'term_id'  => $term->term_id,
-				'name'     => $term->name,
-				'slug'     => $term->slug,
-				'count'    => $term->count,
 				'taxonomy' => $taxonomy,
 			)
 		);

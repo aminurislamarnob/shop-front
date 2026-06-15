@@ -143,6 +143,11 @@ $attributes = wc_get_attribute_taxonomies();
 													</a>
 												</li>
 												<li>
+													<button type="button" class="inline-button dropdown-link storesuite-item-quick-edit" data-object-type="attribute" data-id="<?php echo esc_attr( $attribute->attribute_id ); ?>">
+														<?php esc_html_e( 'Quick edit', 'storesuite' ); ?>
+													</button>
+												</li>
+												<li>
 													<button type="button" class="inline-button dropdown-link storesuite-delete-attribute" data-attribute-id="<?php echo esc_attr( $attribute->attribute_id ); ?>">
 														<?php esc_html_e( 'Delete', 'storesuite' ); ?>
 													</button>
@@ -156,6 +161,7 @@ $attributes = wc_get_attribute_taxonomies();
 					</tbody>
 				</table>
 			</div>
+			<?php storesuite_get_template_part( 'shared/list-quick-edit-modal' ); ?>
 		</main>
 	</div>
 </div>

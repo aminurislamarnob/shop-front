@@ -11,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <tr class="storesuite-list-row" id="brand-row-<?php echo esc_attr( $brand->term_id ); ?>">
+	<td class="check-column">
+		<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'value' => $brand->term_id ) ); ?>
+	</td>
 	<td class="brand-image" data-title="<?php esc_attr_e( 'Image', 'storesuite' ); ?>">
 		<?php
 		$thumbnail_id = absint( get_term_meta( $brand->term_id, 'thumbnail_id', true ) );
@@ -60,6 +63,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</li>
 				<li>
 					<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-brand' ) . '%s', $brand->term_id ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'storesuite' ); ?></a>
+				</li>
+				<li>
+					<button type="button" class="inline-button dropdown-link storesuite-item-quick-edit" data-object-type="brand" data-id="<?php echo esc_attr( $brand->term_id ); ?>"><?php echo esc_html__( 'Quick edit', 'storesuite' ); ?></button>
 				</li>
 				<li>
 					<button type="button" class="inline-button dropdown-link storesuite-delete-brand" data-brand-id="<?php echo esc_attr( $brand->term_id ); ?>">
