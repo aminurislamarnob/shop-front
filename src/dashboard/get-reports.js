@@ -1,33 +1,34 @@
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
-import { lazy } from '@wordpress/element';
 
-const DashboardDateRangePicker = lazy( () =>
+import lazyWithRetry from './utils/lazy-with-retry';
+
+const DashboardDateRangePicker = lazyWithRetry( () =>
 	import(
 		/* webpackChunkName: "ss-dashboard-date-range-picker" */ './components/date-range-picker'
 	)
 );
-const StorePerformance = lazy( () =>
+const StorePerformance = lazyWithRetry( () =>
 	import(
 		/* webpackChunkName: "ss-dashboard-store-performance" */ './components/store-performance'
 	)
 );
-const NetSalesChart = lazy( () =>
+const NetSalesChart = lazyWithRetry( () =>
 	import(
 		/* webpackChunkName: "ss-dashboard-net-sales" */ './components/net-sales-chart'
 	)
 );
-const DashboardLeaderboards = lazy( () =>
+const DashboardLeaderboards = lazyWithRetry( () =>
 	import(
 		/* webpackChunkName: "ss-dashboard-leaderboards" */ './components/leaderboards'
 	)
 );
-const RecentOrders = lazy( () =>
+const RecentOrders = lazyWithRetry( () =>
 	import(
 		/* webpackChunkName: "ss-dashboard-recent-orders" */ './components/recent-orders'
 	)
 );
-const QuickActions = lazy( () =>
+const QuickActions = lazyWithRetry( () =>
 	import(
 		/* webpackChunkName: "ss-dashboard-quick-actions" */ './components/quick-actions'
 	)

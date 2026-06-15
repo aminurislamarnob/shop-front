@@ -456,3 +456,164 @@
 		display: none;
 	}
 }
+
+@media ( max-width: 782px ) {
+	.storesuite-dashboard-layout {
+		.woocommerce-layout__main {
+			padding: 0;
+
+			.storesuite-dashboard-title-wrapper {
+				flex-direction: column;
+				align-items: stretch;
+
+				.storesuite-dashboard-title {
+					margin-bottom: 20px;
+				}
+			}
+
+			.woocommerce-filters {
+				margin-left: 0;
+				margin-right: 0;
+			}
+
+			.woocommerce-summary .woocommerce-summary__item-container {
+				margin-left: 0;
+				margin-right: 0;
+			}
+		}
+
+		ul.woocommerce-summary li:not(:last-child) .woocommerce-summary__item {
+			border-bottom: 1px solid var(--storesuite-border-color);
+		}
+	}
+
+	.dashboard-date-range-picker {
+		width: 100%;
+	}
+
+	.dashboard-date-range-picker .woocommerce-filters-filter,
+	.storesuite-dashboard-net-sales-chart
+		.woocommerce-legend.woocommerce-legend__direction-column {
+		min-width: 0;
+		width: 100%;
+	}
+
+	.storesuite-dashboard-net-sales-chart {
+		// "By day" interval dropdown: full width with a gap below it.
+		.woocommerce-chart .woocommerce-chart__interval-select {
+			width: 100%;
+			margin-bottom: 16px;
+			padding-left: 16px;
+			padding-right: 16px;
+
+			.components-base-control.components-select-control {
+				width: 100%;
+			}
+		}
+
+		// Footer legend ("Last quarter" / "Previous period"): stack each
+		// item full width and keep the total from spilling off-screen.
+		.woocommerce-legend__direction-row .woocommerce-legend__item {
+			flex: 1 0 100%;
+			max-width: 100%;
+		}
+
+		.woocommerce-legend__item > button .woocommerce-legend__item-container {
+			display: block;
+
+			.woocommerce-legend__item-title {
+				display: inline-block;
+				flex: 1 1 auto;
+				margin-right: 8px;
+			}
+
+			.woocommerce-legend__item-total {
+				flex-shrink: 0;
+				padding-left: 8px;
+			}
+		}
+	}
+
+	.storesuite-quick-actions,
+	.storesuite-top-products-responsive-table {
+		margin-top: 24px;
+	}
+
+	// Quick actions: 4 columns overflow on mobile — drop to 2.
+	.storesuite-quick-actions__grid {
+		grid-template-columns: repeat( 2, 1fr );
+	}
+
+	.dashboard-graph-section .storesuite-dashboard-net-sales-chart,
+	.dashboard-graph-section > .row > [class*='col-'] {
+		min-height: 0;
+	}
+
+	/* Top Products & Recent Orders tables → stacked cards, matching the
+	   frontend product list responsive design. Cell labels are injected as
+	   data-label by the ResponsiveTable wrapper. */
+	.storesuite-leaderboard,
+	.storesuite-recent-orders-table {
+		&.woocommerce-table {
+			margin-bottom: 0;
+		}
+
+		.woocommerce-table__table {
+			overflow: visible;
+		}
+
+		.woocommerce-table__table table,
+		.woocommerce-table__table tbody,
+		.woocommerce-table__table tr,
+		.woocommerce-table__table th,
+		.woocommerce-table__table td {
+			display: block;
+			width: 100%;
+		}
+
+		// WooCommerce renders no <thead>; the header is a row of
+		// th.woocommerce-table__header cells. Hide that row on mobile.
+		.woocommerce-table__table tr:has( .woocommerce-table__header ) {
+			display: none;
+		}
+
+		.woocommerce-table__header,
+		.woocommerce-table__item {
+			border-bottom: 0;
+		}
+
+		.woocommerce-table__table tbody tr {
+			margin-bottom: 0;
+			padding: 8px 16px;
+			border: 0;
+			border-radius: 0;
+			background: #fff;
+		}
+
+		.woocommerce-table__table tbody tr:nth-child( odd ) {
+			background: #f1f1f1;
+		}
+
+		.woocommerce-table__table tbody .woocommerce-table__item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+			padding: 10px 0;
+			border-top: 1px solid var( --storesuite-border-color );
+			text-align: right;
+		}
+
+		.woocommerce-table__table tbody .woocommerce-table__item:first-child {
+			border-top: 0;
+		}
+
+		.woocommerce-table__table tbody .woocommerce-table__item[ data-label ]::before {
+			content: attr( data-label );
+			flex: 0 0 auto;
+			font-weight: 600;
+			color: var( --storesuite-text-black );
+			text-align: left;
+		}
+	}
+}
