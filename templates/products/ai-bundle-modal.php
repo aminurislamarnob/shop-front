@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <button type="button" class="my-storesuite-button storesuite-ai-bundle-launch">
 	<svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg>
-	<?php esc_html_e( 'Generate with AI', 'storesuite' ); ?>
+	<span class="storesuite-ai-bundle-prefix"><?php esc_html_e( 'Generate with', 'storesuite' ); ?> </span><?php esc_html_e( 'AI', 'storesuite' ); ?>
 </button>
 
 <div id="storesuite-ai-bundle-modal" class="storesuite-product-bulk-modal-overlay" hidden aria-hidden="true">

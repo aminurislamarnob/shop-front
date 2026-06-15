@@ -65,6 +65,8 @@
 	.storesuite-dashboard-braedcrumb,
 	.storesuite-table-header-part .storesuite-export-toggle .storesuite-button-label,
 	.storesuite-table-header-part .storesuite-filter-toggle .storesuite-button-label,
+	.storesuite-toolbar-actions .my-storesuite-button .storesuite-add-product-text,
+	.storesuite-ai-bundle-prefix,
 	.storesuite-list-table thead,
 	.woocommerce-table--order-downloads thead,
 	.storesuite-toolbar-add {
@@ -85,6 +87,12 @@
 	.storesuite-toolbar-actions {
 		order: 1;
 		width: 100%;
+	}
+
+	/* Product form: restore vertical spacing between stacked grid fields
+	   (Bootstrap rows default to --bs-gutter-y: 0, so columns touch). */
+	#storesuite-add-product .row {
+		--bs-gutter-y: 16px;
 	}
 
 	.storesuite-search-toggle-col {
@@ -291,6 +299,13 @@
 	/* Header: icon-only Visit Home button */
 	.storesuite-header-right {
 		gap: 10px;
+	}
+
+	.storesuite-header-right a.my-storesuite-button {
+		width: 35px;
+		height: 35px;
+		padding: 0;
+		border-radius: 50%;
 	}
 
 	.storesuite-header-right a.my-storesuite-button .storesuite-button-label {

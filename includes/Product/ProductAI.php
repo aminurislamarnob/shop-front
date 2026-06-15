@@ -68,7 +68,7 @@ class ProductAI {
 			return;
 		}
 		?>
-		<button type="button" class="storesuite-ai-generate" data-field="<?php echo esc_attr( $field ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <?php esc_html_e( 'Generate with AI', 'storesuite' ); ?></button>
+		<button type="button" class="storesuite-ai-generate" data-field="<?php echo esc_attr( $field ); ?>"><svg class="storesuite-ai-icon" aria-hidden="true" focusable="false"><use href="#storesuite-icon-ai-magic"></use></svg> <span class="storesuite-ai-bundle-prefix"><?php esc_html_e( 'Generate with', 'storesuite' ); ?> </span><?php esc_html_e( 'AI', 'storesuite' ); ?></button>
 		<?php
 	}
 
