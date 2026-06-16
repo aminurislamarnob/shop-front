@@ -238,6 +238,30 @@
 		left: 0;
 	}
 
+	/* Stack label over buttons so nothing gets clipped on narrow screens */
+	.storesuite-sticky-actions-inner {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 12px;
+	}
+
+	.storesuite-sticky-actions-label {
+		text-align: center;
+	}
+
+	.storesuite-sticky-actions-buttons {
+		width: 100%;
+	}
+
+	.storesuite-sticky-actions-buttons .my-storesuite-button {
+		flex: 1 1 0;
+		justify-content: center;
+	}
+
+	.storesuite-sticky-save .storesuite-sticky-save-label {
+		display: none;
+	}
+
 	.storesuite-variation-attrs select {
 		max-width: 100%;
 	}
@@ -292,6 +316,125 @@
 	.storesuite-product-bulk-modal-footer {
 		padding-left: 1rem;
 		padding-right: 1rem;
+	}
+
+	/* Stack the attribute toolbar and make both actions full width */
+	#storesuite-product-attributes .storesuite-card-footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	#storesuite-attribute-toolbar .storesuite-input-group {
+		flex: 1 1 auto;
+		max-width: none;
+		width: 100%;
+	}
+
+	#storesuite-add-custom-attribute-btn {
+		width: 100%;
+		justify-content: center;
+	}
+
+	#storesuite-add-attribute-btn .storesuite-add-attribute-btn-label {
+		display: none;
+	}
+
+	/* Attributes table → stacked cards (like the product list table) */
+	.my-storesuite-attributes-table thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect( 0, 0, 0, 0 );
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.my-storesuite-attributes-table,
+	.my-storesuite-attributes-table tbody,
+	.my-storesuite-attributes-table tr,
+	.my-storesuite-attributes-table td {
+		display: block;
+		width: 100%;
+	}
+
+	.my-storesuite-attributes-table tr.storesuite-attribute-row {
+		margin-bottom: 16px;
+		padding: 8px 16px;
+		border: 1px solid var( --storesuite-border-color );
+		border-radius: 8px;
+		background: #fff;
+	}
+
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 10px 0;
+		border-top: 1px solid var( --storesuite-border-color );
+		text-align: right;
+	}
+
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td:first-child {
+		border-top: 0;
+	}
+
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td[data-title]::before {
+		content: attr( data-title );
+		flex: 0 0 auto;
+		font-weight: 600;
+		color: var( --storesuite-text-black );
+		text-align: left;
+	}
+
+	/* Name cell holds its own block content (badges, edit controls) */
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td.storesuite-attribute-col-name {
+		display: block;
+		text-align: left;
+	}
+
+	/* Actions row has no label — keep buttons grouped to the right */
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td.storesuite-attribute-col-actions {
+		justify-content: flex-end;
+		gap: 8px;
+	}
+
+	/* Override desktop fixed column widths so cells span the card */
+	#storesuite-product-attributes .storesuite-attribute-col-visible,
+	#storesuite-product-attributes .storesuite-attribute-col-variation,
+	#storesuite-product-attributes .storesuite-attribute-col-actions {
+		width: 100%;
+	}
+
+	#storesuite-product-attributes .my-storesuite-tbl {
+		border: 0;
+	}
+
+	#storesuite-product-attributes .storesuite-attribute-col-name {
+		border-top: 0!important;
+	}
+
+	/* Term action buttons: Select all / Select none share a row, Add new term full width */
+	.storesuite-attribute-terms-toggle {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.storesuite-attribute-terms-toggle .storesuite-select-all-terms,
+	.storesuite-attribute-terms-toggle .storesuite-select-no-terms {
+		flex: 1 1 0;
+		justify-content: center;
+		text-align: center;
+	}
+
+	.storesuite-attribute-terms-toggle .storesuite-add-attribute-term {
+		flex: 1 1 100%;
+		justify-content: center;
+		text-align: center;
 	}
 }
 
