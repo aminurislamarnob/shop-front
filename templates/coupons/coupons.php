@@ -19,7 +19,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="storesuite-table-header-part">
-				<div class="row align-items-center">
+				<div class="row align-items-center g-2">
 					<div class="col-md-auto">
 						<div class="storesuite-form-group d-flex align-items-center storesuite-bulk-product-actions">
 							<select name="action" id="bulk-action-selector-coupons" class="storesuite-form-control" form="storesuite-coupon-bulk-actions">

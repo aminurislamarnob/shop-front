@@ -236,7 +236,7 @@ class Rewrites {
 				$title = ( $order ) ? sprintf( __( 'Order #%s', 'storesuite' ), $order->get_order_number() ) : '';
 				break;
 			case 'categories':
-				$title = __( 'Product Categories', 'storesuite' );
+				$title = __( 'Categories', 'storesuite' );
 				break;
 			case 'add-new-category':
 				$title = __( 'Add New Category', 'storesuite' );
@@ -245,7 +245,7 @@ class Rewrites {
 				$title = __( 'Edit Product Category', 'storesuite' );
 				break;
 			case 'tags':
-				$title = __( 'Product Tags', 'storesuite' );
+				$title = __( 'Tags', 'storesuite' );
 				break;
 			case 'add-new-tag':
 				$title = __( 'Add New Tag', 'storesuite' );
@@ -254,7 +254,7 @@ class Rewrites {
 				$title = __( 'Edit Product Tag', 'storesuite' );
 				break;
 			case 'brands':
-				$title = __( 'Product Brands', 'storesuite' );
+				$title = __( 'Brands', 'storesuite' );
 				break;
 			case 'add-new-brand':
 				$title = __( 'Add New Brand', 'storesuite' );
@@ -263,7 +263,7 @@ class Rewrites {
 				$title = __( 'Edit Product Brand', 'storesuite' );
 				break;
 			case 'attributes':
-				$title = __( 'Product Attributes', 'storesuite' );
+				$title = __( 'Attributes', 'storesuite' );
 				break;
 			case 'add-new-attribute':
 				$title = __( 'Add New Attribute', 'storesuite' );

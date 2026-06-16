@@ -22,7 +22,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="storesuite-table-header-part">
-				<div class="row align-items-center">
+				<div class="row align-items-center g-2">
 					<div class="col-md-auto">
 						<?php storesuite_get_template_part( 'shared/list-bulk-actions', '', array( 'object_type' => 'brand' ) ); ?>
 					</div>
@@ -38,13 +38,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-auto text-right">
-						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-brand' ) ); ?>" class="my-storesuite-button">
-							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
-								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
-							</svg>
-							<?php esc_html_e( 'Add Brand', 'storesuite' ); ?>
-						</a>
+					<div class="col-md-auto text-right storesuite-toolbar-add">
+						<?php do_action( 'storesuite_brands_toolbar_add_button' ); ?>
 					</div>
 				</div>
 			</div>

@@ -10,6 +10,12 @@
 	display: none;
 }
 
+.storesuite-order-search-filters {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
 @media ( max-width: 767px ) {
 	/* Off-canvas sidebar */
 	.my-storesuite-container .my-storesuite-sidebar {
@@ -80,7 +86,7 @@
 
 	.storesuite-table-header-part .storesuite-search-toggle svg,
 	.storesuite-table-header-part .storesuite-export-toggle svg,
-	.storesuite-table-header-part .storesuite-filter-toggle svg {
+	.storesuite-filter-toggle svg {
 		margin-right: 0;
 	}
 
@@ -101,14 +107,82 @@
 
 	.storesuite-table-header-part .storesuite-export-toggle,
 	.storesuite-table-header-part .storesuite-filter-toggle,
-	.storesuite-table-header-part .storesuite-search-toggle {
+	.storesuite-table-header-part .storesuite-search-toggle,
+	.storesuite-orders-title-actions .storesuite-filter-toggle {
 		width: 45px;
 		height: 38px;
 		padding: 5px;
 	}
 
+	/* Order form: push Update/Create button to the very bottom */
+	.storesuite-dashboard-order-details .col-md-4 {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.storesuite-dashboard-order-details .action-buttons {
+		order: 99;
+		flex-direction: row;
+		margin-bottom: 0;
+		margin-top: 16px;
+	}
+
+	.storesuite-dashboard-order-details .create-order-btn {
+		width: 100%;
+	}
+
+	/* Order details toolbar mobile layout */
+	.storesuite-order-details-actions {
+		display: flex;
+		gap: 8px;
+	}
+
+	.storesuite-order-details-actions .my-storesuite-button {
+		flex: 1;
+		justify-content: center;
+	}
+
+	/* Orders toolbar mobile layout */
+	.storesuite-orders-toolbar-bulk,
+	.storesuite-orders-toolbar-search {
+		width: 100%;
+	}
+
+	.storesuite-bulk-order-actions {
+		max-width: none;
+		width: 100%;
+	}
+
+	.storesuite-bulk-order-actions .storesuite-form-control {
+		flex: 1;
+		min-width: 0;
+	}
+
 	.storesuite-order-search-form {
-		flex-wrap: wrap;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		gap: 8px;
+	}
+
+	.storesuite-order-search-form .storesuite-table-search-input {
+		width: 100%;
+	}
+
+	.storesuite-order-search-filters {
+		width: 100%;
+	}
+
+	.storesuite-order-search-filters .storesuite-form-group:first-child {
+		flex: 1 1 0%;
+		min-width: 0;
+	}
+
+	/* Add Order + Filter in the title row */
+	.storesuite-orders-title-actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-left: auto;
 	}
 
 	.storesuite-toolbar-search {
@@ -196,6 +270,10 @@
 	.storesuite-list-table tr.storesuite-list-row td:first-child,
 	.woocommerce-table--order-downloads tbody tr td:first-child {
 		border-top: 0;
+	}
+
+	.my-storesuite-attributes-table tbody tr td:first-child {
+		border-top: 0 !important;
 	}
 
 	.storesuite-list-table tr.storesuite-list-row td[data-title]::before,
@@ -317,6 +395,43 @@
 
 	.my-storesuite-container .select2-container {
 		max-width: 100%;
+	}
+
+	.storesuite-form-group.storesuite-form-switch {
+		flex-wrap: wrap;
+	}
+
+	.storesuite-form-group.storesuite-form-switch .storesuite-form-text {
+		flex: 0 0 100%;
+		width: 100%;
+	}
+
+	.storesuite-dashboard-order-details .select2-container {
+		width: 100% !important;
+	}
+
+	.storesuite-account-layout > .col-md-3 {
+		margin-bottom: 16px;
+	}
+
+	.storesuite-account-header-card > .my-storesuite-button {
+		display: none;
+	}
+
+	.storesuite-dashboard-order-details .date-time-group {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	.storesuite-dashboard-order-details .date-input {
+		flex: 0 0 100%;
+		width: 100%;
+	}
+
+	.storesuite-dashboard-order-details .time-input {
+		width: auto;
+		flex: 0 0 auto;
 	}
 
 	/* Permalink editor: wrap so the prefix sits on its own full-width row */

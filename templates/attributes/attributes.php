@@ -27,13 +27,8 @@ $attributes = wc_get_attribute_taxonomies();
 				<div class="row">
 					<div class="col-md-6">
 					</div>
-					<div class="col-md-6 text-right">
-						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-attribute' ) ); ?>" class="my-storesuite-button">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
-							</svg>
-							<?php esc_html_e( 'Add New Attribute', 'storesuite' ); ?>
-						</a>
+					<div class="col-md-6 text-right storesuite-toolbar-add">
+						<?php do_action( 'storesuite_attributes_toolbar_add_button' ); ?>
 					</div>
 				</div>
 			</div>

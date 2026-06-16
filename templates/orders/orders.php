@@ -23,8 +23,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="storesuite-table-header-part">
-				<div class="row">
-					<div class="col-md-auto">
+				<div class="row g-2">
+					<div class="col-md-auto storesuite-orders-toolbar-bulk">
 						<div class="storesuite-form-group d-flex align-items-center storesuite-bulk-order-actions mb-0">
 							<select name="action" id="bulk-action-selector-top" class="storesuite-form-control" form="storesuite-order-bulk-actions">
 								<option value="-1"><?php esc_html_e( 'Bulk actions', 'storesuite' ); ?></option>
@@ -37,7 +37,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<button type="submit" id="doaction" class="my-storesuite-button" form="storesuite-order-bulk-actions"><?php esc_html_e( 'Apply', 'storesuite' ); ?></button>
 						</div>
 					</div>
-					<div class="col-md-auto">
+					<div class="col-md-auto storesuite-orders-toolbar-search">
 						<form action="" method="get" class="storesuite-search-form storesuite-order-search-form">
 							<div class="storesuite-table-search-input storesuite-form-group">
 								<div class="storesuite-table-search-icon">
@@ -47,6 +47,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								</div>
 								<input type="text" name="search_by" id="search_by" placeholder="<?php esc_attr_e( 'Search Order', 'storesuite' ); ?>" value="<?php echo esc_attr( isset( $_GET['search_by'] ) ? sanitize_text_field( wp_unslash( $_GET['search_by'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search; no state change. ?>" />
 							</div>
+							<div class="storesuite-order-search-filters">
 							<div class="storesuite-form-group">
 								<?php
 								$options = array(
@@ -86,9 +87,10 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									<?php esc_html_e( 'Search', 'storesuite' ); ?>
 								</button>
 							</div>
+							</div><!-- .storesuite-order-search-filters -->
 						</form>
 					</div>
-					<div class="col-md text-right">
+					<div class="col-md text-right storesuite-toolbar-add">
 						<div class="row justify-content-end">
 							<div class="col-md-auto">
 								<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-order' ) ); ?>" class="my-storesuite-button">

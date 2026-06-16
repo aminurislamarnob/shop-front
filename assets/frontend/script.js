@@ -852,7 +852,7 @@
 			} );
 		},
 		handleOrderFilterOffcanvas: function () {
-			var orderFilterToggle = $( '#storesuite-order-filter-toggle' );
+			var orderFilterToggle = $( '#storesuite-order-filter-toggle, #storesuite-order-filter-toggle-title' );
 			var orderFilterOffcanvas = $(
 				'#storesuite-order-filter-offcanvas'
 			);
