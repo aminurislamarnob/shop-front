@@ -123,6 +123,15 @@ Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order S
 
 == Changelog ==
 
+= 1.1.4 =
+* Make the entire frontend dashboard responsive for mobile and tablet viewports.
+* Off-canvas sidebar on mobile with overlay; all list tables collapse to stacked label/value cards; tables scroll horizontally on tablet.
+* Dashboard home: full-width filters, stacked analytics tables, 2-column quick-actions grid.
+* Product, order, coupon, category, tag, brand, and attribute pages: toolbar actions, forms, and buttons adapt to available width on every screen size.
+* On mobile, the primary Add button moves beside the page title; Export/Filter/Search toolbar buttons become compact icon-only buttons.
+* Shorten list page titles: "Product Categories" → "Categories", "Product Tags" → "Tags", "Product Brands" → "Brands", "Product Attributes" → "Attributes".
+* Add `storesuite_categories_toolbar_add_button`, `storesuite_tags_toolbar_add_button`, `storesuite_brands_toolbar_add_button`, and `storesuite_attributes_toolbar_add_button` action hooks for customising the Add button in each list toolbar.
+
 = 1.1.3 =
 * Fix the Brands and Categories lists showing stale data on the frontend dashboard after brands or categories were added, edited, or deleted outside StoreSuite — for example from the WordPress admin, the WooCommerce REST API, WP-CLI, or a product import. The cached list now refreshes immediately regardless of where the change is made.
 
