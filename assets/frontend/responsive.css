@@ -262,8 +262,57 @@
 		display: none;
 	}
 
+	/* Variations card title: stack the heading above the "Set Default Values" link */
+	#storesuite-product-variations .storesuite-card-title {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+
+	/* Generate variations / Add manually become full-width stacked buttons */
+	.storesuite-variation-toolbar,
+	.storesuite-variation-toolbar-primary {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.storesuite-variation-toolbar-primary #storesuite-generate-variations-btn,
+	.storesuite-variation-toolbar-primary #storesuite-add-variation-btn {
+		width: 100%;
+		justify-content: center;
+		margin-left: 0;
+	}
+
+	.storesuite-variation-bulk-group {
+		flex: 1 1 auto;
+		max-width: none;
+		width: 100%;
+	}
+
+	/* Variation row header → stacked card (like the attributes table):
+	   thumb + actions on top, attribute selects full-width below */
+	.storesuite-variation-header {
+		flex-wrap: wrap;
+	}
+
+	.storesuite-variation-thumb {
+		order: 1;
+	}
+
+	.storesuite-variation-actions-header {
+		order: 2;
+		margin-left: auto;
+	}
+
+	.storesuite-variation-attrs {
+		order: 3;
+		flex: 1 1 100%;
+		flex-direction: column;
+	}
+
 	.storesuite-variation-attrs select {
 		max-width: 100%;
+		width: 100%;
 	}
 
 	.my-storesuite-container .select2-container {
