@@ -639,12 +639,6 @@ template {
   margin-left: auto;
 }
 
-@media (min-width: 1920px) {
-  .my-storesuite-page-content {
-    max-width: 1920px;
-  }
-}
-
 /*Left Navigation*/
 nav.my-storesuite-left-navigation ul {
   margin: 0;
@@ -963,6 +957,8 @@ form.storesuite-filters-form .row {
 .my-storesuite-tick {
   position: absolute;
   top: 0;
+  left: 0;
+  bottom: 0;
   color: #fff;
   transition: .3s;
   opacity: 0;
@@ -1958,7 +1954,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   white-space: normal;
 }
 
-@media (max-width: 782px) {
+@media (max-width: 767px) {
   .my-storesuite-container.storesuite-sidebar-collapsed {
     --storesuite-sidebar-current-width: var(--storesuite-sidebar-width-expanded);
   }
@@ -2022,6 +2018,13 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
 }
 .my-storesuite-page-content {
   padding: 24px;
+}
+
+/* Dashboard home mounts a React layout (.woocommerce-layout__main) that already
+   supplies its own 24px gutter. Drop the outer page padding here so the
+   left/right (and top/bottom) gap isn't doubled to 48px. */
+.storesuite-main-dashboard {
+  padding: 0;
 }
 
 /*Header design*/
@@ -2112,7 +2115,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   align-items: center;
 }
 span.storesuite-sidebar-trigger {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   cursor: pointer;
 }
@@ -2258,7 +2261,6 @@ span.storesuite-sidebar-trigger svg {
   margin: 0;
   position: relative;
   vertical-align: middle;
-  width: 100%!important;
 }
 .storesuite-main-dashboard .select2-container .select2-selection--single {
   height: 38px;
@@ -2524,63 +2526,6 @@ span.select2-selection__clear {
 }
 
 /* Make internal dividers single-line like WooCommerce summary */
-@media (min-width: 576px) {
-  .storesuite-kpi-summary .col .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(2n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 2) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 768px) {
-  .storesuite-kpi-summary .col:nth-child(2n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(3n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 3) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 992px) {
-  .storesuite-kpi-summary .col:nth-child(3n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(4n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 4) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 1200px) {
-  .storesuite-kpi-summary .col:nth-child(4n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(5n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 5) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (max-width: 575.98px) {
-  .storesuite-kpi-summary .col .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:last-child .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
 .storesuite-kpi-card--up .storesuite-kpi-change {
   color: #059669;
 }
@@ -4173,17 +4118,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 }
 
 /* Account settings layout: fixed-width nav + flexible content */
-@media (min-width: 768px) {
-  .storesuite-account-layout > .col-md-3 {
-    flex: 0 0 305px;
-    max-width: 305px;
-  }
-  .storesuite-account-layout > .col-md-9 {
-    flex: 1 1 0;
-    max-width: 100%;
-  }
-}
-
 /* Account settings sidebar nav */
 .storesuite-account-nav {
   padding: 8px;
@@ -4277,12 +4211,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
   width: 100%;
   padding: 0 8px;
   margin: 0 0 16px;
-}
-@media (min-width: 768px) {
-  .storesuite-address-grid .form-row-first,
-  .storesuite-address-grid .form-row-last {
-    width: 50%;
-  }
 }
 .storesuite-address-grid .form-row label {
   display: block;
@@ -4511,8 +4439,8 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-filter-offcanvas {
   position: fixed;
   top: 0;
-  right: -100%;
-  width: 100%;
+  right: -100vw;
+  width: 100vw;
   max-width: 400px;
   height: 100vh;
   background-color: #fff;
@@ -4593,17 +4521,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-filter-toggle svg{
   width: 14px;
   height: 14px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .storesuite-filter-offcanvas {
-    max-width: 100%;
-  }
-
-  .storesuite-filter-toggle {
-    display: inline-flex !important;
-  }
 }
 
 /* Scrollbar styling for off-canvas */
@@ -5004,11 +4921,6 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   margin-bottom: 0.5rem;
 }
 
-@media (min-width: 768px) {
-  .storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-dimensions-row .storesuite-form-control {
-    margin-bottom: 0;
-  }
-}
 
 .storesuite-product-bulk-modal-footer {
   display: flex;

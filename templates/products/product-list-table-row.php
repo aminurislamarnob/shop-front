@@ -17,7 +17,7 @@ if ( empty( $storesuite_wfm_thumb ) ) {
 	$storesuite_wfm_thumb = wc_placeholder_img_src( 'thumbnail' );
 }
 ?>
-<tr class="single-product-item" id="product-row-<?php echo esc_attr( (string) $product_id ); ?>">
+<tr class="single-product-item storesuite-list-row" id="product-row-<?php echo esc_attr( (string) $product_id ); ?>">
 	<td class="check-column">
 		<label class="my-storesuite-checkbox">
 			<input type="checkbox" name="bulk_product_ids[]" id="cb-select-<?php echo esc_attr( (string) $product_id ); ?>" value="<?php echo esc_attr( (string) $product_id ); ?>" class="my-storesuite-checkbox-input" aria-label="<?php esc_attr_e( 'Select item', 'storesuite' ); ?>">

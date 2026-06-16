@@ -166,7 +166,7 @@ $terms = is_wp_error( $terms ) ? array() : $terms;
 					</div>
 					<div class="storesuite-card-content">
 						<div class="storesuite-table-responsive">
-							<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-attribute-terms-table">
+							<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-attribute-terms-table storesuite-list-table">
 								<thead>
 									<tr>
 										<th class="check-column">

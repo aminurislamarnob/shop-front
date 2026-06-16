@@ -27,19 +27,14 @@ $attributes = wc_get_attribute_taxonomies();
 				<div class="row">
 					<div class="col-md-6">
 					</div>
-					<div class="col-md-6 text-right">
-						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-attribute' ) ); ?>" class="my-storesuite-button">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
-							</svg>
-							<?php esc_html_e( 'Add New Attribute', 'storesuite' ); ?>
-						</a>
+					<div class="col-md-6 text-right storesuite-toolbar-add">
+						<?php do_action( 'storesuite_attributes_toolbar_add_button' ); ?>
 					</div>
 				</div>
 			</div>
 
 			<div class="storesuite-table-responsive">
-				<table class="my-storesuite-tbl my-storesuite-product-list-table my-storesuite-attributes-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table my-storesuite-attributes-table storesuite-list-table">
 					<thead>
 						<tr>
 							<th><?php esc_html_e( 'Name', 'storesuite' ); ?></th>
@@ -106,12 +101,12 @@ $attributes = wc_get_attribute_taxonomies();
 										break;
 								}
 								?>
-								<tr id="attribute-row-<?php echo esc_attr( $attribute->attribute_id ); ?>">
-									<td><a href="<?php echo esc_url( add_query_arg( array( 'taxonomy' => $taxonomy ), storesuite_get_navigation_url( 'attribute-terms' ) ) ); ?>"><?php echo esc_html( $attribute->attribute_label ); ?></a></td>
-									<td><?php echo esc_html( $attribute->attribute_name ); ?></td>
-									<td><?php echo esc_html( wc_get_attribute_types()[ $attribute->attribute_type ] ?? $attribute->attribute_type ); ?></td>
-											<td><?php echo esc_html( $order_by_label ); ?></td>
-									<td>
+								<tr class="storesuite-list-row" id="attribute-row-<?php echo esc_attr( $attribute->attribute_id ); ?>">
+									<td data-title="<?php esc_attr_e( 'Name', 'storesuite' ); ?>"><a href="<?php echo esc_url( add_query_arg( array( 'taxonomy' => $taxonomy ), storesuite_get_navigation_url( 'attribute-terms' ) ) ); ?>"><?php echo esc_html( $attribute->attribute_label ); ?></a></td>
+									<td data-title="<?php esc_attr_e( 'Slug', 'storesuite' ); ?>"><?php echo esc_html( $attribute->attribute_name ); ?></td>
+									<td data-title="<?php esc_attr_e( 'Type', 'storesuite' ); ?>"><?php echo esc_html( wc_get_attribute_types()[ $attribute->attribute_type ] ?? $attribute->attribute_type ); ?></td>
+									<td data-title="<?php esc_attr_e( 'Order by', 'storesuite' ); ?>"><?php echo esc_html( $order_by_label ); ?></td>
+									<td data-title="<?php esc_attr_e( 'Terms', 'storesuite' ); ?>">
 										<?php
 										if ( ! empty( $term_names ) ) {
 											// Show comma-separated term names, similar to Woo admin.
@@ -126,7 +121,7 @@ $attributes = wc_get_attribute_taxonomies();
 											</a>
 										</div>
 									</td>
-									<td class="text-right">
+									<td class="text-right" data-title="<?php esc_attr_e( 'Action', 'storesuite' ); ?>">
 										<div class="storesuite-dropdown">
 											<span class="storesuite-dropdown-icon">
 												<svg width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-three-dots"></use></svg>

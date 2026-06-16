@@ -129,11 +129,13 @@ class Assets {
 	public function register_styles() {
 		$admin_style                      = STORESUITE_PLUGIN_ASSET . '/admin/style.css';
 		$frontend_style                   = STORESUITE_PLUGIN_ASSET . '/frontend/style.css';
+		$frontend_responsive_style        = STORESUITE_PLUGIN_ASSET . '/frontend/responsive.css';
 		$bs_grid_style                    = STORESUITE_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
 		$frontend_sweetalert2_style       = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
 
 		wp_register_style( 'storesuite_admin_style', $admin_style, array(), STORESUITE_PLUGIN_VERSION );
 		wp_register_style( 'storesuite_style', $frontend_style, array(), STORESUITE_PLUGIN_VERSION );
+		wp_register_style( 'storesuite_responsive_style', $frontend_responsive_style, array( 'storesuite_style' ), STORESUITE_PLUGIN_VERSION );
 		wp_register_style( 'storesuite_bs_grid', $bs_grid_style, array(), STORESUITE_PLUGIN_VERSION );
 
 		wp_register_style( 'storesuite_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
@@ -205,6 +207,7 @@ class Assets {
 
 		// Base shell styles — always needed.
 		wp_enqueue_style( 'storesuite_style' );
+		wp_enqueue_style( 'storesuite_responsive_style' );
 		wp_enqueue_style( 'storesuite_bs_grid' );
 
 		// Sidebar collapse, submenu, and dropdown behaviours run on every

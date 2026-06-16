@@ -22,7 +22,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="storesuite-table-header-part">
-				<div class="row align-items-center">
+				<div class="row align-items-center g-2">
 					<div class="col-md-auto">
 						<?php storesuite_get_template_part( 'shared/list-bulk-actions', '', array( 'object_type' => 'tag' ) ); ?>
 					</div>
@@ -38,13 +38,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-auto text-right">
-						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-tag' ) ); ?>" class="my-storesuite-button">
-							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
-								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
-							</svg>
-							<?php esc_html_e( 'Add Tag', 'storesuite' ); ?>
-						</a>
+					<div class="col-md-auto text-right storesuite-toolbar-add">
+						<?php do_action( 'storesuite_tags_toolbar_add_button' ); ?>
 					</div>
 				</div>
 			</div>
@@ -56,7 +51,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			$tags_data     = $product_tags->get_paginated_tags( $tags_per_page, $current_page, $search_term );
 			?>
 			<div class="storesuite-table-responsive">
-				<table class="my-storesuite-tbl my-storesuite-product-list-table my-storesuite-tags-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table my-storesuite-tags-table storesuite-list-table">
 					<thead>
 						<tr>
 							<th class="check-column">
@@ -68,7 +63,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<th width="70"><?php echo esc_html__( 'Count', 'storesuite' ); ?></th>
 							<th class="text-right"><?php echo esc_html__( 'Actions', 'storesuite' ); ?></th>
 						</tr>
-						<tbody>
+					</thead>
+					<tbody>
 						<?php
 						if ( empty( $tags_data->tags ) ) {
 							echo '<tr id="tag-row-not-found"><td colspan="6">';
@@ -84,14 +80,14 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 						} else {
 							foreach ( $tags_data->tags as $product_tag ) {
 								?>
-						<tr id="tag-row-<?php echo esc_attr( $product_tag->term_id ); ?>">
+						<tr class="storesuite-list-row" id="tag-row-<?php echo esc_attr( $product_tag->term_id ); ?>">
 							<td class="check-column">
 								<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'value' => $product_tag->term_id ) ); ?>
 							</td>
-							<td><a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-tag' ) . '%s', $product_tag->term_id ) ); ?>"><?php echo esc_html( $product_tag->name ); ?></a></td>
-							<td><?php echo esc_html( wp_trim_words( $product_tag->description, '9', '...' ) ); ?></td>
-							<td><?php echo esc_html( $product_tag->slug ); ?></td>
-							<td><?php echo esc_html( $product_tag->count ); ?></td>
+							<td data-title="<?php esc_attr_e( 'Name', 'storesuite' ); ?>"><a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-tag' ) . '%s', $product_tag->term_id ) ); ?>"><?php echo esc_html( $product_tag->name ); ?></a></td>
+							<td data-title="<?php esc_attr_e( 'Description', 'storesuite' ); ?>"><?php echo esc_html( wp_trim_words( $product_tag->description, '9', '...' ) ); ?></td>
+							<td data-title="<?php esc_attr_e( 'Slug', 'storesuite' ); ?>"><?php echo esc_html( $product_tag->slug ); ?></td>
+							<td data-title="<?php esc_attr_e( 'Count', 'storesuite' ); ?>"><?php echo esc_html( $product_tag->count ); ?></td>
 							<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
 								<div class="storesuite-dropdown">
 									<span class="storesuite-dropdown-icon">
@@ -122,8 +118,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							}
 						}
 						?>
-						</tbody>
-					</thead>
+					</tbody>
 				</table>
 				<?php
 				if ( $tags_data->max_num_pages > 1 ) {

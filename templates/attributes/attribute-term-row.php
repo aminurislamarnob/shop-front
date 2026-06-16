@@ -25,14 +25,14 @@ $storesuite_term_url = esc_url(
 	)
 );
 ?>
-<tr id="term-row-<?php echo esc_attr( $term->term_id ); ?>">
+<tr class="storesuite-list-row" id="term-row-<?php echo esc_attr( $term->term_id ); ?>">
 	<td class="check-column">
 		<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'value' => $term->term_id ) ); ?>
 	</td>
-	<td><a href="<?php echo $storesuite_term_url; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>"><?php echo esc_html( $term->name ); ?></a></td>
-	<td><?php echo esc_html( $term->slug ); ?></td>
-	<td><?php echo esc_html( $term->count ); ?></td>
-	<td class="text-right">
+	<td data-title="<?php esc_attr_e( 'Name', 'storesuite' ); ?>"><a href="<?php echo $storesuite_term_url; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above. ?>"><?php echo esc_html( $term->name ); ?></a></td>
+	<td data-title="<?php esc_attr_e( 'Slug', 'storesuite' ); ?>"><?php echo esc_html( $term->slug ); ?></td>
+	<td data-title="<?php esc_attr_e( 'Count', 'storesuite' ); ?>"><?php echo esc_html( $term->count ); ?></td>
+	<td class="text-right" data-title="<?php esc_attr_e( 'Action', 'storesuite' ); ?>">
 		<div class="storesuite-dropdown">
 			<span class="storesuite-dropdown-icon">
 				<svg width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-three-dots"></use></svg>

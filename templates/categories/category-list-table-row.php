@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<tr id="category-row-<?php echo esc_attr( $category->term_id ); ?>">
+<tr class="storesuite-list-row" id="category-row-<?php echo esc_attr( $category->term_id ); ?>">
 	<td class="check-column">
 		<?php storesuite_get_template_part( 'shared/list-bulk-checkbox', '', array( 'value' => $category->term_id ) ); ?>
 	</td>
@@ -34,15 +34,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 		}
 		?>
 	</td>
-	<td>
+	<td data-title="<?php esc_attr_e( 'Name', 'storesuite' ); ?>">
 		<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-category' ) . '%s', $category->term_id ) ); ?>">
 			<?php echo esc_html( $dash_prefix . $category->name ); ?>
 		</a>
 	</td>
-	<td><?php echo esc_html( wp_trim_words( $category->description, '9', '...' ) ); ?></td>
-	<td><?php echo esc_html( $parent ? $parent->name : '-' ); ?></td>
-	<td><?php echo esc_html( $category->slug ); ?></td>
-	<td><?php echo esc_html( $category->count ); ?></td>
+	<td data-title="<?php esc_attr_e( 'Description', 'storesuite' ); ?>"><?php echo esc_html( wp_trim_words( $category->description, '9', '...' ) ); ?></td>
+	<td data-title="<?php esc_attr_e( 'Parent', 'storesuite' ); ?>"><?php echo esc_html( $parent ? $parent->name : '-' ); ?></td>
+	<td data-title="<?php esc_attr_e( 'Slug', 'storesuite' ); ?>"><?php echo esc_html( $category->slug ); ?></td>
+	<td data-title="<?php esc_attr_e( 'Count', 'storesuite' ); ?>"><?php echo esc_html( $category->count ); ?></td>
 	<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
 		<div class="storesuite-dropdown">
 			<span class="storesuite-dropdown-icon">

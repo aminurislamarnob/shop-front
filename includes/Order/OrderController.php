@@ -22,6 +22,34 @@ class OrderController {
 		add_action( 'wp_ajax_storesuite_add_shipping_to_order', array( $this, 'storesuite_add_shipping_to_order' ) );
 		add_action( 'wp_ajax_storesuite_create_order', array( $this, 'storesuite_create_order' ) );
 		add_action( 'template_redirect', array( $this, 'handle_order_bulk_actions' ) );
+		add_action( 'storesuite_dashboard_title_after', array( $this, 'render_title_order_actions' ) );
+	}
+
+	/**
+	 * Render Add Order + Filter buttons beside the Orders title on mobile.
+	 *
+	 * @return void
+	 */
+	public function render_title_order_actions() {
+		$query = pluginizelab_storesuite()->get_storesuite_query();
+		if ( ! $query || 'orders' !== $query->get_current_endpoint() ) {
+			return;
+		}
+		?>
+		<div class="storesuite-title-action storesuite-orders-title-actions">
+			<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-order' ) ); ?>" class="my-storesuite-button">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+					<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
+				</svg>
+				<?php esc_html_e( 'Add Order', 'storesuite' ); ?>
+			</a>
+			<button type="button" class="my-storesuite-button storesuite-filter-toggle" id="storesuite-order-filter-toggle-title">
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+					<path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/>
+				</svg>
+			</button>
+		</div>
+		<?php
 	}
 
 	public function load_order_add_form() {

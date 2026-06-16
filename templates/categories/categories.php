@@ -22,7 +22,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="storesuite-table-header-part">
-				<div class="row align-items-center">
+				<div class="row align-items-center g-2">
 					<div class="col-md-auto">
 						<?php storesuite_get_template_part( 'shared/list-bulk-actions', '', array( 'object_type' => 'category' ) ); ?>
 					</div>
@@ -38,13 +38,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-auto text-right">
-						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-category' ) ); ?>" class="my-storesuite-button">
-							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
-								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
-							</svg>
-							<?php esc_html_e( 'Add Category', 'storesuite' ); ?>
-						</a>
+					<div class="col-md-auto text-right storesuite-toolbar-add">
+						<?php do_action( 'storesuite_categories_toolbar_add_button' ); ?>
 					</div>
 				</div>
 			</div>
@@ -56,7 +51,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 			$categories_data     = $product_categories->get_paginated_categories_with_children( $categories_per_page, $current_page, $search_term );
 			?>
 			<div class="storesuite-table-responsive">
-				<table class="my-storesuite-tbl my-storesuite-product-list-table">
+				<table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-list-table">
 					<thead>
 						<tr>
 							<th class="check-column">
@@ -70,7 +65,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							<th width="70"><?php echo esc_html__( 'Count', 'storesuite' ); ?></th>
 							<th class="text-right"><?php echo esc_html__( 'Actions', 'storesuite' ); ?></th>
 						</tr>
-						<tbody>
+					</thead>
+					<tbody>
 							<?php
 							if ( empty( $categories_data->categories ) ) {
 								echo '<tr id="tag-category-not-found"><td colspan="8">';
@@ -99,8 +95,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								}
 							}
 							?>
-						</tbody>
-					</thead>
+					</tbody>
 				</table>
 				<?php
 				if ( $categories_data->max_num_pages > 1 ) {

@@ -864,7 +864,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 				<div class="storesuite-sticky-actions-buttons">
 					<button type="button" class="my-storesuite-button storesuite-sticky-discard"><?php esc_html_e( 'Discard', 'storesuite' ); ?></button>
 					<button type="submit" name="save_product" class="my-storesuite-button storesuite-sticky-save">
-						<?php echo $is_edit_mode ? esc_html__( 'Update Product', 'storesuite' ) : esc_html__( 'Add Product', 'storesuite' ); ?>
+						<?php echo $is_edit_mode ? esc_html__( 'Update', 'storesuite' ) : esc_html__( 'Add', 'storesuite' ); ?> <span class="storesuite-sticky-save-label"><?php esc_html_e( 'Product', 'storesuite' ); ?></span>
 					</button>
 				</div>
 			</div>

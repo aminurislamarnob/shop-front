@@ -19,7 +19,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="storesuite-table-header-part">
-				<div class="row align-items-center">
+				<div class="row align-items-center g-2">
 					<div class="col-md-auto">
 						<div class="storesuite-form-group d-flex align-items-center storesuite-bulk-product-actions">
 							<select name="action" id="bulk-action-selector-coupons" class="storesuite-form-control" form="storesuite-coupon-bulk-actions">
@@ -42,7 +42,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-auto text-right">
+					<div class="col-md-auto text-right storesuite-toolbar-add">
 						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-coupon' ) ); ?>" class="my-storesuite-button">
 							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
@@ -73,7 +73,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 				$coupon_query = new WP_Query( $query );
 				if ( $coupon_query->found_posts > 0 ) {
 					?>
-				<table class="my-storesuite-tbl my-storesuite-coupon-list-table">
+				<table class="my-storesuite-tbl my-storesuite-coupon-list-table storesuite-list-table">
 					<thead>
 						<tr>
 							<th class="check-column">
@@ -104,7 +104,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							$coupon_id = get_the_ID();
 							$coupon    = new WC_Coupon( $coupon_id );
 							?>
-							<tr class="single-coupon-item">
+							<tr class="single-coupon-item storesuite-list-row">
 								<td class="check-column">
 									<label class="my-storesuite-checkbox">
 										<input type="checkbox" name="bulk_coupon_ids[]" id="cb-select-<?php echo esc_attr( (string) $coupon_id ); ?>" value="<?php echo esc_attr( (string) $coupon_id ); ?>" class="my-storesuite-checkbox-input" aria-label="<?php esc_attr_e( 'Select item', 'storesuite' ); ?>">
