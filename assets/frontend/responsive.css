@@ -319,6 +319,16 @@
 		max-width: 100%;
 	}
 
+	/* Permalink editor: wrap so the prefix sits on its own full-width row */
+	.my-storesuite-container .storesuite-permalink-group {
+		flex-wrap: wrap;
+	}
+
+	.my-storesuite-container .storesuite-permalink-prefix {
+		width: 100%;
+		border-right: 0;
+	}
+
 	/* Order items (view + edit): scroll horizontally instead of squishing */
 	#woocommerce-order-items {
 		overflow-x: auto;
