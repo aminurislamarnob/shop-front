@@ -1,3 +1,5 @@
+@use 'reskin';
+
 // StoreSuite Analytics styles
 
 .storesuite-analytics-layout {
@@ -34,14 +36,14 @@
 			transition: color 0.15s, border-color 0.15s;
 
 			&:hover {
-				color: #674399;
-				border-bottom-color: #674399;
+				color: var( --storesuite-primary-bg );
+				border-bottom-color: var( --storesuite-primary-bg );
 			}
 		}
 
 		&.active a {
-			color: #674399;
-			border-bottom-color: #674399;
+			color: var( --storesuite-primary-bg );
+			border-bottom-color: var( --storesuite-primary-bg );
 			font-weight: 600;
 		}
 	}
@@ -127,16 +129,17 @@
 		margin: 0;
 
 		.woocommerce-table {
-			box-shadow: none;
-			border: 1px solid #e0e0e0;
-			border-radius: 4px;
+			box-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+			border: 0;
+			border-radius: 8px;
+			margin-bottom: 0;
 		}
 
 		.storesuite-leaderboard__title {
 			margin: 0;
 			font-size: 14px;
 			font-weight: 600;
-			color: #1e1e1e;
+			color: var( --storesuite-text-black );
 		}
 	}
 }
@@ -152,11 +155,30 @@
 		font-size: 14px;
 		font-weight: 600;
 		margin-bottom: 4px;
+		color: var( --storesuite-text-black );
 	}
 
 	&__help {
-		color: #757575;
+		color: var( --storesuite-text-color-light );
 		margin: 4px 0 12px;
+	}
+
+	.components-card__header h2 {
+		font-size: 16px;
+		font-weight: 600;
+		margin: 0;
+		color: var( --storesuite-text-black );
+	}
+
+	.components-checkbox-control__input:checked {
+		background: var( --storesuite-primary-bg );
+		border-color: var( --storesuite-primary-bg );
+	}
+
+	// Keep the date-type select a comfortable reading width instead of
+	// stretching across the whole card.
+	.components-select-control {
+		max-width: 420px;
 	}
 
 	&__statuses {
@@ -180,8 +202,9 @@
 
 .storesuite-overview-chart-item {
 	background: #fff;
-	border: 1px solid #e0e0e0;
-	border-radius: 4px;
+	border: 0;
+	border-radius: 8px;
+	box-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
 	overflow: hidden;
 
 	.storesuite-overview-chart-title {
@@ -189,8 +212,8 @@
 		padding: 12px 16px;
 		font-size: 13px;
 		font-weight: 600;
-		color: #1e1e1e;
-		border-bottom: 1px solid #e0e0e0;
+		color: var( --storesuite-text-black );
+		border-bottom: 1px solid var( --storesuite-border-color );
 	}
 
 	.woocommerce-chart {

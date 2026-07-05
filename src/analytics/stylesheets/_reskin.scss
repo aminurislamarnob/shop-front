@@ -1,0 +1,558 @@
+// StoreSuite Analytics — re-skin of the WooCommerce admin components so every
+// report matches the StoreSuite dashboard design language (white cards,
+// 8px radius, soft shadow, --storesuite-* color tokens). Layout/behavior of
+// the underlying components is untouched — visual overrides only.
+
+$ss-card-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+$ss-radius: 8px;
+
+.storesuite-analytics-layout {
+	// ------------------------------------------------------------------
+	// Page header (rendered by ReportPage above each report)
+	// ------------------------------------------------------------------
+	.storesuite-analytics-page-header {
+		margin-bottom: 24px;
+
+		h3 {
+			font-weight: 600;
+			margin: 0 0 6px;
+			font-size: 20px;
+			color: var( --storesuite-text-black );
+		}
+
+		p {
+			margin: 0;
+			font-size: 14px;
+			font-weight: 400;
+			color: var( --storesuite-text-color-light );
+		}
+	}
+
+	// ------------------------------------------------------------------
+	// Filters bar (date range picker, report filter picker)
+	// ------------------------------------------------------------------
+	.woocommerce-filters {
+		margin-bottom: 24px;
+
+		.woocommerce-filters__basic-filters {
+			margin-bottom: 0;
+		}
+
+		.woocommerce-filters-filter {
+			min-height: auto;
+		}
+
+		.woocommerce-filters-label {
+			font-size: 13px;
+			font-weight: 500;
+			color: var( --storesuite-text-color );
+			margin-bottom: 6px;
+		}
+	}
+
+	.components-button.woocommerce-dropdown-button {
+		background: #fff;
+		border: 1px solid var( --storesuite-border-color );
+		border-radius: 6px;
+		box-shadow: $ss-card-shadow;
+		transition: border-color 0.15s ease;
+
+		&:hover,
+		&:focus,
+		&[aria-expanded='true'] {
+			border-color: var( --storesuite-primary-bg );
+			box-shadow: $ss-card-shadow;
+		}
+
+		.woocommerce-dropdown-button__labels {
+			span {
+				color: var( --storesuite-text-black );
+			}
+
+			span + span {
+				color: var( --storesuite-text-color-light );
+				font-weight: 400;
+			}
+		}
+	}
+
+	// Dropdown/popover content (date range presets, custom range, calendar)
+	.components-popover__content {
+		border: 1px solid var( --storesuite-border-color );
+		border-radius: $ss-radius;
+		box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+	}
+
+	fieldset.woocommerce-segmented-selection {
+		padding: 0;
+		border: none;
+	}
+
+	.woocommerce-segmented-selection__item {
+		border-color: var( --storesuite-border-color );
+	}
+
+	.woocommerce-segmented-selection__label {
+		font-size: 13px;
+		color: var( --storesuite-text-color );
+	}
+
+	.woocommerce-segmented-selection__input:checked + label {
+		color: var( --storesuite-primary-bg );
+		font-weight: 600;
+	}
+
+	// Presets / Custom tabs inside the date picker
+	.components-tab-panel__tabs-item {
+		font-size: 13px;
+
+		&.is-active,
+		&[aria-selected='true'] {
+			color: var( --storesuite-primary-bg );
+			box-shadow: inset 0 -2px 0 var( --storesuite-primary-bg );
+		}
+	}
+
+	// Calendar (custom date range)
+	.woocommerce-calendar__input-text {
+		border-radius: 6px;
+		border-color: var( --storesuite-border-color );
+	}
+
+	.CalendarDay__selected,
+	.CalendarDay__selected:hover,
+	.CalendarDay__selected_span,
+	.CalendarDay__hovered_span {
+		background: var( --storesuite-primary-bg );
+		border-color: var( --storesuite-primary-bg );
+		color: #fff;
+	}
+
+	.CalendarDay__selected_span,
+	.CalendarDay__hovered_span {
+		opacity: 0.75;
+	}
+
+	// ------------------------------------------------------------------
+	// Buttons — map WP component variants to StoreSuite button styles
+	// ------------------------------------------------------------------
+	.components-button.is-primary {
+		background: var( --storesuite-primary-bg );
+		border: 1px solid var( --storesuite-primary-bg );
+		color: var( --storesuite-button-text-color );
+		border-radius: 6px;
+		box-shadow: none;
+
+		&:hover:not( :disabled ),
+		&:focus:not( :disabled ) {
+			background: var( --storesuite-primary-bg-hover );
+			border-color: var( --storesuite-primary-bg-hover );
+			color: var( --storesuite-button-text-hover-color );
+			box-shadow: none;
+		}
+	}
+
+	.components-button.is-secondary {
+		background: #fff;
+		border: 1px solid var( --storesuite-border-color );
+		color: var( --storesuite-text-color );
+		border-radius: 6px;
+		box-shadow: none;
+
+		&:hover:not( :disabled ) {
+			border-color: var( --storesuite-primary-bg );
+			color: var( --storesuite-primary-bg );
+			box-shadow: none;
+		}
+	}
+
+	.components-button.is-link {
+		color: var( --storesuite-primary-bg );
+
+		&:hover:not( :disabled ) {
+			color: var( --storesuite-primary-bg-hover );
+		}
+	}
+
+	// ------------------------------------------------------------------
+	// Inputs / selects (chart interval select, pagination, advanced filters)
+	// ------------------------------------------------------------------
+	.components-input-control__backdrop {
+		border: 1px solid var( --storesuite-border-color ) !important;
+		border-radius: 6px !important;
+	}
+
+	.components-input-control__input:focus ~ .components-input-control__backdrop,
+	.components-select-control__input:focus ~ .components-input-control__backdrop {
+		border-color: var( --storesuite-primary-bg ) !important;
+		box-shadow: none !important;
+	}
+
+	.components-select-control__input {
+		color: var( --storesuite-text-color );
+	}
+
+	// ------------------------------------------------------------------
+	// Summary numbers (stat tiles)
+	// ------------------------------------------------------------------
+	ul.woocommerce-summary {
+		background: #fff;
+		border: 0;
+		border-radius: $ss-radius;
+		box-shadow: $ss-card-shadow;
+		overflow: hidden;
+		margin-bottom: 24px;
+
+		li .woocommerce-summary__item {
+			border-bottom: 0;
+			border-color: var( --storesuite-border-color );
+		}
+
+		li:last-child .woocommerce-summary__item {
+			border-right: 0;
+		}
+	}
+
+	.woocommerce-summary__item {
+		background: #fff;
+		padding: 16px;
+
+		&:hover,
+		&:focus {
+			background: var( --storesuite-bg-color-light );
+		}
+
+		&.is-selected {
+			background: #fff;
+			border-top: 3px solid var( --storesuite-primary-bg );
+
+			.woocommerce-summary__item-label {
+				color: var( --storesuite-primary-bg );
+				font-weight: 600;
+			}
+		}
+	}
+
+	.woocommerce-summary__item-label {
+		font-size: 13px;
+		color: var( --storesuite-text-color-light );
+		margin-bottom: 6px;
+	}
+
+	.woocommerce-summary__item-value {
+		font-size: 18px;
+		font-weight: 600;
+		color: var( --storesuite-text-black );
+		line-height: 1.2;
+	}
+
+	// Delta rendered as a soft pastel pill, like the dashboard KPI cards
+	.woocommerce-summary__item-delta {
+		padding: 4px 10px;
+		border-radius: 999px;
+		background: #f1f5f9;
+
+		span {
+			font-size: 12px;
+			font-weight: 600;
+			color: var( --storesuite-text-color-light );
+		}
+
+		svg {
+			width: 14px;
+			height: 14px;
+		}
+	}
+
+	.woocommerce-summary__item.is-good-trend .woocommerce-summary__item-delta {
+		background: #d1fae5;
+
+		span {
+			color: #059669;
+		}
+
+		svg {
+			fill: #059669;
+		}
+	}
+
+	.woocommerce-summary__item.is-bad-trend .woocommerce-summary__item-delta {
+		background: #fee2e2;
+
+		span {
+			color: #dc2626;
+		}
+
+		svg {
+			fill: #dc2626;
+		}
+	}
+
+	// ------------------------------------------------------------------
+	// Chart card
+	// ------------------------------------------------------------------
+	.woocommerce-chart {
+		background: #fff;
+		border: 0;
+		border-radius: $ss-radius;
+		box-shadow: $ss-card-shadow;
+		overflow: hidden;
+		margin-bottom: 24px;
+
+		.woocommerce-chart__header {
+			border-bottom: 1px solid var( --storesuite-border-color );
+			min-height: 58px;
+		}
+
+		.woocommerce-chart__title {
+			font-size: 16px;
+			font-weight: 600;
+			color: var( --storesuite-text-black );
+		}
+
+		.woocommerce-chart__type-button {
+			color: var( --storesuite-icon-color );
+
+			&.woocommerce-chart__type-button-selected {
+				color: var( --storesuite-primary-bg );
+			}
+		}
+
+		.woocommerce-chart__interval-select {
+			.components-select-control__input {
+				min-width: 110px;
+			}
+		}
+	}
+
+	.woocommerce-legend__item button:hover {
+		background: var( --storesuite-bg-color-light );
+	}
+
+	.woocommerce-legend__item-title {
+		color: var( --storesuite-text-color );
+	}
+
+	.woocommerce-legend__item-total {
+		color: var( --storesuite-text-black );
+		font-weight: 600;
+	}
+
+	// ------------------------------------------------------------------
+	// Report table card
+	// ------------------------------------------------------------------
+	.woocommerce-table {
+		background: #fff;
+		border: 0;
+		border-radius: $ss-radius;
+		box-shadow: $ss-card-shadow;
+		overflow: hidden;
+		margin-bottom: 24px;
+
+		.components-card__header {
+			border-bottom: 1px solid var( --storesuite-border-color );
+		}
+
+		.woocommerce-table__caption {
+			font-size: 16px;
+			font-weight: 600;
+			color: var( --storesuite-text-black );
+		}
+
+		.woocommerce-table__header {
+			text-transform: uppercase;
+			font-size: 12px;
+			font-weight: 600;
+			letter-spacing: 0.02em;
+			color: var( --storesuite-text-black );
+			background: #fff;
+			border-bottom-color: var( --storesuite-border-color );
+
+			.components-button {
+				text-transform: uppercase;
+				font-size: 12px;
+				font-weight: 600;
+				letter-spacing: 0.02em;
+				color: var( --storesuite-text-black );
+			}
+		}
+
+		.woocommerce-table__item {
+			font-size: 14px;
+			color: var( --storesuite-text-color );
+			border-bottom-color: var( --storesuite-border-color );
+
+			a {
+				color: var( --storesuite-primary-bg );
+
+				&:hover {
+					color: var( --storesuite-primary-bg-hover );
+					text-decoration: underline;
+				}
+			}
+		}
+
+		tr:hover .woocommerce-table__item {
+			background: var( --storesuite-bg-color-light );
+		}
+
+		.woocommerce-table__summary {
+			border-top: 1px solid var( --storesuite-border-color );
+		}
+
+		.woocommerce-table__summary-item {
+			.woocommerce-table__summary-value {
+				font-weight: 600;
+				color: var( --storesuite-text-black );
+			}
+
+			.woocommerce-table__summary-label {
+				color: var( --storesuite-text-color-light );
+			}
+		}
+
+		.woocommerce-table__download-button {
+			color: var( --storesuite-primary-bg );
+
+			&:hover:not( :disabled ) {
+				color: var( --storesuite-primary-bg-hover );
+			}
+
+			svg {
+				fill: currentColor;
+			}
+		}
+	}
+
+	// Search-within-table + compare button in table actions
+	.woocommerce-table__actions {
+		.woocommerce-search {
+			.woocommerce-select-control__control {
+				border: 1px solid var( --storesuite-border-color );
+				border-radius: 6px;
+				background: #fff;
+			}
+
+			.woocommerce-select-control__control.is-active {
+				border-color: var( --storesuite-primary-bg );
+				box-shadow: none;
+			}
+		}
+
+		.woocommerce-compare-button {
+			border-radius: 6px;
+		}
+	}
+
+	// Pagination
+	.woocommerce-pagination {
+		.woocommerce-pagination__page-arrows-buttons {
+			border: 1px solid var( --storesuite-border-color );
+			border-radius: 6px;
+			overflow: hidden;
+
+			.components-button {
+				color: var( --storesuite-text-color );
+
+				&:hover:not( :disabled ) {
+					color: var( --storesuite-primary-bg );
+				}
+			}
+		}
+
+		.woocommerce-pagination__page-picker-input {
+			border: 1px solid var( --storesuite-border-color );
+			border-radius: 6px;
+
+			&:focus {
+				border-color: var( --storesuite-primary-bg );
+				box-shadow: none;
+			}
+		}
+
+		.woocommerce-pagination__link {
+			color: var( --storesuite-primary-bg );
+		}
+	}
+
+	// ------------------------------------------------------------------
+	// Advanced filters card
+	// ------------------------------------------------------------------
+	.woocommerce-filters-advanced {
+		background: #fff;
+		border: 0;
+		border-radius: $ss-radius;
+		box-shadow: $ss-card-shadow;
+		overflow: hidden;
+
+		.woocommerce-filters-advanced__title-select .components-select-control__input {
+			border-radius: 6px;
+		}
+
+		.woocommerce-filters-advanced__list-item {
+			border-bottom-color: var( --storesuite-border-color );
+
+			&:hover {
+				background: var( --storesuite-bg-color-light );
+			}
+		}
+
+		.woocommerce-filters-advanced__add-button {
+			color: var( --storesuite-primary-bg );
+
+			&:hover:not( :disabled ) {
+				color: var( --storesuite-primary-bg-hover );
+			}
+
+			svg {
+				fill: currentColor;
+			}
+		}
+
+		input[type='text'],
+		input[type='number'],
+		input[type='email'],
+		select {
+			border: 1px solid var( --storesuite-border-color );
+			border-radius: 6px;
+
+			&:focus {
+				border-color: var( --storesuite-primary-bg );
+				box-shadow: none;
+				outline: none;
+			}
+		}
+	}
+
+	// ------------------------------------------------------------------
+	// Generic cards (settings page, empty content wrappers)
+	// ------------------------------------------------------------------
+	.components-card {
+		border-radius: $ss-radius;
+		box-shadow: $ss-card-shadow;
+		border: 0;
+
+		.components-card__header {
+			border-bottom: 1px solid var( --storesuite-border-color );
+		}
+	}
+
+	// Empty content ("Report not found", chart empty states)
+	.woocommerce-empty-content {
+		.woocommerce-empty-content__title {
+			color: var( --storesuite-text-black );
+		}
+
+		.woocommerce-empty-content__message {
+			color: var( --storesuite-text-color-light );
+		}
+	}
+
+	// Loading spinner block
+	.storesuite-analytics-loading {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		min-height: 200px;
+	}
+}
