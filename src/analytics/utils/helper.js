@@ -19,11 +19,16 @@ export function mapToDashboardRoute( url ) {
 		const newParams = new URLSearchParams();
 
 		// Convert WP admin path (e.g. /analytics/products) to report= param.
+		// The Customers report lives at /customers in wc-admin (not under
+		// /analytics), so it needs its own mapping — Top Customers leaderboard
+		// links point there.
 		const path = urlObj.searchParams.get( 'path' );
 		if ( path ) {
 			const reportMatch = path.match( /^\/analytics\/([^/?]+)/ );
 			if ( reportMatch ) {
 				newParams.set( 'report', reportMatch[ 1 ] );
+			} else if ( /^\/customers\/?$/.test( path ) ) {
+				newParams.set( 'report', 'customers' );
 			}
 		}
 

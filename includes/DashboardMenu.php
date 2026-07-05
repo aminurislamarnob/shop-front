@@ -95,12 +95,17 @@ class DashboardMenu {
 						continue;
 					}
 					if ( isset( $submenu['endpoint'] ) ) {
-						$sub_active = $is_active && ( $current_endpoint === $submenu['endpoint'] );
+						$sub_active  = $is_active && ( $current_endpoint === $submenu['endpoint'] );
+						$report_attr = '';
 					} else {
 						$sub_active = $is_active && ( $current_report === $subkey );
+						// Report-based submenus (analytics) are SPA-navigated; the
+						// data-report attribute lets the JS sidebar sync re-target
+						// the active item without relying on hrefs.
+						$report_attr = ' data-report="' . esc_attr( $subkey ) . '"';
 					}
 					echo '<li>';
-					echo '<a href="' . esc_url( $submenu['url'] ) . '" class="' . ( $sub_active ? 'active' : '' ) . '">';
+					echo '<a href="' . esc_url( $submenu['url'] ) . '" class="' . ( $sub_active ? 'active' : '' ) . '"' . $report_attr . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					echo '<span>' . esc_html( $submenu['title'] ) . '</span>';
 					echo '</a>';
 					echo '</li>';
@@ -225,50 +230,7 @@ class DashboardMenu {
 				'target'     => '_self',
 				'submenu'    => apply_filters(
 					'storesuite_analytics_menu_items',
-					array(
-						'overview'   => array(
-							'title'      => __( 'Overview', 'storesuite' ),
-							'url'        => add_query_arg( 'report', 'overview', storesuite_get_navigation_url( 'analytics' ) ),
-							'icon'       => '',
-							'permission' => 'manage_woocommerce',
-						),
-						'revenue'    => array(
-							'title'      => __( 'Revenue', 'storesuite' ),
-							'url'        => add_query_arg( 'report', 'revenue', storesuite_get_navigation_url( 'analytics' ) ),
-							'icon'       => '',
-							'permission' => 'manage_woocommerce',
-						),
-						'orders'     => array(
-							'title'      => __( 'Orders', 'storesuite' ),
-							'url'        => add_query_arg( 'report', 'orders', storesuite_get_navigation_url( 'analytics' ) ),
-							'icon'       => '',
-							'permission' => 'manage_woocommerce',
-						),
-						'products'   => array(
-							'title'      => __( 'Products', 'storesuite' ),
-							'url'        => add_query_arg( 'report', 'products', storesuite_get_navigation_url( 'analytics' ) ),
-							'icon'       => '',
-							'permission' => 'manage_woocommerce',
-						),
-						'variations' => array(
-							'title'      => __( 'Variations', 'storesuite' ),
-							'url'        => add_query_arg( 'report', 'variations', storesuite_get_navigation_url( 'analytics' ) ),
-							'icon'       => '',
-							'permission' => 'manage_woocommerce',
-						),
-						'categories' => array(
-							'title'      => __( 'Categories', 'storesuite' ),
-							'url'        => add_query_arg( 'report', 'categories', storesuite_get_navigation_url( 'analytics' ) ),
-							'icon'       => '',
-							'permission' => 'manage_woocommerce',
-						),
-						'stock'      => array(
-							'title'      => __( 'Stock', 'storesuite' ),
-							'url'        => add_query_arg( 'report', 'stock', storesuite_get_navigation_url( 'analytics' ) ),
-							'icon'       => '',
-							'permission' => 'manage_woocommerce',
-						),
-					)
+					$this->get_analytics_submenu_items()
 				),
 			),
 			'edit-account-details' => array(
@@ -309,55 +271,87 @@ class DashboardMenu {
 	}
 
 	/**
-	 * Retrieves the currently active menu based on the current request URL.
+	 * Builds the Analytics submenu items (report pages rendered by the React app).
 	 *
-	 * @return string The slug of the currently active menu item, such as 'dashboard' or 'products'.
+	 * @return array Submenu items keyed by report name.
+	 */
+	private function get_analytics_submenu_items() {
+		$reports = array(
+			'overview'   => __( 'Overview', 'storesuite' ),
+			'revenue'    => __( 'Revenue', 'storesuite' ),
+			'orders'     => __( 'Orders', 'storesuite' ),
+			'products'   => __( 'Products', 'storesuite' ),
+			'variations' => __( 'Variations', 'storesuite' ),
+			'categories' => __( 'Categories', 'storesuite' ),
+			'coupons'    => __( 'Coupons', 'storesuite' ),
+			'taxes'      => __( 'Taxes', 'storesuite' ),
+			'downloads'  => __( 'Downloads', 'storesuite' ),
+			'stock'      => __( 'Stock', 'storesuite' ),
+			'customers'  => __( 'Customers', 'storesuite' ),
+			'settings'   => __( 'Settings', 'storesuite' ),
+		);
+
+		// Mirror WooCommerce core: the Stock report only exists when stock
+		// management is enabled.
+		if ( 'yes' !== get_option( 'woocommerce_manage_stock' ) ) {
+			unset( $reports['stock'] );
+		}
+
+		$items = array();
+		foreach ( $reports as $report => $title ) {
+			$items[ $report ] = array(
+				'title'      => $title,
+				'url'        => add_query_arg( 'report', $report, storesuite_get_navigation_url( 'analytics' ) ),
+				'icon'       => '',
+				'permission' => 'manage_woocommerce',
+			);
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Retrieves the currently active menu based on the resolved rewrite endpoint.
+	 *
+	 * Uses the internal endpoint KEY from the query vars rather than parsing the
+	 * request path, so custom endpoint slugs (storesuite_myshop_*_endpoint) and
+	 * dashboard pages nested under a parent page resolve correctly.
+	 *
+	 * @return string The key of the currently active menu item, such as 'dashboard' or 'products'.
 	 */
 	public function get_active_menu() {
-		global $wp;
+		$endpoint = pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
 
-		$request = $wp->request;
-		$active  = explode( '/', $request );
+		$endpoint_to_parent = array(
+			'add-new-product'  => 'products',
+			'edit-product'     => 'products',
+			'new-product'      => 'products',
+			'add-new-order'    => 'orders',
+			'edit-order'       => 'orders',
+			'order-details'    => 'orders',
+			'categories'       => 'products',
+			'add-new-category' => 'products',
+			'edit-category'    => 'products',
+			'brands'           => 'products',
+			'add-new-brand'    => 'products',
+			'edit-brand'       => 'products',
+			'tags'             => 'products',
+			'add-new-tag'      => 'products',
+			'edit-tag'         => 'products',
+			'add-new-coupon'   => 'coupons',
+			'edit-coupon'      => 'coupons',
+		);
 
-		unset( $active[0] );
-
-		if ( $active ) {
-			// First segment after the dashboard root is the endpoint slug.
-			// Edit pages append the entity ID (e.g. edit-category/123) which
-			// would otherwise miss the lookup and leave the parent menu
-			// un-highlighted.
-			$active_menu = reset( $active );
-
-			$endpoint_to_parent = array(
-				'add-new-product'  => 'products',
-				'edit-product'     => 'products',
-				'new-product'      => 'products',
-				'add-new-order'    => 'orders',
-				'edit-order'       => 'orders',
-				'order-details'    => 'orders',
-				'categories'       => 'products',
-				'add-new-category' => 'products',
-				'edit-category'    => 'products',
-				'brands'           => 'products',
-				'add-new-brand'    => 'products',
-				'edit-brand'       => 'products',
-				'tags'             => 'products',
-				'add-new-tag'      => 'products',
-				'edit-tag'         => 'products',
-				'add-new-coupon'   => 'coupons',
-				'edit-coupon'      => 'coupons',
-			);
-
-			if ( isset( $endpoint_to_parent[ $active_menu ] ) ) {
-				$active_menu = $endpoint_to_parent[ $active_menu ];
-			}
-
-			if ( get_query_var( 'edit' ) && is_singular( 'product' ) ) {
-				$active_menu = 'products';
-			}
+		if ( $endpoint ) {
+			$active_menu = isset( $endpoint_to_parent[ $endpoint ] ) ? $endpoint_to_parent[ $endpoint ] : $endpoint;
 		} else {
 			$active_menu = 'dashboard';
 		}
+
+		if ( get_query_var( 'edit' ) && is_singular( 'product' ) ) {
+			$active_menu = 'products';
+		}
+
 		return $active_menu;
 	}
 }

@@ -1,5 +1,6 @@
 import { compose } from '@wordpress/compose';
-import { withSelect } from '@wordpress/data';
+import { withSelect, useSelect, useDispatch } from '@wordpress/data';
+import '@wordpress/notices';
 import { Component, Suspense, Fragment, Children, cloneElement, useEffect } from '@wordpress/element';
 import {
 	unstable_HistoryRouter as HistoryRouter,
@@ -10,7 +11,7 @@ import {
 	useParams,
 } from 'react-router-dom';
 import { identity } from 'lodash';
-import { SlotFillProvider } from '@wordpress/components';
+import { SlotFillProvider, SnackbarList } from '@wordpress/components';
 import {
 	getHistory,
 	getQuery,
@@ -23,6 +24,7 @@ import { Controller, usePages } from './controller';
 import { getAdminSetting } from '../utils/admin-settings';
 import { storeSuiteConfig } from '../config';
 import { redirectIfAdminUrl } from '../utils/helper';
+import { syncSidebar } from '../utils/sidebar-sync';
 
 const WithReactRouterProps = ( { children } ) => {
 	const location = useLocation();
@@ -34,12 +36,30 @@ const WithReactRouterProps = ( { children } ) => {
 	);
 };
 
+const Notices = () => {
+	const notices = useSelect( ( select ) =>
+		select( 'core/notices' )
+			.getNotices()
+			.filter( ( notice ) => 'snackbar' === notice.type )
+	);
+	const { removeNotice } = useDispatch( 'core/notices' );
+
+	return (
+		<SnackbarList
+			notices={ notices }
+			onRemove={ removeNotice }
+			className="storesuite-analytics-snackbar"
+		/>
+	);
+};
+
 const PageContent = ( { page, match } ) => {
 	const location = useLocation();
 	const query    = getQuery();
 
 	useEffect( () => {
 		redirectIfAdminUrl();
+		syncSidebar();
 	}, [ location ] );
 
 	return (
@@ -49,6 +69,7 @@ const PageContent = ( { page, match } ) => {
 					<Controller page={ page } match={ match } query={ query } />
 				</div>
 			</div>
+			<Notices />
 		</SlotFillProvider>
 	);
 };

@@ -141,6 +141,43 @@
 	}
 }
 
+.storesuite-analytics-settings {
+	&__field {
+		margin: 0 0 32px;
+		border: 0;
+		padding: 0;
+	}
+
+	&__label {
+		font-size: 14px;
+		font-weight: 600;
+		margin-bottom: 4px;
+	}
+
+	&__help {
+		color: #757575;
+		margin: 4px 0 12px;
+	}
+
+	&__statuses {
+		display: grid;
+		grid-template-columns: repeat( auto-fill, minmax( 180px, 1fr ) );
+		gap: 8px;
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+	}
+}
+
+.storesuite-analytics-snackbar {
+	position: fixed;
+	bottom: 24px;
+	left: 24px;
+	z-index: 100000;
+}
+
 .storesuite-overview-chart-item {
 	background: #fff;
 	border: 1px solid #e0e0e0;
