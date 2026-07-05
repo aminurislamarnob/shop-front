@@ -323,10 +323,25 @@ $ss-radius: 8px;
 				min-width: 110px;
 			}
 		}
+
+		// Soften the "No data for the selected date range" placeholder so it
+		// reads as a calm empty state rather than a heavy headline.
+		.d3-chart__empty-message,
+		.woocommerce-chart__empty-message {
+			font-weight: 500;
+		}
 	}
 
 	.woocommerce-legend__item button:hover {
 		background: var( --storesuite-bg-color-light );
+	}
+
+	// The checkmark is absolutely positioned at top:4px, which leaves it sitting
+	// ~1.5px below the single-line label's optical centre. Nudge it up so the
+	// tick and the label text line up. WooCommerce's own rule is deeply nested,
+	// so match its container chain to win on specificity.
+	.woocommerce-legend__item > button .woocommerce-legend__item-container .woocommerce-legend__item-checkmark {
+		top: 2px;
 	}
 
 	.woocommerce-legend__item-title {
