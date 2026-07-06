@@ -3,9 +3,19 @@
 // StoreSuite Analytics styles
 
 .storesuite-analytics-layout {
+	// The outer .storesuite-analytics-page already applies a 24px gutter, so the
+	// layout main only needs to sit flush inside it — an extra padding here would
+	// push all report content 24px right of the shared title/breadcrumb row.
 	.woocommerce-layout__main {
-		padding: 24px;
+		padding: 0;
 	}
+}
+
+// The report subtitle is the first thing inside the app, right below the shared
+// title/breadcrumb row. Tighten that row's bottom margin on analytics pages so
+// the title and its subtitle read as a single pair instead of drifting apart.
+.storesuite-analytics-page .storesuite-dashboard-title-wrapper {
+	margin-bottom: 8px;
 }
 
 .storesuite-analytics-nav {
