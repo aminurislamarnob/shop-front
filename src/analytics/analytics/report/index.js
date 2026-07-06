@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { Suspense } from '@wordpress/element';
+import { Suspense, useEffect, useState } from '@wordpress/element';
 import { EmptyContent, Spinner } from '@woocommerce/components';
 import { getQuery, getNewPath } from '@woocommerce/navigation';
 import getReports from './get-reports';
@@ -19,14 +19,43 @@ const REPORT_DESCRIPTIONS = {
 	settings:   __( 'Customize how your analytics reports are calculated.', 'storesuite' ),
 };
 
-const ReportHeader = ( { report, title } ) => (
-	<div className="storesuite-analytics-page-header">
-		<h3>{ title }</h3>
-		{ REPORT_DESCRIPTIONS[ report ] && (
-			<p>{ REPORT_DESCRIPTIONS[ report ] }</p>
-		) }
-	</div>
-);
+const ReportHeader = ( { report, title } ) => {
+	// The dashboard chrome renders a server-side title row
+	// (.storesuite-dashboard-title-wrapper) with an empty title and breadcrumb
+	// tail, because the active report is only known client-side. Fill those in
+	// so the report title sits on the same row as the breadcrumb — matching the
+	// rest of the StoreSuite dashboard (e.g. the Products page). Fall back to an
+	// in-app heading if that row isn't present.
+	const [ hasServerTitle, setHasServerTitle ] = useState( false );
+
+	useEffect( () => {
+		const titleEl = document.querySelector( '.storesuite-page-main-title' );
+		if ( ! titleEl ) {
+			setHasServerTitle( false );
+			return;
+		}
+
+		titleEl.textContent = title;
+
+		const crumbEl = document.querySelector(
+			'.storesuite-dashboard-braedcrumb li:last-child span'
+		);
+		if ( crumbEl ) {
+			crumbEl.textContent = title;
+		}
+
+		setHasServerTitle( true );
+	}, [ title ] );
+
+	return (
+		<div className="storesuite-analytics-page-header">
+			{ ! hasServerTitle && <h3>{ title }</h3> }
+			{ REPORT_DESCRIPTIONS[ report ] && (
+				<p>{ REPORT_DESCRIPTIONS[ report ] }</p>
+			) }
+		</div>
+	);
+};
 
 const NoMatch = () => (
 	<div className="storesuite-analytics-reports">
