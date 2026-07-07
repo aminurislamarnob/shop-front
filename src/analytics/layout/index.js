@@ -23,7 +23,7 @@ import {
 import { Controller, usePages } from './controller';
 import { getAdminSetting } from '../utils/admin-settings';
 import { storeSuiteConfig } from '../config';
-import { redirectIfAdminUrl } from '../utils/helper';
+import { redirectIfAdminUrl, handleAdminLinkClick } from '../utils/helper';
 import { syncSidebar } from '../utils/sidebar-sync';
 
 const WithReactRouterProps = ( { children } ) => {
@@ -61,6 +61,11 @@ const PageContent = ( { page, match } ) => {
 		redirectIfAdminUrl();
 		syncSidebar();
 	}, [ location ] );
+
+	useEffect( () => {
+		document.addEventListener( 'click', handleAdminLinkClick, true );
+		return () => document.removeEventListener( 'click', handleAdminLinkClick, true );
+	}, [] );
 
 	return (
 		<SlotFillProvider>

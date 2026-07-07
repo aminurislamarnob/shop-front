@@ -58,3 +58,47 @@ export function redirectIfAdminUrl() {
 		getHistory().replace( mapped );
 	}
 }
+
+/**
+ * Capture-phase click handler for internal WooCommerce admin.php links.
+ *
+ * WooCommerce data-store components (report tables, leaderboards) render hrefs
+ * like `admin.php?page=wc-admin&path=/analytics/...`. On the frontend dashboard
+ * these must resolve to `?report=...` routes. Handling the click directly is
+ * more reliable than remapping after navigation — in particular it covers
+ * same-report drill-downs (e.g. a product name → single-product view) where the
+ * report query var is unchanged and the post-navigation redirect does not fire.
+ */
+export function handleAdminLinkClick( event ) {
+	// Let the browser handle modified / non-primary clicks (new tab, etc.).
+	if (
+		event.defaultPrevented ||
+		event.button !== 0 ||
+		event.metaKey ||
+		event.ctrlKey ||
+		event.shiftKey ||
+		event.altKey
+	) {
+		return;
+	}
+
+	const anchor = event.target.closest && event.target.closest( 'a[href]' );
+	if ( ! anchor ) {
+		return;
+	}
+
+	// Only intercept the internal wc-admin links; leave post.php / external
+	// links (e.g. edit order/product in wp-admin) to navigate normally.
+	if ( ! ( anchor.getAttribute( 'href' ) || '' ).includes( 'admin.php' ) ) {
+		return;
+	}
+
+	const mapped = mapToDashboardRoute( anchor.href );
+	if ( mapped === anchor.href ) {
+		return;
+	}
+
+	event.preventDefault();
+	event.stopImmediatePropagation();
+	getHistory().push( mapped );
+}

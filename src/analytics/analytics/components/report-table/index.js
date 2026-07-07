@@ -62,6 +62,7 @@ const ReportTable = ( {
 	primaryData = {},
 	tableData = { items: { data: [], totalResults: 0 }, query: {} },
 	endpoint,
+	ids = [],
 	itemIdField,
 	tableQuery = {},
 	compareBy,
@@ -100,6 +101,55 @@ const ReportTable = ( {
 
 	const onSort = ( key, direction ) => {
 		onQueryChange( 'sort' )( key, direction );
+	};
+
+	const selectAllRows = ( checked ) => {
+		setSelectedRows( checked ? ids : [] );
+	};
+
+	const selectRow = ( rowIndex, checked ) => {
+		if ( checked ) {
+			setSelectedRows( uniq( [ ids[ rowIndex ], ...selectedRows ] ) );
+		} else {
+			const index = selectedRows.indexOf( ids[ rowIndex ] );
+			setSelectedRows( [
+				...selectedRows.slice( 0, index ),
+				...selectedRows.slice( index + 1 ),
+			] );
+		}
+	};
+
+	const getCheckbox = ( rowIndex ) => {
+		const isSelected = -1 !== selectedRows.indexOf( ids[ rowIndex ] );
+		return {
+			display: (
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					onChange={ partial( selectRow, rowIndex ) }
+					checked={ isSelected }
+				/>
+			),
+			value: false,
+		};
+	};
+
+	const getSelectAllHeader = () => {
+		const hasRows      = ids.length > 0;
+		const allSelected  = hasRows && ids.length === selectedRows.length;
+		return {
+			cellClassName: 'is-checkbox-column',
+			key:           'compare',
+			label: (
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					onChange={ selectAllRows }
+					aria-label={ __( 'Select All', 'storesuite' ) }
+					checked={ allSelected }
+					disabled={ ! hasRows }
+				/>
+			),
+			required: true,
+		};
 	};
 
 	const filterShownHeaders = ( headers, hiddenKeys ) => {
@@ -147,6 +197,13 @@ const ReportTable = ( {
 	let { headers, rows }         = applyTableFiltersResult;
 	const { summary }             = applyTableFiltersResult;
 
+	// When the report supports comparison, prepend a selection checkbox
+	// column (header + per-row) so rows can be picked for the compare view.
+	if ( compareBy ) {
+		rows    = rows.map( ( row, index ) => [ getCheckbox( index ), ...row ] );
+		headers = [ getSelectAllHeader(), ...headers ];
+	}
+
 	const filteredHeaders = filterShownHeaders( headers, userPrefColumns );
 
 	const title = tableProps.title || '';
@@ -168,6 +225,27 @@ const ReportTable = ( {
 				className="woocommerce-report-table"
 				hasSearch={ !! searchBy }
 				actions={ [
+					compareBy && (
+						<CompareButton
+							key="compare"
+							className="woocommerce-table__compare"
+							count={ selectedRows.length }
+							helpText={
+								labels.helpText ||
+								__( 'Check at least two items below to compare', 'storesuite' )
+							}
+							disabled={ ! downloadable }
+							onClick={ () => {
+								onQueryChange( 'compare' )(
+									compareBy,
+									compareParam,
+									selectedRows.join( ',' )
+								);
+							} }
+						>
+							{ labels.compareButton || __( 'Compare', 'storesuite' ) }
+						</CompareButton>
+					),
 					searchBy && (
 						<Search
 							allowFreeTextSearch={ true }

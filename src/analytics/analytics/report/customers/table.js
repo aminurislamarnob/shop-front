@@ -119,7 +119,7 @@ class CustomersReportTable extends Component {
 				filters={ filters }
 				advancedFilters={ advancedFilters }
 				tableQuery={ {
-					orderby: [ 'name', 'username', 'date_last_active', 'date_registered', 'orders_count', 'total_spend' ].includes( query.orderby ) ? query.orderby : 'date_registered',
+					orderby: [ 'name', 'username', 'date_last_active', 'date_registered', 'orders_count', 'total_spend' ].includes( query.orderby ) ? query.orderby : 'date_last_active',
 					order:   query.order || 'desc',
 				} }
 			/>
