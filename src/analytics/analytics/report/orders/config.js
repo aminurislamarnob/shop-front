@@ -52,6 +52,99 @@ export const advancedFilters = applyFilters( 'storesuite_analytics_orders_report
 				getLabels: getProductLabels,
 			},
 		},
+		variation: {
+			labels: {
+				add:         __( 'Product variation', 'storesuite' ),
+				placeholder: __( 'Search product variations', 'storesuite' ),
+				remove:      __( 'Remove product variation filter', 'storesuite' ),
+				rule:        __( 'Select a product variation filter match', 'storesuite' ),
+				title:       __( '<title>Product variation</title> <rule/> <filter/>', 'storesuite' ),
+				filter:      __( 'Select variation', 'storesuite' ),
+			},
+			rules: [
+				{ value: 'includes', label: _x( 'Includes', 'variations', 'storesuite' ) },
+				{ value: 'excludes', label: _x( 'Excludes', 'variations', 'storesuite' ) },
+			],
+			input: {
+				component: 'Search',
+				type:      'variations',
+				getLabels: getVariationLabels,
+			},
+		},
+		coupon: {
+			labels: {
+				add:         __( 'Coupon code', 'storesuite' ),
+				placeholder: __( 'Search coupons', 'storesuite' ),
+				remove:      __( 'Remove coupon filter', 'storesuite' ),
+				rule:        __( 'Select a coupon filter match', 'storesuite' ),
+				title:       __( '<title>Coupon code</title> <rule/> <filter/>', 'storesuite' ),
+				filter:      __( 'Select coupon codes', 'storesuite' ),
+			},
+			rules: [
+				{ value: 'includes', label: _x( 'Includes', 'coupon code', 'storesuite' ) },
+				{ value: 'excludes', label: _x( 'Excludes', 'coupon code', 'storesuite' ) },
+			],
+			input: {
+				component: 'Search',
+				type:      'coupons',
+				getLabels: getCouponLabels,
+			},
+		},
+		customer_type: {
+			labels: {
+				add:    __( 'Customer type', 'storesuite' ),
+				remove: __( 'Remove customer filter', 'storesuite' ),
+				rule:   __( 'Select a customer filter match', 'storesuite' ),
+				title:  __( '<title>Customer is</title> <filter/>', 'storesuite' ),
+				filter: __( 'Select a customer type', 'storesuite' ),
+			},
+			input: {
+				component:     'SelectControl',
+				options:       [
+					{ value: 'new',       label: __( 'New', 'storesuite' ) },
+					{ value: 'returning', label: __( 'Returning', 'storesuite' ) },
+				],
+				defaultOption: 'new',
+			},
+		},
+		refunds: {
+			labels: {
+				add:    __( 'Refund', 'storesuite' ),
+				remove: __( 'Remove refund filter', 'storesuite' ),
+				rule:   __( 'Select a refund filter match', 'storesuite' ),
+				title:  __( '<title>Refund</title> <filter/>', 'storesuite' ),
+				filter: __( 'Select a refund type', 'storesuite' ),
+			},
+			input: {
+				component:     'SelectControl',
+				options:       [
+					{ value: 'all',     label: __( 'All', 'storesuite' ) },
+					{ value: 'partial', label: __( 'Partially refunded', 'storesuite' ) },
+					{ value: 'full',    label: __( 'Fully refunded', 'storesuite' ) },
+					{ value: 'none',    label: __( 'None', 'storesuite' ) },
+				],
+				defaultOption: 'all',
+			},
+		},
+		tax_rate: {
+			labels: {
+				add:         __( 'Tax rate', 'storesuite' ),
+				placeholder: __( 'Search tax rates', 'storesuite' ),
+				remove:      __( 'Remove tax rate filter', 'storesuite' ),
+				rule:        __( 'Select a tax rate filter match', 'storesuite' ),
+				title:       __( '<title>Tax Rate</title> <rule/> <filter/>', 'storesuite' ),
+				filter:      __( 'Select tax rates', 'storesuite' ),
+			},
+			rules: [
+				{ value: 'includes', label: _x( 'Includes', 'tax rate', 'storesuite' ) },
+				{ value: 'excludes', label: _x( 'Excludes', 'tax rate', 'storesuite' ) },
+			],
+			input: {
+				component: 'Search',
+				type:      'taxes',
+				getLabels: getTaxRateLabels,
+			},
+		},
 	},
 } );
 
