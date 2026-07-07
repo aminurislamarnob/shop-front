@@ -8,6 +8,7 @@ import { defaultTableDateFormat } from '@woocommerce/date';
 import { CurrencyContext } from '@woocommerce/currency';
 import ReportTable from '../../components/report-table';
 import { getAdminSetting } from '../../../utils/admin-settings';
+import { storeSuiteConfig } from '../../../config';
 
 class OrdersReportTable extends Component {
 	constructor() {
@@ -46,8 +47,12 @@ class OrdersReportTable extends Component {
 				num_items_sold: numItemsSold,
 				order_id:      orderId,
 				order_number:  orderNumber,
+				parent_id:     parentId,
 				status,
 			} = row;
+
+			// Refund rows report their own id; link to the parent order.
+			const orderDetailsUrl = `${ storeSuiteConfig.orderDetailsPath }${ parentId || orderId }/`;
 
 			const extendedInfo = row.extended_info || {};
 			const { customer, products = [], coupons = [], attribution } = extendedInfo;
@@ -76,7 +81,7 @@ class OrdersReportTable extends Component {
 
 			return [
 				{ display: <Date date={ date } visibleFormat={ dateFormat } />, value: date },
-				{ display: <Link href={ `post.php?post=${ orderId }&action=edit` } type="external">{ orderNumber }</Link>, value: orderNumber },
+				{ display: <a href={ orderDetailsUrl }>{ orderNumber }</a>, value: orderNumber },
 				{
 					display: (
 						<OrderStatus
