@@ -78,6 +78,25 @@ export const advancedFilters = applyFilters( 'storesuite_analytics_customers_rep
 				getLabels: getLabelsFromQuery,
 			},
 		},
+		username: {
+			labels: {
+				add:         __( 'Username', 'storesuite' ),
+				placeholder: __( 'Search customer username', 'storesuite' ),
+				remove:      __( 'Remove customer username filter', 'storesuite' ),
+				rule:        __( 'Select a customer username filter match', 'storesuite' ),
+				title:       __( '<title>Username</title> <rule/> <filter/>', 'storesuite' ),
+				filter:      __( 'Select customer username', 'storesuite' ),
+			},
+			rules: [
+				{ value: 'includes', label: _x( 'Includes', 'customer usernames', 'storesuite' ) },
+				{ value: 'excludes', label: _x( 'Excludes', 'customer usernames', 'storesuite' ) },
+			],
+			input: {
+				component: 'Search',
+				type:      'usernames',
+				getLabels: getLabelsFromQuery,
+			},
+		},
 		email: {
 			labels: {
 				add:         __( 'Email', 'storesuite' ),

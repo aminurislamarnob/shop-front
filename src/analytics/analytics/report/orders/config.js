@@ -145,6 +145,24 @@ export const advancedFilters = applyFilters( 'storesuite_analytics_orders_report
 				getLabels: getTaxRateLabels,
 			},
 		},
+		attribute: {
+			allowMultiple: true,
+			labels: {
+				add:         __( 'Product attribute', 'storesuite' ),
+				placeholder: __( 'Search product attributes', 'storesuite' ),
+				remove:      __( 'Remove product attribute filter', 'storesuite' ),
+				rule:        __( 'Select a product attribute filter match', 'storesuite' ),
+				title:       __( '<title>Product attribute</title> <rule/> <filter/>', 'storesuite' ),
+				filter:      __( 'Select attributes', 'storesuite' ),
+			},
+			rules: [
+				{ value: 'is',     label: _x( 'Is', 'product attribute', 'storesuite' ) },
+				{ value: 'is_not', label: _x( 'Is Not', 'product attribute', 'storesuite' ) },
+			],
+			input: {
+				component: 'ProductAttribute',
+			},
+		},
 	},
 } );
 
