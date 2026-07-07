@@ -286,6 +286,7 @@ const ReportTable = ( {
 					),
 				].filter( Boolean ) }
 				headers={ filteredHeaders }
+				query={ query }
 				isLoading={ isLoading }
 				onQueryChange={ onQueryChange }
 				onColumnsChange={ onColumnsChange }
