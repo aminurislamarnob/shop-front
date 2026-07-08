@@ -191,6 +191,12 @@
 		max-width: 420px;
 	}
 
+	// The default-date-range picker ships with WC's 12px left padding, which
+	// indents it past the other settings fields. Flush it to the left edge.
+	.woocommerce-filters-filter {
+		padding-left: 0;
+	}
+
 	&__statuses {
 		display: grid;
 		grid-template-columns: repeat( auto-fill, minmax( 180px, 1fr ) );
