@@ -413,6 +413,11 @@
 			.woocommerce-search {
 				width: 100%;
 			}
+
+			// Compare stays on the left; push Download to the right edge.
+			.woocommerce-table__download-button {
+				margin-left: auto;
+			}
 		}
 	}
 }
