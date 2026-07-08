@@ -33,6 +33,7 @@ class ProductController {
 		$template_args = array(
 			'query_vars' => $query_vars,
 		);
+		storesuite_get_template_part( 'products/product-icons' );
 		storesuite_get_template_part( 'products/add-new-product', '', $template_args );
 	}
 
@@ -47,6 +48,7 @@ class ProductController {
 		$template_args = array(
 			'query_vars' => $query_vars,
 		);
+		storesuite_get_template_part( 'products/product-icons' );
 		storesuite_get_template_part( 'products/edit-product', '', $template_args );
 	}
 

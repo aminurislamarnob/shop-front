@@ -29,7 +29,7 @@ class StockReportTable extends Component {
 		const stockStatuses = getAdminSetting( 'stockStatuses', {} );
 
 		return data.map( ( row ) => {
-			const { product_id, name = '', sku = '', stock_status = '', stock_quantity = 0 } = row;
+			const { product_id, name = '', sku = '', stock_status = '', stock_quantity = 0, manage_stock = false } = row;
 			const statusLabel = stockStatuses[ stock_status ] || stock_status;
 
 			return [
@@ -43,7 +43,12 @@ class StockReportTable extends Component {
 				},
 				{ display: sku,                                                         value: sku },
 				{ display: statusLabel,                                                  value: stock_status },
-				{ display: formatValue( currency, 'number', stock_quantity ),           value: Number( stock_quantity ) },
+				{
+					display: manage_stock
+						? formatValue( currency, 'number', stock_quantity )
+						: __( 'N/A', 'storesuite' ),
+					value: manage_stock ? Number( stock_quantity ) : null,
+				},
 			];
 		} );
 	}

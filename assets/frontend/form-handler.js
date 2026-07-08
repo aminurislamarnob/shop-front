@@ -57,6 +57,42 @@
 			this.bindEditAccountPasswordLiveValidation();
 			this.bindPasswordVisibilityToggle();
 			this.initEditAccountPasswordToggle();
+			this.preventPasswordAutofill();
+		},
+
+		/**
+		 * Stop browsers from autofilling the account password fields on load.
+		 *
+		 * The fields render with the `readonly` attribute so browsers skip them
+		 * during page-load autofill. We drop `readonly` on first focus/touch so
+		 * the user can still type into them normally.
+		 */
+		preventPasswordAutofill: function () {
+			var fieldsSelector = '#password_current, #password_1, #password_2';
+
+			$( document )
+				.off(
+					'focus.storesuitePasswordAutofill touchstart.storesuitePasswordAutofill blur.storesuitePasswordAutofill',
+					fieldsSelector
+				)
+				// Drop readonly on interaction so the field is typeable.
+				.on(
+					'focus.storesuitePasswordAutofill touchstart.storesuitePasswordAutofill',
+					fieldsSelector,
+					function () {
+						$( this ).removeAttr( 'readonly' );
+					}
+				)
+				// Re-arm the autofill guard when the user leaves an empty field.
+				.on(
+					'blur.storesuitePasswordAutofill',
+					fieldsSelector,
+					function () {
+						if ( '' === $( this ).val() ) {
+							$( this ).attr( 'readonly', 'readonly' );
+						}
+					}
+				);
 		},
 
 		/**
@@ -389,7 +425,7 @@
 		 * Show success message
 		 */
 		showSuccess: function ( message ) {
-			Swal.fire( {
+			return Swal.fire( {
 				icon: 'success',
 				title: storeSuiteFormHandler.i18n.success_title,
 				text: message,
@@ -1356,9 +1392,14 @@
 						contentType: false,
 						success: function ( response ) {
 							if ( response.success ) {
-								self.showSuccess( response.data.message );
 								$form[ 0 ].reset();
-								self.appendTermRow( response.data );
+								self.showSuccess(
+									response.data.message
+								).then( function () {
+									// Reload so the new term shows in the
+									// correct sorted/paginated position.
+									window.location.reload();
+								} );
 							} else {
 								self.showError( response.data.error );
 							}
@@ -1379,47 +1420,6 @@
 					} );
 				}
 			);
-		},
-
-		/**
-		 * Append a new term row to the attribute terms table.
-		 */
-		appendTermRow: function ( data ) {
-			var i18n = storeSuiteFormHandler.i18n;
-			var editUrl =
-				storeSuiteFormHandler.attribute_terms_url +
-				'?taxonomy=' +
-				encodeURIComponent( data.taxonomy ) +
-				'&term_id=' +
-				data.term_id;
-
-			var row =
-				'<tr id="term-row-' + data.term_id + '">' +
-					'<td>' + $( '<span>' ).text( data.name ).html() + '</td>' +
-					'<td>' + $( '<span>' ).text( data.slug ).html() + '</td>' +
-					'<td>' + data.count + '</td>' +
-					'<td class="text-right">' +
-						'<div class="storesuite-dropdown">' +
-							'<span class="storesuite-dropdown-icon">' +
-								'<svg width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-three-dots"></use></svg>' +
-							'</span>' +
-							'<ul class="storesuite-dropdown-menu">' +
-								'<li>' +
-									'<a href="' + editUrl + '" class="dropdown-link">' + $( '<span>' ).text( i18n.edit_label ).html() + '</a>' +
-								'</li>' +
-								'<li>' +
-									'<button type="button" class="inline-button dropdown-link storesuite-delete-attribute-term" data-term-id="' + data.term_id + '" data-taxonomy="' + $( '<span>' ).text( data.taxonomy ).html() + '">' +
-										$( '<span>' ).text( i18n.delete_label ).html() +
-									'</button>' +
-								'</li>' +
-							'</ul>' +
-						'</div>' +
-					'</td>' +
-				'</tr>';
-
-			var $table = $( '.storesuite-attribute-terms-table tbody' );
-			$table.find( 'tr td[colspan]' ).closest( 'tr' ).remove();
-			$table.append( row );
 		},
 
 		/**
@@ -1469,7 +1469,11 @@
 							Swal.close();
 
 							if ( response.success ) {
-								self.showSuccess( response.data.message );
+								self.showSuccess(
+									response.data.message
+								).then( function () {
+									window.location.reload();
+								} );
 							} else {
 								self.showError( response.data.error );
 							}
@@ -1553,13 +1557,30 @@
 										icon: 'success',
 										title: i18n.success_title,
 										text: response.data.message,
-									} );
-									$( '#term-row-' + termId ).fadeOut(
-										300,
-										function () {
-											$( this ).remove();
+										confirmButtonText: i18n.ok_button,
+									} ).then( function () {
+										// Pull the latest terms (and correct
+										// pagination) from the server. If the
+										// deleted term was the only item left on
+										// this page, go to the previous page
+										// instead of landing on an empty one.
+										var $remaining = $(
+											'.storesuite-attribute-terms-table tbody tr[id^="term-row-"]'
+										);
+										var $prevPage = $(
+											'.storesuite-pagination a.prev'
+										);
+										if (
+											$remaining.length <= 1 &&
+											$prevPage.length
+										) {
+											window.location.assign(
+												$prevPage.attr( 'href' )
+											);
+											return;
 										}
-									);
+										window.location.reload();
+									} );
 								} else {
 									Swal.fire( {
 										icon: 'error',
@@ -1774,11 +1795,12 @@
 		handleCouponDelete: function () {
 			var self = this;
 
-			$( document ).on( 'submit', '.delete-coupon-form', function ( e ) {
+			$( document ).on( 'click', '.storesuite-delete-coupon', function ( e ) {
 				e.preventDefault();
 
-				var $form = $( this );
-				var couponId = $form.find( 'input[name="coupon_id"]' ).val();
+				var $button = $( this );
+				var couponId = $button.data( 'coupon-id' );
+				var couponNonce = $button.data( 'nonce' );
 
 				if ( ! couponId ) {
 					return;
@@ -1796,7 +1818,13 @@
 						return;
 					}
 
-					var formData = new FormData( $form[ 0 ] );
+					var formData = new FormData();
+					formData.append( 'action', 'storesuite_delete_coupon' );
+					formData.append( 'coupon_id', couponId );
+					formData.append(
+						'storesuite_delete_coupon_nonce',
+						couponNonce
+					);
 
 					$.ajax( {
 						url: storeSuiteFormHandler.ajax_url,
@@ -1809,7 +1837,7 @@
 
 							if ( response.success ) {
 								self.showSuccess( response.data.message );
-								$form
+								$button
 									.closest( 'tr' )
 									.fadeOut( 300, function () {
 										$( this ).remove();

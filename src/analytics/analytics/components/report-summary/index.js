@@ -4,16 +4,13 @@ import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import PropTypes from 'prop-types';
 import { getNewPath } from '@woocommerce/navigation';
-import {
-	SummaryList,
-	SummaryListPlaceholder,
-	SummaryNumber,
-} from '@woocommerce/components';
+import { SummaryListPlaceholder, SummaryNumber } from '@woocommerce/components';
 import { calculateDelta, formatValue } from '@woocommerce/number';
-import { getSummaryNumbers, SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { getSummaryNumbers } from '@woocommerce/data';
 import { getDateParamsFromQuery } from '@woocommerce/date';
 import { CurrencyContext } from '@woocommerce/currency';
 import ReportError from '../report-error';
+import { getDefaultDateRange } from '../../../utils/date';
 
 export class ReportSummary extends Component {
 	formatVal( val, type ) {
@@ -50,7 +47,7 @@ export class ReportSummary extends Component {
 
 		const { compare } = getDateParamsFromQuery( query, defaultDateRange );
 
-		const renderSummaryNumbers = ( { onToggle } ) =>
+		const renderSummaryNumbers = () =>
 			charts.map( ( chart ) => {
 				const { key, order, orderby, label, type, isReverseTrend, labelTooltipText } = chart;
 				const newPath = { chart: key };
@@ -80,16 +77,27 @@ export class ReportSummary extends Component {
 						selected={ isSelected }
 						value={ value }
 						labelTooltipText={ labelTooltipText }
-						onLinkClickCallback={ () => {
-							if ( onToggle ) {
-								onToggle();
-							}
-						} }
 					/>
 				);
 			} );
 
-		return <SummaryList>{ renderSummaryNumbers }</SummaryList>;
+		// Render the same markup Woo's <SummaryList> produces in its list mode,
+		// rather than <SummaryList> itself. SummaryList collapses into a
+		// single-item dropdown on mobile when there are 10 or fewer numbers
+		// (which every per-report summary is), whereas the Overview (15
+		// indicators) stays a list. Rendering the list directly keeps every
+		// report's summary stacked on mobile. The `has-N-items` class is what
+		// drives the desktop grid columns, so it must be included to keep the
+		// desktop row layout (without it the grid falls back to one full-width
+		// column). Woo caps the count at 10.
+		const items = renderSummaryNumbers();
+		const itemCount = Math.min( items.length, 10 );
+
+		return (
+			<ul className={ `woocommerce-summary has-${ itemCount }-items` }>
+				{ items }
+			</ul>
+		);
 	}
 }
 
@@ -124,9 +132,7 @@ export default compose(
 
 		const fields = charts && charts.map( ( chart ) => chart.key );
 
-		const { woocommerce_default_date_range: defaultDateRange } = select(
-			SETTINGS_STORE_NAME
-		).getSetting( 'wc_admin', 'wcAdminSettings' );
+		const defaultDateRange = getDefaultDateRange( select );
 
 		const summaryData = getSummaryNumbers( {
 			endpoint,

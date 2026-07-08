@@ -132,9 +132,9 @@ class AccountController {
 		$account_email        = ! empty( $_POST['account_email'] ) ? wc_clean( wp_unslash( $_POST['account_email'] ) ) : '';
 		$account_website      = isset( $_POST['account_website'] ) ? esc_url_raw( wp_unslash( $_POST['account_website'] ) ) : '';
 		$account_description  = isset( $_POST['account_description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['account_description'] ) ) : '';
-		$pass_cur             = ! empty( $_POST['password_current'] ) ? $_POST['password_current'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$pass1                = ! empty( $_POST['password_1'] ) ? $_POST['password_1'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$pass2                = ! empty( $_POST['password_2'] ) ? $_POST['password_2'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$pass_cur             = ! empty( $_POST['password_current'] ) ? wp_unslash( $_POST['password_current'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must not be altered by sanitization.
+		$pass1                = ! empty( $_POST['password_1'] ) ? wp_unslash( $_POST['password_1'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must not be altered by sanitization.
+		$pass2                = ! empty( $_POST['password_2'] ) ? wp_unslash( $_POST['password_2'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passwords must not be altered by sanitization.
 		$save_pass            = true;
 
 		$current_user       = get_user_by( 'id', $user_id );

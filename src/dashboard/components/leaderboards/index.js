@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import { getAdminSetting } from '../../utils/admin-settings';
 import { mapToAnalyticsRoute } from '../../utils/helper';
 import { DASHBOARD_DEFAULT_DATE_RANGE } from '../../constants';
+import ResponsiveTable from '../responsive-table';
 
 const LEADERBOARD_ROWS_KEY = 'storesuite_dashboard_leaderboard_rows';
 
@@ -81,7 +82,7 @@ class LeaderboardTable extends Component {
 		);
 	}
 
-	render() {
+	renderContent() {
 		const { isRequesting, isError, totalRows, title } = this.props;
 		const classes = 'storesuite-leaderboard';
 
@@ -139,6 +140,10 @@ class LeaderboardTable extends Component {
 				totalRows={ totalRows }
 			/>
 		);
+	}
+
+	render() {
+		return <ResponsiveTable>{ this.renderContent() }</ResponsiveTable>;
 	}
 }
 

@@ -186,9 +186,19 @@
     gap: 0 32px;
 }
 
+/* Notice shown when no AI provider is connected. */
+.storesuite-ai-connector-notice {
+    margin: 0 0 16px;
+}
+
 /* ========== Section header card ========== */
 .storesuite-form-header-card {
     margin-bottom: 10px;
+}
+
+/* Extra space when a second section header follows a previous section. */
+.storesuite-form-header-card.storesuite-section-gap-top {
+    margin-top: 32px;
 }
 
 .storesuite-form-header-card .storesuite-form-section-header {

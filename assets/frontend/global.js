@@ -162,7 +162,8 @@
 
 		handleSidebarCollapseToggle: function () {
 			var collapsedPreferenceStorageKey = 'storesuite_sidebar_collapsed';
-			var minViewportWidthForCollapsedSidebar = 783;
+			var minViewportWidthForCollapsedSidebar = 768;
+			var maxTabletViewportWidth = 1024;
 			var $dashboardContainer = $( '.my-storesuite-container' );
 			var $sidebarCollapseToggle = $( '.storesuite-sidebar-trigger' );
 
@@ -174,7 +175,13 @@
 			}
 
 			function isViewportWideEnoughForCollapsedSidebar() {
-				return window.innerWidth >= minViewportWidthForCollapsedSidebar;
+				// Use the layout viewport (clientWidth) so this matches the CSS
+				// media queries; window.innerWidth tracks the visual viewport and
+				// can diverge under zoom / dev tools, desyncing JS from CSS.
+				return (
+					document.documentElement.clientWidth >=
+					minViewportWidthForCollapsedSidebar
+				);
 			}
 
 			function applySidebarCollapsedState( isCollapsed ) {
@@ -188,53 +195,108 @@
 				);
 			}
 
+			function isTabletViewport() {
+				var viewportWidth = document.documentElement.clientWidth;
+				return (
+					viewportWidth >= minViewportWidthForCollapsedSidebar &&
+					viewportWidth <= maxTabletViewportWidth
+				);
+			}
+
 			function persistCollapsedPreference( isCollapsed ) {
 				try {
-					if ( isCollapsed ) {
-						localStorage.setItem(
-							collapsedPreferenceStorageKey,
-							'1'
-						);
-					} else {
-						localStorage.removeItem(
-							collapsedPreferenceStorageKey
-						);
-					}
+					// '0' is stored explicitly (instead of removing the key) so an
+					// expanded choice survives the collapsed-by-default tablet range.
+					localStorage.setItem(
+						collapsedPreferenceStorageKey,
+						isCollapsed ? '1' : '0'
+					);
 				} catch ( storageError ) {}
 			}
 
 			function readCollapsedPreferenceFromStorage() {
+				var storedPreference = null;
 				try {
-					return (
-						localStorage.getItem(
-							collapsedPreferenceStorageKey
-						) === '1'
+					storedPreference = localStorage.getItem(
+						collapsedPreferenceStorageKey
 					);
-				} catch ( storageError ) {
+				} catch ( storageError ) {}
+				if ( '1' === storedPreference ) {
+					return true;
+				}
+				if ( '0' === storedPreference ) {
 					return false;
 				}
+				// No explicit choice: collapse on tablets, expand on desktop.
+				return isTabletViewport();
+			}
+
+			function applyMobileOpenState( isOpen ) {
+				$dashboardContainer.toggleClass(
+					'storesuite-sidebar-mobile-open',
+					isOpen
+				);
+				$sidebarCollapseToggle.attr(
+					'aria-expanded',
+					isOpen ? 'true' : 'false'
+				);
 			}
 
 			function syncSidebarCollapsedState() {
 				if ( ! isViewportWideEnoughForCollapsedSidebar() ) {
+					// Narrow viewport: drop the desktop collapse, start closed.
 					applySidebarCollapsedState( false );
+					applyMobileOpenState( false );
 					return;
 				}
+				// Wide viewport: drop the off-canvas state, restore preference.
+				$dashboardContainer.removeClass(
+					'storesuite-sidebar-mobile-open'
+				);
 				applySidebarCollapsedState(
 					readCollapsedPreferenceFromStorage()
 				);
 			}
 
 			function handleSidebarToggleInteraction( event ) {
+				event.preventDefault();
+
+				// Narrow viewport: the trigger opens/closes the off-canvas drawer.
 				if ( ! isViewportWideEnoughForCollapsedSidebar() ) {
+					applyMobileOpenState(
+						! $dashboardContainer.hasClass(
+							'storesuite-sidebar-mobile-open'
+						)
+					);
 					return;
 				}
-				event.preventDefault();
+
 				var shouldBeCollapsed = ! $dashboardContainer.hasClass(
 					'storesuite-sidebar-collapsed'
 				);
 				applySidebarCollapsedState( shouldBeCollapsed );
 				persistCollapsedPreference( shouldBeCollapsed );
+			}
+
+			// Close the off-canvas drawer when tapping the backdrop (outside
+			// the sidebar and away from the trigger).
+			function handleOutsideClickToClose( event ) {
+				if (
+					isViewportWideEnoughForCollapsedSidebar() ||
+					! $dashboardContainer.hasClass(
+						'storesuite-sidebar-mobile-open'
+					)
+				) {
+					return;
+				}
+				var $target = $( event.target );
+				if (
+					$target.closest( '.my-storesuite-sidebar' ).length ||
+					$target.closest( '.storesuite-sidebar-trigger' ).length
+				) {
+					return;
+				}
+				applyMobileOpenState( false );
 			}
 
 			syncSidebarCollapsedState();
@@ -243,6 +305,7 @@
 				'click',
 				handleSidebarToggleInteraction
 			);
+			$( document ).on( 'click', handleOutsideClickToClose );
 		},
 
 		handleDropdown: function () {
@@ -250,11 +313,14 @@
 				'click',
 				'.storesuite-dropdown-icon',
 				function () {
-					$( '.storesuite-dropdown-menu' ).hide();
-					$( this )
+					var $menu = $( this )
 						.closest( '.storesuite-dropdown' )
-						.find( '.storesuite-dropdown-menu' )
-						.toggle();
+						.find( '.storesuite-dropdown-menu' );
+					$( '.storesuite-dropdown-menu' )
+						.not( $menu )
+						.stop( true, false )
+						.slideUp( 200 );
+					$menu.stop( true, false ).slideToggle( 200 );
 				}
 			);
 		},
@@ -264,7 +330,9 @@
 				if (
 					! $( event.target ).closest( '.storesuite-dropdown' ).length
 				) {
-					$( '.storesuite-dropdown-menu' ).hide();
+					$( '.storesuite-dropdown-menu' )
+						.stop( true, false )
+						.slideUp( 200 );
 				}
 			} );
 		},
