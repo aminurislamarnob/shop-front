@@ -4,11 +4,7 @@ import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import PropTypes from 'prop-types';
 import { getNewPath } from '@woocommerce/navigation';
-import {
-	SummaryList,
-	SummaryListPlaceholder,
-	SummaryNumber,
-} from '@woocommerce/components';
+import { SummaryListPlaceholder, SummaryNumber } from '@woocommerce/components';
 import { calculateDelta, formatValue } from '@woocommerce/number';
 import { getSummaryNumbers } from '@woocommerce/data';
 import { getDateParamsFromQuery } from '@woocommerce/date';
@@ -51,7 +47,7 @@ export class ReportSummary extends Component {
 
 		const { compare } = getDateParamsFromQuery( query, defaultDateRange );
 
-		const renderSummaryNumbers = ( { onToggle } ) =>
+		const renderSummaryNumbers = () =>
 			charts.map( ( chart ) => {
 				const { key, order, orderby, label, type, isReverseTrend, labelTooltipText } = chart;
 				const newPath = { chart: key };
@@ -81,16 +77,20 @@ export class ReportSummary extends Component {
 						selected={ isSelected }
 						value={ value }
 						labelTooltipText={ labelTooltipText }
-						onLinkClickCallback={ () => {
-							if ( onToggle ) {
-								onToggle();
-							}
-						} }
 					/>
 				);
 			} );
 
-		return <SummaryList>{ renderSummaryNumbers }</SummaryList>;
+		// Render the same <ul class="woocommerce-summary"> markup the Overview
+		// report produces, instead of Woo's <SummaryList>. SummaryList collapses
+		// into a single-item dropdown on mobile when there are 10 or fewer
+		// numbers (which every per-report summary is), whereas the Overview
+		// (15 indicators) stays a stacked list. Rendering the list directly keeps
+		// every report's summary stacked on mobile and is identical to Woo's own
+		// desktop output, so the desktop row layout is unchanged.
+		return (
+			<ul className="woocommerce-summary">{ renderSummaryNumbers() }</ul>
+		);
 	}
 }
 
