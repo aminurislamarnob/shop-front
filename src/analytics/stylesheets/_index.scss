@@ -365,6 +365,15 @@
 			border-bottom: 1px solid var( --storesuite-border-color );
 		}
 
+		// Force one stat per row on mobile. Woo's `has-N-items` grid keeps
+		// multiple columns (which overflow on phones); the Overview stacks only
+		// because its SummaryList drops the `has-N-items` class below this
+		// breakpoint. We add that class ourselves for the desktop grid, so
+		// collapse it back to a single column here to match.
+		ul.woocommerce-summary {
+			grid-template-columns: 1fr;
+		}
+
 		// WC full-bleeds the report chart with -16px side margins as well, so its
 		// "By day" control, plot area and legend touch the screen edges. Reset so
 		// the chart sits inside the page gutter like the summary and header.

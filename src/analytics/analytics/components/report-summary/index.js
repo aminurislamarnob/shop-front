@@ -81,15 +81,22 @@ export class ReportSummary extends Component {
 				);
 			} );
 
-		// Render the same <ul class="woocommerce-summary"> markup the Overview
-		// report produces, instead of Woo's <SummaryList>. SummaryList collapses
-		// into a single-item dropdown on mobile when there are 10 or fewer
-		// numbers (which every per-report summary is), whereas the Overview
-		// (15 indicators) stays a stacked list. Rendering the list directly keeps
-		// every report's summary stacked on mobile and is identical to Woo's own
-		// desktop output, so the desktop row layout is unchanged.
+		// Render the same markup Woo's <SummaryList> produces in its list mode,
+		// rather than <SummaryList> itself. SummaryList collapses into a
+		// single-item dropdown on mobile when there are 10 or fewer numbers
+		// (which every per-report summary is), whereas the Overview (15
+		// indicators) stays a list. Rendering the list directly keeps every
+		// report's summary stacked on mobile. The `has-N-items` class is what
+		// drives the desktop grid columns, so it must be included to keep the
+		// desktop row layout (without it the grid falls back to one full-width
+		// column). Woo caps the count at 10.
+		const items = renderSummaryNumbers();
+		const itemCount = Math.min( items.length, 10 );
+
 		return (
-			<ul className="woocommerce-summary">{ renderSummaryNumbers() }</ul>
+			<ul className={ `woocommerce-summary has-${ itemCount }-items` }>
+				{ items }
+			</ul>
 		);
 	}
 }
