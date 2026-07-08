@@ -54,14 +54,23 @@ $ss-radius: 8px;
 		background: #fff;
 		border: 1px solid var( --storesuite-border-color );
 		border-radius: 6px;
-		box-shadow: $ss-card-shadow;
+		// Flat, soft-bordered pill matching the StoreSuite dashboard date
+		// picker — no card shadow.
+		box-shadow: none;
 		transition: border-color 0.15s ease;
+
+		// WooCommerce ships a `:not(:focus):not(.is-open)` rule that sets the
+		// resting border to its default dark grey and out-specifies the plain
+		// override above. Match its specificity so the soft token wins.
+		&:not( :focus ):not( .is-open ) {
+			border-color: var( --storesuite-border-color );
+		}
 
 		&:hover,
 		&:focus,
 		&[aria-expanded='true'] {
 			border-color: var( --storesuite-primary-bg );
-			box-shadow: $ss-card-shadow;
+			box-shadow: none;
 		}
 
 		.woocommerce-dropdown-button__labels {
