@@ -17,7 +17,6 @@ import {
 import {
 	getReportChartData,
 	getReportTableData,
-	SETTINGS_STORE_NAME,
 	REPORTS_STORE_NAME,
 	useUserPreferences,
 	QUERY_DEFAULTS,
@@ -25,6 +24,7 @@ import {
 
 import ReportError from '../report-error';
 import DownloadIcon from './download-icon';
+import { getDefaultDateRange } from '../../../utils/date';
 
 const TABLE_FILTER = 'storesuite_analytics_report_table';
 
@@ -322,9 +322,7 @@ export default compose(
 
 		const reportStoreSelector = select( REPORTS_STORE_NAME );
 
-		const { woocommerce_default_date_range: defaultDateRange } = select(
-			SETTINGS_STORE_NAME
-		).getSetting( 'wc_admin', 'wcAdminSettings' );
+		const defaultDateRange = getDefaultDateRange( select );
 
 		const noSearchResultsFound =
 			query.search && ! ( query[ endpoint ] && query[ endpoint ].length );

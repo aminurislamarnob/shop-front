@@ -10,10 +10,11 @@ import {
 	SummaryNumber,
 } from '@woocommerce/components';
 import { calculateDelta, formatValue } from '@woocommerce/number';
-import { getSummaryNumbers, SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { getSummaryNumbers } from '@woocommerce/data';
 import { getDateParamsFromQuery } from '@woocommerce/date';
 import { CurrencyContext } from '@woocommerce/currency';
 import ReportError from '../report-error';
+import { getDefaultDateRange } from '../../../utils/date';
 
 export class ReportSummary extends Component {
 	formatVal( val, type ) {
@@ -124,9 +125,7 @@ export default compose(
 
 		const fields = charts && charts.map( ( chart ) => chart.key );
 
-		const { woocommerce_default_date_range: defaultDateRange } = select(
-			SETTINGS_STORE_NAME
-		).getSetting( 'wc_admin', 'wcAdminSettings' );
+		const defaultDateRange = getDefaultDateRange( select );
 
 		const summaryData = getSummaryNumbers( {
 			endpoint,

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { omitBy, isUndefined, snakeCase } from 'lodash';
 import { withSelect } from '@wordpress/data';
 import { ReportFilters as Filters } from '@woocommerce/components';
-import { SETTINGS_STORE_NAME } from '@woocommerce/data';
 import {
 	getCurrentDates,
 	getDateParamsFromQuery,
@@ -12,6 +11,7 @@ import {
 } from '@woocommerce/date';
 import { CurrencyContext } from '@woocommerce/currency';
 import { LOCALE } from '../../../utils/admin-settings';
+import { getDefaultDateRange } from '../../../utils/date';
 import ImportStatusBar from '../import-status-bar';
 
 // CES store key — safely handle if package not available.
@@ -84,9 +84,7 @@ ReportFilters.propTypes = {
 
 export default compose(
 	withSelect( ( select ) => {
-		const { woocommerce_default_date_range: defaultDateRange } = select(
-			SETTINGS_STORE_NAME
-		).getSetting( 'wc_admin', 'wcAdminSettings' );
+		const defaultDateRange = getDefaultDateRange( select );
 		return { defaultDateRange };
 	} )
 )( ReportFilters );
