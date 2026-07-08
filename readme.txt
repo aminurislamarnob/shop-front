@@ -4,7 +4,7 @@ Tags: frontend manager, shop manager, woocommerce order management, woocommerce 
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.1.4
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,8 @@ StoreSuite includes capabilities that other store-management dashboards often lo
 * 🤖 AI product content, image, and all-in-one generation
 * 🧩 Full variable products, attributes, and variations (with generate-all-variations)
 * 📊 Real-time analytics, KPIs, and leaderboards
+* 📈 A full Analytics suite with WooCommerce-admin report parity (Revenue, Orders, Products, and more)
+* 📱 Fully responsive on mobile, tablet, and desktop
 * 📤 CSV product export
 
 No feature gates. No trial limits. No upsell.
@@ -42,6 +44,8 @@ No feature gates. No trial limits. No upsell.
 * 🎟️ **Coupons** – Create, edit, and manage WooCommerce coupons
 * 🛒 **Orders** – View, create, and edit orders with customer and item details
 * 📊 **Real-time dashboard analytics** – Sales KPIs, net sales chart, top products, recent orders, and quick actions
+* 📈 **Analytics reports** – A full analytics suite with WooCommerce-admin parity: Revenue, Orders, Products, Variations, Categories, Coupons, Taxes, Downloads, Stock, and Customers reports, each with summary KPIs, an interactive line/bar chart, sortable and paginated data tables, advanced filters, date-range comparison, and CSV export
+* 📱 **Fully responsive** – The entire frontend dashboard and analytics reports adapt to mobile and desktop screens with an off-canvas sidebar, stacked cards, and touch-friendly controls
 * 🔑 **Bring your own AI** – Built on the WordPress 7.0 central AI connector; generation runs on the provider and keys you configure in WordPress
 * ⚡ **Built for WooCommerce HPOS** – Fully compatible with High-Performance Order Storage
 
@@ -122,6 +126,14 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.2.0 =
+* Add a full **Analytics** suite with WooCommerce-admin report parity: Revenue, Orders, Products, Variations, Categories, Coupons, Taxes, Downloads, Stock, and Customers reports.
+* Each report includes summary KPIs, an interactive chart (line/bar; by day, week, month, quarter, or year), sortable and paginated data tables, and CSV export.
+* Add date-range comparison (previous period / previous year) and per-report advanced filters (e.g. product, category, coupon, order status, customer type) for WooCommerce Analytics parity.
+* Add a "Data status" import bar and re-skin every report to match the StoreSuite dashboard design language.
+* Make the Analytics reports fully responsive on mobile: the report header stacks, summary stats collapse to one per row, charts align to the page gutter, and the table actions row wraps so nothing is clipped.
+* Link analytics order numbers to the StoreSuite order-details page and rewrite WooCommerce admin URLs to their frontend dashboard equivalents.
 
 = 1.1.4 =
 * Make the entire frontend dashboard responsive for mobile and tablet viewports.
