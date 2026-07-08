@@ -216,12 +216,19 @@
 .woocommerce-analytics-report-header {
 	position: relative;
 	display: flex;
-	align-items: center;
+	// Top-align so the "Date range:" and "Data status:" labels share one row,
+	// regardless of how tall the filter block below each grows.
+	align-items: flex-start;
 	gap: 16px;
 
 	.woocommerce-filters {
 		flex: 1;
 		width: 100%;
+	}
+
+	// The status bar keeps its natural width and hugs the right edge.
+	.woocommerce-analytics-import-status-bar-wrapper {
+		flex: 0 0 auto;
 	}
 }
 
