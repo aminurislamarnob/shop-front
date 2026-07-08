@@ -241,8 +241,8 @@
 		margin: 5px 0 0;
 		font-size: 13px;
 		line-height: 18px;
-		color: #1e1e1e;
-		// Match the "Date range:" filter label weight.
+		// Match the "Date range:" filter label color and weight.
+		color: var( --storesuite-text-color );
 		font-weight: 500;
 	}
 }
