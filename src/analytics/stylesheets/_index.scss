@@ -395,11 +395,24 @@
 		// The table card's actions row (Compare / search / Download) is a
 		// right-aligned no-wrap flex row. On mobile its content is wider than the
 		// cell, so the overflow pushes the Compare button off the left edge and
-		// clips it. Let it wrap and align left so every control stays on screen.
+		// clips it. Let it wrap and align left, keeping Compare + Download on the
+		// first row and dropping the search to a full-width second row.
 		.woocommerce-table__actions {
 			flex-wrap: wrap;
 			justify-content: flex-start;
 			gap: 8px;
+
+			// The search sits in an unclassed wrapper div (the only div child).
+			// Push that wrapper onto its own full-width second row so Compare and
+			// Download stay together on the first row.
+			> div {
+				order: 1;
+				flex: 0 0 100%;
+			}
+
+			.woocommerce-search {
+				width: 100%;
+			}
 		}
 	}
 }
