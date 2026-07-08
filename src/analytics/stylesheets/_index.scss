@@ -197,6 +197,13 @@
 		padding-left: 0;
 	}
 
+	// Match the picker's own "Date range:" label to the other settings field
+	// labels (weight + color).
+	.woocommerce-filters-label {
+		font-weight: 600;
+		color: var( --storesuite-text-black );
+	}
+
 	&__statuses {
 		display: grid;
 		grid-template-columns: repeat( auto-fill, minmax( 180px, 1fr ) );
