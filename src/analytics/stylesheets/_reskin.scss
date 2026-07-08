@@ -535,6 +535,10 @@ $ss-radius: 8px;
 			}
 		}
 
+		.woocommerce-filters-advanced__line-item {
+			border: 0 !important;
+		}
+
 		.woocommerce-filters-advanced__add-button {
 			color: var( --storesuite-primary-bg );
 
