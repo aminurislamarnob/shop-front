@@ -5463,6 +5463,216 @@ body,
   background-color: var(--storesuite-surface-bg);
 }
 
+/*
+ * Bulk-edit, quick-edit and list quick-edit modal cards hardcode a white
+ * surface (#fff) and light chrome. Give the dialog a dark surface plus a
+ * defining border (the drop shadow is invisible on a dark backdrop) and
+ * re-skin the header/footer dividers and dividing rule.
+ */
+[data-theme="dark"] .storesuite-product-bulk-modal-dialog {
+  background: var(--storesuite-surface-bg);
+  border: 1px solid var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-product-bulk-modal-header {
+  border-bottom-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-product-bulk-modal-footer {
+  border-top-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-quick-edit-hr {
+  border-top-color: var(--storesuite-border-color);
+}
+
+/* Modal notices and warnings hardcode pale pastel fills. */
+[data-theme="dark"] .storesuite-export-bulk-notice {
+  background-color: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-wc-quick-edit-warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: rgb(251 191 36);
+}
+
+/* Secondary / ghost buttons (export + bulk modal actions) hardcode light fills. */
+[data-theme="dark"] .my-storesuite-button.storesuite-button-secondary {
+  background: var(--storesuite-surface-elevated);
+  border-color: var(--storesuite-border-color);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .my-storesuite-button.storesuite-button-ghost {
+  border-color: var(--storesuite-border-color);
+}
+
+/* ==========================================================================
+   Dashboard home (React widgets) dark mode
+   The dashboard home renders WooCommerce admin components (summary tiles,
+   chart, tables) plus custom quick-action cards. Their SCSS hardcodes white
+   surfaces and near-black text, so re-skin them for dark here. Scoped to
+   .storesuite-dashboard-layout so the Analytics page reskin is untouched.
+   ========================================================================== */
+
+/* Card surfaces: summary tiles, chart, tables, quick actions. */
+[data-theme="dark"] .storesuite-dashboard-layout ul.woocommerce-summary,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-actions,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-action-item,
+[data-theme="dark"] .storesuite-dashboard-layout .components-button.woocommerce-dropdown-button {
+  background: var(--storesuite-surface-bg);
+}
+
+/* Summary tile hover/selected states. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item:hover,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item:focus {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item.is-selected {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Dividers between summary tiles and inside cards. */
+[data-theme="dark"] .storesuite-dashboard-layout ul.woocommerce-summary li .woocommerce-summary__item,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__header,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__header,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__item,
+[data-theme="dark"] .storesuite-dashboard-layout .components-card__header,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-dashboard-section-header {
+  border-color: var(--storesuite-border-color);
+}
+
+/* Table header cells hardcode a light gray fill. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__header {
+  background: var(--storesuite-surface-bg);
+}
+
+/* Row hover. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table tr:hover .woocommerce-table__item {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Near-black text: titles, values, numbers, dropdown labels. */
+[data-theme="dark"] .storesuite-dashboard-layout h2.woocommerce-chart__title,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__title,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-value,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__caption,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__header,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__header .components-button,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__item,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-actions__title,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-recent-orders__number,
+[data-theme="dark"] .storesuite-dashboard-layout .components-button.woocommerce-dropdown-button .woocommerce-dropdown-button__labels span {
+  color: var(--storesuite-text-black);
+}
+
+/* Muted/secondary text: labels, section headers, empty notices, deltas. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-label,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-action-item__label,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-dashboard-empty-notice,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-dashboard-section-header h3 {
+  color: var(--storesuite-text-color);
+}
+
+/*
+ * WooCommerce wraps stat labels, values and table cell text in its <Text>
+ * component (.components-text), which hardcodes a near-black color on the leaf
+ * element — so the container color rules above never reach the actual glyphs.
+ * Make the wrapper follow its container's token color. Scoped away from the
+ * delta pill so is-good/is-bad-trend text colors are preserved.
+ */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-label .components-text,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-stat-label,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-value .components-text,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table .components-text {
+  color: inherit;
+}
+
+/* Card header titles (Recent Orders, Top products) render as a <Text> heading
+   inside .components-card__header and stay near-black. */
+[data-theme="dark"] .storesuite-dashboard-layout .components-card__header .components-text {
+  color: var(--storesuite-text-black);
+}
+
+/* Quick-action card border + hover. */
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-action-item {
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-action-item:hover {
+  border-color: var(--storesuite-primary-bg);
+}
+
+/* Delta pill neutral fill + text (good/bad-trend keep their pastel greens/reds). */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item:not(.is-good-trend):not(.is-bad-trend) .woocommerce-summary__item-delta {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item:not(.is-good-trend):not(.is-bad-trend) .woocommerce-summary__item-delta .components-text {
+  color: var(--storesuite-text-color-light);
+}
+
+/* Chart interval select + dropdown backdrops hardcode a light border. */
+[data-theme="dark"] .storesuite-dashboard-layout .components-input-control__backdrop {
+  border-color: var(--storesuite-border-color);
+}
+
+/* Mobile stacked-table rows hardcode white / zebra light gray. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__table tbody tr {
+  background: var(--storesuite-surface-bg);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__table tbody tr:nth-child(odd) {
+  background: var(--storesuite-surface-elevated);
+}
+
+/*
+ * WooCommerce date-range picker popover. Shared by the dashboard home and the
+ * Analytics reports, and rendered as a WordPress popover whose position in the
+ * DOM is not guaranteed to sit inside a layout wrapper — so these are matched
+ * on the dark theme alone. The container surface plus its inner preset list,
+ * custom-range inputs and Presets/Custom tabs all hardcode white / near-black.
+ */
+/* Generic popovers (chart ellipsis menus, tooltips) — beats WordPress's
+   single-class .components-popover__content default. */
+[data-theme="dark"] .components-popover__content {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+/*
+ * The date-range picker popover specifically. WooCommerce's admin CSS whitens
+ * it with `.woocommerce-filters-date__content .components-popover__content`
+ * (specificity 0,2,0) and loads AFTER this file, so a single-class override
+ * only ties and loses on order. Match that same ancestor to exceed it (0,3,0).
+ */
+[data-theme="dark"] .woocommerce-filters-date__content .components-popover__content {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .woocommerce-segmented-selection__label,
+[data-theme="dark"] .woocommerce-filters-date__text,
+[data-theme="dark"] .woocommerce-filters-date__content-controls {
+  background: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-segmented-selection__label {
+  border-color: var(--storesuite-border-color);
+}
+/*
+ * Selected preset/compare cell. WooCommerce paints the checked label white via
+ * `.__input:checked + label .__label` (specificity 0,3,1); match that chain so
+ * the selected item's surface goes dark while its blue indicator + text stay.
+ */
+[data-theme="dark"] .woocommerce-segmented-selection__input:checked + label .woocommerce-segmented-selection__label {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .woocommerce-segmented-selection__input:checked + label {
+  color: var(--storesuite-primary-bg);
+}
+[data-theme="dark"] .components-tab-panel__tabs-item {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .components-tab-panel__tabs-item.is-active,
+[data-theme="dark"] .components-tab-panel__tabs-item[aria-selected="true"] {
+  color: var(--storesuite-primary-bg);
+}
+
 /* Form fields, selects and select2 controls sit one step above the surface. */
 [data-theme="dark"] .my-storesuite-container .storesuite-form-control,
 [data-theme="dark"] .woocommerce_order_items_wrapper input[type="text"],
@@ -5736,11 +5946,6 @@ body,
 [data-theme="dark"] .storesuite-dashboard-order-details .toggle-slider,
 [data-theme="dark"] .storesuite-form-group.storesuite-form-switch label::before {
   background-color: rgb(71 85 105);
-}
-
-/* Warm highlight on the quick-edit switch fieldset. */
-[data-theme="dark"] .storesuite-product-quick-edit-fieldset .storesuite-form-group.storesuite-form-switch {
-  background: rgba(245, 158, 11, 0.1);
 }
 
 /* Status badges: darken pastel fills, brighten text for contrast. */
