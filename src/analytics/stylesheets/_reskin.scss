@@ -476,6 +476,9 @@ $ss-radius: 8px;
 			// actions row (Woo ships the compare button noticeably shorter).
 			height: 38px;
 			border-radius: 6px;
+			// !important to override Woo's disabled-state secondary-button shadow
+			// (.components-button.is-secondary:disabled), which is more specific.
+			box-shadow: none !important;
 		}
 	}
 
