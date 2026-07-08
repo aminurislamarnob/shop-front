@@ -9,7 +9,6 @@ import { Chart } from '@woocommerce/components';
 import {
 	getReportChartData,
 	getTooltipValueFormat,
-	SETTINGS_STORE_NAME,
 	REPORTS_STORE_NAME,
 } from '@woocommerce/data';
 import {
@@ -22,6 +21,7 @@ import {
 import { CurrencyContext } from '@woocommerce/currency';
 
 import ReportError from '../report-error';
+import { getDefaultDateRange } from '../../../utils/date';
 import { getChartMode, getSelectedFilter, createDateFormatter, buildChartData } from './utils';
 
 export class ReportChart extends Component {
@@ -205,9 +205,7 @@ export default compose(
 		const chartMode      =
 			props.mode || getChartMode( selectedFilter, query ) || 'time-comparison';
 
-		const { woocommerce_default_date_range: defaultDateRange } = select(
-			SETTINGS_STORE_NAME
-		).getSetting( 'wc_admin', 'wcAdminSettings' );
+		const defaultDateRange = getDefaultDateRange( select );
 
 		const reportStoreSelector = select( REPORTS_STORE_NAME );
 
