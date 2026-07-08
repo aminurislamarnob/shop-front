@@ -213,8 +213,14 @@ $ss-radius: 8px;
 		margin-bottom: 24px;
 
 		li .woocommerce-summary__item {
-			border-bottom: 0;
+			border-bottom: 1px solid var( --storesuite-border-color );
 			border-color: var( --storesuite-border-color );
+		}
+
+		// No divider beneath the last row (5-column grid) so it doesn't
+		// double up with the card's bottom edge.
+		li:nth-last-child( -n + 5 ) .woocommerce-summary__item {
+			border-bottom: 0;
 		}
 
 		li:last-child .woocommerce-summary__item {
