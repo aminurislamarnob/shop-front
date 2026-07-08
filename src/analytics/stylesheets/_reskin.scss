@@ -472,6 +472,9 @@ $ss-radius: 8px;
 		}
 
 		.woocommerce-compare-button {
+			// Match the search box height so the two sit level in the table
+			// actions row (Woo ships the compare button noticeably shorter).
+			height: 38px;
 			border-radius: 6px;
 		}
 	}
