@@ -136,6 +136,32 @@ class SettingsController extends WP_REST_Controller {
 			$storesuite_settings['storesuite_coupon_per_page'] = sanitize_text_field( $request->get_param( 'storesuite_coupon_per_page' ) );
 		}
 
+		$ai_field_keys = array(
+			'storesuite_ai_field_title',
+			'storesuite_ai_field_description',
+			'storesuite_ai_field_short_description',
+			'storesuite_ai_field_featured_image',
+			'storesuite_ai_field_gallery_image',
+			'storesuite_ai_field_bundle',
+		);
+		foreach ( $ai_field_keys as $key ) {
+			if ( $request->has_param( $key ) ) {
+				$storesuite_settings[ $key ] = 'no' === $request->get_param( $key ) ? 'no' : 'yes';
+			}
+		}
+
+		$ai_instruction_keys = array(
+			'storesuite_ai_instruction_title',
+			'storesuite_ai_instruction_description',
+			'storesuite_ai_instruction_short_description',
+			'storesuite_ai_image_instruction',
+		);
+		foreach ( $ai_instruction_keys as $key ) {
+			if ( $request->has_param( $key ) ) {
+				$storesuite_settings[ $key ] = sanitize_textarea_field( $request->get_param( $key ) );
+			}
+		}
+
 		$color_keys = array(
 			'storesuite_color_button_text',
 			'storesuite_color_button_background',
@@ -155,7 +181,8 @@ class SettingsController extends WP_REST_Controller {
 		);
 		foreach ( $color_keys as $key ) {
 			if ( $request->has_param( $key ) ) {
-				$storesuite_settings[ $key ] = sanitize_hex_color( $request->get_param( $key ) ) ?: sanitize_text_field( $request->get_param( $key ) );
+				$sanitized_hex               = sanitize_hex_color( $request->get_param( $key ) );
+				$storesuite_settings[ $key ] = $sanitized_hex ? $sanitized_hex : sanitize_text_field( $request->get_param( $key ) );
 			}
 		}
 
@@ -168,6 +195,13 @@ class SettingsController extends WP_REST_Controller {
 
 		if ( $request->has_param( 'storesuite_color_palette_name' ) ) {
 			$storesuite_settings['storesuite_color_palette_name'] = sanitize_text_field( $request->get_param( 'storesuite_color_palette_name' ) );
+		}
+
+		if ( $request->has_param( 'storesuite_attribution_logo_variant' ) ) {
+			$variant = $request->get_param( 'storesuite_attribution_logo_variant' );
+			if ( in_array( $variant, array( 'dark', 'light' ), true ) ) {
+				$storesuite_settings['storesuite_attribution_logo_variant'] = $variant;
+			}
 		}
 
 		update_option( 'storesuite_settings', $storesuite_settings );
@@ -320,6 +354,68 @@ class SettingsController extends WP_REST_Controller {
 				),
 				'storesuite_color_palette_name' => array(
 					'description' => __( 'Active predefined color palette slug.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_attribution_logo_variant' => array(
+					'description' => __( 'Attribution logo variant for the custom palette: dark or light.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'dark', 'light' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_field_title'           => array(
+					'description' => __( 'Enable AI generation for the product title.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_field_description'     => array(
+					'description' => __( 'Enable AI generation for the product long description.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_field_short_description' => array(
+					'description' => __( 'Enable AI generation for the product short description.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_field_featured_image'  => array(
+					'description' => __( 'Enable AI generation for the product featured image.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_field_gallery_image'   => array(
+					'description' => __( 'Enable AI generation for the product gallery images.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_field_bundle'          => array(
+					'description' => __( 'Enable the global "Generate with AI" button that drafts all product copy at once.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_instruction_title'     => array(
+					'description' => __( 'Custom system instruction for the product title. Falls back to the built-in default when empty.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_instruction_description' => array(
+					'description' => __( 'Custom system instruction for the product long description. Falls back to the built-in default when empty.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_instruction_short_description' => array(
+					'description' => __( 'Custom system instruction for the product short description. Falls back to the built-in default when empty.', 'storesuite' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_ai_image_instruction'     => array(
+					'description' => __( 'Custom styling guidance appended to product image prompts. Falls back to the built-in default when empty.', 'storesuite' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),

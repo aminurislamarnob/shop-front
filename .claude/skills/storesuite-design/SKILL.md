@@ -130,6 +130,8 @@ This produces:
 - `.storesuite-page-main-title` (`h3`, `20px / 600`, slate)
 - `.storesuite-dashboard-braedcrumb` (note legacy spelling) — inline list with chevron SVG separators, breadcrumb anchors in primary blue, current item in slate
 
+**Title actions:** to surface a page's primary button beside the title on mobile/tablet, hook `storesuite_dashboard_title_after` (fires inside the wrapper, after the title) and render a `.my-storesuite-button.storesuite-title-action`, gated to the page's endpoint (see `CouponController::render_title_add_coupon_button()`). The button is hidden on desktop; on ≤1024px it appears and the toolbar's counterpart (`.storesuite-toolbar-add` column) is hidden, along with the breadcrumb on title bars that have an action.
+
 ## Cards
 
 Two card variants:
@@ -246,15 +248,17 @@ Wrap the toolbar/container — the skill auto-styles `.wp-editor-container` with
 
 ```html
 <div class="storesuite-table-responsive">
-    <table class="my-storesuite-tbl my-storesuite-product-list-table">
+    <table class="my-storesuite-tbl my-storesuite-product-list-table storesuite-list-table">
         <thead><tr><th>…</th></tr></thead>
-        <tbody><tr class="single-product-item"><td>…</td></tr></tbody>
+        <tbody><tr class="single-product-item storesuite-list-row"><td data-title="…">…</td></tr></tbody>
     </table>
 </div>
 ```
 
 - `.storesuite-table-responsive` — `overflow-x: auto`, radius `4px`
 - `.my-storesuite-tbl` — collapsed borders, white thead/tbody, no cell borders by default
+- **Every list table** must also carry `storesuite-list-table` on the `<table>` and `storesuite-list-row` on each data `<tr>` (not on "not found" rows) — these drive the responsive stacked-card layout and tablet `min-width` scrolling
+- Checkbox cells use class `check-column` (no `data-title`); all other data `<td>`s carry a `data-title` matching their column header
 - `th`: `padding: 10px`, uppercase, `font-weight: 600`, slate text
 - `td`: `padding: 12px`, top-border `1px solid var(--storesuite-border-color)`
 - First-column anchors: primary blue, underline on hover
@@ -394,6 +398,31 @@ When adding a new page that needs interactivity, prefer **extending `form-handle
 - Keep `<label for>` paired with form control `id`s — never rely on visual order alone
 - All decorative SVGs: `aria-hidden="true" focusable="false"`
 
+## Responsive styles
+
+All responsive (mobile/tablet) CSS lives in **`assets/frontend/responsive.css`** — never add media queries to `style.css`. It is registered as `storesuite_responsive_style` (depends on `storesuite_style`) and enqueued right after it in `includes/Assets.php`, so it overrides the desktop shell.
+
+**Breakpoints — use only these, and never repeat one:**
+- `@media ( max-width: 767px )` — mobile. Matches the sidebar collapse logic in `global.js`, which goes off-canvas below `768px`.
+- `@media ( max-width: 575px )` — phone-only refinements.
+- `@media ( min-width: 768px ) and ( max-width: 1024px )` — tablet, which also catches landscape phones ≥768px wide. The sidebar defaults to collapsed in this range (`global.js`), list tables get a `min-width` and scroll horizontally inside `.storesuite-table-responsive`, and toolbar toggles go icon-only.
+- `@media ( min-width: 768px ) and ( max-width: 1024px ) and ( orientation: landscape ) and ( max-height: 500px )` — landscape-phone (short viewport) refinements only: tighter page padding, near-full-height modals.
+
+Put **every** rule for a breakpoint inside a **single** `@media` block. Do not open the same `@media` more than once in the file. Don't invent other ad-hoc breakpoints for new work.
+
+**Selectors:**
+- Prefer a **unique, semantic class** over ID selectors or generic Bootstrap chains. If the markup only offers `#some-id`, `.row.justify-content-end`, or `.col-md-*` to hook onto, **add a purpose class to the template first** (e.g. `storesuite-products-toolbar`, `storesuite-toolbar-actions` / `-search` / `-bulk`) and style that.
+- For rules shared across several modals, target the **common** `.storesuite-product-bulk-modal-overlay` / `.storesuite-product-bulk-modal-*` classes — not per-modal IDs like `#storesuite-product-bulk-edit-modal`.
+- Reuse existing classes and design tokens, same as global CSS.
+
+**Keep it lean:**
+- Very few comments — short section labels only; skip comments where the selector is self-explanatory.
+- When multiple selectors in the same media query share one identical declaration (e.g. `display: none`), **merge them into a single comma-separated selector list**.
+
+**JS parity:** any JS that branches on viewport width must read `document.documentElement.clientWidth` (the layout viewport) so it matches the CSS media queries — not `window.innerWidth`. The sidebar threshold is `768`.
+
+**Mobile list tables:** list tables collapse to **stacked cards** (hide `thead`, set `table/tr/td` to `display:block`, surface each cell's label via `td[data-title]::before`). The card rules key on the shared `storesuite-list-table` (table) and `storesuite-list-row` (data row) classes — add both to any new list table, and ensure every data `<td>` carries a `data-title` (checkbox cells use `check-column` instead).
+
 ## Critical rules
 
 1. **Use design tokens** — never hardcode `#2d5bdb`, `rgb(226 232 240)`, etc. Reference `var(--storesuite-*)`.
@@ -405,7 +434,7 @@ When adding a new page that needs interactivity, prefer **extending `form-handle
 7. **Inline SVG, never `<i>` icon fonts.**
 8. **Templates are themable** — load via `storesuite_get_template_part( $template, null, $args )` so the theme's `my-storesuite/` directory can override them.
 9. **Don't import this design system into the React bundles** — `src/dashboard/` and `src/analytics/` use WooCommerce components and Heroicons; only the shared CSS variables (`--storesuite-*`) are available there since `style.css` is also loaded.
-10. **Test at `≥1536px` and ≤768px** — page content caps at `1536px`; mobile collapses card columns to full-width via the `@media (max-width: 768px)` block.
+10. **Test at `≥1536px`, `768–1024px` (portrait + landscape), `≤767px`, and `≤575px`** — page content caps at `1536px`. All responsive rules go in `assets/frontend/responsive.css` using only the breakpoints listed in the **Responsive styles** section.
 
 ## Adding a new page (recipe)
 

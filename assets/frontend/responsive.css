@@ -1,0 +1,849 @@
+/**
+ * StoreSuite — Responsive & breakpoint styles. Loaded after style.css.
+ * Sidebar collapse logic (global.js) activates at >= 768px, so mobile rules use <= 767px.
+ * Tablet rules (768–1024px) also cover landscape phones; global.js defaults the
+ * sidebar to collapsed in that range.
+ */
+
+.storesuite-search-toggle-col,
+.storesuite-title-action {
+	display: none;
+}
+
+.storesuite-order-search-filters {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+@media ( max-width: 767px ) {
+	/* Off-canvas sidebar */
+	.my-storesuite-container .my-storesuite-sidebar {
+		--storesuite-sidebar-current-width: var( --storesuite-sidebar-width-expanded );
+		width: var( --storesuite-sidebar-width-expanded );
+		max-width: 85vw;
+		transform: translateX( -100% );
+		box-shadow: 0 12px 40px -8px rgba( 15, 23, 42, 0.35 );
+		transition: transform 0.28s ease;
+		z-index: 1000;
+	}
+
+	.my-storesuite-container.storesuite-sidebar-mobile-open .my-storesuite-sidebar {
+		transform: translateX( 0 );
+	}
+
+	.my-storesuite-wrapper {
+		width: 100%;
+		margin-left: 0;
+	}
+
+	.my-storesuite-container::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		z-index: 999;
+		background: rgba( 15, 23, 42, 0.45 );
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.28s ease, visibility 0.28s ease;
+	}
+
+	.my-storesuite-container.storesuite-sidebar-mobile-open::before {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.my-storesuite-container.storesuite-sidebar-collapsed {
+		--storesuite-sidebar-current-width: var( --storesuite-sidebar-width-expanded );
+	}
+
+	.my-storesuite-container,
+	.my-storesuite-wrapper,
+	.my-storesuite-page-content {
+		max-width: 100%;
+		overflow-x: hidden;
+	}
+
+	.my-storesuite-page-content {
+		padding: 16px;
+	}
+
+	.storesuite-dashboard-braedcrumb,
+	.storesuite-table-header-part .storesuite-export-toggle .storesuite-button-label,
+	.storesuite-table-header-part .storesuite-filter-toggle .storesuite-button-label,
+	.storesuite-toolbar-actions .my-storesuite-button .storesuite-add-product-text,
+	.storesuite-ai-bundle-prefix,
+	.storesuite-list-table thead,
+	.woocommerce-table--order-downloads thead,
+	.storesuite-toolbar-add {
+		display: none;
+	}
+
+	/* Primary "Add" action moves up beside the page title */
+	.storesuite-title-action {
+		display: inline-flex;
+	}
+
+	.storesuite-table-header-part .storesuite-search-toggle svg,
+	.storesuite-table-header-part .storesuite-export-toggle svg,
+	.storesuite-filter-toggle svg {
+		margin-right: 0;
+	}
+
+	.storesuite-toolbar-actions {
+		order: 1;
+		width: 100%;
+	}
+
+	/* Product form: restore vertical spacing between stacked grid fields
+	   (Bootstrap rows default to --bs-gutter-y: 0, so columns touch). */
+	#storesuite-add-product .row {
+		--bs-gutter-y: 16px;
+	}
+
+	.storesuite-search-toggle-col {
+		display: block;
+	}
+
+	.storesuite-table-header-part .storesuite-export-toggle,
+	.storesuite-table-header-part .storesuite-filter-toggle,
+	.storesuite-table-header-part .storesuite-search-toggle,
+	.storesuite-orders-title-actions .storesuite-filter-toggle {
+		width: 45px;
+		height: 38px;
+		padding: 5px;
+	}
+
+	/* Order form: push Update/Create button to the very bottom */
+	.storesuite-dashboard-order-details .col-md-4 {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.storesuite-dashboard-order-details .action-buttons {
+		order: 99;
+		flex-direction: row;
+		margin-bottom: 0;
+		margin-top: 16px;
+	}
+
+	.storesuite-dashboard-order-details .create-order-btn {
+		width: 100%;
+	}
+
+	/* Order details toolbar mobile layout */
+	.storesuite-order-details-actions {
+		display: flex;
+		gap: 8px;
+	}
+
+	.storesuite-order-details-actions .my-storesuite-button {
+		flex: 1;
+		justify-content: center;
+	}
+
+	/* Orders toolbar mobile layout */
+	.storesuite-orders-toolbar-bulk,
+	.storesuite-orders-toolbar-search {
+		width: 100%;
+	}
+
+	.storesuite-bulk-order-actions {
+		max-width: none;
+		width: 100%;
+	}
+
+	.storesuite-bulk-order-actions .storesuite-form-control {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.storesuite-order-search-form {
+		flex-direction: column;
+		flex-wrap: nowrap;
+		gap: 8px;
+	}
+
+	.storesuite-order-search-form .storesuite-table-search-input {
+		width: 100%;
+	}
+
+	.storesuite-order-search-filters {
+		width: 100%;
+	}
+
+	.storesuite-order-search-filters .storesuite-form-group:first-child {
+		flex: 1 1 0%;
+		min-width: 0;
+	}
+
+	/* Add Order + Filter in the title row */
+	.storesuite-orders-title-actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-left: auto;
+	}
+
+	.storesuite-toolbar-search {
+		order: 2;
+		display: none;
+	}
+
+	.storesuite-products-toolbar.storesuite-search-open .storesuite-toolbar-search {
+		display: block;
+	}
+
+	.storesuite-table-search-input {
+		min-width: 0;
+		max-width: none;
+		width: 100%;
+	}
+
+	.storesuite-filter-offcanvas {
+		max-width: 100vw;
+	}
+
+	.storesuite-filter-toggle {
+		display: inline-flex !important;
+	}
+
+	.storesuite-toolbar-bulk {
+		order: 3;
+	}
+
+	.storesuite-toolbar-actions .row.justify-content-end {
+		flex-wrap: nowrap;
+	}
+
+	.storesuite-toolbar-actions .row.justify-content-end > div:first-child {
+		margin-right: auto;
+	}
+
+	.storesuite-table-responsive {
+		max-width: 100%;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	/* List tables → stacked cards (each cell's data-title becomes its label) */
+	.storesuite-table-responsive:has( .storesuite-list-table ) {
+		overflow: visible;
+	}
+
+	table.my-storesuite-tbl > tbody {
+		background: transparent;
+	}
+
+	.storesuite-list-table,
+	.storesuite-list-table tbody,
+	.storesuite-list-table tr,
+	.storesuite-list-table td,
+	.woocommerce-table--order-downloads,
+	.woocommerce-table--order-downloads tbody,
+	.woocommerce-table--order-downloads tr,
+	.woocommerce-table--order-downloads td {
+		display: block;
+		width: 100%;
+	}
+
+	.storesuite-list-table tr.storesuite-list-row,
+	.woocommerce-table--order-downloads tbody tr {
+		margin-bottom: 16px;
+		padding: 8px 16px;
+		border: 1px solid var( --storesuite-border-color );
+		border-radius: 8px;
+		background: #fff;
+	}
+
+	.storesuite-list-table tr.storesuite-list-row td,
+	.woocommerce-table--order-downloads tbody tr td {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 10px 0;
+		border-top: 1px solid var( --storesuite-border-color );
+		text-align: right;
+	}
+
+	.storesuite-list-table tr.storesuite-list-row td:first-child,
+	.woocommerce-table--order-downloads tbody tr td:first-child {
+		border-top: 0;
+	}
+
+	.my-storesuite-attributes-table tbody tr td:first-child {
+		border-top: 0 !important;
+	}
+
+	.storesuite-list-table tr.storesuite-list-row td[data-title]::before,
+	.woocommerce-table--order-downloads tbody tr td[data-title]::before {
+		content: attr( data-title );
+		flex: 0 0 auto;
+		font-weight: 600;
+		color: var( --storesuite-text-black );
+		text-align: left;
+	}
+
+	.storesuite-list-table tr.storesuite-list-row td.check-column {
+		border-top: 0 !important;
+		justify-content: flex-start;
+		padding-top: 7px;
+		padding-bottom: 15px;
+	}
+
+	table.my-storesuite-product-list-table tbody tr td.tbl-product-name {
+		width: 100%;
+	}
+
+	/* Actions menu expands inline (collapse) instead of floating over cards */
+	.storesuite-list-table tr.storesuite-list-row td:last-child {
+		flex-wrap: wrap;
+	}
+
+	.storesuite-list-table .storesuite-dropdown {
+		display: contents;
+	}
+
+	.storesuite-list-table .storesuite-dropdown-menu {
+		position: static;
+		width: 100%;
+		box-shadow: none;
+	}
+
+	/* Product form: sticky save bar spans the viewport (sidebar is off-canvas) */
+	.storesuite-sticky-actions {
+		left: 0;
+	}
+
+	/* Stack label over buttons so nothing gets clipped on narrow screens */
+	.storesuite-sticky-actions-inner {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 12px;
+	}
+
+	.storesuite-sticky-actions-label {
+		text-align: center;
+	}
+
+	.storesuite-sticky-actions-buttons {
+		width: 100%;
+	}
+
+	.storesuite-sticky-actions-buttons .my-storesuite-button {
+		flex: 1 1 0;
+		justify-content: center;
+	}
+
+	.storesuite-sticky-save .storesuite-sticky-save-label {
+		display: none;
+	}
+
+	/* Variations card title: stack the heading above the "Set Default Values" link */
+	#storesuite-product-variations .storesuite-card-title {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+
+	/* Generate variations / Add manually become full-width stacked buttons */
+	.storesuite-variation-toolbar,
+	.storesuite-variation-toolbar-primary {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.storesuite-variation-toolbar-primary #storesuite-generate-variations-btn,
+	.storesuite-variation-toolbar-primary #storesuite-add-variation-btn {
+		width: 100%;
+		justify-content: center;
+		margin-left: 0;
+	}
+
+	.storesuite-variation-bulk-group {
+		flex: 1 1 auto;
+		max-width: none;
+		width: 100%;
+	}
+
+	/* Variation row header → stacked card (like the attributes table):
+	   thumb + actions on top, attribute selects full-width below */
+	.storesuite-variation-header {
+		flex-wrap: wrap;
+	}
+
+	.storesuite-variation-thumb {
+		order: 1;
+	}
+
+	.storesuite-variation-actions-header {
+		order: 2;
+		margin-left: auto;
+	}
+
+	.storesuite-variation-attrs {
+		order: 3;
+		flex: 1 1 100%;
+		flex-direction: column;
+	}
+
+	.storesuite-variation-attrs select {
+		max-width: 100%;
+		width: 100%;
+	}
+
+	.my-storesuite-container .select2-container {
+		max-width: 100%;
+	}
+
+	.storesuite-form-group.storesuite-form-switch {
+		flex-wrap: wrap;
+	}
+
+	.storesuite-form-group.storesuite-form-switch .storesuite-form-text {
+		flex: 0 0 100%;
+		width: 100%;
+	}
+
+	.storesuite-dashboard-order-details .select2-container {
+		width: 100% !important;
+	}
+
+	.storesuite-account-layout > .col-md-3 {
+		margin-bottom: 16px;
+	}
+
+	.storesuite-account-header-card > .my-storesuite-button {
+		display: none;
+	}
+
+	.storesuite-dashboard-order-details .date-time-group {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	.storesuite-dashboard-order-details .date-input {
+		flex: 0 0 100%;
+		width: 100%;
+	}
+
+	.storesuite-dashboard-order-details .time-input {
+		width: auto;
+		flex: 0 0 auto;
+	}
+
+	/* Permalink editor: wrap so the prefix sits on its own full-width row */
+	.my-storesuite-container .storesuite-permalink-group {
+		flex-wrap: wrap;
+	}
+
+	.my-storesuite-container .storesuite-permalink-prefix {
+		width: 100%;
+		border-right: 0;
+	}
+
+	/* Order items (view + edit): scroll horizontally instead of squishing */
+	#woocommerce-order-items {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.storesuite-dashboard-order-details .storesuite-table.order-items {
+		min-width: 480px;
+	}
+
+	.storesuite-dashboard-order-details .storesuite-table th,
+	.storesuite-dashboard-order-details .storesuite-table td {
+		padding: 8px;
+	}
+
+	.storesuite-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 {
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.storesuite-pagination-wrap {
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		text-align: center;
+	}
+
+	.storesuite-pagination {
+		justify-content: center;
+	}
+
+	/* Product modals */
+	.storesuite-product-bulk-modal-overlay {
+		padding: 1rem;
+	}
+
+	.storesuite-product-bulk-modal-dialog {
+		max-width: 100%;
+		max-height: calc( 100vh - 2rem );
+	}
+
+	.storesuite-product-bulk-modal-header,
+	.storesuite-product-bulk-edit-scroll,
+	.storesuite-product-bulk-modal-footer {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+
+	/* Stack the attribute toolbar and make both actions full width */
+	#storesuite-product-attributes .storesuite-card-footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	#storesuite-attribute-toolbar .storesuite-input-group {
+		flex: 1 1 auto;
+		max-width: none;
+		width: 100%;
+	}
+
+	#storesuite-add-custom-attribute-btn {
+		width: 100%;
+		justify-content: center;
+	}
+
+	#storesuite-add-attribute-btn .storesuite-add-attribute-btn-label {
+		display: none;
+	}
+
+	/* Attributes table → stacked cards (like the product list table) */
+	.my-storesuite-attributes-table thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect( 0, 0, 0, 0 );
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.my-storesuite-attributes-table,
+	.my-storesuite-attributes-table tbody,
+	.my-storesuite-attributes-table tr,
+	.my-storesuite-attributes-table td {
+		display: block;
+		width: 100%;
+	}
+
+	.my-storesuite-attributes-table tr.storesuite-attribute-row {
+		margin-bottom: 16px;
+		padding: 8px 16px;
+		border: 1px solid var( --storesuite-border-color );
+		border-radius: 8px;
+		background: #fff;
+	}
+
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 10px 0;
+		border-top: 1px solid var( --storesuite-border-color );
+		text-align: right;
+	}
+
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td:first-child {
+		border-top: 0;
+	}
+
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td[data-title]::before {
+		content: attr( data-title );
+		flex: 0 0 auto;
+		font-weight: 600;
+		color: var( --storesuite-text-black );
+		text-align: left;
+	}
+
+	/* Name cell holds its own block content (badges, edit controls) */
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td.storesuite-attribute-col-name {
+		display: block;
+		text-align: left;
+	}
+
+	/* Actions row has no label — keep buttons grouped to the right */
+	.my-storesuite-attributes-table tr.storesuite-attribute-row td.storesuite-attribute-col-actions {
+		justify-content: flex-end;
+		gap: 8px;
+	}
+
+	/* Override desktop fixed column widths so cells span the card */
+	#storesuite-product-attributes .storesuite-attribute-col-visible,
+	#storesuite-product-attributes .storesuite-attribute-col-variation,
+	#storesuite-product-attributes .storesuite-attribute-col-actions {
+		width: 100%;
+	}
+
+	#storesuite-product-attributes .my-storesuite-tbl {
+		border: 0;
+	}
+
+	#storesuite-product-attributes .storesuite-attribute-col-name {
+		border-top: 0!important;
+	}
+
+	/* Term action buttons: Select all / Select none share a row, Add new term full width */
+	.storesuite-attribute-terms-toggle {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.storesuite-attribute-terms-toggle .storesuite-select-all-terms,
+	.storesuite-attribute-terms-toggle .storesuite-select-no-terms {
+		flex: 1 1 0;
+		justify-content: center;
+		text-align: center;
+	}
+
+	.storesuite-attribute-terms-toggle .storesuite-add-attribute-term {
+		flex: 1 1 100%;
+		justify-content: center;
+		text-align: center;
+	}
+}
+
+@media ( max-width: 575px ) {
+	/* Header: icon-only Visit Home button */
+	.storesuite-header-right {
+		gap: 10px;
+	}
+
+	.storesuite-header-right a.my-storesuite-button {
+		width: 35px;
+		height: 35px;
+		padding: 0;
+		border-radius: 50%;
+	}
+
+	.storesuite-header-right a.my-storesuite-button .storesuite-button-label {
+		display: none;
+	}
+
+	.storesuite-header-right a.my-storesuite-button svg {
+		margin-right: 0;
+	}
+
+	.storesuite-button-group {
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.storesuite-product-bulk-modal-overlay {
+		padding: 0;
+	}
+
+	.storesuite-product-bulk-modal-dialog {
+		width: 100%;
+		max-width: 100%;
+		height: 100%;
+		max-height: 100%;
+		border-radius: 0;
+	}
+
+	.storesuite-product-bulk-modal-title {
+		font-size: 1rem;
+	}
+
+	.storesuite-product-bulk-modal-footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.storesuite-product-bulk-modal-footer .my-storesuite-button {
+		width: 100%;
+		justify-content: center;
+	}
+	.storesuite-kpi-summary .col .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:last-child .storesuite-kpi-card {
+		border-bottom: none;
+	}
+}
+
+/* Tablet + landscape phones ≥768px: compact toolbar, horizontally scrollable list table */
+@media ( min-width: 768px ) and ( max-width: 1024px ) {
+	.my-storesuite-page-content {
+		padding: 20px;
+	}
+
+	.storesuite-table-header-part .storesuite-export-toggle .storesuite-button-label,
+	.storesuite-table-header-part .storesuite-filter-toggle .storesuite-button-label,
+	.storesuite-toolbar-add,
+	.storesuite-dashboard-title-wrapper:has( .storesuite-title-action ) .storesuite-dashboard-braedcrumb {
+		display: none;
+	}
+
+	/* Primary "Add" action moves up beside the page title */
+	.storesuite-title-action {
+		display: inline-flex;
+	}
+
+	.storesuite-table-header-part .storesuite-export-toggle svg,
+	.storesuite-table-header-part .storesuite-filter-toggle svg {
+		margin-right: 0;
+	}
+
+	.storesuite-table-header-part .storesuite-export-toggle,
+	.storesuite-table-header-part .storesuite-filter-toggle {
+		width: 45px;
+		height: 38px;
+		padding: 5px;
+	}
+
+	.storesuite-toolbar-search .storesuite-table-search-input {
+		min-width: 200px;
+	}
+
+	.storesuite-table-responsive {
+		-webkit-overflow-scrolling: touch;
+	}
+
+	/* Scroll horizontally instead of squishing; narrow tables keep their natural width */
+	.storesuite-list-table:not( .storesuite-attribute-terms-table ) {
+		min-width: 700px;
+	}
+
+	.my-storesuite-product-list-table:not( .my-storesuite-tags-table ):not( .my-storesuite-attributes-table ):not( .storesuite-attribute-terms-table ),
+	.my-storesuite-coupon-list-table {
+		min-width: 900px;
+	}
+
+	table.my-storesuite-product-list-table tbody tr td.tbl-product-name {
+		width: 220px;
+	}
+
+	/* Account: stack the nav above the panels (305px desktop nav crushes forms here) */
+	.row.storesuite-account-layout > .col-md-3,
+	.row.storesuite-account-layout > .col-md-9 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+
+	/* Order details/edit: stack main + sidebar so the line-item table gets full width */
+	.storesuite-dashboard-order-details .col-md-8,
+	.storesuite-dashboard-order-details .col-md-4 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+
+	/* Order items table still needs horizontal scroll on tablet (cells are nowrap) */
+	#woocommerce-order-items {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.storesuite-dashboard-order-details .storesuite-table.order-items {
+		min-width: 480px;
+	}
+}
+
+/* Landscape phones (wide angle): reclaim the short viewport height */
+@media ( min-width: 768px ) and ( max-width: 1024px ) and ( orientation: landscape ) and ( max-height: 500px ) {
+	.my-storesuite-page-content {
+		padding: 16px;
+	}
+
+	.storesuite-product-bulk-modal-overlay {
+		padding: 0.5rem;
+	}
+
+	.storesuite-product-bulk-modal-dialog {
+		max-height: calc( 100vh - 1rem );
+	}
+}
+
+/* Dashboard home — KPI summary card grid (progressive column borders).
+   Breakpoints must stay in ascending order; the 768px block also carries the
+   desktop layout rules (account / address / bulk-edit) to avoid repeating it. */
+@media ( min-width: 576px ) {
+	.storesuite-kpi-summary .col .storesuite-kpi-card {
+		border-right: 1px solid var( --storesuite-border-color );
+	}
+
+	.storesuite-kpi-summary .col:nth-child( 2n ) .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:nth-last-child( -n + 2 ) .storesuite-kpi-card {
+		border-bottom: none;
+	}
+}
+
+@media ( min-width: 768px ) {
+	.storesuite-kpi-summary .col:nth-child( 2n ) .storesuite-kpi-card {
+		border-right: 1px solid var( --storesuite-border-color );
+	}
+
+	.storesuite-kpi-summary .col:nth-child( 3n ) .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:nth-last-child( -n + 3 ) .storesuite-kpi-card {
+		border-bottom: none;
+	}
+
+	.storesuite-account-layout > .col-md-3 {
+		flex: 0 0 305px;
+		max-width: 305px;
+	}
+
+	.storesuite-account-layout > .col-md-9 {
+		flex: 1 1 0;
+		max-width: 100%;
+	}
+
+	.storesuite-address-grid .form-row-first,
+	.storesuite-address-grid .form-row-last {
+		width: 50%;
+	}
+
+	.storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-dimensions-row .storesuite-form-control {
+		margin-bottom: 0;
+	}
+}
+
+@media ( min-width: 992px ) {
+	.storesuite-kpi-summary .col:nth-child( 3n ) .storesuite-kpi-card {
+		border-right: 1px solid var( --storesuite-border-color );
+	}
+
+	.storesuite-kpi-summary .col:nth-child( 4n ) .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:nth-last-child( -n + 4 ) .storesuite-kpi-card {
+		border-bottom: none;
+	}
+}
+
+@media ( min-width: 1200px ) {
+	.storesuite-kpi-summary .col:nth-child( 4n ) .storesuite-kpi-card {
+		border-right: 1px solid var( --storesuite-border-color );
+	}
+
+	.storesuite-kpi-summary .col:nth-child( 5n ) .storesuite-kpi-card {
+		border-right: none;
+	}
+
+	.storesuite-kpi-summary .col:nth-last-child( -n + 5 ) .storesuite-kpi-card {
+		border-bottom: none;
+	}
+}
+
+@media ( min-width: 1920px ) {
+	.my-storesuite-page-content {
+		max-width: 1920px;
+	}
+}

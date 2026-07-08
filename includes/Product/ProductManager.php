@@ -6,6 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+use Automattic\WooCommerce\Internal\ProductFeed\Integrations\POSCatalog\POSProductVisibilitySync;
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use WP_Error;
 
 /**
@@ -46,16 +49,18 @@ class ProductManager {
 		}
 
 		// Handle slug.
-		$product_slug = '';
-		if ( isset( $data['product_slug'] ) && ! empty( $data['product_slug'] ) ) {
+		$slug_provided = isset( $data['product_slug'] ) && '' !== trim( (string) $data['product_slug'] );
+		if ( $slug_provided ) {
 			$product_slug = sanitize_title( $data['product_slug'] );
 		} else {
 			// Auto-generate slug from title.
 			$product_slug = sanitize_title( $data['product_title'] );
 		}
 
-		// Check for slug uniqueness.
-		if ( ! empty( $product_slug ) ) {
+		// Only block duplicates when the user explicitly chose a slug. When the
+		// slug is auto-generated from the title, let WordPress append a numeric
+		// suffix on save (product-slug-1, product-slug-2, …) instead of erroring.
+		if ( $slug_provided && ! empty( $product_slug ) ) {
 			$slug_exists = get_page_by_path( $product_slug, OBJECT, 'product' );
 			if ( $slug_exists && ( ! $is_updating || $slug_exists->ID !== $post_arr['product_id'] ) ) {
 				return new WP_Error( 'slug-exists', __( 'This slug already exists. Please choose a different slug.', 'storesuite' ) );
@@ -181,6 +186,19 @@ class ProductManager {
 			$post_data['featured'] = 'off';
 		}
 
+		$post_data['virtual']      = ( isset( $data['_virtual'] ) && 'yes' === $data['_virtual'] );
+		$post_data['downloadable'] = ( isset( $data['_downloadable'] ) && 'yes' === $data['_downloadable'] );
+
+		if ( isset( $data['_product_url'] ) ) {
+			$post_data['external_url'] = esc_url_raw( wp_unslash( $data['_product_url'] ) );
+		}
+		if ( isset( $data['_button_text'] ) ) {
+			$post_data['button_text'] = wc_clean( wp_unslash( $data['_button_text'] ) );
+		}
+		if ( isset( $data['_cogs_value'] ) ) {
+			$post_data['cogs_value'] = wc_clean( wp_unslash( $data['_cogs_value'] ) );
+		}
+
 		if ( isset( $data['menu_order'] ) ) {
 			$post_data['menu_order'] = wc_clean( wp_unslash( $data['menu_order'] ) );
 		}
@@ -195,12 +213,36 @@ class ProductManager {
 		// Cross-sells - always set even if empty to clear previous values.
 		$post_data['cross_sell_ids'] = isset( $data['crosssell_ids'] ) ? array_map( 'intval', (array) wp_unslash( $data['crosssell_ids'] ) ) : array();
 
+		// Grouped children - always set even if empty to clear previous values.
+		$post_data['grouped_products'] = isset( $data['grouped_products'] ) ? array_map( 'intval', (array) wp_unslash( $data['grouped_products'] ) ) : array();
+
+		// Downloadable files and options.
+		if ( isset( $data['downloads'] ) ) {
+			$post_data['downloads'] = $data['downloads'];
+		}
+		if ( isset( $data['_download_limit'] ) ) {
+			$post_data['download_limit'] = '' === $data['_download_limit'] ? '' : absint( $data['_download_limit'] );
+		}
+		if ( isset( $data['_download_expiry'] ) ) {
+			$post_data['download_expiry'] = '' === $data['_download_expiry'] ? '' : absint( $data['_download_expiry'] );
+		}
+
 		// Save shipping class.
 		if ( isset( $data['product_shipping_class'] ) && 'external' !== $post_data['type'] ) {
 			$post_data['product_shipping_class'] = absint( $data['product_shipping_class'] );
 		}
 
+		// Attributes (already prepared in ProductController::sanitize_product_data).
+		if ( isset( $data['attributes'] ) ) {
+			$post_data['attributes'] = $data['attributes'];
+		}
+
 		$product = $this->create_product( $post_data );
+
+		if ( $product && FeaturesUtil::feature_is_enabled( 'point_of_sale' ) ) {
+			$visible_in_pos = ! empty( $data['_visible_in_pos'] );
+			wc_get_container()->get( POSProductVisibilitySync::class )->set_product_pos_visibility( $product->get_id(), $visible_in_pos );
+		}
 
 		if ( ! $is_updating ) {
 			do_action( 'storesuite_new_product_added', $product->get_id(), $data );
@@ -501,6 +543,12 @@ class ProductManager {
 			}
 		}
 
+		// Cost of Goods Sold value.
+		if ( wc_get_container()->get( CostOfGoodsSoldController::class )->feature_is_enabled() ) {
+			$cogs_value = wc_clean( wp_unslash( $args['cogs_value'] ?? null ) );
+			$product->set_cogs_value( is_null( $cogs_value ) ? null : (float) wc_format_decimal( $cogs_value ) );
+		}
+
 		// Product url and button text for external products.
 		if ( $product->is_type( 'external' ) ) {
 			if ( isset( $args['external_url'] ) ) {
@@ -655,11 +703,12 @@ class ProductManager {
 	 */
 	protected function save_downloadable_files( $product, $downloads ) {
 		$files = array();
-		foreach ( $downloads as $key => $file ) {
+		foreach ( $downloads as $index => $file ) {
 			if ( empty( $file['file'] ) ) {
 				continue;
 			}
 
+			$key      = ! empty( $file['download_id'] ) ? $file['download_id'] : wp_generate_uuid4();
 			$download = new \WC_Product_Download();
 			$download->set_id( $key );
 			$download->set_name( $file['name'] ? $file['name'] : wc_get_filename_from_url( $file['file'] ) );

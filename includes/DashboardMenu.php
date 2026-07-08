@@ -117,6 +117,46 @@ class DashboardMenu {
 		}
 
 		echo '</ul>';
+
+		// Branding footer pinned to the bottom of the sidebar.
+		$palette_mode = storesuite_get_option_by_key( 'storesuite_color_palette_mode' );
+
+		if ( 'custom' === $palette_mode ) {
+			// Custom palette: respect the explicitly chosen logo variant (defaults to dark).
+			$logo_variant = storesuite_get_option_by_key( 'storesuite_attribution_logo_variant' );
+			$use_dark_logo = ( 'light' !== $logo_variant );
+		} else {
+			// The StoreSuite Default palette uses a light sidebar, so show the dark logo;
+			// every other predefined palette uses a dark sidebar, so show the light logo.
+			$palette_name = storesuite_get_option_by_key( 'storesuite_color_palette_name' );
+			$use_dark_logo = ( '' === $palette_name || 'default' === $palette_name );
+		}
+
+		$logo_file = $use_dark_logo ? 'storesuite-logo-dark.png' : 'storesuite-logo-light.png';
+		$logo_url  = STORESUITE_PLUGIN_ASSET . '/frontend/images/' . $logo_file;
+
+		/**
+		 * Filters the StoreSuite sidebar attribution logo URL.
+		 *
+		 * @param string $logo_url      Full URL to the branding logo image.
+		 * @param bool   $use_dark_logo Whether the dark logo variant is active.
+		 */
+		$logo_url = apply_filters( 'storesuite_sidebar_attribution_logo_url', $logo_url, $use_dark_logo );
+
+		/**
+		 * Filters the StoreSuite sidebar attribution logo link URL.
+		 *
+		 * @param string $link_url Destination URL the attribution logo links to.
+		 */
+		$link_url = apply_filters( 'storesuite_sidebar_attribution_link_url', 'https://aiarnob.com/product/storesuite/' );
+
+		if ( ! empty( $logo_url ) ) {
+			echo '<div class="storesuite-sidebar-branding">';
+			echo '<a class="storesuite-sidebar-branding-link" href="' . esc_url( $link_url ) . '" target="_blank" rel="noopener noreferrer">';
+			echo '<img class="storesuite-sidebar-branding-logo" src="' . esc_url( $logo_url ) . '" alt="' . esc_attr__( 'StoreSuite', 'storesuite' ) . '" />';
+			echo '</a>';
+			echo '</div>';
+		}
 	}
 
 	/**
@@ -172,6 +212,12 @@ class DashboardMenu {
 						'url'        => storesuite_get_navigation_url( 'tags' ),
 						'permission' => 'manage_woocommerce',
 						'endpoint'   => 'tags',
+					),
+					'attributes'       => array(
+						'title'      => __( 'Attributes', 'storesuite' ),
+						'url'        => storesuite_get_navigation_url( 'attributes' ),
+						'permission' => 'manage_woocommerce',
+						'endpoint'   => 'attributes',
 					),
 				),
 			),
@@ -323,23 +369,27 @@ class DashboardMenu {
 		$endpoint = pluginizelab_storesuite()->get_storesuite_query()->get_current_endpoint();
 
 		$endpoint_to_parent = array(
-			'add-new-product'  => 'products',
-			'edit-product'     => 'products',
-			'new-product'      => 'products',
-			'add-new-order'    => 'orders',
-			'edit-order'       => 'orders',
-			'order-details'    => 'orders',
-			'categories'       => 'products',
-			'add-new-category' => 'products',
-			'edit-category'    => 'products',
-			'brands'           => 'products',
-			'add-new-brand'    => 'products',
-			'edit-brand'       => 'products',
-			'tags'             => 'products',
-			'add-new-tag'      => 'products',
-			'edit-tag'         => 'products',
-			'add-new-coupon'   => 'coupons',
-			'edit-coupon'      => 'coupons',
+			'add-new-product'   => 'products',
+			'edit-product'      => 'products',
+			'new-product'       => 'products',
+			'add-new-order'     => 'orders',
+			'edit-order'        => 'orders',
+			'order-details'     => 'orders',
+			'categories'        => 'products',
+			'add-new-category'  => 'products',
+			'edit-category'     => 'products',
+			'brands'            => 'products',
+			'add-new-brand'     => 'products',
+			'edit-brand'        => 'products',
+			'tags'              => 'products',
+			'add-new-tag'       => 'products',
+			'edit-tag'          => 'products',
+			'attributes'        => 'products',
+			'add-new-attribute' => 'products',
+			'edit-attribute'    => 'products',
+			'attribute-terms'   => 'products',
+			'add-new-coupon'    => 'coupons',
+			'edit-coupon'       => 'coupons',
 		);
 
 		if ( $endpoint ) {

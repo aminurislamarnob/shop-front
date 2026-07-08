@@ -21,6 +21,7 @@
   --storesuite-text-color-light: rgb(130 130 130);
   --storesuite-icon-color: rgb(148 163 184);
   --storesuite-bg-color-light: #f7f7f7;
+  --storesuite-bg-color-muted: #f8f9fa;
   --storesuite-border-color: rgb(226 232 240);
   --storesuite-button-text-color: #ffffff;
   --storesuite-button-text-hover-color: #ffffff;
@@ -29,7 +30,7 @@
   --storesuite-sidebar-menu-text: rgb(71 85 105);
   --storesuite-sidebar-active-text: #213fd4;
   --storesuite-sidebar-active-background: #213fd4;
-  --storesuite-sidebar-width-expanded: 290px;
+  --storesuite-sidebar-width-expanded: 250px;
   --storesuite-sidebar-width-collapsed: 72px;
 }
 /* Apply border-box to all elements and pseudo-elements */
@@ -536,6 +537,41 @@ template {
   border: 1px solid var(--storesuite-primary-bg);
 }
 
+/* Permalink field: a static URL-base prefix joined to the editable slug input. */
+.my-storesuite-container .storesuite-permalink-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  background-color: #fff;
+  overflow: hidden;
+  transition: .3s;
+}
+.my-storesuite-container .storesuite-permalink-group:focus-within {
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-permalink-prefix {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #6c757d;
+  background-color: #f5f5f5;
+  border-right: 1px solid var(--storesuite-border-color);
+  white-space: nowrap;
+  user-select: none;
+}
+.my-storesuite-container .storesuite-permalink-group .storesuite-form-control,
+.my-storesuite-container .storesuite-permalink-group .storesuite-form-control:focus {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
 .my-storesuite-container .storesuite-password-field {
   position: relative;
 }
@@ -601,12 +637,6 @@ template {
   width: 100%;
   margin-right: auto;
   margin-left: auto;
-}
-
-@media (min-width: 1920px) {
-  .my-storesuite-page-content {
-    max-width: 1920px;
-  }
 }
 
 /*Left Navigation*/
@@ -744,10 +774,10 @@ table.my-storesuite-tbl>tbody {
 .my-storesuite-tbl td.action-buttons {
   width: 245px;
 }
-.my-storesuite-tbl:not(.my-storesuite-tags-table) tr td:first-child a {
+.my-storesuite-tbl:not(.my-storesuite-tags-table):not(.my-storesuite-attributes-table):not(.storesuite-attribute-terms-table) tr td:first-child a {
   color: var(--storesuite-primary-bg);
 }
-.my-storesuite-tbl:not(.my-storesuite-tags-table) tr td:first-child a:hover{
+.my-storesuite-tbl:not(.my-storesuite-tags-table):not(.my-storesuite-attributes-table):not(.storesuite-attribute-terms-table) tr td:first-child a:hover{
   text-decoration: underline;
 }
 
@@ -828,6 +858,22 @@ form.storesuite-filters-form .row {
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
   -o-border-radius: 5px;
+}
+.my-storesuite-attributes-table .storesuite-dropdown .storesuite-dropdown-menu {
+  width: 160px;
+}
+.storesuite-configure-terms-link {
+  margin-top: 4px;
+  font-size: 12px;
+}
+.storesuite-configure-terms-link a,
+.storesuite-configure-terms-link a:visited,
+.storesuite-configure-terms-link a:focus {
+  color: var(--storesuite-primary-bg) !important;
+  text-decoration: none;
+}
+.storesuite-configure-terms-link a:hover {
+  text-decoration: underline;
 }
 .storesuite-dropdown svg{
   fill: var(--storesuite-icon-color);
@@ -911,6 +957,8 @@ form.storesuite-filters-form .row {
 .my-storesuite-tick {
   position: absolute;
   top: 0;
+  left: 0;
+  bottom: 0;
   color: #fff;
   transition: .3s;
   opacity: 0;
@@ -1035,6 +1083,12 @@ tr.single-product-item:hover .product-list-action {
   visibility: visible;
 }
 
+/* Always show actions in attribute terms table */
+.storesuite-attribute-terms-table .product-list-action {
+  visibility: visible;
+  opacity: 1;
+}
+
 /*Order List Page*/
 span.order-pending {
   color: #f39c12;
@@ -1082,6 +1136,11 @@ span.order-failed {
   border: 1px solid var(--storesuite-primary-bg);
   justify-content: center;
 }
+.my-storesuite-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
 .my-storesuite-button svg{
   fill: var(--storesuite-button-text-color);
   width: 11px;
@@ -1110,6 +1169,46 @@ span.order-failed {
 }
 .refund-actions button.button.cancel-action {
   background: rgb(244 63 94);
+}
+
+/* Soft primary button — primary text on light-primary bg, inverts on hover. */
+.my-storesuite-button.my-storesuite-button-soft {
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 12%, #fff);
+  border: 1px solid color-mix(in srgb, var(--storesuite-primary-bg) 18%, #fff);
+}
+.my-storesuite-button.my-storesuite-button-soft svg {
+  fill: var(--storesuite-primary-bg);
+}
+.my-storesuite-button.my-storesuite-button-soft:hover,
+.my-storesuite-button.my-storesuite-button-soft:focus {
+  color: #fff;
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-button.my-storesuite-button-soft:hover svg,
+.my-storesuite-button.my-storesuite-button-soft:focus svg {
+  fill: #fff;
+}
+
+/* Soft danger button — red text on light-red bg, inverts on hover. */
+.my-storesuite-button.my-storesuite-button-danger-soft {
+  color: #ef4444;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+}
+.my-storesuite-button.my-storesuite-button-danger-soft svg {
+  fill: #ef4444;
+}
+.my-storesuite-button.my-storesuite-button-danger-soft:hover,
+.my-storesuite-button.my-storesuite-button-danger-soft:focus {
+  color: #fff;
+  background: #ef4444;
+  border-color: #ef4444;
+}
+.my-storesuite-button.my-storesuite-button-danger-soft:hover svg,
+.my-storesuite-button.my-storesuite-button-danger-soft:focus svg {
+  fill: #fff;
 }
 
 .refund-actions button.button.cancel-action:hover {
@@ -1522,6 +1621,29 @@ ul.my-storesuite-metas {
   overflow-y: auto;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Branding footer pinned to the bottom of the sidebar */
+.storesuite-sidebar-branding {
+  margin: auto -10px -10px; /* push to bottom (flex), reach the sidebar edges */
+  position: sticky;
+  bottom: -10px; /* stay pinned while the menu scrolls (cancels bottom padding) */
+  padding: 14px 16px;
+  background: var(--storesuite-sidebar-bg-color);
+  border-top: 1px solid
+    var(--storesuite-sidebar-border-color, var(--storesuite-border-color));
+}
+.storesuite-sidebar-branding-logo {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 30px;
+    height: auto;
+}
+.my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-branding {
+  display: none;
 }
 .storesuite-sidebar-site-title {
   font-weight: 600;
@@ -1832,7 +1954,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   white-space: normal;
 }
 
-@media (max-width: 782px) {
+@media (max-width: 767px) {
   .my-storesuite-container.storesuite-sidebar-collapsed {
     --storesuite-sidebar-current-width: var(--storesuite-sidebar-width-expanded);
   }
@@ -1898,10 +2020,26 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   padding: 24px;
 }
 
+/* Dashboard home mounts a React layout (.woocommerce-layout__main) that already
+   supplies its own 24px gutter. Drop the outer page padding here so the
+   left/right (and top/bottom) gap isn't doubled to 48px. */
+.storesuite-main-dashboard {
+  padding: 0;
+}
+
 /*Header design*/
 .storesuite-dashboard-header {
   background: var(--storesuite-sidebar-bg-color);
   padding: 10px 24px;
+}
+
+/* Predefined palettes: keep the header white and tint the sidebar toggle icon
+   with the (dark) title text color so it stays visible on white. */
+.storesuite-palette-predefined .storesuite-dashboard-header {
+  background: #ffffff;
+}
+.storesuite-palette-predefined span.storesuite-sidebar-trigger svg {
+  fill: var(--storesuite-title-text-color);
 }
 
 .storesuite-dropdown.storesuite-header-dropdown img {
@@ -1912,9 +2050,39 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
 
 .storesuite-header-right {
   display: flex;
-  gap: 30px;
+  gap: 20px;
   justify-content: flex-end;
   align-items: center;
+}
+
+/* Rounded, bordered icon link (e.g. Visit Store) */
+.storesuite-header-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 50%;
+  background: #fff;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.storesuite-header-icon-link svg {
+  width: 15px;
+  height: 15px;
+  fill: var(--storesuite-text-color);
+  transition: fill 0.15s ease;
+}
+.storesuite-header-icon-link:hover,
+.storesuite-header-icon-link:focus {
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+}
+.storesuite-header-icon-link:hover svg,
+.storesuite-header-icon-link:focus svg {
+  fill: var(--storesuite-button-text-color);
 }
 
 .storesuite-header-right a.my-storesuite-button {
@@ -1947,7 +2115,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   align-items: center;
 }
 span.storesuite-sidebar-trigger {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   cursor: pointer;
 }
@@ -1958,12 +2126,67 @@ span.storesuite-sidebar-trigger svg {
   fill: var(--storesuite-icon-color);
 }
 .storesuite-dropdown.storesuite-header-dropdown .storesuite-dropdown-menu {
-  top: 35px;
-  width: 140px;
+  top: 44px;
+  width: 240px;
+  padding: 0;
+}
+
+/* User info header */
+.storesuite-header-dropdown .storesuite-dropdown-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--storesuite-border-color);
+}
+.storesuite-header-dropdown .storesuite-dropdown-user-avatar img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: block;
+}
+.storesuite-header-dropdown .storesuite-dropdown-user-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.storesuite-header-dropdown .storesuite-dropdown-user-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--storesuite-title-text-color);
+}
+.storesuite-header-dropdown .storesuite-dropdown-user-email {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--storesuite-text-color-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Menu list */
+.storesuite-header-dropdown .storesuite-dropdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.storesuite-dropdown.storesuite-header-dropdown .storesuite-dropdown-menu a.dropdown-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+}
+.storesuite-header-dropdown .storesuite-dropdown-list svg {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  top: 0;
+  flex: 0 0 auto;
 }
 .storesuite-dropdown .storesuite-dropdown-menu svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   margin-right: 5px;
   position: relative;
   top: 1px;
@@ -1974,6 +2197,24 @@ span.storesuite-sidebar-trigger svg {
   margin-bottom: 0;
   font-size: 20px;
   color: var(--storesuite-text-color);
+}
+.storesuite-title-view-link {
+  display: inline-flex;
+  align-items: center;
+  /* Hug the page title; let space-between push other header items right. */
+  margin-left: 8px;
+  margin-right: auto;
+  color: var(--storesuite-primary-bg);
+  transition: color 0.2s ease;
+}
+.storesuite-title-view-link:hover {
+  color: var(--storesuite-text-color);
+}
+.storesuite-title-view-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;
 }
 .storesuite-dashboard-braedcrumb ul {
   display: flex;
@@ -2020,7 +2261,6 @@ span.storesuite-sidebar-trigger svg {
   margin: 0;
   position: relative;
   vertical-align: middle;
-  width: 100%!important;
 }
 .storesuite-main-dashboard .select2-container .select2-selection--single {
   height: 38px;
@@ -2070,7 +2310,7 @@ span.storesuite-sidebar-trigger svg {
   font-size: 12px;
 }
 .storesuite-main-dashboard .select2-container .select2-selection--multiple .select2-selection__choice {
-  background-color: #f8f9fa;
+  background-color: var(--storesuite-bg-color-muted);
   border: 1px solid var(--storesuite-border-color);
   border-radius: 4px;
   color: #444;
@@ -2286,63 +2526,6 @@ span.select2-selection__clear {
 }
 
 /* Make internal dividers single-line like WooCommerce summary */
-@media (min-width: 576px) {
-  .storesuite-kpi-summary .col .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(2n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 2) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 768px) {
-  .storesuite-kpi-summary .col:nth-child(2n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(3n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 3) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 992px) {
-  .storesuite-kpi-summary .col:nth-child(3n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(4n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 4) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 1200px) {
-  .storesuite-kpi-summary .col:nth-child(4n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(5n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 5) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (max-width: 575.98px) {
-  .storesuite-kpi-summary .col .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:last-child .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
 .storesuite-kpi-card--up .storesuite-kpi-change {
   color: #059669;
 }
@@ -2609,7 +2792,7 @@ span.select2-selection__clear {
 }
 
 .storesuite-dashboard-order-details .storesuite-table th, .storesuite-order-items-box table th {
-  background-color: #f8f9fa;
+  background-color: var(--storesuite-bg-color-muted);
   font-weight: 600;
   color: var(--storesuite-text-color);
   font-size: 14px;
@@ -2643,7 +2826,7 @@ span.select2-selection__clear {
 }
 
 .storesuite-dashboard-order-details .delete-btn:hover {
-  background-color: #f8f9fa;
+  background-color: var(--storesuite-bg-color-muted);
 }
 
 .storesuite-dashboard-order-details .coupon-group {
@@ -2708,7 +2891,7 @@ span.select2-selection__clear {
 }
 
 .storesuite-dashboard-order-details .order-summary {
-  background-color: #f8f9fa;
+  background-color: var(--storesuite-bg-color-muted);
   padding: 16px;
   border-radius: 8px;
 }
@@ -3072,7 +3255,7 @@ div#woocommerce-order-items .line_cost {
   margin: 0;
   padding: 0;
   text-align: right;
-  background: #f8f9fa;
+  background: var(--storesuite-bg-color-muted);
 }
 #woocommerce-order-items .wc-order-totals .total {
   text-align: right;
@@ -3177,6 +3360,553 @@ button.remove_order_item_meta.button:hover {
   width: auto;
   padding: 7px 16px;
   height: 35px;
+}
+
+/* Product attributes UI */
+.storesuite-attribute-toolbar-spacing {
+  margin-top: 12px;
+}
+
+.storesuite-attribute-header-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.storesuite-attribute-remove {
+  color: #d63638;
+  margin-left: 8px;
+}
+
+.storesuite-attribute-body-hidden {
+  display: none;
+}
+
+.storesuite-attribute-terms-toggle {
+  margin-top: 0;
+}
+.storesuite-attribute-terms-toggle .storesuite-select-all-terms,
+.storesuite-attribute-terms-toggle .storesuite-select-no-terms,
+.storesuite-attribute-terms-toggle .storesuite-add-attribute-term {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+/* Attributes bordered table — horizontal row borders only, 6px radius */
+#storesuite-product-attributes .my-storesuite-tbl {
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+}
+#storesuite-product-attributes .my-storesuite-tbl th,
+#storesuite-product-attributes .my-storesuite-tbl td {
+  border-left: 0;
+  border-right: 0;
+}
+#storesuite-product-attributes .my-storesuite-tbl thead th {
+  border-bottom: 1px solid var(--storesuite-border-color);
+}
+#storesuite-product-attributes .my-storesuite-tbl tbody td {
+  border-top: 1px solid var(--storesuite-border-color);
+}
+
+/* Attributes table column widths */
+#storesuite-product-attributes .storesuite-attribute-col-name {
+  width: auto;
+}
+#storesuite-product-attributes .storesuite-attribute-col-visible {
+  width: 85px;
+}
+#storesuite-product-attributes .storesuite-attribute-col-variation {
+  width: 100px;
+}
+#storesuite-product-attributes .storesuite-attribute-col-actions {
+  width: 105px;
+}
+
+/* Attributes card footer toolbar */
+#storesuite-product-attributes .storesuite-card-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--storesuite-border-color);
+  background-color: var(--storesuite-bg-color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.storesuite-hidden {
+  display: none !important;
+}
+
+.storesuite-text-capitalize {
+  text-transform: capitalize;
+}
+
+.storesuite-input-group {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  max-width: 500px;
+}
+.storesuite-input-group .storesuite-form-control {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+.storesuite-input-group .my-storesuite-button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  white-space: nowrap;
+}
+#storesuite-add-custom-attribute-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+#storesuite-add-custom-attribute-btn svg {
+  flex: 0 0 auto;
+}
+/* Match the global-attribute picker width to the variation bulk-actions group. */
+#storesuite-attribute-toolbar .storesuite-input-group {
+  flex: 0 1 320px;
+  max-width: 320px;
+}
+
+/* Variation toolbar — primary actions row */
+.storesuite-variation-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.storesuite-variation-toolbar-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+#storesuite-add-variation-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+#storesuite-add-variation-btn svg {
+  flex: 0 0 auto;
+}
+/* When bulk actions are visible they sit on the left and the Generate/Add
+   buttons move to the right; with no variations the buttons stay left. */
+.storesuite-variation-toolbar-primary.has-bulk-actions
+  #storesuite-generate-variations-btn {
+  margin-left: auto;
+}
+
+/* Bulk actions group — pinned to the left of the toolbar. */
+.storesuite-variation-bulk-group {
+  flex: 0 1 320px;
+  max-width: 320px;
+  order: -1;
+}
+
+/* Attribute value display / edit toggle */
+.storesuite-attribute-name-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+/* Attribute drag-sort */
+.storesuite-attribute-sort-handle {
+  display: inline-flex;
+  align-items: center;
+  cursor: grab;
+  color: var(--storesuite-text-black);
+}
+.storesuite-attribute-sort-handle:active {
+  cursor: grabbing;
+}
+#storesuite-attributes-list .ui-sortable-helper {
+  display: table;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.storesuite-attribute-sortable-placeholder {
+  outline: 2px dashed #2271b1;
+  background: #f0f6fc;
+}
+.storesuite-attribute-terms-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.storesuite-term-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: var(--storesuite-bg-color-muted);
+  border: 1px solid var(--storesuite-border-color);
+  color: var(--storesuite-text-black);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.storesuite-attribute-terms-display:empty {
+  display: none;
+}
+.storesuite-attribute-edit-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.3s ease, opacity 0.2s ease;
+}
+.storesuite-attribute-row.is-editing .storesuite-attribute-edit-wrap {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 10px;
+}
+.storesuite-attribute-edit-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Attributes card — table layout.
+   Excludes .storesuite-attribute-col-name so select2 sizes its own search
+   field there and the placeholder text is not clipped. */
+#storesuite-product-attributes .select2-container .select2-selection--multiple .select2-search--inline:not( .storesuite-attribute-col-name * ),
+#storesuite-product-attributes .select2-container .select2-selection--multiple .select2-search--inline:not( .storesuite-attribute-col-name * ) .select2-search__field {
+  width: auto !important;
+}
+
+.my-storesuite-wrapper #storesuite-product-attributes .storesuite-form-group {
+  margin-bottom: 0;
+}
+
+.storesuite-attributes-subtitle {
+  color: #6b7280;
+  margin: 0 0 16px 0;
+  font-size: 14px;
+}
+.storesuite-edit-attribute,
+.storesuite-remove-attribute,
+.storesuite-toggle-variation,
+.storesuite-remove-variation {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+.storesuite-edit-attribute svg,
+.storesuite-remove-attribute svg,
+.storesuite-toggle-variation svg,
+.storesuite-remove-variation svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  margin: 0;
+}
+/* Toggle icon swap: closed icon by default, open icon when expanded/editing */
+.storesuite-toggle-variation .storesuite-toggle-icon-open,
+.storesuite-toggle-variation.is-open .storesuite-toggle-icon-closed,
+.storesuite-edit-attribute .storesuite-toggle-icon-open,
+.storesuite-attribute-row.is-editing .storesuite-edit-attribute .storesuite-toggle-icon-closed {
+  display: none;
+}
+.storesuite-toggle-variation.is-open .storesuite-toggle-icon-open,
+.storesuite-attribute-row.is-editing .storesuite-edit-attribute .storesuite-toggle-icon-open {
+  display: block;
+}
+
+/* Product variations UI */
+
+/* Empty state (no variations yet) */
+.storesuite-variation-empty {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 0;
+  min-height: 320px;
+}
+.storesuite-variation-empty-arrow {
+  position: absolute;
+  top: 0;
+  left: 24px;
+}
+.storesuite-variation-empty-arrow img {
+  display: block;
+  width: 57px;
+  height: auto;
+}
+.storesuite-variation-empty-bg {
+  display: block;
+  width: 80px;
+  height: auto;
+}
+.storesuite-variation-empty p {
+  width: 90%;
+  max-width: 544px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--storesuite-text-black);
+}
+
+.storesuite-variation-row {
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 0;
+  padding: 0;
+}
+#storesuite-variations-container .storesuite-variation-row {
+  margin-bottom: 0;
+}
+#storesuite-variations-container .storesuite-variation-row + .storesuite-variation-row {
+  border-top: 0;
+}
+#storesuite-variations-container .storesuite-variation-row:first-child {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+#storesuite-variations-container .storesuite-variation-row:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.storesuite-variation-header {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  cursor: pointer;
+  gap: 10px;
+}
+
+.storesuite-variation-thumb img {
+  border-radius: 4px;
+  object-fit: cover;
+  display: block;
+}
+
+.storesuite-variation-attrs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+}
+
+.storesuite-variation-attrs select {
+  max-width: 160px;
+}
+
+.storesuite-variation-actions-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.storesuite-variation-actions-header a {
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.storesuite-remove-variation {
+  color: #d63638;
+}
+
+.storesuite-variation-body .storesuite-card-content {
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.storesuite-variation-image-upload {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.storesuite-variation-image-upload img {
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+}
+
+.storesuite-variation-image-actions {
+  position: absolute;
+  inset: 0;
+}
+
+.storesuite-variation-image-actions a {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  line-height: 1;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.storesuite-variation-image-upload:hover .storesuite-variation-image-actions a {
+  opacity: 1;
+}
+
+.storesuite-variation-image-actions a svg {
+  display: block;
+  box-sizing: content-box;
+  width: 16px;
+  height: 16px;
+  padding: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  fill: #fff;
+}
+
+.storesuite-upload-variation-image {
+  color: var(--storesuite-primary-bg);
+}
+
+.storesuite-upload-variation-image:hover {
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 20%, transparent);
+}
+
+.storesuite-remove-variation-image {
+  color: #ef4444;
+}
+
+.storesuite-remove-variation-image:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.storesuite-variation-image-upload:not(.has-variation-image) .storesuite-remove-variation-image,
+.storesuite-variation-image-upload.has-variation-image .storesuite-upload-variation-image {
+  display: none;
+}
+
+.storesuite-variation-row.variation-needs-update {
+  border-left: 4px solid var(--storesuite-primary-bg);
+}
+
+.storesuite-form-text a.storesuite-cogs-default-link {
+  text-decoration: underline !important;
+}
+
+.variable-switches-group {
+  margin: 10px 0;
+}
+
+.storesuite-variation-body.is-open .storesuite-card-content {
+  background: var(--storesuite-bg-color-muted);
+}
+
+/* Drag reorder */
+#storesuite-variations-container .storesuite-variation-header {
+  cursor: grab;
+}
+
+#storesuite-variations-container .ui-sortable-helper .storesuite-variation-header {
+  cursor: grabbing;
+}
+
+#storesuite-variations-container .ui-sortable-helper {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.storesuite-sortable-placeholder {
+  border: 2px dashed #2271b1;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  min-height: 56px;
+  background: #f0f6fc;
+}
+
+/* Default attributes */
+#storesuite-product-variations .storesuite-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.storesuite-text-link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  color: var(--storesuite-primary-bg);
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.storesuite-text-link-button:hover {
+  color: var(--storesuite-primary-bg-hover);
+  text-decoration: none;
+}
+.storesuite-text-link-button svg {
+  fill: currentColor;
+  transition: transform 0.2s ease;
+}
+#storesuite-toggle-default-values.is-active svg {
+  transform: rotate(90deg);
+}
+
+.storesuite-default-attributes {
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 16px;
+  background: var(--storesuite-bg-color-muted);
+  padding: 20px;
+  border-radius: 6px;
+  margin-left: -25px;
+  margin-right: -25px;
+}
+
+.storesuite-default-attributes-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+/* Variation pagination */
+.storesuite-variation-pagination .storesuite-pagination-wrap {
+  margin-top: 12px;
+}
+
+.storesuite-notice {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.storesuite-notice-info {
+  background: #f0f6fc;
+  border-left: 4px solid #2271b1;
+  color: #1d2327;
+}
+
+.storesuite-notice p {
+  margin: 0;
 }
 #woocommerce-order-items .woocommerce_order_items_wrapper table.woocommerce_order_items table.meta tr td input {
   margin-bottom: 5px;
@@ -3289,10 +4019,9 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .my-storesuite-wrapper .storesuite-form-group.storesuite-bulk-order-actions {
     gap: 10px;
 }
-.storesuite-bulk-order-actions select.storesuite-form-control{
-  width: 255px;
+.storesuite-bulk-order-actions{
+  max-width: 250px;
 }
-
 
 /* Hide the default checkbox */
 .storesuite-form-group.storesuite-form-switch input[type="checkbox"] {
@@ -3357,6 +4086,264 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-form-group.storesuite-form-switch input[type="checkbox"]:disabled + label {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Account header card: title/subtitle + Save All Changes */
+.storesuite-account-header-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+}
+.storesuite-account-header-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--storesuite-title-text-color);
+}
+.storesuite-account-header-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--storesuite-text-color-light);
+}
+.storesuite-account-header-card .my-storesuite-button {
+  flex: 0 0 auto;
+}
+.storesuite-account-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Account settings layout: fixed-width nav + flexible content */
+/* Account settings sidebar nav */
+.storesuite-account-nav {
+  padding: 8px;
+}
+.storesuite-account-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.storesuite-account-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--storesuite-text-color);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.storesuite-account-nav-link svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  fill: var(--storesuite-text-black);
+  transition: fill 0.15s ease;
+}
+.storesuite-account-nav-link:hover {
+  background: var(--storesuite-bg-color-muted);
+  color: var(--storesuite-text-color);
+}
+.storesuite-account-nav-link.is-active {
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 12%, #fff);
+  color: var(--storesuite-primary-bg);
+}
+.storesuite-account-nav-link.is-active svg {
+  fill: var(--storesuite-primary-bg);
+}
+.storesuite-account-nav-logout {
+  color: #d63638;
+}
+.storesuite-account-nav-logout svg {
+  fill: #d63638;
+}
+.storesuite-account-nav-logout:hover {
+  background: rgba(214, 54, 56, 0.08);
+  color: #d63638;
+}
+
+/* Account settings tab panels */
+.storesuite-account-panel {
+  display: none;
+}
+.storesuite-account-panel.is-active {
+  display: block;
+}
+
+/* Address tab: WooCommerce form fields styled like StoreSuite */
+.storesuite-address-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-transform: capitalize;
+}
+.storesuite-copy-billing {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+.storesuite-copy-billing svg {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+.storesuite-address-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -8px;
+}
+.storesuite-address-grid .form-row {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 8px;
+  margin: 0 0 16px;
+}
+.storesuite-address-grid .form-row label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--storesuite-text-color);
+}
+.storesuite-address-grid .form-row label .optional {
+  display: none;
+}
+.storesuite-address-grid .form-row .woocommerce-input-wrapper {
+  display: block;
+  width: 100%;
+}
+.storesuite-address-grid .form-row .input-text,
+.storesuite-address-grid .form-row select {
+  width: 100%;
+  height: 40px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  color: var(--storesuite-text-color);
+  transition: 0.3s;
+}
+.storesuite-address-grid .form-row .input-text:focus,
+.storesuite-address-grid .form-row select:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--storesuite-primary-bg);
+}
+.storesuite-address-grid .form-row .select2-container .select2-selection {
+  height: 40px;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+}
+.storesuite-address-grid
+  .form-row
+  .select2-container
+  .select2-selection--single
+  .select2-selection__rendered {
+  line-height: 38px;
+  padding-left: 12px;
+  color: var(--storesuite-text-color);
+}
+.storesuite-address-grid
+  .form-row
+  .select2-container
+  .select2-selection--single
+  .select2-selection__arrow {
+  height: 38px;
+}
+.storesuite-address-grid .form-row .required {
+  color: #d63638;
+  border: 0;
+  text-decoration: none;
+}
+.storesuite-address-grid .form-row .optional {
+  color: var(--storesuite-text-color-light);
+}
+
+/* Account profile picture upload — circular avatar with floating badges */
+.storesuite-account-avatar {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+.storesuite-account-avatar-preview {
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--storesuite-border-color);
+  background: var(--storesuite-bg-color-muted);
+}
+.storesuite-account-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.storesuite-account-avatar-upload,
+.storesuite-account-avatar-remove {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.storesuite-account-avatar-upload {
+  right: -4px;
+  bottom: -4px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--storesuite-border-color);
+}
+.storesuite-account-avatar-upload svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--storesuite-primary-bg);
+}
+.storesuite-account-avatar-upload:hover {
+  background: var(--storesuite-primary-bg);
+}
+.storesuite-account-avatar-upload:hover svg {
+  fill: #fff;
+}
+.storesuite-account-avatar-remove {
+  right: -6px;
+  top: -6px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--storesuite-border-color);
+}
+.storesuite-account-avatar-remove svg {
+  width: 14px;
+  height: 14px;
+  fill: #d63638;
+}
+.storesuite-account-avatar-remove:hover {
+  background: #d63638;
+}
+.storesuite-account-avatar-remove:hover svg {
+  fill: #fff;
 }
 .storesuite-form-group .mce-top-part::before {
   box-shadow: none;
@@ -3452,8 +4439,8 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-filter-offcanvas {
   position: fixed;
   top: 0;
-  right: -100%;
-  width: 100%;
+  right: -100vw;
+  width: 100vw;
   max-width: 400px;
   height: 100vh;
   background-color: #fff;
@@ -3536,17 +4523,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
   height: 14px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .storesuite-filter-offcanvas {
-    max-width: 100%;
-  }
-
-  .storesuite-filter-toggle {
-    display: inline-flex !important;
-  }
-}
-
 /* Scrollbar styling for off-canvas */
 .storesuite-filter-offcanvas-body::-webkit-scrollbar {
   width: 6px;
@@ -3618,7 +4594,7 @@ form.storesuite-search-form.storesuite-order-search-form .my-storesuite-button {
 
 /* Premium Loader Overlay */
 .storesuite-loader-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -3708,11 +4684,13 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   border-bottom: 1px solid rgba(0,0,0,.1)!important;
 }
 
-.storesuite-dropdown.storesuite-header-dropdown .storesuite-dropdown-menu a.dropdown-link {
-  padding: 7px 15px;
-}
-
 /* Product bulk edit modal */
+/* SweetAlert2 (z-index 1060 by default) must sit above the modal overlay
+   (100050) so alerts triggered from inside a modal stay visible. It renders on
+   <body>, so this rule is intentionally not scoped to .my-storesuite-container. */
+.swal2-container {
+  z-index: 100060 !important;
+}
 .storesuite-product-bulk-modal-overlay {
   position: fixed;
   inset: 0;
@@ -3781,7 +4759,9 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 }
 
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost {
   flex-shrink: 0;
   box-sizing: border-box;
   width: 30px;
@@ -3805,14 +4785,20 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
 .storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
   color: #fff;
   background-color: rgb(244, 63, 94);
   border-color: rgb(244, 63, 94);
 }
 
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg {
   display: block;
   width: 20px;
   height: 20px;
@@ -3832,6 +4818,73 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   min-height: 0;
   overflow-y: auto;
   padding: 1rem 1.25rem;
+}
+
+.storesuite-product-export-intro {
+  margin: 0 0 1rem;
+  color: #6b7280;
+}
+
+.storesuite-export-bulk-notice {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--storesuite-primary-bg);
+  background-color: #f9fafb;
+  color: #374151;
+  border-radius: 4px;
+}
+
+.storesuite-export-bulk-notice[hidden] {
+  display: none;
+}
+
+.storesuite-export-clear-selection {
+  color: var(--storesuite-primary-bg);
+  text-decoration: underline;
+}
+
+.my-storesuite-button.storesuite-export-toggle svg {
+  width: 13px;
+  height: 13px;
+}
+
+.storesuite-export-progress {
+  display: block;
+  width: 100%;
+  height: 14px;
+  margin-top: 1.25rem;
+  border: 0;
+  border-radius: 999px;
+  background-color: var(--storesuite-border-color);
+  overflow: hidden;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.storesuite-export-progress::-webkit-progress-bar {
+  background-color: var(--storesuite-border-color);
+  border-radius: 999px;
+}
+
+.storesuite-export-progress::-webkit-progress-value {
+  background-color: var(--storesuite-primary-bg);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.storesuite-export-progress::-moz-progress-bar {
+  background-color: var(--storesuite-primary-bg);
+  border-radius: 999px;
+}
+
+/* selectWoo dropdowns ship with z-index 1051, which sits below the product modal overlay
+   (z-index 100050), so they render behind the dialog. Lift them above it. The base
+   `.storesuite-main-dashboard .select2-container .select2-dropdown` rule sets no z-index, so this
+   override wins on specificity. */
+.storesuite-main-dashboard .select2-container--open,
+.storesuite-main-dashboard .select2-container .select2-dropdown {
+  z-index: 100060;
 }
 
 .storesuite-product-bulk-edit-core .storesuite-form-group,
@@ -3868,11 +4921,6 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   margin-bottom: 0.5rem;
 }
 
-@media (min-width: 768px) {
-  .storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-dimensions-row .storesuite-form-control {
-    margin-bottom: 0;
-  }
-}
 
 .storesuite-product-bulk-modal-footer {
   display: flex;
@@ -3937,6 +4985,11 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 /* Product quick edit modal: wider dialog than bulk edit */
 .storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
   max-width: 920px;
+}
+
+/* The taxonomy/attribute quick edit forms are single column, so use a narrower dialog. */
+.storesuite-list-quick-edit-modal .storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
+  max-width: 480px;
 }
 
 .storesuite-product-quick-edit-modal-scroll {
@@ -4022,4 +5075,541 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   background: #fffbeb;
   border: 1px solid #fcd34d;
   border-radius: 4px;
+}
+
+/* Downloadable files table on product add/edit form. */
+table.storesuite-downloadable-files {
+  width: 100%;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+table.storesuite-downloadable-files th,
+table.storesuite-downloadable-files td {
+  padding: 0.5rem;
+  vertical-align: middle;
+  background: #fff;
+}
+table.storesuite-downloadable-files thead th {
+  text-align: left;
+  font-weight: 600;
+}
+table.storesuite-downloadable-files thead:first-child tr:first-child th {
+  border-bottom: 1px solid var(--storesuite-border-color) !important;
+}
+table.storesuite-downloadable-files tbody td {
+  border-top: 1px solid var(--storesuite-border-color) !important;
+}
+table.storesuite-downloadable-files tbody tr:first-child td {
+  border-top: 0 !important;
+}
+table.storesuite-downloadable-files tbody tr:last-child td {
+  border-bottom: 1px solid var(--storesuite-border-color) !important;
+}
+table.storesuite-downloadable-files tfoot th {
+  text-align: left;
+}
+.storesuite-downloadable-files td.sort,
+.storesuite-downloadable-files th.sort {
+  width: 24px;
+  text-align: center;
+}
+.storesuite-downloadable-files .storesuite-drag-handle {
+  cursor: move;
+  color: #9ca3af;
+}
+.storesuite-downloadable-file-url {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.storesuite-downloadable-file-url-input {
+  flex: 1;
+}
+.storesuite-downloadable-files .file_url_choose {
+  white-space: nowrap;
+}
+.storesuite-downloadable-files .file_url_choose a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  text-decoration: none;
+  line-height: 1;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.storesuite-downloadable-files .file_url_choose a + a {
+  margin-left: 6px;
+}
+.storesuite-downloadable-files .storesuite-upload-file-button {
+  color: var(--storesuite-primary-color, #4f46e5);
+  background: color-mix(in srgb, var(--storesuite-primary-color, #4f46e5) 12%, #fff);
+}
+.storesuite-downloadable-files .storesuite-upload-file-button:hover {
+  border-color: var(--storesuite-primary-color, #4f46e5);
+}
+.storesuite-downloadable-files .storesuite-delete-file {
+  color: #ef4444;
+  background: #fef2f2;
+}
+.storesuite-downloadable-files .storesuite-delete-file:hover,
+.storesuite-downloadable-files .storesuite-delete-file:focus {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+.storesuite-downloadable-files .file_url_choose svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+a.my-storesuite-button.storesuite-add-downloadable-file {
+  font-weight: normal;
+  color: var(--storesuite-button-text-color);
+}
+
+/* Hide number input spinner arrows on product add/edit form. */
+#storesuite-add-product input[type="number"]::-webkit-outer-spin-button,
+#storesuite-add-product input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#storesuite-add-product input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Floating sticky save bar on the product add/edit form */
+.storesuite-sticky-actions {
+  position: fixed;
+  left: var(--storesuite-sidebar-current-width, 0);
+  right: 0;
+  top: 24px;
+  z-index: 120;
+  padding: 0 24px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.storesuite-sticky-actions.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.storesuite-sticky-actions-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--storesuite-sidebar-bg-color);
+  color: var(--storesuite-sidebar-menu-text);
+  border: 1px solid var(--storesuite-sidebar-border-color, var(--storesuite-border-color));
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+.storesuite-sticky-actions-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--storesuite-sidebar-menu-text);
+}
+.storesuite-sticky-actions-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.storesuite-sticky-actions .storesuite-sticky-discard {
+  background: transparent;
+  color: var(--storesuite-sidebar-menu-text);
+  border: 1px solid var(--storesuite-sidebar-border-color, var(--storesuite-border-color));
+}
+.storesuite-sticky-actions .storesuite-sticky-discard:hover {
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .storesuite-sticky-actions {
+    padding: 0 12px;
+    top: 12px;
+  }
+  .storesuite-sticky-actions-inner {
+    padding: 12px 14px;
+  }
+}
+
+/* ---------------------------------------------------------------
+ * SweetAlert2 — modern flat theme
+ * --------------------------------------------------------------- */
+.swal2-container {
+  padding: 16px;
+}
+.swal2-container.swal2-backdrop-show {
+  background: rgba(15, 23, 42, 0.4);
+}
+.swal2-popup {
+  width: 26em;
+  padding: 28px;
+  border-radius: 14px;
+  box-shadow: 0 12px 44px rgba(15, 23, 42, 0.16);
+  font-family: inherit;
+}
+.swal2-title {
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--storesuite-title-text-color);
+}
+.swal2-html-container {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--storesuite-text-color-light);
+}
+
+/* Flat icon — palette colors. Keep default geometry so the success/error
+ * line children (absolutely positioned for the default size) stay aligned. */
+.swal2-icon {
+  margin: 6px auto 16px;
+}
+.swal2-icon.swal2-warning {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+.swal2-icon.swal2-error {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+.swal2-icon.swal2-error [class^="swal2-x-mark-line"] {
+  background-color: #ef4444;
+}
+.swal2-icon.swal2-question {
+  border-color: var(--storesuite-primary-bg);
+  color: var(--storesuite-primary-bg);
+}
+.swal2-icon.swal2-success {
+  border-color: #10b981;
+}
+.swal2-icon.swal2-success [class^="swal2-success-line"] {
+  background-color: #10b981;
+}
+.swal2-icon.swal2-success .swal2-success-ring {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* Actions / buttons — flat, StoreSuite style */
+.swal2-actions {
+  gap: 8px;
+  margin-top: 22px;
+}
+.swal2-styled {
+  margin: 0;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: none !important;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.swal2-styled.swal2-confirm {
+  background: var(--storesuite-primary-bg);
+  color: #fff;
+}
+.swal2-styled.swal2-confirm:hover,
+.swal2-styled.swal2-confirm:focus {
+  background: var(--storesuite-primary-bg-hover);
+}
+.swal2-styled.swal2-cancel {
+  background: #fff;
+  border: 1px solid var(--storesuite-border-color);
+  color: var(--storesuite-text-color-light);
+}
+.swal2-styled.swal2-cancel:hover,
+.swal2-styled.swal2-cancel:focus {
+  background: var(--storesuite-bg-color-muted);
+}
+.swal2-styled:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--storesuite-primary-bg) 28%, transparent) !important;
+}
+
+/* Inputs */
+.swal2-input,
+.swal2-select,
+.swal2-textarea {
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  box-shadow: none;
+  font-size: 14px;
+  color: var(--storesuite-text-black);
+}
+.swal2-input:focus,
+.swal2-select:focus,
+.swal2-textarea:focus {
+  border-color: var(--storesuite-primary-bg);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--storesuite-primary-bg) 16%, transparent);
+}
+.swal2-validation-message {
+  background: transparent;
+  font-size: 13px;
+  color: #ef4444;
+}
+
+/* AI "Generate with AI" buttons on the product form. */
+.my-storesuite-container .storesuite-form-group label:has(.storesuite-ai-generate) {
+  display: flex;
+  align-items: center;
+}
+/* Shared styling for the small AI action buttons (field label, per-field
+   regenerate, and image). Keep them visually identical; per-button deltas live
+   in their own rules below. */
+.my-storesuite-container .storesuite-ai-generate,
+.my-storesuite-container .storesuite-ai-field-regenerate,
+.my-storesuite-container .storesuite-ai-image-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  cursor: pointer;
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 10%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--storesuite-primary-bg) 30%, transparent);
+  border-radius: 4px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.my-storesuite-container .storesuite-ai-generate:hover:not(:disabled),
+.my-storesuite-container .storesuite-ai-field-regenerate:hover:not(:disabled),
+.my-storesuite-container .storesuite-ai-image-generate:hover:not(:disabled) {
+  color: var(--storesuite-button-text-color);
+  background: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-ai-generate:disabled,
+.my-storesuite-container .storesuite-ai-field-regenerate:disabled,
+.my-storesuite-container .storesuite-ai-image-generate:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-generate .storesuite-ai-icon,
+.my-storesuite-container .storesuite-ai-field-regenerate .storesuite-ai-icon,
+.my-storesuite-container .storesuite-ai-image-generate .storesuite-ai-icon {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+/* The field-label "Generate with AI" button pushes to the row's trailing edge. */
+.my-storesuite-container .storesuite-ai-generate {
+  margin-left: auto;
+}
+/* The explicit display on buttons overrides the UA [hidden] rule, so restore it. */
+.my-storesuite-container .my-storesuite-button[hidden],
+.my-storesuite-container .storesuite-ai-bundle-step[hidden] {
+  display: none;
+}
+/* Per-field "Regenerate" buttons inside the bundle result step. */
+.my-storesuite-container
+  .storesuite-form-group
+  label:has(.storesuite-ai-field-regenerate) {
+  display: flex;
+  align-items: center;
+}
+/* Right-aligned group holding the per-field history pager and Regenerate. */
+.my-storesuite-container .storesuite-ai-field-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+/* Per-field "‹ n/m ›" history pager. */
+.my-storesuite-container .storesuite-ai-field-pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.my-storesuite-container .storesuite-ai-field-pager button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--storesuite-text-color);
+  background: #fff;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 4px;
+}
+.my-storesuite-container .storesuite-ai-field-pager button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-field-pager-status {
+  min-width: 30px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--storesuite-text-color);
+}
+.my-storesuite-container .storesuite-ai-field-regenerate .la-spin {
+  animation: storesuite-ai-spin 0.8s linear infinite;
+}
+/* Small "AI" image button beside the Product Image label. */
+.my-storesuite-container label.storesuite-ai-image-label {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+/* Generated image preview inside the image modal. */
+.my-storesuite-container .storesuite-ai-image-preview {
+  margin-top: 14px;
+  text-align: center;
+}
+.my-storesuite-container .storesuite-ai-image-preview img {
+  max-width: 100%;
+  max-height: 360px;
+  border-radius: 6px;
+  border: 1px solid var(--storesuite-border-color);
+}
+/* Global "Generate with AI" launcher in the page header. */
+.my-storesuite-container .storesuite-ai-bundle-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 12%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--storesuite-primary-bg) 24%,
+    transparent
+  );
+}
+.my-storesuite-container .storesuite-ai-bundle-launch:hover {
+  color: var(--storesuite-button-text-color);
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-ai-bundle-launch svg {
+  fill: currentColor;
+}
+.my-storesuite-container .storesuite-ai-bundle-launch .storesuite-ai-icon {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+/* Subtitle and pager share one row: subtitle left, pager right. */
+.my-storesuite-container .storesuite-ai-modal-subhead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 12px;
+}
+.my-storesuite-container .storesuite-ai-modal-subtitle {
+  margin: 0 auto 0 0;
+  font-size: 13px;
+  color: var(--storesuite-text-color-light);
+}
+.my-storesuite-container .storesuite-ai-modal-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.my-storesuite-container .storesuite-ai-modal-pager button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--storesuite-text-color);
+  background: #fff;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 4px;
+}
+.my-storesuite-container .storesuite-ai-modal-pager button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-pager-icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+.my-storesuite-container .storesuite-ai-pager-status {
+  min-width: 34px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--storesuite-text-color);
+}
+.my-storesuite-container .storesuite-ai-generate .la-spin {
+  animation: storesuite-ai-spin 0.8s linear infinite;
+}
+@keyframes storesuite-ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* AI generation skeleton loader. Reuses the shimmer placeholder design from the
+   dashboard skeletons (src/dashboard/stylesheets/_index.scss), adapted for the
+   frontend AI modals where the result will appear. */
+@keyframes storesuite-skeleton-shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+.my-storesuite-container .storesuite-skeleton {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: storesuite-skeleton-shimmer 1.4s infinite;
+}
+/* Stacked text lines (suggestion modal). */
+.my-storesuite-container .storesuite-skeleton-lines .storesuite-skeleton {
+  height: 14px;
+  margin-bottom: 10px;
+}
+.my-storesuite-container .storesuite-skeleton-lines .storesuite-skeleton:last-child {
+  width: 60%;
+  margin-bottom: 0;
+}
+/* Image placeholder (image modal preview). */
+.my-storesuite-container .storesuite-skeleton-image {
+  height: 240px;
+  margin-top: 14px;
+}
+/* Inputs in the AI modals read as disabled while a request is in flight. */
+#storesuite-ai-modal .storesuite-form-control[readonly],
+#storesuite-ai-prompt-modal .storesuite-form-control[readonly],
+#storesuite-ai-image-modal .storesuite-form-control[readonly],
+#storesuite-ai-bundle-modal .storesuite-form-control[readonly] {
+  opacity: 0.55;
+  cursor: not-allowed;
 }

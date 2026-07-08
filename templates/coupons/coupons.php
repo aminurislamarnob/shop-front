@@ -19,9 +19,19 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 		<main class="my-storesuite-page-content">
 			<?php do_action( 'storesuite_dashboard_before_main_content' ); ?>
 			<div class="storesuite-table-header-part">
-				<div class="row">
-					<div class="col-md-6">
-						<form action="">
+				<div class="row align-items-center g-2">
+					<div class="col-md-auto">
+						<div class="storesuite-form-group d-flex align-items-center storesuite-bulk-product-actions">
+							<select name="action" id="bulk-action-selector-coupons" class="storesuite-form-control" form="storesuite-coupon-bulk-actions">
+								<option value="-1"><?php esc_html_e( 'Bulk actions', 'storesuite' ); ?></option>
+								<option value="edit"><?php esc_html_e( 'Edit', 'storesuite' ); ?></option>
+								<option value="trash"><?php esc_html_e( 'Move to Trash', 'storesuite' ); ?></option>
+							</select>
+							<button type="submit" id="storesuite-coupon-doaction" class="my-storesuite-button" form="storesuite-coupon-bulk-actions"><?php esc_html_e( 'Apply', 'storesuite' ); ?></button>
+						</div>
+					</div>
+					<div class="col-md">
+						<form action="" method="get">
 							<div class="storesuite-table-search-input">
 								<div class="storesuite-table-search-icon">
 									<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
@@ -32,7 +42,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							</div>
 						</form>
 					</div>
-					<div class="col-md-6 text-right">
+					<div class="col-md-auto text-right storesuite-toolbar-add">
 						<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-coupon' ) ); ?>" class="my-storesuite-button">
 							<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24">
 								<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
@@ -42,6 +52,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 					</div>
 				</div>
 			</div>
+			<form id="storesuite-coupon-bulk-actions" method="post">
 			<div class="storesuite-table-responsive">
 				<?php
 				$coupon_statuses = apply_filters( 'storesuite_coupon_listing_post_statuses', array( 'publish', 'draft', 'pending', 'private' ) );
@@ -62,12 +73,12 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 				$coupon_query = new WP_Query( $query );
 				if ( $coupon_query->found_posts > 0 ) {
 					?>
-				<table class="my-storesuite-tbl my-storesuite-coupon-list-table">
+				<table class="my-storesuite-tbl my-storesuite-coupon-list-table storesuite-list-table">
 					<thead>
 						<tr>
-							<th>
+							<th class="check-column">
 								<label class="my-storesuite-checkbox">
-									<input type="checkbox" name="" id="" class="my-storesuite-checkbox-input">
+									<input type="checkbox" id="cb-select-all-coupons" class="my-storesuite-checkbox-input" aria-label="<?php esc_attr_e( 'Select all', 'storesuite' ); ?>">
 									<span class="my-storesuite-checkbox-back"></span>
 									<span class="my-storesuite-tick">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
@@ -93,10 +104,10 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 							$coupon_id = get_the_ID();
 							$coupon    = new WC_Coupon( $coupon_id );
 							?>
-							<tr class="single-coupon-item">
-								<td>
+							<tr class="single-coupon-item storesuite-list-row">
+								<td class="check-column">
 									<label class="my-storesuite-checkbox">
-										<input type="checkbox" name="" id="" class="my-storesuite-checkbox-input">
+										<input type="checkbox" name="bulk_coupon_ids[]" id="cb-select-<?php echo esc_attr( (string) $coupon_id ); ?>" value="<?php echo esc_attr( (string) $coupon_id ); ?>" class="my-storesuite-checkbox-input" aria-label="<?php esc_attr_e( 'Select item', 'storesuite' ); ?>">
 										<span class="my-storesuite-checkbox-back"></span>
 										<span class="my-storesuite-tick">
 											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
@@ -161,21 +172,14 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								<td class="text-right" data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
 									<div class="storesuite-dropdown">
 										<span class="storesuite-dropdown-icon">
-											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-												<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
-											</svg>
+											<svg width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-three-dots"></use></svg>
 										</span>
 										<ul class="storesuite-dropdown-menu">
 											<li>
 												<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-coupon' ) . '%s', $coupon_id ) ); ?>" class="dropdown-link"><?php esc_html_e( 'Edit', 'storesuite' ); ?></a>
 											</li>
 											<li>
-												<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="POST" class="delete-coupon-form">
-													<?php wp_nonce_field( '_storesuite_delete_coupon_', 'storesuite_delete_coupon_nonce' ); ?>
-													<input type="hidden" name="coupon_id" value="<?php echo esc_attr( $coupon_id ); ?>">
-													<input type="hidden" name="action" value="storesuite_delete_coupon">
-													<button type="submit" class="inline-button dropdown-link"><?php esc_html_e( 'Delete', 'storesuite' ); ?></button>
-												</form>
+												<button type="button" class="inline-button dropdown-link storesuite-delete-coupon" data-coupon-id="<?php echo esc_attr( $coupon_id ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( '_storesuite_delete_coupon_' ) ); ?>"><?php esc_html_e( 'Delete', 'storesuite' ); ?></button>
 											</li>
 										</ul>
 									</div>
@@ -216,6 +220,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 				}
 				?>
 			</div>
+			</form>
+			<?php storesuite_get_template_part( 'coupons/coupon-bulk-edit-modal' ); ?>
 		</main>
 		<?php do_action( 'storesuite_dashboard_content_after' ); ?>
 	</div>

@@ -7,8 +7,13 @@
 			this.initSelect2();
 			this.initWcProductSearch();
 			this.toggleStockFields();
+			this.toggleProductTypeFields();
+			this.toggleVirtualFields();
+			this.toggleDownloadableFields();
+			this.initDownloadableFilesSortable();
 			this.salePriceDatesPicker();
 			this.handleProductSubmit();
+			this.handleStickyActions();
 			this.handleProductBulkEditSubmit();
 			this.handleProductDelete();
 			this.initProductBulkEditModal();
@@ -82,6 +87,31 @@
 			$( document ).on( 'change', '#_manage_stock', function () {
 				self.toggleStockFields();
 			} );
+			$( document ).on( 'change', 'select#post_type', function () {
+				self.toggleProductTypeFields();
+			} );
+			$( document ).on( 'change', '#_downloadable', function () {
+				self.togglePosVisibility();
+				self.toggleDownloadableFields();
+			} );
+			$( document ).on( 'change', '#_virtual', function () {
+				self.toggleVirtualFields();
+			} );
+			$( document ).on(
+				'click',
+				'.storesuite-add-downloadable-file',
+				this.addDownloadableFileRow
+			);
+			$( document ).on(
+				'click',
+				'.storesuite-delete-file',
+				this.removeDownloadableFileRow
+			);
+			$( document ).on(
+				'click',
+				'.storesuite-upload-file-button',
+				this.openDownloadableFileMedia
+			);
 			$( document.body ).on(
 				'keyup',
 				'input[type=text][name*=_global_unique_id]',
@@ -251,6 +281,23 @@
 										storeSuiteFormHandler.i18n.ok_button,
 								} );
 
+								// Changes saved — hide the unsaved-changes bar
+								// after any form-reset change triggers settle.
+								setTimeout( function () {
+									self.hideStickyActions();
+								}, 0 );
+
+								// Also persist any unsaved variation row changes.
+								if (
+									window.StoreSuiteVariations &&
+									typeof window.StoreSuiteVariations
+										.saveVariations === 'function'
+								) {
+									window.StoreSuiteVariations.saveVariations( {
+										silent: true,
+									} );
+								}
+
 								// Reset form fields only if adding (not editing)
 								if ( response.data.context === 'add' ) {
 									$form[ 0 ].reset();
@@ -270,28 +317,18 @@
 										.find( '.storesuite-select2' )
 										.val( null )
 										.trigger( 'change' );
+
+									// Native form reset leaves the image/gallery
+									// previews (DOM markup + state classes) intact,
+									// so clear them back to their empty state.
+									self.resetProductImageFields();
 								}
 
-								// Update permalink and slug field if editing product
+								// Reflect the server-sanitized slug when editing.
 								if (
 									response.data.context === 'edit' &&
-									response.data.permalink &&
 									response.data.slug
 								) {
-									var $permalinkLink = $(
-										'label[for="product_slug"] small a'
-									);
-									if ( $permalinkLink.length ) {
-										$permalinkLink.attr(
-											'href',
-											response.data.permalink
-										);
-										$permalinkLink.text(
-											response.data.permalink
-										);
-									}
-
-									// Update slug field value
 									var $slugField = $( '#product_slug' );
 									if ( $slugField.length ) {
 										$slugField.val( response.data.slug );
@@ -317,6 +354,112 @@
 				}
 			);
 		},
+
+		/**
+		 * Reset the featured image and gallery back to their empty state after a
+		 * successful add. Mirrors the manual remove handlers in script.js: the
+		 * hidden inputs, preview markup and the state classes/placeholder text
+		 * that `form.reset()` does not touch.
+		 */
+		resetProductImageFields: function () {
+			var uploadText =
+				( typeof storeSuiteFrontScript !== 'undefined' &&
+					storeSuiteFrontScript.upload_image_text ) ||
+				'';
+
+			// Featured image.
+			$( '#product_thumbnail_id' ).val( '' );
+			$( '#product_thumbnail_url' ).val( '' );
+			$( '#product_thumb_img' ).html( '' );
+			$( '#product-single-image' )
+				.removeClass( 'image-drop-bg' )
+				.find( '.image-drop-text span' )
+				.text( uploadText );
+
+			// Gallery.
+			$( '#product_image_gallery' ).val( '' );
+			$( '#product_image_gallery_url' ).val( '' );
+			$( '#product_gallery_img' ).empty();
+			$( '#product-gallery-images' ).removeClass(
+				'sm-gallery-image-uploader'
+			);
+			$( '.product-gallery-images-wrapper' ).addClass(
+				'gallery-has-no-image'
+			);
+		},
+
+		/**
+		 * Floating "Unsaved Changes" bar — visible only when the form is dirty
+		 * and the in-form Update button is scrolled out of view.
+		 */
+		handleStickyActions: function () {
+			var self = this;
+			var $bar = $( '#storesuite-product-sticky-actions' );
+			var btn = document.getElementById( 'storesuite-product-actions' );
+			if ( ! $bar.length ) {
+				return;
+			}
+
+			self._dirty = false;
+
+			// Single source of truth for the bar's visibility.
+			self.refreshStickyBar = function () {
+				var inView = false;
+				if ( btn ) {
+					var rect = btn.getBoundingClientRect();
+					inView = rect.top < window.innerHeight && rect.bottom > 0;
+				}
+				var show = self._dirty && ! inView;
+				$bar.toggleClass( 'is-visible', show ).attr(
+					'aria-hidden',
+					show ? 'false' : 'true'
+				);
+			};
+
+			$( document ).on(
+				'change input',
+				'#storesuite-add-product :input',
+				function ( e ) {
+					if (
+						$( e.target ).closest( '.storesuite-sticky-actions' )
+							.length
+					) {
+						return;
+					}
+					// These pickers are UI controls, not saved fields, so
+					// changing them must not mark the form dirty.
+					if (
+						$( e.target ).is(
+							'#storesuite-bulk-action-select, #storesuite-add-attribute-select'
+						)
+					) {
+						return;
+					}
+					self._dirty = true;
+					self.refreshStickyBar();
+				}
+			);
+
+			$( document ).on(
+				'click',
+				'.storesuite-sticky-discard',
+				function ( e ) {
+					e.preventDefault();
+					window.location.reload();
+				}
+			);
+
+			$( window ).on( 'scroll resize', self.refreshStickyBar );
+			self.refreshStickyBar();
+		},
+
+		hideStickyActions: function () {
+			this._dirty = false;
+			if ( this.refreshStickyBar ) {
+				this.refreshStickyBar();
+			}
+		},
+
 		showError: function ( message ) {
 			Swal.fire( {
 				icon: 'error',
@@ -415,6 +558,119 @@
 				is_checked
 					? $( '._stock_status_field' ).slideUp( 'fast' )
 					: $( '._stock_status_field' ).slideDown( 'fast' );
+			}
+		},
+		toggleProductTypeFields: function () {
+			const product_type = $( 'select#post_type' ).val();
+
+			$(
+				'.show_if_simple, .show_if_variable, .show_if_external, .show_if_grouped'
+			).hide();
+			$( '.show_if_' + product_type ).show();
+
+			$(
+				'.hide_if_simple, .hide_if_variable, .hide_if_external, .hide_if_grouped'
+			).show();
+			$( '.hide_if_' + product_type ).hide();
+
+			this.togglePosVisibility();
+		},
+
+		initDownloadableFilesSortable: function () {
+			var $tbody = $( '.downloadable_files tbody' );
+			if ( ! $tbody.length || typeof $tbody.sortable !== 'function' ) {
+				return;
+			}
+			$tbody.sortable( {
+				items: 'tr',
+				cursor: 'move',
+				axis: 'y',
+				handle: 'td.sort',
+				scrollSensitivity: 40,
+				forcePlaceholderSize: true,
+				helper: 'clone',
+				opacity: 0.65,
+			} );
+		},
+
+		addDownloadableFileRow: function ( e ) {
+			e.preventDefault();
+			var row = $( this ).data( 'row' );
+			if ( ! row ) {
+				return;
+			}
+			$( this )
+				.closest( '.storesuite-downloadable-files' )
+				.find( 'tbody' )
+				.append( row );
+		},
+
+		removeDownloadableFileRow: function ( e ) {
+			e.preventDefault();
+			$( this ).closest( 'tr' ).remove();
+		},
+
+		openDownloadableFileMedia: function ( e ) {
+			e.preventDefault();
+			var $button = $( this );
+			var $input = $button
+				.closest( 'tr' )
+				.find( '.storesuite-downloadable-file-url-input' );
+
+			if ( typeof wp === 'undefined' || ! wp.media ) {
+				return;
+			}
+
+			var frame = wp.media( {
+				title: $button.data( 'choose' ) || 'Choose a file',
+				button: {
+					text: $button.data( 'update' ) || 'Insert file URL',
+				},
+				multiple: false,
+			} );
+
+			frame.on( 'select', function () {
+				var attachment = frame
+					.state()
+					.get( 'selection' )
+					.first()
+					.toJSON();
+				$input.val( attachment.url );
+			} );
+
+			frame.open();
+		},
+
+		toggleVirtualFields: function () {
+			const is_virtual = $( '#_virtual' ).is( ':checked' );
+			$( '.hide_if_virtual' ).toggle( ! is_virtual );
+			$( '.show_if_virtual' ).toggle( is_virtual );
+		},
+
+		toggleDownloadableFields: function () {
+			const is_downloadable = $( '#_downloadable' ).is( ':checked' );
+			$( '.show_if_downloadable' ).toggle( is_downloadable );
+			$( '.hide_if_downloadable' ).toggle( ! is_downloadable );
+		},
+
+		togglePosVisibility: function () {
+			const $supported = $( '#pos_visibility_supported' );
+			const $unsupported = $( '#pos_visibility_unsupported' );
+			if ( ! $supported.length && ! $unsupported.length ) {
+				return;
+			}
+			const product_type = $( 'select#post_type' ).val();
+			const is_downloadable = $( '#_downloadable' ).is( ':checked' );
+			const is_pos_supported =
+				( 'simple' === product_type || 'variable' === product_type ) &&
+				! is_downloadable;
+
+			if ( is_pos_supported ) {
+				$supported.show();
+				$unsupported.hide();
+			} else {
+				$supported.hide();
+				$unsupported.show();
 			}
 		},
 		validateGlobalUniqueIdOnKeyUp: function () {
@@ -1248,6 +1504,7 @@
 				.find( 'input[data-field-toggler]' )
 				.trigger( 'change' );
 		},
+
 	};
 	StoreFrontProduct.init();
 } )( jQuery );

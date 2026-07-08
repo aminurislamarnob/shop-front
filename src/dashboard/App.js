@@ -143,7 +143,7 @@ function DashboardPage() {
 										/>
 									</Suspense>
 								</div>
-								<div className="col-12 col-lg-5">
+								<div className="col-12 col-lg-5 storesuite-top-products-responsive-table">
 									<Suspense fallback={ <div className="storesuite-leaderboard-skeleton" /> }>
 										<DashboardLeaderboards
 											query={ query }

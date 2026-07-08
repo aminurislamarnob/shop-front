@@ -31,6 +31,35 @@
 	};
 
 	/**
+	 * Resolve a usable image URL from a wp.media attachment.
+	 *
+	 * Not every attachment has a generated `thumbnail` size (small images,
+	 * SVG/GIF, or sizes not yet regenerated), so fall back through medium and
+	 * full to the original URL. Accessing `sizes.thumbnail.url` directly throws
+	 * when the size is missing, which aborts the select handler and leaves no
+	 * image rendered.
+	 *
+	 * @param {Object} attachment wp.media attachment JSON.
+	 * @return {string} Best-available image URL.
+	 */
+	function storeSuiteAttachmentImageUrl( attachment ) {
+		if ( ! attachment ) {
+			return '';
+		}
+		var sizes = attachment.sizes || {};
+		if ( sizes.thumbnail && sizes.thumbnail.url ) {
+			return sizes.thumbnail.url;
+		}
+		if ( sizes.medium && sizes.medium.url ) {
+			return sizes.medium.url;
+		}
+		if ( sizes.full && sizes.full.url ) {
+			return sizes.full.url;
+		}
+		return attachment.url || '';
+	}
+
+	/**
 	 * Overlay modal helpers: focus return, Escape, Tab cycle, backdrop and close buttons.
 	 * Expects the root overlay to use the hidden attribute when closed.
 	 * Pass initOverlay { fade: true } and matching CSS (see .storesuite-modal-fade) for opacity transitions.
@@ -173,6 +202,7 @@
 		 * @param {string} [options.dialogSelector]
 		 * @param {string} [options.closeSelector] Delegated selector for close controls.
 		 * @param {boolean} [options.fade] Opacity fade (requires .storesuite-modal-fade CSS on overlay).
+		 * @param {boolean} [options.closeOnOverlayClick] Close when the backdrop is clicked. Defaults to true.
 		 */
 		initOverlay: function ( $overlay, options ) {
 			options = options || {};
@@ -180,6 +210,7 @@
 			var closeSelector =
 				options.closeSelector ||
 				'.storesuite-modal-cancel, .storesuite-modal-close';
+			var closeOnOverlayClick = options.closeOnOverlayClick !== false;
 
 			if ( $overlay.data( 'storesuite-modal-a11y-bound' ) ) {
 				return;
@@ -225,11 +256,13 @@
 				}
 			} );
 
-			$overlay.on( 'click.storesuiteModal', function ( e ) {
-				if ( e.target === $overlay[ 0 ] ) {
-					self.close( $overlay );
-				}
-			} );
+			if ( closeOnOverlayClick ) {
+				$overlay.on( 'click.storesuiteModal', function ( e ) {
+					if ( e.target === $overlay[ 0 ] ) {
+						self.close( $overlay );
+					}
+				} );
+			}
 
 			$overlay.on(
 				'click.storesuiteModal',
@@ -253,6 +286,8 @@
 		},
 		bindEvents: function () {
 			this.uploadProductImage(); // Upload product image
+			this.initAccountTabs(); // Account settings sidebar tabs
+			this.uploadAccountAvatar(); // Upload account profile picture
 			this.uploadProductGallaryImages(); // Upload product gallery images
 			this.removeGalleryImage(); // Remove gallery image
 			this.uploadCategoryImage(); // Upload category image
@@ -260,6 +295,25 @@
 			this.handleFilterOffcanvas(); // Handle filter off-canvas
 			this.handleOrderFilterOffcanvas(); // Handle order filter off-canvas
 			this.handleBulkActionCheckbox(); // Handle bulk action checkbox
+			this.handleSearchToggle(); // Toggle the search box on mobile
+		},
+		handleSearchToggle: function () {
+			var searchToggle = $( '#storesuite-search-toggle' );
+			var toolbar = $( '.storesuite-products-toolbar' );
+
+			searchToggle.on( 'click', function ( event ) {
+				event.preventDefault();
+				var isOpen = toolbar
+					.toggleClass( 'storesuite-search-open' )
+					.hasClass( 'storesuite-search-open' );
+				searchToggle.attr(
+					'aria-expanded',
+					isOpen ? 'true' : 'false'
+				);
+				if ( isOpen ) {
+					toolbar.find( '#search_by' ).trigger( 'focus' );
+				}
+			} );
 		},
 		handleBulkActionCheckbox: function () {
 			$( '#cb-select-all-orders' ).on( 'click', function () {
@@ -292,6 +346,8 @@
 						.find( '.image-drop-text span' )
 						.text( storeSuiteFrontScript.upload_image_text );
 					$( targetContainer ).removeClass( 'image-drop-bg' );
+					// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+					$( '#product_thumbnail_id' ).trigger( 'change' );
 				} else {
 					// If the media frame already exists, reopen it.
 					if ( frame ) {
@@ -321,13 +377,13 @@
 						// Send the attachment URL to our custom image input field.
 						$( '#product_thumb_img' ).html(
 							'<img src="' +
-								attachment.sizes.thumbnail.url +
+								storeSuiteAttachmentImageUrl( attachment ) +
 								'" alt="' +
 								storeSuiteFrontScript.product_image +
 								'"/>'
 						);
 						$( '#product_thumbnail_url' ).val(
-							attachment.sizes.thumbnail.url
+							storeSuiteAttachmentImageUrl( attachment )
 						);
 
 						//add class to hide text normaly
@@ -335,11 +391,160 @@
 						$( '#product-single-image .image-drop-text span' ).text(
 							storeSuiteFrontScript.remove_image_text
 						);
+						// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+						$( '#product_thumbnail_id' ).trigger( 'change' );
 					} );
 
 					frame.open();
 				}
 			} );
+		},
+		initAccountTabs: function () {
+			// If the address tab is the active one on load, its selects are
+			// already visible, so WooCommerce enhances them natively on ready.
+			var addressEnhanced = $(
+				'.storesuite-account-panel[data-account-panel="address"].is-active'
+			).length
+				? true
+				: false;
+
+			$( document ).on(
+				'click',
+				'.storesuite-account-nav-link[data-account-tab]',
+				function ( event ) {
+					event.preventDefault();
+					var tab = $( this ).data( 'account-tab' );
+
+					$( '.storesuite-account-nav-link' ).removeClass(
+						'is-active'
+					);
+					$( this ).addClass( 'is-active' );
+
+					$( '.storesuite-account-panel' ).removeClass( 'is-active' );
+					$(
+						'.storesuite-account-panel[data-account-panel="' +
+							tab +
+							'"]'
+					).addClass( 'is-active' );
+
+					// Reflect the active tab in the URL (?tab=...).
+					if ( window.history && window.history.replaceState ) {
+						var url = new URL( window.location.href );
+						url.searchParams.set( 'tab', tab );
+						window.history.replaceState( {}, '', url.toString() );
+					}
+
+					// WooCommerce's country-select only enhances visible
+					// selects; the Address tab is hidden on load, so enhance
+					// its country/state dropdowns the first time it is shown.
+					if ( 'address' === tab && ! addressEnhanced ) {
+						addressEnhanced = true;
+						$( document.body ).trigger(
+							'country_to_state_changed'
+						);
+					}
+				}
+			);
+
+			// Copy billing address values into the shipping fields.
+			$( document ).on(
+				'click',
+				'.storesuite-copy-billing',
+				function ( event ) {
+					event.preventDefault();
+
+					$( '[name^="billing_"]' ).each( function () {
+						var $billing = $( this );
+						var shippingName = $billing
+							.attr( 'name' )
+							.replace( /^billing_/, 'shipping_' );
+						var $shipping = $( '[name="' + shippingName + '"]' );
+
+						if ( ! $shipping.length ) {
+							return;
+						}
+
+						$shipping.val( $billing.val() );
+						// Refresh selectWoo-enhanced country/state dropdowns.
+						if ( $shipping.is( 'select' ) ) {
+							$shipping.trigger( 'change' );
+						}
+					} );
+				}
+			);
+		},
+		uploadAccountAvatar: function () {
+			var avatarFrame;
+
+			// Open the media library to choose a profile picture.
+			$( document ).on(
+				'click',
+				'.storesuite-account-avatar-upload',
+				function ( event ) {
+					event.preventDefault();
+
+					if ( avatarFrame ) {
+						avatarFrame.open();
+						return;
+					}
+
+					avatarFrame = wp.media( {
+						title:
+							storeSuiteFrontScript.upload_profile_picture ||
+							'Upload Profile Picture',
+						button: {
+							text: storeSuiteFrontScript.insert_image,
+						},
+						multiple: false,
+						library: { type: 'image' },
+					} );
+
+					avatarFrame.on( 'select', function () {
+						var attachment = avatarFrame
+							.state()
+							.get( 'selection' )
+							.first()
+							.toJSON();
+						var url = storeSuiteAttachmentImageUrl( attachment );
+						var $wrap = $( '#storesuite-account-avatar' );
+
+						$( '#account_profile_picture_id' ).val( attachment.id );
+						$wrap
+							.addClass( 'has-image' )
+							.find( '.storesuite-account-avatar-preview img' )
+							.attr( 'src', url );
+						$wrap
+							.find( '.storesuite-account-avatar-remove' )
+							.removeClass( 'storesuite-hidden' );
+						// Notify the dirty-state tracker (sticky save bar).
+						$( '#account_profile_picture_id' ).trigger( 'change' );
+					} );
+
+					avatarFrame.open();
+				}
+			);
+
+			// Clear the selected picture (revert to the default avatar).
+			$( document ).on(
+				'click',
+				'.storesuite-account-avatar-remove',
+				function ( event ) {
+					event.preventDefault();
+
+					var $wrap = $( '#storesuite-account-avatar' );
+					$( '#account_profile_picture_id' ).val( '' );
+					$wrap
+						.removeClass( 'has-image' )
+						.find( '.storesuite-account-avatar-preview img' )
+						.attr(
+							'src',
+							storeSuiteFrontScript.default_avatar_url || ''
+						);
+					$( this ).addClass( 'storesuite-hidden' );
+					// Notify the dirty-state tracker (sticky save bar).
+					$( '#account_profile_picture_id' ).trigger( 'change' );
+				}
+			);
 		},
 		uploadProductGallaryImages: function () {
 			$( '#product-gallery-images' ).click( function ( event ) {
@@ -397,13 +602,13 @@
 						) {
 							galleryImageIds.push( String( attachment.id ) );
 							galleryImageUrls.push(
-								attachment.sizes.thumbnail.url
+								storeSuiteAttachmentImageUrl( attachment )
 							);
 							$( '#product_gallery_img' ).append(
 								'<div class="preview-image-box"><i class="las la-trash" data-id="' +
 									attachment.id +
 									'"></i><img src="' +
-									attachment.sizes.thumbnail.url +
+									storeSuiteAttachmentImageUrl( attachment ) +
 									'" data-id="' +
 									attachment.id +
 									'" alt="' +
@@ -419,6 +624,8 @@
 					$( '#product_image_gallery_url' ).val(
 						galleryImageUrls.join( ',' )
 					);
+					// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+					$( '#product_image_gallery' ).trigger( 'change' );
 
 					//add class to hide text normaly
 					$( targetContainer ).addClass(
@@ -438,15 +645,40 @@
 				'.remove-gallery-image',
 				function ( event ) {
 					event.preventDefault();
-					var imageId = $( this ).data( 'id' );
-					var galleryImageIds = $( '#product_image_gallery' ).val();
-					var newGalleryImageIds = galleryImageIds
-						.split( ',' )
-						.filter( function ( id ) {
-							return parseInt( id ) !== parseInt( imageId );
-						} )
-						.join( ',' );
-					$( '#product_image_gallery' ).val( newGalleryImageIds );
+					var imageId = String( $( this ).data( 'id' ) );
+
+					var ids = $.map(
+						( $( '#product_image_gallery' ).val() || '' ).split(
+							','
+						),
+						function ( id ) {
+							id = $.trim( id );
+							return id ? id : null;
+						}
+					);
+					var urls = $.map(
+						( $( '#product_image_gallery_url' ).val() || '' ).split(
+							','
+						),
+						function ( url ) {
+							url = $.trim( url );
+							return url ? url : null;
+						}
+					);
+
+					// Remove the matching id and its parallel url by index.
+					var idx = $.inArray( imageId, ids );
+					if ( idx !== -1 ) {
+						ids.splice( idx, 1 );
+						if ( idx < urls.length ) {
+							urls.splice( idx, 1 );
+						}
+					}
+
+					$( '#product_image_gallery' ).val( ids.join( ',' ) );
+					$( '#product_image_gallery_url' ).val( urls.join( ',' ) );
+					// Notify the dirty-state tracker (sticky "Unsaved Changes" bar).
+					$( '#product_image_gallery' ).trigger( 'change' );
 					$( this ).closest( '.preview-image-box' ).remove();
 				}
 			);
@@ -497,13 +729,13 @@
 						// Send the attachment URL to our custom image input field.
 						$( '#category_thumb_img' ).html(
 							'<img src="' +
-								attachment.sizes.thumbnail.url +
+								storeSuiteAttachmentImageUrl( attachment ) +
 								'" alt="' +
 								storeSuiteFrontScript.category_image +
 								'"/>'
 						);
 						$( '#product_category_thumbnail_url' ).val(
-							attachment.sizes.thumbnail.url
+							storeSuiteAttachmentImageUrl( attachment )
 						);
 
 						//add class to hide text normaly
@@ -561,13 +793,13 @@
 						// Send the attachment URL to our custom image input field.
 						$( '#brand_thumb_img' ).html(
 							'<img src="' +
-								attachment.sizes.thumbnail.url +
+								storeSuiteAttachmentImageUrl( attachment ) +
 								'" alt="' +
 								storeSuiteFrontScript.brand_image +
 								'"/>'
 						);
 						$( '#product_brand_thumbnail_url' ).val(
-							attachment.sizes.thumbnail.url
+							storeSuiteAttachmentImageUrl( attachment )
 						);
 
 						//add class to hide text normaly
@@ -620,7 +852,7 @@
 			} );
 		},
 		handleOrderFilterOffcanvas: function () {
-			var orderFilterToggle = $( '#storesuite-order-filter-toggle' );
+			var orderFilterToggle = $( '#storesuite-order-filter-toggle, #storesuite-order-filter-toggle-title' );
 			var orderFilterOffcanvas = $(
 				'#storesuite-order-filter-offcanvas'
 			);

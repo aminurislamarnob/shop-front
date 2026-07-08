@@ -20,6 +20,31 @@ class CouponController {
 		add_action( 'wp_ajax_storesuite_add_coupon', array( $this, 'handle_add_coupon' ) );
 		add_action( 'wp_ajax_storesuite_edit_coupon', array( $this, 'handle_edit_coupon' ) );
 		add_action( 'wp_ajax_storesuite_delete_coupon', array( $this, 'handle_delete_coupon' ) );
+		add_action( 'storesuite_dashboard_title_after', array( $this, 'render_title_add_coupon_button' ) );
+	}
+
+	/**
+	 * Render an "Add Coupon" button beside the Coupons page title.
+	 *
+	 * Hooked on `storesuite_dashboard_title_after`; only renders on the
+	 * Coupons list page. Hidden on desktop where the toolbar button is
+	 * shown instead (see `assets/frontend/responsive.css`).
+	 *
+	 * @return void
+	 */
+	public function render_title_add_coupon_button() {
+		$query = pluginizelab_storesuite()->get_storesuite_query();
+		if ( ! $query || 'coupons' !== $query->get_current_endpoint() ) {
+			return;
+		}
+		?>
+		<a href="<?php echo esc_url( storesuite_get_navigation_url( 'add-new-coupon' ) ); ?>" class="my-storesuite-button storesuite-title-action">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+				<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
+			</svg>
+			<?php esc_html_e( 'Add Coupon', 'storesuite' ); ?>
+		</a>
+		<?php
 	}
 
 	/**
