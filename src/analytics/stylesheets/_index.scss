@@ -243,6 +243,17 @@
 	.woocommerce-analytics-import-status-bar-wrapper {
 		flex: 0 0 auto;
 	}
+
+	// On small screens the date-range picker and the status bar can't sit
+	// side by side without the bar overflowing its container and clipping the
+	// "Update" trigger. Stack them so each gets the full row width.
+	@media ( max-width: 782px ) {
+		flex-direction: column;
+
+		.woocommerce-analytics-import-status-bar-wrapper {
+			width: 100%;
+		}
+	}
 }
 
 .woocommerce-analytics-import-status-bar-wrapper {
@@ -327,5 +338,31 @@
 		margin: 0;
 		box-shadow: none;
 		border: none;
+	}
+}
+
+// Mobile/tablet alignment fixes, mirroring the dashboard home so the analytics
+// reports share the same gutter behaviour.
+@media ( max-width: 782px ) {
+	.storesuite-analytics-layout {
+		// WC ships the date-range picker with -8px side margins, which pushes it
+		// past the report content's left/right edges (the "Data status" bar sits
+		// at the clean gutter). Reset so both align.
+		.woocommerce-filters {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		// WC full-bleeds the performance stat cards with -16px side margins.
+		// Reset so each card sits inside the page gutter with proper left/right
+		// padding, and divide stacked cards with a bottom border.
+		.woocommerce-summary .woocommerce-summary__item-container {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		ul.woocommerce-summary li:not( :last-child ) .woocommerce-summary__item {
+			border-bottom: 1px solid var( --storesuite-border-color );
+		}
 	}
 }
