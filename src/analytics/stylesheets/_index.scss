@@ -243,6 +243,17 @@
 	.woocommerce-analytics-import-status-bar-wrapper {
 		flex: 0 0 auto;
 	}
+
+	// On small screens the date-range picker and the status bar can't sit
+	// side by side without the bar overflowing its container and clipping the
+	// "Update" trigger. Stack them so each gets the full row width.
+	@media ( max-width: 782px ) {
+		flex-direction: column;
+
+		.woocommerce-analytics-import-status-bar-wrapper {
+			width: 100%;
+		}
+	}
 }
 
 .woocommerce-analytics-import-status-bar-wrapper {
@@ -327,5 +338,86 @@
 		margin: 0;
 		box-shadow: none;
 		border: none;
+	}
+}
+
+// Mobile/tablet alignment fixes, mirroring the dashboard home so the analytics
+// reports share the same gutter behaviour.
+@media ( max-width: 782px ) {
+	.storesuite-analytics-layout {
+		// WC ships the date-range picker with -8px side margins, which pushes it
+		// past the report content's left/right edges (the "Data status" bar sits
+		// at the clean gutter). Reset so both align.
+		.woocommerce-filters {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		// WC full-bleeds the performance stat cards with -16px side margins.
+		// Reset so each card sits inside the page gutter with proper left/right
+		// padding, and divide stacked cards with a bottom border.
+		.woocommerce-summary .woocommerce-summary__item-container {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		ul.woocommerce-summary li:not( :last-child ) .woocommerce-summary__item {
+			border-bottom: 1px solid var( --storesuite-border-color );
+		}
+
+		// Force one stat per row on mobile. Woo's `has-N-items` grid keeps
+		// multiple columns (which overflow on phones); the Overview stacks only
+		// because its SummaryList drops the `has-N-items` class below this
+		// breakpoint. We add that class ourselves for the desktop grid, so
+		// collapse it back to a single column here to match.
+		ul.woocommerce-summary {
+			grid-template-columns: 1fr;
+		}
+
+		// WC full-bleeds the report chart with -16px side margins as well, so its
+		// "By day" control, plot area and legend touch the screen edges. Reset so
+		// the chart sits inside the page gutter like the summary and header.
+		.woocommerce-chart {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		// Tighten the stacked report header spacing on mobile: drop the filter's
+		// own bottom margin and give the header a single consistent gap below.
+		.woocommerce-analytics-report-header {
+			margin-bottom: 30px;
+
+			.woocommerce-filters {
+				margin-bottom: 0 !important;
+			}
+		}
+
+		// The table card's actions row (Compare / search / Download) is a
+		// right-aligned no-wrap flex row. On mobile its content is wider than the
+		// cell, so the overflow pushes the Compare button off the left edge and
+		// clips it. Let it wrap and align left, keeping Compare + Download on the
+		// first row and dropping the search to a full-width second row.
+		.woocommerce-table__actions {
+			flex-wrap: wrap;
+			justify-content: flex-start;
+			gap: 8px;
+
+			// The search sits in an unclassed wrapper div (the only div child).
+			// Push that wrapper onto its own full-width second row so Compare and
+			// Download stay together on the first row.
+			> div {
+				order: 1;
+				flex: 0 0 100%;
+			}
+
+			.woocommerce-search {
+				width: 100%;
+			}
+
+			// Compare stays on the left; push Download to the right edge.
+			.woocommerce-table__download-button {
+				margin-left: auto;
+			}
+		}
 	}
 }
