@@ -381,5 +381,15 @@
 			margin-left: 0;
 			margin-right: 0;
 		}
+
+		// Tighten the stacked report header spacing on mobile: drop the filter's
+		// own bottom margin and give the header a single consistent gap below.
+		.woocommerce-analytics-report-header {
+			margin-bottom: 30px;
+
+			.woocommerce-filters {
+				margin-bottom: 0 !important;
+			}
+		}
 	}
 }
