@@ -249,8 +249,10 @@
 .woocommerce-analytics-import-status-bar {
 	display: flex;
 	align-items: center;
-	border: 1px solid #ccc;
-	border-radius: 4px;
+	background: #fff;
+	// Match the date-range picker: soft border token, 6px radius, no shadow.
+	border: 1px solid var( --storesuite-border-color );
+	border-radius: 6px;
 	padding: 16px 12px;
 	font-size: 11px;
 	line-height: 20px;
