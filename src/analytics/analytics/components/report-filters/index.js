@@ -12,6 +12,7 @@ import {
 } from '@woocommerce/date';
 import { CurrencyContext } from '@woocommerce/currency';
 import { LOCALE } from '../../../utils/admin-settings';
+import ImportStatusBar from '../import-status-bar';
 
 // CES store key — safely handle if package not available.
 let CES_STORE_KEY = null;
@@ -49,20 +50,23 @@ class ReportFilters extends Component {
 		const Currency  = this.context;
 
 		return (
-			<Filters
-				query={ query }
-				siteLocale={ LOCALE.siteLocale }
-				currency={ Currency.getCurrencyConfig() }
-				path={ path }
-				filters={ filters }
-				advancedFilters={ advancedFilters }
-				showDatePicker={ showDatePicker }
-				onDateSelect={ this.onDateSelect }
-				onFilterSelect={ this.onFilterSelect }
-				onAdvancedFilterAction={ this.onAdvancedFilterAction }
-				dateQuery={ dateQuery }
-				isoDateFormat={ isoDateFormat }
-			/>
+			<div className="woocommerce-analytics-report-header">
+				<Filters
+					query={ query }
+					siteLocale={ LOCALE.siteLocale }
+					currency={ Currency.getCurrencyConfig() }
+					path={ path }
+					filters={ filters }
+					advancedFilters={ advancedFilters }
+					showDatePicker={ showDatePicker }
+					onDateSelect={ this.onDateSelect }
+					onFilterSelect={ this.onFilterSelect }
+					onAdvancedFilterAction={ this.onAdvancedFilterAction }
+					dateQuery={ dateQuery }
+					isoDateFormat={ isoDateFormat }
+				/>
+				<ImportStatusBar />
+			</div>
 		);
 	}
 }

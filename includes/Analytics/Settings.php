@@ -31,6 +31,7 @@ class Settings {
 			'timezone'                   => wp_timezone_string(),
 			'orderStatuses'              => $this->get_order_statuses(),
 			'unregisteredOrderStatuses'  => $this->get_unregistered_order_statuses(),
+			'scheduledImport'            => $this->get_scheduled_import_config(),
 			'preloadOptions'             => $this->get_preload_options(),
 		];
 
@@ -75,6 +76,27 @@ class Settings {
 			}
 		}
 		return $unregistered;
+	}
+
+	/**
+	 * Gating config for the "Data status" import bar, mirroring the two checks
+	 * wc-admin performs before rendering it: the `analytics-scheduled-import`
+	 * feature flag (which also registers the /wc-analytics/imports REST routes)
+	 * and the `woocommerce_analytics_scheduled_import` option (scheduled vs.
+	 * immediate mode). On the frontend `window.wcAdminFeatures` is not printed,
+	 * so we resolve both server-side and inline them for the React bar.
+	 *
+	 * @return array{enabled:bool,mode:string}
+	 */
+	private function get_scheduled_import_config(): array {
+		$features_class = '\Automattic\WooCommerce\Admin\Features\Features';
+		$enabled        = class_exists( $features_class )
+			&& $features_class::is_enabled( 'analytics-scheduled-import' );
+
+		return [
+			'enabled' => $enabled,
+			'mode'    => get_option( 'woocommerce_analytics_scheduled_import', 'no' ),
+		];
 	}
 
 	private function get_current_user_data(): array {

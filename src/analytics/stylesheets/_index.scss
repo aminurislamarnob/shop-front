@@ -210,6 +210,80 @@
 	z-index: 100000;
 }
 
+// "Data status" import bar — ported from wc-admin. StoreSuite doesn't load the
+// WC admin app stylesheet, so these mirror the upstream rules (using the same
+// classnames) to keep the bar visually identical to the admin panel.
+.woocommerce-analytics-report-header {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+
+	.woocommerce-filters {
+		flex: 1;
+		width: 100%;
+	}
+}
+
+.woocommerce-analytics-import-status-bar-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+
+	&__label {
+		margin: 5px 0 0;
+		font-size: 13px;
+		line-height: 18px;
+		color: #1e1e1e;
+		font-weight: 400;
+	}
+}
+
+.woocommerce-analytics-import-status-bar {
+	display: flex;
+	align-items: center;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding: 16px 12px;
+	font-size: 11px;
+	line-height: 20px;
+	font-weight: 400;
+	height: 50px;
+
+	&__content {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+	}
+
+	&__item {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__label {
+		color: #757575;
+		white-space: nowrap;
+	}
+
+	&__value {
+		color: #1e1e1e;
+	}
+
+	&__trigger {
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 20px;
+		width: 88px;
+		justify-content: center;
+	}
+
+	.components-spinner {
+		height: 8px;
+		width: 8px;
+	}
+}
+
 .storesuite-overview-chart-item {
 	background: #fff;
 	border: 0;
