@@ -1,9 +1,21 @@
+@use 'reskin';
+
 // StoreSuite Analytics styles
 
 .storesuite-analytics-layout {
+	// The outer .storesuite-analytics-page already applies a 24px gutter, so the
+	// layout main only needs to sit flush inside it — an extra padding here would
+	// push all report content 24px right of the shared title/breadcrumb row.
 	.woocommerce-layout__main {
-		padding: 24px;
+		padding: 0;
 	}
+}
+
+// The report subtitle is the first thing inside the app, right below the shared
+// title/breadcrumb row. Tighten that row's bottom margin on analytics pages so
+// the title and its subtitle read as a single pair instead of drifting apart.
+.storesuite-analytics-page .storesuite-dashboard-title-wrapper {
+	margin-bottom: 8px;
 }
 
 .storesuite-analytics-nav {
@@ -34,14 +46,14 @@
 			transition: color 0.15s, border-color 0.15s;
 
 			&:hover {
-				color: #674399;
-				border-bottom-color: #674399;
+				color: var( --storesuite-primary-bg );
+				border-bottom-color: var( --storesuite-primary-bg );
 			}
 		}
 
 		&.active a {
-			color: #674399;
-			border-bottom-color: #674399;
+			color: var( --storesuite-primary-bg );
+			border-bottom-color: var( --storesuite-primary-bg );
 			font-weight: 600;
 		}
 	}
@@ -127,24 +139,179 @@
 		margin: 0;
 
 		.woocommerce-table {
-			box-shadow: none;
-			border: 1px solid #e0e0e0;
-			border-radius: 4px;
+			box-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+			border: 0;
+			border-radius: 8px;
+			margin-bottom: 0;
 		}
 
 		.storesuite-leaderboard__title {
 			margin: 0;
 			font-size: 14px;
 			font-weight: 600;
-			color: #1e1e1e;
+			color: var( --storesuite-text-black );
 		}
+	}
+}
+
+.storesuite-analytics-settings {
+	&__field {
+		margin: 0 0 32px;
+		border: 0;
+		padding: 0;
+	}
+
+	&__label {
+		font-size: 14px;
+		font-weight: 600;
+		margin-bottom: 4px;
+		color: var( --storesuite-text-black );
+	}
+
+	&__help {
+		color: var( --storesuite-text-color-light );
+		margin: 4px 0 12px;
+	}
+
+	.components-card__header h2 {
+		font-size: 16px;
+		font-weight: 600;
+		margin: 0;
+		color: var( --storesuite-text-black );
+	}
+
+	.components-checkbox-control__input:checked {
+		background: var( --storesuite-primary-bg );
+		border-color: var( --storesuite-primary-bg );
+	}
+
+	// Keep the date-type select a comfortable reading width instead of
+	// stretching across the whole card.
+	.components-select-control {
+		max-width: 420px;
+	}
+
+	// The default-date-range picker ships with WC's 12px left padding, which
+	// indents it past the other settings fields. Flush it to the left edge.
+	.woocommerce-filters-filter {
+		padding-left: 0;
+	}
+
+	// Match the picker's own "Date range:" label to the other settings field
+	// labels (weight + color).
+	.woocommerce-filters-label {
+		font-weight: 600;
+		color: var( --storesuite-text-black );
+	}
+
+	&__statuses {
+		display: grid;
+		grid-template-columns: repeat( auto-fill, minmax( 180px, 1fr ) );
+		gap: 8px;
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+	}
+}
+
+.storesuite-analytics-snackbar {
+	position: fixed;
+	bottom: 24px;
+	left: 24px;
+	z-index: 100000;
+}
+
+// "Data status" import bar — ported from wc-admin. StoreSuite doesn't load the
+// WC admin app stylesheet, so these mirror the upstream rules (using the same
+// classnames) to keep the bar visually identical to the admin panel.
+.woocommerce-analytics-report-header {
+	position: relative;
+	display: flex;
+	// Top-align so the "Date range:" and "Data status:" labels share one row,
+	// regardless of how tall the filter block below each grows.
+	align-items: flex-start;
+	gap: 16px;
+
+	.woocommerce-filters {
+		flex: 1;
+		width: 100%;
+	}
+
+	// The status bar keeps its natural width and hugs the right edge.
+	.woocommerce-analytics-import-status-bar-wrapper {
+		flex: 0 0 auto;
+	}
+}
+
+.woocommerce-analytics-import-status-bar-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+
+	&__label {
+		margin: 5px 0 0;
+		font-size: 13px;
+		line-height: 18px;
+		// Match the "Date range:" filter label color and weight.
+		color: var( --storesuite-text-color );
+		font-weight: 500;
+	}
+}
+
+.woocommerce-analytics-import-status-bar {
+	display: flex;
+	align-items: center;
+	background: #fff;
+	// Match the date-range picker: soft border token, 6px radius, no shadow.
+	border: 1px solid var( --storesuite-border-color );
+	border-radius: 6px;
+	padding: 16px 12px;
+	font-size: 11px;
+	line-height: 20px;
+	font-weight: 400;
+	height: 50px;
+
+	&__content {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+	}
+
+	&__item {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__label {
+		color: #757575;
+		white-space: nowrap;
+	}
+
+	&__value {
+		color: #1e1e1e;
+	}
+
+	&__trigger {
+		font-size: 11px;
+		font-weight: 500;
+		line-height: 20px;
+		width: 88px;
+		justify-content: center;
+	}
+
+	.components-spinner {
+		height: 8px;
+		width: 8px;
 	}
 }
 
 .storesuite-overview-chart-item {
 	background: #fff;
-	border: 1px solid #e0e0e0;
-	border-radius: 4px;
+	border: 0;
+	border-radius: 8px;
+	box-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
 	overflow: hidden;
 
 	.storesuite-overview-chart-title {
@@ -152,8 +319,8 @@
 		padding: 12px 16px;
 		font-size: 13px;
 		font-weight: 600;
-		color: #1e1e1e;
-		border-bottom: 1px solid #e0e0e0;
+		color: var( --storesuite-text-black );
+		border-bottom: 1px solid var( --storesuite-border-color );
 	}
 
 	.woocommerce-chart {

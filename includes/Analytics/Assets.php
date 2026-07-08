@@ -64,10 +64,11 @@ class Assets {
 			'storesuite-analytics',
 			'var storeSuiteAnalyticsConfig = ' . wp_json_encode(
 				[
-					'assetsPath'    => STORESUITE_PLUGIN_ASSET . '/build/',
-					'analyticsUrl'  => $analytics_url,
-					'dashboardPath' => wp_parse_url( $dashboard_url, PHP_URL_PATH ),
-					'reportsPath'   => wp_parse_url( $analytics_url, PHP_URL_PATH ),
+					'assetsPath'       => STORESUITE_PLUGIN_ASSET . '/build/',
+					'analyticsUrl'     => $analytics_url,
+					'dashboardPath'    => wp_parse_url( $dashboard_url, PHP_URL_PATH ),
+					'reportsPath'      => wp_parse_url( $analytics_url, PHP_URL_PATH ),
+					'orderDetailsPath' => wp_parse_url( storesuite_get_navigation_url( 'order-details' ), PHP_URL_PATH ),
 				]
 			),
 			'before'

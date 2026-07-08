@@ -22,19 +22,81 @@ class Settings {
 	 */
 	public function get_settings( ?array $preload_endpoints = null ): array {
 		$settings = [
-			'stockStatuses'      => wc_get_product_stock_status_options(),
-			'manageStock'        => get_option( 'woocommerce_manage_stock', 'no' ),
-			'isAnalyticsEnabled' => true,
-			'currentUserData'    => $this->get_current_user_data(),
-			'dateFormat'         => get_option( 'date_format', 'F j, Y' ),
-			'timeFormat'         => get_option( 'time_format', 'g:i a' ),
-			'timezone'           => wp_timezone_string(),
-			'preloadOptions'     => $this->get_preload_options(),
+			'stockStatuses'              => wc_get_product_stock_status_options(),
+			'manageStock'                => get_option( 'woocommerce_manage_stock', 'no' ),
+			'isAnalyticsEnabled'         => true,
+			'currentUserData'            => $this->get_current_user_data(),
+			'dateFormat'                 => get_option( 'date_format', 'F j, Y' ),
+			'timeFormat'                 => get_option( 'time_format', 'g:i a' ),
+			'timezone'                   => wp_timezone_string(),
+			'orderStatuses'              => $this->get_order_statuses(),
+			'unregisteredOrderStatuses'  => $this->get_unregistered_order_statuses(),
+			'scheduledImport'            => $this->get_scheduled_import_config(),
+			'preloadOptions'             => $this->get_preload_options(),
 		];
 
 		$settings = array_merge( $settings, $this->load_preload_endpoints( $preload_endpoints ) );
 
 		return apply_filters( 'storesuite_analytics_settings', $settings, $preload_endpoints );
+	}
+
+	/**
+	 * Registered WC order statuses keyed without the `wc-` prefix, matching the
+	 * shape wc-admin exposes as `orderStatuses` (used by the Orders report
+	 * advanced filter and the Analytics Settings status checkboxes).
+	 *
+	 * @return array<string,string>
+	 */
+	private function get_order_statuses(): array {
+		$statuses = [];
+		foreach ( wc_get_order_statuses() as $key => $label ) {
+			$statuses[ preg_replace( '/^wc-/', '', $key ) ] = $label;
+		}
+		return $statuses;
+	}
+
+	/**
+	 * Statuses referenced by the analytics status options but no longer
+	 * registered (e.g. from a deactivated plugin), mirroring wc-admin's
+	 * `unregisteredOrderStatuses` so saved selections stay visible/editable.
+	 *
+	 * @return array<string,string>
+	 */
+	private function get_unregistered_order_statuses(): array {
+		$registered = $this->get_order_statuses();
+		$saved      = array_merge(
+			(array) get_option( 'woocommerce_excluded_report_order_statuses', [] ),
+			(array) get_option( 'woocommerce_actionable_order_statuses', [] )
+		);
+
+		$unregistered = [];
+		foreach ( $saved as $status ) {
+			if ( is_string( $status ) && '' !== $status && ! isset( $registered[ $status ] ) ) {
+				$unregistered[ $status ] = ucfirst( $status );
+			}
+		}
+		return $unregistered;
+	}
+
+	/**
+	 * Gating config for the "Data status" import bar, mirroring the two checks
+	 * wc-admin performs before rendering it: the `analytics-scheduled-import`
+	 * feature flag (which also registers the /wc-analytics/imports REST routes)
+	 * and the `woocommerce_analytics_scheduled_import` option (scheduled vs.
+	 * immediate mode). On the frontend `window.wcAdminFeatures` is not printed,
+	 * so we resolve both server-side and inline them for the React bar.
+	 *
+	 * @return array{enabled:bool,mode:string}
+	 */
+	private function get_scheduled_import_config(): array {
+		$features_class = '\Automattic\WooCommerce\Admin\Features\Features';
+		$enabled        = class_exists( $features_class )
+			&& $features_class::is_enabled( 'analytics-scheduled-import' );
+
+		return [
+			'enabled' => $enabled,
+			'mode'    => get_option( 'woocommerce_analytics_scheduled_import', 'no' ),
+		];
 	}
 
 	private function get_current_user_data(): array {

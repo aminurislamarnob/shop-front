@@ -63,7 +63,7 @@ export const indicators = applyFilters( 'storesuite_analytics_overview_indicator
 		type:           'number',
 		isReverseTrend: false,
 		endpoint:       'coupons',
-		linkedReport:   null,
+		linkedReport:   'coupons',
 	},
 	{
 		stat:           'coupons/amount',
@@ -72,7 +72,7 @@ export const indicators = applyFilters( 'storesuite_analytics_overview_indicator
 		type:           'currency',
 		isReverseTrend: false,
 		endpoint:       'coupons',
-		linkedReport:   null,
+		linkedReport:   'coupons',
 	},
 	{
 		stat:           'taxes/total_tax',
@@ -81,7 +81,7 @@ export const indicators = applyFilters( 'storesuite_analytics_overview_indicator
 		type:           'currency',
 		isReverseTrend: false,
 		endpoint:       'taxes',
-		linkedReport:   null,
+		linkedReport:   'taxes',
 	},
 	{
 		stat:           'taxes/order_tax',
@@ -90,7 +90,7 @@ export const indicators = applyFilters( 'storesuite_analytics_overview_indicator
 		type:           'currency',
 		isReverseTrend: false,
 		endpoint:       'taxes',
-		linkedReport:   null,
+		linkedReport:   'taxes',
 	},
 	{
 		stat:           'taxes/shipping_tax',
@@ -99,7 +99,7 @@ export const indicators = applyFilters( 'storesuite_analytics_overview_indicator
 		type:           'currency',
 		isReverseTrend: false,
 		endpoint:       'taxes',
-		linkedReport:   null,
+		linkedReport:   'taxes',
 	},
 	{
 		stat:           'revenue/shipping',
@@ -117,7 +117,7 @@ export const indicators = applyFilters( 'storesuite_analytics_overview_indicator
 		type:           'number',
 		isReverseTrend: false,
 		endpoint:       'downloads',
-		linkedReport:   null,
+		linkedReport:   'downloads',
 	},
 	{
 		stat:           'revenue/gross_sales',

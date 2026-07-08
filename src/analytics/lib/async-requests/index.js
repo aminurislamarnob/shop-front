@@ -45,3 +45,25 @@ export const getTaxRateLabels = getRequestByIdString(
 	NAMESPACE + '/taxes',
 	( tax ) => ( { key: tax.id, label: tax.name } )
 );
+
+export const getCustomerLabels = getRequestByIdString(
+	NAMESPACE + '/reports/customers',
+	( customer ) => ( { key: customer.id, label: customer.name } )
+);
+
+export const getOrderLabels = getRequestByIdString(
+	NAMESPACE + '/orders',
+	( order ) => ( { key: order.id, label: '#' + ( order.number || order.id ) } )
+);
+
+/**
+ * For filters whose query values ARE the labels (usernames, IP addresses),
+ * no lookup request is needed.
+ */
+export const getLabelsFromQuery = ( queryString = '' ) =>
+	Promise.resolve(
+		String( queryString )
+			.split( ',' )
+			.filter( Boolean )
+			.map( ( value ) => ( { key: value, label: value } ) )
+	);

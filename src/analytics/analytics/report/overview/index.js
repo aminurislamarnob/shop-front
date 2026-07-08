@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import LineGraphIcon from 'gridicons/dist/line-graph';
 import StatsAltIcon from 'gridicons/dist/stats-alt';
 import { EllipsisMenu, MenuItem, MenuTitle } from '@woocommerce/components';
-import { SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { getDefaultDateRange } from '../../../utils/date';
 import { getAllowedIntervalsForQuery } from '@woocommerce/date';
 import { getHistory, getPersistedQuery } from '@woocommerce/navigation';
 import { indicators, filters, advancedFilters } from './config';
@@ -67,13 +67,7 @@ export default function OverviewReport( { path, query } ) {
 		lsGet( CHART_TYPE_KEY, 'line' )
 	);
 
-	const defaultDateRange = useSelect(
-		( select ) =>
-			select( SETTINGS_STORE_NAME ).getSetting(
-				'wc_admin',
-				'wcAdminSettings'
-			)?.woocommerce_default_date_range
-	);
+	const defaultDateRange = useSelect( ( select ) => getDefaultDateRange( select ) );
 
 	const toggleStat = ( stat ) => {
 		const next = hiddenStats.includes( stat )
@@ -107,10 +101,7 @@ export default function OverviewReport( { path, query } ) {
 	const visibleCharts = indicators.filter(
 		( i ) => ! hiddenCharts.includes( i.stat )
 	);
-	const allowedIntervals = getAllowedIntervalsForQuery(
-		query,
-		defaultDateRange
-	) || [ 'day', 'week', 'month' ];
+	const allowedIntervals = getAllowedIntervalsForQuery( query, defaultDateRange );
 	const chartQuery = { ...query, chartType, interval: chartInterval };
 
 	return (

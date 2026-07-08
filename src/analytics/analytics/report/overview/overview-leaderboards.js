@@ -5,11 +5,12 @@ import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { Card, CardBody, CardHeader, SelectControl } from '@wordpress/components';
 import { EllipsisMenu, EmptyTable, MenuItem, MenuTitle, TableCard } from '@woocommerce/components';
-import { getLeaderboard, SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { getLeaderboard } from '@woocommerce/data';
 import { getHistory, getPersistedQuery } from '@woocommerce/navigation';
 import PropTypes from 'prop-types';
 
 import { getAdminSetting } from '../../../utils/admin-settings';
+import { getDefaultDateRange } from '../../../utils/date';
 import { mapToDashboardRoute } from '../../../utils/helper';
 import ReportError from '../../components/report-error';
 
@@ -126,8 +127,7 @@ LeaderboardTable.defaultProps = {
 const ConnectedLeaderboardTable = compose(
 	withSelect( ( select, props ) => {
 		const { id, query, totalRows } = props;
-		const { woocommerce_default_date_range: defaultDateRange } = select( SETTINGS_STORE_NAME )
-			.getSetting( 'wc_admin', 'wcAdminSettings' );
+		const defaultDateRange = getDefaultDateRange( select );
 
 		const leaderboardQuery = {
 			id,

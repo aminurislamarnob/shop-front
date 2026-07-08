@@ -9,11 +9,12 @@ import {
 	SummaryNumber,
 } from '@woocommerce/components';
 import { calculateDelta, formatValue } from '@woocommerce/number';
-import { REPORTS_STORE_NAME, SETTINGS_STORE_NAME } from '@woocommerce/data';
+import { REPORTS_STORE_NAME } from '@woocommerce/data';
 import { getNewPath } from '@woocommerce/navigation';
 import { getCurrentDates, appendTimestamp, getDateParamsFromQuery } from '@woocommerce/date';
 import { CurrencyContext } from '@woocommerce/currency';
 import ReportError from '../../components/report-error';
+import { getDefaultDateRange } from '../../../utils/date';
 
 class OverviewSummary extends Component {
 	formatVal( value, format ) {
@@ -103,8 +104,7 @@ export default compose(
 		const { indicators, query } = props;
 
 		const { getReportItems, getReportItemsError, isResolving } = select( REPORTS_STORE_NAME );
-		const { woocommerce_default_date_range: defaultDateRange } = select( SETTINGS_STORE_NAME )
-			.getSetting( 'wc_admin', 'wcAdminSettings' );
+		const defaultDateRange = getDefaultDateRange( select );
 
 		const { primary, secondary } = getCurrentDates( query, defaultDateRange );
 		const stats = indicators.map( ( i ) => i.stat ).join( ',' );
