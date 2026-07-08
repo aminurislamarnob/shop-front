@@ -364,5 +364,13 @@
 		ul.woocommerce-summary li:not( :last-child ) .woocommerce-summary__item {
 			border-bottom: 1px solid var( --storesuite-border-color );
 		}
+
+		// WC full-bleeds the report chart with -16px side margins as well, so its
+		// "By day" control, plot area and legend touch the screen edges. Reset so
+		// the chart sits inside the page gutter like the summary and header.
+		.woocommerce-chart {
+			margin-left: 0;
+			margin-right: 0;
+		}
 	}
 }
