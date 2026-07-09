@@ -114,11 +114,38 @@ class Assets {
 		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_product_export_script', $frontend_product_export, array( 'jquery', 'storesuite_product_script', 'storesuite_selectWoo', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 
+		// WooCommerce's product CSV import wizard JS (reused verbatim; drives the AJAX batch import).
+		wp_register_script( 'wc-product-import', WC()->plugin_url() . '/assets/js/admin/wc-product-import.js', array( 'jquery' ), WC_VERSION, true );
+		// wc-product-import.js relies on the global `ajaxurl`, which WordPress only defines in wp-admin.
+		wp_add_inline_script( 'wc-product-import', 'window.ajaxurl = window.ajaxurl || ' . wp_json_encode( admin_url( 'admin-ajax.php' ) ) . ';', 'before' );
+
 		// Shared bulk delete + quick edit behaviour for the taxonomy/attribute list pages.
 		wp_register_script( 'storesuite_taxonomy_list_script', $frontend_taxonomy_list, array( 'jquery', 'storesuite_script', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 
 		// Bulk edit + bulk trash behaviour for the coupons list page.
 		wp_register_script( 'storesuite_coupon_bulk_script', $frontend_coupon_bulk, array( 'jquery', 'storesuite_script', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
+	}
+
+	/**
+	 * Resolve a cache-busting version string for a bundled asset.
+	 *
+	 * In production the plugin version is used so caches persist across page
+	 * loads. When SCRIPT_DEBUG is enabled (development), the file's modification
+	 * time is used instead so edits are picked up without a plugin version bump.
+	 * Falls back to the plugin version if the file is unreadable.
+	 *
+	 * @param string $path Absolute filesystem path to the asset.
+	 * @return string|int Version string usable as the wp_register_style() $ver.
+	 */
+	private function asset_version( string $path ) {
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+			$mtime = @filemtime( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- graceful fallback below.
+			if ( false !== $mtime ) {
+				return $mtime;
+			}
+		}
+
+		return STORESUITE_PLUGIN_VERSION;
 	}
 
 	/**
@@ -133,13 +160,22 @@ class Assets {
 		$bs_grid_style                    = STORESUITE_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
 		$frontend_sweetalert2_style       = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
 
+		// Frequently-edited frontend stylesheets: version by plugin version in
+		// production, or by file mtime under SCRIPT_DEBUG so local edits are
+		// picked up without a plugin version bump.
+		$frontend_style_ver     = $this->asset_version( STORESUITE_DIR . '/assets/frontend/style.css' );
+		$frontend_responsive_ver = $this->asset_version( STORESUITE_DIR . '/assets/frontend/responsive.css' );
+
 		wp_register_style( 'storesuite_admin_style', $admin_style, array(), STORESUITE_PLUGIN_VERSION );
-		wp_register_style( 'storesuite_style', $frontend_style, array(), STORESUITE_PLUGIN_VERSION );
-		wp_register_style( 'storesuite_responsive_style', $frontend_responsive_style, array( 'storesuite_style' ), STORESUITE_PLUGIN_VERSION );
+		wp_register_style( 'storesuite_style', $frontend_style, array(), $frontend_style_ver );
+		wp_register_style( 'storesuite_responsive_style', $frontend_responsive_style, array( 'storesuite_style' ), $frontend_responsive_ver );
 		wp_register_style( 'storesuite_bs_grid', $bs_grid_style, array(), STORESUITE_PLUGIN_VERSION );
 
 		wp_register_style( 'storesuite_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );
 		wp_register_style( 'storesuite_jquery-ui-style', WC()->plugin_url() . '/assets/css/jquery-ui/jquery-ui.min.css', array(), STORESUITE_PLUGIN_VERSION );
+
+		// WooCommerce admin styles power the reused product import wizard (steps bar, mapping table, progress).
+		wp_register_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
 	}
 
 	/**
@@ -249,6 +285,7 @@ class Assets {
 			|| storesuite_is_endpoint_url( 'edit-attribute' )
 			|| storesuite_is_endpoint_url( 'attribute-terms' );
 		$is_account = storesuite_is_endpoint_url( 'edit-account-details' );
+		$is_import  = storesuite_is_endpoint_url( 'import-products' );
 
 		// List pages that get the shared bulk delete + quick edit behaviour.
 		$is_taxonomy_list = storesuite_is_endpoint_url( 'categories' )
@@ -271,6 +308,13 @@ class Assets {
 
 		if ( $needs_select2 ) {
 			wp_enqueue_style( 'select2' );
+		}
+
+		// Product import wizard reuses WooCommerce's importer UI. The `wc-product-import` script is
+		// enqueued + localized by the wizard's import() step itself (it needs wc_product_import_params,
+		// which only exists on that step), so we only load the styles here.
+		if ( $is_import ) {
+			wp_enqueue_style( 'woocommerce_admin_styles' );
 		}
 
 		// Account address tab needs WooCommerce's country/state select behaviour.

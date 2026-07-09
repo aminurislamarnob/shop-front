@@ -30,6 +30,34 @@ class Main {
 		add_action( 'woocommerce_account_dashboard', array( $this, 'add_storesuite_dashboard_btn' ), 1 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_dashboard_btn_css' ), 20 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_css_variables' ), 20 );
+		add_action( 'wp_head', array( $this, 'add_storesuite_theme_mode_script' ), 1 );
+	}
+
+	/**
+	 * Print an inline head script that resolves the dashboard color scheme
+	 * (light/dark) before first paint to avoid a flash of the wrong theme.
+	 *
+	 * The user's explicit choice is read from localStorage; when unset we fall
+	 * back to the operating system's `prefers-color-scheme` preference.
+	 */
+	public function add_storesuite_theme_mode_script() {
+		if ( ! storesuite_is_dashboard_page() ) {
+			return;
+		}
+		?>
+		<script id="storesuite-theme-mode">
+			( function () {
+				try {
+					var storedMode = localStorage.getItem( 'storesuite_theme_mode' );
+					var prefersDark = window.matchMedia && window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
+					var mode = ( storedMode === 'dark' || storedMode === 'light' ) ? storedMode : ( prefersDark ? 'dark' : 'light' );
+					document.documentElement.setAttribute( 'data-theme', mode );
+				} catch ( error ) {
+					document.documentElement.setAttribute( 'data-theme', 'light' );
+				}
+			} )();
+		</script>
+		<?php
 	}
 
 	/**
@@ -99,12 +127,12 @@ class Main {
 			wp_safe_redirect( admin_url() );
 			exit();
 		}
-	
+
 		// 2) Non-admins who can manage WooCommerce → StoreSuite dashboard.
 		if ( user_can( $user, 'manage_woocommerce' ) ) {
 			$this->redirect_to_storesuite_dashboard(); // This already redirects & exits if page is set.
 		}
-	
+
 		// 3) Everyone else → normal My Account page.
 		wp_safe_redirect( wc_get_page_permalink( 'myaccount' ) );
 		exit();

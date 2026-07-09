@@ -256,6 +256,7 @@ final class StoreSuite {
 		$this->container['storesuite_product_ai']                  = new Product\ProductAI();
 		$this->container['storesuite_product_image_ai']            = new Product\ProductImageAI();
 		$this->container['storesuite_product_export_controller']   = new Product\ProductExportController();
+		$this->container['storesuite_product_import_controller']   = new Product\ProductImportController();
 		$this->container['storesuite_product_hooks']               = new Product\ProductHooks();
 		$this->container['storesuite_variation_ajax']              = new Product\VariationAjax();
 		$this->container['storesuite_order_controller']            = new Order\OrderController();
@@ -304,9 +305,12 @@ final class StoreSuite {
 	 * @return void
 	 */
 	public function maybe_flush_rewrite_rules() {
-		if ( get_option( 'storesuite_flush_rewrite_rules' ) ) {
+		// Flush when explicitly scheduled (activation) or when the plugin version changed, so newly added
+		// dashboard endpoints (e.g. import-products) register without a manual reactivation.
+		if ( get_option( 'storesuite_flush_rewrite_rules' ) || STORESUITE_PLUGIN_VERSION !== get_option( 'storesuite_rewrite_version' ) ) {
 			flush_rewrite_rules();
 			delete_option( 'storesuite_flush_rewrite_rules' );
+			update_option( 'storesuite_rewrite_version', STORESUITE_PLUGIN_VERSION );
 		}
 	}
 
