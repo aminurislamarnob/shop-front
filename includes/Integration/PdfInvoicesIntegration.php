@@ -137,8 +137,19 @@ class PdfInvoicesIntegration {
 			</div>
 			<div class="storesuite-card-content">
 				<div class="storesuite-order-documents-list">
-					<?php foreach ( $documents as $document ) : ?>
-						<a href="<?php echo esc_url( $document['url'] ); ?>" class="my-storesuite-button my-storesuite-button-light<?php echo empty( $document['print'] ) ? '' : ' storesuite-print-document'; ?>" target="_blank" rel="noopener noreferrer">
+					<?php
+					foreach ( $documents as $document ) :
+						$classes = 'my-storesuite-button my-storesuite-button-light';
+
+						if ( ! empty( $document['half'] ) ) {
+							$classes .= ' storesuite-document-half';
+						}
+
+						if ( ! empty( $document['print'] ) ) {
+							$classes .= ' storesuite-print-document';
+						}
+						?>
+						<a href="<?php echo esc_url( $document['url'] ); ?>" class="<?php echo esc_attr( $classes ); ?>" target="_blank" rel="noopener noreferrer">
 							<?php echo $this->get_document_icon( $document['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in get_document_icon(). ?>
 							<?php echo esc_html( $document['label'] ); ?>
 						</a>
@@ -156,7 +167,7 @@ class PdfInvoicesIntegration {
 	 * @param WC_Order $order   The order.
 	 * @param string   $context Rendering context: 'list_page' or 'detail_page'.
 	 *
-	 * @return array<int, array{label:string, url:string, exists:bool, print:bool, icon:string}>
+	 * @return array<int, array{label:string, url:string, exists:bool, print:bool, icon:string, half:bool}>
 	 */
 	public function get_documents_for_order( WC_Order $order, string $context ): array {
 		$documents = array();
@@ -179,7 +190,7 @@ class PdfInvoicesIntegration {
 	 *
 	 * @param WC_Order $order The order.
 	 *
-	 * @return array<int, array{label:string, url:string, exists:bool, print:bool, icon:string}>
+	 * @return array<int, array{label:string, url:string, exists:bool, print:bool, icon:string, half:bool}>
 	 */
 	protected function get_wpo_documents( WC_Order $order ): array {
 		$items = array();
@@ -205,6 +216,8 @@ class PdfInvoicesIntegration {
 				// WPO streams a PDF, which the browser renders in the new tab.
 				'print'  => false,
 				'icon'   => 'download',
+				// WPO exposes few documents with short labels, so they pair up two per row.
+				'half'   => true,
 			);
 		}
 
@@ -223,7 +236,7 @@ class PdfInvoicesIntegration {
 	 * @param WC_Order $order   The order.
 	 * @param string   $context Rendering context: 'list_page' or 'detail_page'.
 	 *
-	 * @return array<int, array{label:string, url:string, exists:bool, print:bool, icon:string}>
+	 * @return array<int, array{label:string, url:string, exists:bool, print:bool, icon:string, half:bool}>
 	 */
 	protected function get_webtoffee_documents( WC_Order $order, string $context ): array {
 		$items = array();
@@ -280,7 +293,7 @@ class PdfInvoicesIntegration {
 	 * @param string $parent_label Aggregate button label, prefixed onto the child label.
 	 * @param bool   $exists       Whether the document has already been generated.
 	 *
-	 * @return array{label:string, url:string, exists:bool, print:bool, icon:string}|null Null when the button is not a usable link.
+	 * @return array{label:string, url:string, exists:bool, print:bool, icon:string, half:bool}|null Null when the button is not a usable link.
 	 */
 	protected function build_webtoffee_document( $button, int $order_id, string $parent_label, bool $exists ) {
 		if ( ! is_array( $button ) || empty( $button['action'] ) ) {
@@ -315,6 +328,8 @@ class PdfInvoicesIntegration {
 			'exists' => $exists,
 			'print'  => $is_print,
 			'icon'   => $is_print ? 'print' : 'download',
+			// WebToffee labels ("Download Packing slip") are too long to pair up.
+			'half'   => false,
 		);
 	}
 }

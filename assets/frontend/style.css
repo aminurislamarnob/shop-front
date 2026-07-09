@@ -5619,11 +5619,11 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
 /* Order details "Documents" card (PDF-invoice / packing-slip integration). */
 .storesuite-order-documents .storesuite-order-documents-list {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 6px;
 }
 .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button {
-  width: 100%;
+  flex: 0 0 100%;
   gap: 12px;
   justify-content: flex-start;
   padding: 10px 14px;
@@ -5632,6 +5632,14 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   color: var(--storesuite-text-color);
   font-weight: 500;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+/* Short-labelled documents (WPO invoice / packing slip) sit two per row. */
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button.storesuite-document-half {
+  flex: 0 1 calc(50% - 3px);
+  min-width: 0;
+  padding-left: 10px;
+  padding-right: 10px;
+  gap: 8px;
 }
 /* The icon sits in a tinted tile so every label starts on the same x. */
 .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button svg {
