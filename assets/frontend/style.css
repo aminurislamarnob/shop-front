@@ -829,6 +829,7 @@ form.storesuite-filters-form .row {
   padding: 5px 15px;
   font-size: 14px;
   text-align: left;
+  white-space: nowrap;
   color: var(--storesuite-text-color);
   font-weight: 400;
   transition: .3s;
@@ -849,7 +850,9 @@ form.storesuite-filters-form .row {
   background: #fff;
   border-radius: 5px;
   z-index: 9;
-  width: 120px;
+  width: max-content;
+  min-width: 120px;
+  max-width: 260px;
   right: 0;
   top: 20px;
   padding: 5px 0;
