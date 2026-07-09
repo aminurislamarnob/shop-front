@@ -7669,3 +7669,16 @@ body,
   background: var(--storesuite-primary-bg);
   fill: #fff;
 }
+/* Dark mode: see the "Dark mode overrides" section above. The button surface is
+   already re-skinned there; these rules keep the icon tile recessed against it
+   and stop the hover state from going darker than the button it sits on. */
+[data-theme="dark"] .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button svg {
+  background: var(--storesuite-page-bg);
+}
+[data-theme="dark"] .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button:hover {
+  background: var(--storesuite-surface-bg);
+}
+/* The tile rule above outranks the light-theme :hover rule, so restate the fill. */
+[data-theme="dark"] .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button:hover svg {
+  background: var(--storesuite-primary-bg);
+}
