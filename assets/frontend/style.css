@@ -5524,6 +5524,123 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   }
 }
 
+/* Done step --------------------------------------------------------------- */
+.storesuite-import-done {
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.storesuite-import-done__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 10%, #fff);
+  color: var(--storesuite-primary-bg);
+}
+
+.storesuite-import-done__icon.is-warning {
+  background: rgb(254 243 199);
+  color: rgb(245 158 11);
+}
+
+.storesuite-import-done__title {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--storesuite-text-black);
+}
+
+.storesuite-import-done__lead {
+  margin: 0 auto 28px;
+  max-width: 70%;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--storesuite-text-color);
+}
+
+.storesuite-import-done__stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+}
+
+.storesuite-import-done__stat {
+  flex: 0 1 180px;
+  padding: 18px 16px;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  background: var(--storesuite-bg-color-muted);
+}
+
+.storesuite-import-done__stat-value {
+  display: block;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--storesuite-text-black);
+}
+
+.storesuite-import-done__stat-label {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--storesuite-text-color-light);
+}
+
+.storesuite-import-done__stat--success .storesuite-import-done__stat-value {
+  color: rgb(16 185 129);
+}
+
+.storesuite-import-done__stat--info .storesuite-import-done__stat-value {
+  color: rgb(99 102 241);
+}
+
+.storesuite-import-done__stat--warning .storesuite-import-done__stat-value {
+  color: rgb(245 158 11);
+}
+
+.storesuite-import-done__stat--danger .storesuite-import-done__stat-value {
+  color: rgb(244 63 94);
+}
+
+.storesuite-import-done__log {
+  margin: 20px auto 0;
+  text-align: left;
+}
+
+.storesuite-import-done__log code {
+  background: none;
+  padding: 0;
+  font-size: 13px;
+  color: var(--storesuite-text-black);
+}
+
+.storesuite-import-done__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+@media (max-width: 768px) {
+  .storesuite-import-done__lead {
+    max-width: 100%;
+  }
+
+  .storesuite-import-done__stat {
+    flex: 1 1 100%;
+  }
+}
+
 /* The bi-play glyph carries a lot of internal padding, so scale it up to read the same as the back arrow. */
 .storesuite-import-btn--run svg {
   width: 24px;
