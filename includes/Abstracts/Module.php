@@ -140,6 +140,12 @@ abstract class Module {
 	 * This is where a module drops its tables and deletes its options — the
 	 * one place data removal is expected.
 	 *
+	 * Only BUNDLED modules (under the plugin's own `modules/` directory) are
+	 * uninstalled this way. Modules shipped by third-party plugins via the
+	 * `storesuite_register_modules` filter are skipped — those plugins remain
+	 * installed after StoreSuite is deleted and must run their own
+	 * `uninstall.php` teardown.
+	 *
 	 * @return void
 	 */
 	public function uninstall() {}

@@ -31,10 +31,19 @@ if ( ! defined( 'STORESUITE_DIR' ) ) {
 }
 
 // Discover every bundled module and let each run its permanent teardown
-// (dropping tables, deleting its own options). Third-party modules registered
-// via `storesuite_register_modules` won't be present here — the plugins that
-// ship them are responsible for their own uninstall routines.
+// (dropping tables, deleting its own options).
+//
+// Deliberately limit this to BUNDLED modules: other active plugins are loaded
+// during an uninstall request, so an add-on that hooked
+// `storesuite_register_modules` (or redirected `storesuite_modules_dir`)
+// would otherwise have its own data dropped here — while the add-on plugin
+// itself remains installed. Third-party plugins own their uninstall routines;
+// strip their filters before discovery so only our modules/ directory is
+// torn down.
 if ( class_exists( \PluginizeLab\StoreSuite\Module\Manager::class ) ) {
+	remove_all_filters( 'storesuite_register_modules' );
+	remove_all_filters( 'storesuite_modules_dir' );
+
 	$storesuite_manager = new \PluginizeLab\StoreSuite\Module\Manager();
 	$storesuite_manager->uninstall_all();
 }

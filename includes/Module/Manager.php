@@ -218,7 +218,9 @@ class Manager {
 	 * Activate a module: persist the slug and run its `activate()` hook.
 	 *
 	 * @param string $slug Module slug.
-	 * @return bool True if the module is now active, false if the slug is unknown.
+	 * @return bool True if the module is now active; false if the slug is
+	 *              unknown or a required plugin (see `Module::get_requires()`)
+	 *              is not active.
 	 */
 	public function activate( $slug ) {
 		$modules = $this->get_all();
