@@ -122,6 +122,28 @@ class Assets {
 	}
 
 	/**
+	 * Resolve a cache-busting version string for a bundled asset.
+	 *
+	 * In production the plugin version is used so caches persist across page
+	 * loads. When SCRIPT_DEBUG is enabled (development), the file's modification
+	 * time is used instead so edits are picked up without a plugin version bump.
+	 * Falls back to the plugin version if the file is unreadable.
+	 *
+	 * @param string $path Absolute filesystem path to the asset.
+	 * @return string|int Version string usable as the wp_register_style() $ver.
+	 */
+	private function asset_version( string $path ) {
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+			$mtime = @filemtime( $path ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- graceful fallback below.
+			if ( false !== $mtime ) {
+				return $mtime;
+			}
+		}
+
+		return STORESUITE_PLUGIN_VERSION;
+	}
+
+	/**
 	 * Register styles.
 	 *
 	 * @return void
@@ -133,9 +155,15 @@ class Assets {
 		$bs_grid_style                    = STORESUITE_PLUGIN_ASSET . '/frontend/bootstrap-grid.min.css';
 		$frontend_sweetalert2_style       = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.css';
 
+		// Frequently-edited frontend stylesheets: version by plugin version in
+		// production, or by file mtime under SCRIPT_DEBUG so local edits are
+		// picked up without a plugin version bump.
+		$frontend_style_ver     = $this->asset_version( STORESUITE_DIR . '/assets/frontend/style.css' );
+		$frontend_responsive_ver = $this->asset_version( STORESUITE_DIR . '/assets/frontend/responsive.css' );
+
 		wp_register_style( 'storesuite_admin_style', $admin_style, array(), STORESUITE_PLUGIN_VERSION );
-		wp_register_style( 'storesuite_style', $frontend_style, array(), STORESUITE_PLUGIN_VERSION );
-		wp_register_style( 'storesuite_responsive_style', $frontend_responsive_style, array( 'storesuite_style' ), STORESUITE_PLUGIN_VERSION );
+		wp_register_style( 'storesuite_style', $frontend_style, array(), $frontend_style_ver );
+		wp_register_style( 'storesuite_responsive_style', $frontend_responsive_style, array( 'storesuite_style' ), $frontend_responsive_ver );
 		wp_register_style( 'storesuite_bs_grid', $bs_grid_style, array(), STORESUITE_PLUGIN_VERSION );
 
 		wp_register_style( 'storesuite_sweetalert2_style', $frontend_sweetalert2_style, array(), '11.14.5' );

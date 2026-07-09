@@ -5570,11 +5570,19 @@ body,
 [data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-actions__title,
 [data-theme="dark"] .storesuite-dashboard-layout .storesuite-recent-orders__number,
 [data-theme="dark"] .storesuite-dashboard-layout .storesuite-leaderboard__title,
-[data-theme="dark"] .storesuite-dashboard-layout .components-select-control__input,
 [data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item-title,
 [data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item-total,
 [data-theme="dark"] .storesuite-dashboard-layout .components-card__body,
 [data-theme="dark"] .storesuite-dashboard-layout .components-button.woocommerce-dropdown-button .woocommerce-dropdown-button__labels span {
+  color: var(--storesuite-text-black);
+}
+
+/* Interval-select ("By day") value. WooCommerce's emotion runtime injects a
+   tripled-class rule (.css-x.css-x.css-x { color: currentColor }, specificity
+   0,3,0) into <head> after this file, so a plain .components-select-control__input
+   rule ties and loses on source order. Add the interval-select ancestor to
+   reach 0,4,0 and win. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__interval-select .components-select-control__input {
   color: var(--storesuite-text-black);
 }
 
@@ -5739,11 +5747,18 @@ body,
   background: var(--storesuite-surface-bg);
 }
 
-/* Near-black control/card text: the chart interval <select> ("By hour"),
-   card bodies and card header titles. */
-[data-theme="dark"] .storesuite-analytics-layout .components-select-control__input,
+/* Near-black control/card text: card bodies and card header titles. */
 [data-theme="dark"] .storesuite-analytics-layout .components-card__body,
 [data-theme="dark"] .storesuite-analytics-layout .components-card__header .components-text {
+  color: var(--storesuite-text-black);
+}
+
+/* Interval-select ("By hour") value. WooCommerce's emotion runtime injects a
+   tripled-class rule (.css-x.css-x.css-x { color: currentColor }, specificity
+   0,3,0) into <head> after this file, so a plain .components-select-control__input
+   rule ties and loses on source order. Add the interval-select ancestor to
+   reach 0,4,0 and win. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__interval-select .components-select-control__input {
   color: var(--storesuite-text-black);
 }
 
