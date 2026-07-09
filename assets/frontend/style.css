@@ -5786,6 +5786,66 @@ body,
   color: var(--storesuite-text-black);
 }
 
+/* Sorted report-table column. WooCommerce highlights the active sort column's
+   body cells with a hardcoded light #f0f0f0, which buries the (already light)
+   text. Use the elevated surface so the column stays subtly highlighted on
+   dark. The sorted header cell inherits the dark header fill already. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__item.is-sorted {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Row hover is a hardcoded #e0e0e0 that washes the whole row out on dark. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__table tr:hover {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* The "No data to display" cell keeps a #757575 fill that reads as a muddy
+   smudge against the dark table. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__empty-item {
+  color: var(--storesuite-text-color-light);
+}
+
+/* Table pagination. The bar paints its own white fill over the card footer, and
+   the labels, page input and prev/next button group all keep light defaults. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination {
+  background: transparent;
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__page-arrows-label,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__page-picker-label,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__per-page-picker .components-input-control__label {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__page-arrows-buttons {
+  background: var(--storesuite-surface-elevated);
+  border-color: var(--storesuite-border-color);
+}
+/* The divider between the prev/next arrows. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__link {
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__page-picker-input {
+  background: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-black);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__per-page-picker select {
+  color: var(--storesuite-text-black);
+}
+
+/* Advanced-filters + Compare Variations panels. The card surface is already
+   dark via the .components-card rule, but WooCommerce whitens the inner band
+   with `.woocommerce-filters__advanced-filters .components-card__body` (#f0f0f0,
+   specificity 0,2,0) — shared by the Orders advanced filters and the Compare
+   panel — so match that ancestor to exceed it (0,4,0). The advanced "match"
+   select also renders near-black text. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-filters__advanced-filters .components-card__body {
+  background: var(--storesuite-bg-color-muted);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-filters-advanced .components-select-control__input {
+  color: var(--storesuite-text-black);
+}
+
 /* Performance summary tiles + date-range dropdown button hardcode a white
    surface (same WooCommerce components as the dashboard home, but the reskin
    there is scoped to .storesuite-dashboard-layout so the Analytics page never
@@ -5965,6 +6025,125 @@ body,
 [data-theme="dark"] .components-tab-panel__tabs-item.is-active,
 [data-theme="dark"] .components-tab-panel__tabs-item[aria-selected="true"] {
   color: var(--storesuite-primary-bg);
+}
+
+/*
+ * The "Show:" filter dropdown menu (All orders / Advanced filters). Its popover
+ * surface is handled by the generic .components-popover__content rule above, but
+ * each option button hardcodes an #f0f0f0 fill with #757575 text. WooCommerce
+ * paints it via `.__content-list-item .__button` (specificity 0,2,0) loaded
+ * AFTER this file, so match that same ancestor to exceed it (0,3,0). Portals out
+ * of the layout, so matched on theme alone.
+ */
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button {
+  background: var(--storesuite-surface-bg);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button:hover,
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item.is-selected .woocommerce-filters-filter__button {
+  background: var(--storesuite-surface-elevated);
+}
+/*
+ * Focused option. WooCommerce highlights the focused button white via a long
+ * :not():not():focus chain (specificity 0,6,0 — 0,7,0 for the selected item)
+ * loaded after this file, so match the same chains prefixed with [data-theme]
+ * to exceed them (0,7,0 / 0,8,0).
+ */
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button.components-button:not(:disabled):not([aria-disabled="true"]):focus,
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item.is-selected .woocommerce-filters-filter__button.components-button:not(:disabled):not([aria-disabled="true"]):focus {
+  background: var(--storesuite-surface-elevated);
+}
+
+/*
+ * The "Add a filter" type menu (Coupon code / Customer type / Order status …).
+ * Options are base .components-button with #1e1e1e text and a light hover
+ * (#e0e0e0) / focus (#f0f0f0) fill. Menu portals out of the layout so matched
+ * on theme alone. The focus chain mirrors WooCommerce's (0,5,0) prefixed with
+ * [data-theme] to exceed it (0,6,0).
+ */
+[data-theme="dark"] .woocommerce-filters-advanced__add-dropdown .components-button {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-filters-advanced__add-dropdown .components-button:hover,
+[data-theme="dark"] .woocommerce-filters-advanced__add-dropdown .components-button:not(:disabled):not([aria-disabled="true"]):focus {
+  background: var(--storesuite-surface-elevated);
+}
+
+/*
+ * "Single product" (and similar) search inside a filter dropdown. WooCommerce's
+ * select-control search box, its results listbox and options hardcode white /
+ * #f0f0f0 fills with near-black or purple link text. Portals out of the layout,
+ * so matched on theme alone. Each selector mirrors WooCommerce's ancestor chain
+ * (control/listbox 0,2,0, option 0,3,0) with a [data-theme] prefix to exceed it.
+ */
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__control {
+  background: var(--storesuite-surface-elevated);
+}
+/* The report-table search box reuses this control but StoreSuite's own
+   index.css whitens it with a 0,4,0 chain (.storesuite-analytics-layout
+   .woocommerce-table__actions .woocommerce-search .__control), so match that
+   same chain here to exceed it (0,5,0). */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__actions .woocommerce-search .woocommerce-select-control__control {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__control-input {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__control-input::placeholder {
+  color: var(--storesuite-text-color-light);
+}
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__listbox {
+  background: var(--storesuite-surface-bg);
+}
+[data-theme="dark"] .woocommerce-search.woocommerce-select-control .woocommerce-select-control__option {
+  background: var(--storesuite-surface-bg);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-search.woocommerce-select-control .woocommerce-select-control__option:hover,
+[data-theme="dark"] .woocommerce-search.woocommerce-select-control .woocommerce-select-control__option.is-selected,
+[data-theme="dark"] .woocommerce-search.woocommerce-select-control .woocommerce-select-control__option[aria-selected="true"] {
+  background: var(--storesuite-surface-elevated);
+}
+/* The bold matched substring keeps a brighter tone so it still stands out. */
+[data-theme="dark"] .woocommerce-select-control__option .components-form-token-field__suggestion-match {
+  color: var(--storesuite-text-black);
+}
+
+/* The magnifier glyph is filled black, which all but disappears on the dark
+   input. */
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__control-icon {
+  fill: var(--storesuite-text-color-light);
+}
+
+/* Selected-item chips. Both halves of the pill (label + remove button) carry
+   their own #f0f0f0 fill and near-black text; the remove glyph is filled black. */
+[data-theme="dark"] .woocommerce-tag .woocommerce-tag__text,
+[data-theme="dark"] .woocommerce-tag .woocommerce-tag__remove {
+  background: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-tag .woocommerce-tag__remove svg {
+  fill: var(--storesuite-text-color-light);
+}
+[data-theme="dark"] .woocommerce-tag .woocommerce-tag__remove:hover svg {
+  fill: var(--storesuite-text-black);
+}
+
+/* Compare Variations panel. The secondary "Compare" button hardcodes a white
+   fill and a #ddd inset ring, and the variation checkboxes hardcode a white box
+   with a light-gray border. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-compare-button.is-secondary {
+  background: var(--storesuite-surface-elevated);
+  box-shadow: inset 0 0 0 1px var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-compare-button.is-secondary:hover:not(:disabled) {
+  background: var(--storesuite-surface-bg);
+  color: var(--storesuite-text-black);
+  box-shadow: inset 0 0 0 1px var(--storesuite-text-color-light);
+}
+[data-theme="dark"] .storesuite-analytics-layout .components-checkbox-control__input:not(:checked) {
+  background: var(--storesuite-surface-elevated);
+  border-color: var(--storesuite-border-color);
 }
 
 /* Form fields, selects and select2 controls sit one step above the surface. */

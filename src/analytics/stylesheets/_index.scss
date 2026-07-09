@@ -9,6 +9,12 @@
 	.woocommerce-layout__main {
 		padding: 0;
 	}
+
+	// The advanced-filters / Compare Variations card renders flush against the
+	// filter row above it, so the two read as one block. Separate them.
+	.woocommerce-filters__advanced-filters {
+		margin-top: 16px;
+	}
 }
 
 // The report subtitle is the first thing inside the app, right below the shared
