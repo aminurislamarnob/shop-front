@@ -5518,8 +5518,16 @@ body,
 [data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table,
 [data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-actions,
 [data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-action-item,
+[data-theme="dark"] .storesuite-dashboard-layout .components-card,
+[data-theme="dark"] .storesuite-dashboard-layout .components-input-control__container,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item button,
 [data-theme="dark"] .storesuite-dashboard-layout .components-button.woocommerce-dropdown-button {
   background: var(--storesuite-surface-bg);
+}
+
+/* Chart legend rows (Today / Previous period) hardcode a white button fill. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item button:hover {
+  background: var(--storesuite-surface-elevated);
 }
 
 /* Summary tile hover/selected states. */
@@ -5561,8 +5569,22 @@ body,
 [data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__item,
 [data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-actions__title,
 [data-theme="dark"] .storesuite-dashboard-layout .storesuite-recent-orders__number,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-leaderboard__title,
+[data-theme="dark"] .storesuite-dashboard-layout .components-select-control__input,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item-title,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item-total,
+[data-theme="dark"] .storesuite-dashboard-layout .components-card__body,
 [data-theme="dark"] .storesuite-dashboard-layout .components-button.woocommerce-dropdown-button .woocommerce-dropdown-button__labels span {
   color: var(--storesuite-text-black);
+}
+
+/* Chart hover tooltip (d3) hardcodes a white surface with a light-gray title. */
+[data-theme="dark"] .storesuite-dashboard-layout .d3-chart__tooltip {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .d3-chart__tooltip h4 {
+  color: var(--storesuite-text-color);
 }
 
 /* Muted/secondary text: labels, section headers, empty notices, deltas. */
@@ -5609,9 +5631,48 @@ body,
   color: var(--storesuite-text-color-light);
 }
 
-/* Chart interval select + dropdown backdrops hardcode a light border. */
-[data-theme="dark"] .storesuite-dashboard-layout .components-input-control__backdrop {
+/* Chart interval select + dropdown backdrops hardcode a light border
+   (#e0e0e0). WooCommerce sets it via .components-input-base descendant, so
+   match that ancestor to win over the default. */
+[data-theme="dark"] .storesuite-dashboard-layout .components-input-control__backdrop,
+[data-theme="dark"] .storesuite-dashboard-layout .components-input-base .components-input-control__backdrop {
   border-color: var(--storesuite-border-color);
+}
+
+/* Chart grid/axis lines hardcode a light stroke; dim them for dark mode. */
+[data-theme="dark"] .storesuite-dashboard-layout .tick line,
+[data-theme="dark"] .storesuite-dashboard-layout .grid line,
+[data-theme="dark"] .storesuite-dashboard-layout .domain {
+  stroke: var(--storesuite-border-color);
+}
+
+/* Date-range dropdown chevron is a masked SVG colored via ::after background. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-dropdown-button::after {
+  background-color: var(--storesuite-text-black);
+}
+
+/* Interval-select vertical divider + legend list top border hardcode a light
+   #e2e4e7 / #ccc. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__interval-select {
+  border-right-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__list {
+  border-top-color: var(--storesuite-border-color);
+}
+
+/* Interval-select ("By day") chevron icon. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__interval-select svg,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__interval-select svg path {
+  color: var(--storesuite-text-black);
+  fill: var(--storesuite-text-black);
+}
+
+/* Active chart-type toggle (line/bar) should read as primary, not muted gray. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__type-button-selected,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__type-button-selected svg,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__type-button-selected svg path {
+  color: var(--storesuite-primary-bg);
+  fill: var(--storesuite-primary-bg);
 }
 
 /* Mobile stacked-table rows hardcode white / zebra light gray. */
@@ -5620,6 +5681,92 @@ body,
 }
 [data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__table tbody tr:nth-child(odd) {
   background: var(--storesuite-surface-elevated);
+}
+
+/* Loading skeletons (chart + summary/table value placeholders) hardcode a light
+   #f0f0f0 fill that flashes white before data arrives. Shared by the dashboard
+   home and Analytics reports. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart-placeholder,
+[data-theme="dark"] .storesuite-dashboard-layout .is-placeholder,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart-placeholder,
+[data-theme="dark"] .storesuite-analytics-layout .is-placeholder {
+  background-color: var(--storesuite-surface-elevated);
+}
+
+/* ==========================================================================
+   Analytics reports dark mode
+   The Analytics page reskin (src/analytics/stylesheets/_reskin.scss) colors
+   text with CSS variables (which flip in dark mode) but hardcodes white card
+   surfaces and near-black control text, which do not. Re-skin those surfaces
+   here, scoped to .storesuite-analytics-layout so the light theme is untouched.
+   ========================================================================== */
+
+/* Card surfaces: the chart card, report tables (incl. sticky header row) and
+   generic components cards (e.g. Top products) all hardcode #fff. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table .woocommerce-table__header,
+[data-theme="dark"] .storesuite-analytics-layout .components-card {
+  background: var(--storesuite-surface-bg);
+}
+
+/* Near-black control/card text: the chart interval <select> ("By hour"),
+   card bodies and card header titles. */
+[data-theme="dark"] .storesuite-analytics-layout .components-select-control__input,
+[data-theme="dark"] .storesuite-analytics-layout .components-card__body,
+[data-theme="dark"] .storesuite-analytics-layout .components-card__header .components-text {
+  color: var(--storesuite-text-black);
+}
+
+/* Chart hover tooltip (d3) hardcodes a white surface with a light-gray title. */
+[data-theme="dark"] .storesuite-analytics-layout .d3-chart__tooltip {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .d3-chart__tooltip h4 {
+  color: var(--storesuite-text-color);
+}
+
+/* Chart grid/axis lines hardcode a light stroke; dim them for dark mode. */
+[data-theme="dark"] .storesuite-analytics-layout .tick line,
+[data-theme="dark"] .storesuite-analytics-layout .grid line,
+[data-theme="dark"] .storesuite-analytics-layout .domain {
+  stroke: var(--storesuite-border-color);
+}
+
+/* Date-range dropdown chevron is a masked SVG colored via ::after background. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-dropdown-button::after {
+  background-color: var(--storesuite-text-black);
+}
+
+/* Interval-select vertical divider + legend list top border hardcode a light
+   #e2e4e7 / #ccc. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__interval-select {
+  border-right-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-legend__list {
+  border-top-color: var(--storesuite-border-color);
+}
+
+/* Interval-select ("By day") chevron icon. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__interval-select svg,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__interval-select svg path {
+  color: var(--storesuite-text-black);
+  fill: var(--storesuite-text-black);
+}
+
+/* Active chart-type toggle (line/bar) should read as primary, not muted gray. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__type-button-selected,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__type-button-selected svg,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__type-button-selected svg path {
+  color: var(--storesuite-primary-bg);
+  fill: var(--storesuite-primary-bg);
+}
+
+/* Chart interval select dropdown border hardcodes a light #e0e0e0. */
+[data-theme="dark"] .storesuite-analytics-layout .components-input-control__backdrop,
+[data-theme="dark"] .storesuite-analytics-layout .components-input-base .components-input-control__backdrop {
+  border-color: var(--storesuite-border-color);
 }
 
 /*
@@ -5652,6 +5799,12 @@ body,
   color: var(--storesuite-text-color);
 }
 [data-theme="dark"] .woocommerce-segmented-selection__label {
+  border-color: var(--storesuite-border-color);
+}
+/* Preset grid dividers + tabs separator hardcode a light #ccc. */
+[data-theme="dark"] .woocommerce-segmented-selection__container,
+[data-theme="dark"] .woocommerce-segmented-selection__item,
+[data-theme="dark"] .woocommerce-filters-date__tabs {
   border-color: var(--storesuite-border-color);
 }
 /*
