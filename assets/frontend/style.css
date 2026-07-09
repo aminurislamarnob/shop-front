@@ -7064,6 +7064,13 @@ body,
   border-top-color: var(--storesuite-border-color);
 }
 
+/* The multi-select rendered list hardcodes #444. The inline search field hardcodes
+   #444 too, so text typed into the field disappears on a dark surface. */
+[data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection--multiple .select2-selection__rendered,
+[data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection--multiple .select2-search--inline .select2-search__field {
+  color: var(--storesuite-text-color)!important;
+}
+
 /* Selected select2 chips hardcode dark text; recolor for dark mode. */
 [data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection--multiple .select2-selection__choice {
   color: var(--storesuite-text-color);
@@ -7086,6 +7093,28 @@ body,
 }
 [data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option {
   color: var(--storesuite-text-color);
+}
+
+/* select2 fields that live outside .storesuite-main-dashboard (e.g., WC admin
+   order/product screens, quick-edit modals) — make text light on dark surface. */
+[data-theme="dark"] .select2-container .select2-selection,
+[data-theme="dark"] .select2-container .select2-selection--single .select2-selection__rendered,
+[data-theme="dark"] .select2-container--default .select2-results__option,
+[data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__rendered,
+[data-theme="dark"] .select2-container .select2-selection--multiple .select2-search--inline .select2-search__field {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: var(--storesuite-text-color-light);
+}
+[data-theme="dark"] .select2-container .select2-selection--multiple .select2-selection__rendered {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .select2-container .select2-selection--multiple .select2-selection__choice {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .select2-container .select2-selection--multiple .select2-selection__choice__remove {
+  color: var(--storesuite-text-color-light);
 }
 
 /* Loading overlay uses a white scrim and dark text. */
