@@ -5423,6 +5423,107 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   height: 16px;
 }
 
+/* Import (progress) step ---------------------------------------------------
+   The card keeps WooCommerce's `.woocommerce-importer` class (its importer script binds to it), which
+   drags in admin.css rules for padding/text-align/shadow and for the nested h2/p. Those are two-class
+   selectors, so scope ours under the wizard wrapper to win. */
+.storesuite-import-wizard .storesuite-import-progress-step.woocommerce-importer {
+  padding: 56px 24px;
+  margin: 0;
+  overflow: visible;
+  text-align: center;
+  box-shadow: none;
+  color: var(--storesuite-text-color);
+}
+
+.storesuite-import-progress-step__spinner {
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 20px;
+  border: 3px solid var(--storesuite-border-color);
+  border-top-color: var(--storesuite-primary-bg);
+  border-radius: 50%;
+  animation: storesuite-import-spin 0.7s linear infinite;
+}
+
+@keyframes storesuite-import-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storesuite-import-progress-step__spinner {
+    animation-duration: 3s;
+  }
+}
+
+.storesuite-import-wizard .woocommerce-importer h2.storesuite-import-progress-step__title {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--storesuite-text-black);
+}
+
+.storesuite-import-wizard .woocommerce-importer p.storesuite-import-progress-step__lead {
+  margin: 0 auto 28px;
+  max-width: 60%;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--storesuite-text-color);
+}
+
+.storesuite-import-progress-step__bar {
+  max-width: 60%;
+  margin: 0 auto;
+}
+
+/* Native <progress> needs per-engine pseudo-elements; the element itself is required by
+   wc-product-import.js, so restyle it rather than replacing it. admin.css hides it via
+   `.woocommerce-progress-form-wrapper .woocommerce-importer progress`, hence the extra class here. */
+.storesuite-import-wizard .storesuite-import-progress-step.woocommerce-importer progress {
+  display: block;
+  width: 100%;
+  height: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--storesuite-bg-color-muted);
+  appearance: none;
+}
+
+.storesuite-import-wizard .storesuite-import-progress-step.woocommerce-importer progress::-webkit-progress-bar {
+  border-radius: 6px;
+  background: var(--storesuite-bg-color-muted);
+}
+
+.storesuite-import-wizard .storesuite-import-progress-step.woocommerce-importer progress::-webkit-progress-value {
+  border-radius: 6px;
+  box-shadow: none;
+  background: var(--storesuite-primary-bg);
+}
+
+.storesuite-import-wizard .storesuite-import-progress-step.woocommerce-importer progress::-moz-progress-bar {
+  border-radius: 6px;
+  box-shadow: none;
+  background: var(--storesuite-primary-bg);
+}
+
+.storesuite-import-progress-step__value {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--storesuite-primary-bg);
+}
+
+@media (max-width: 768px) {
+  .storesuite-import-progress-step__lead,
+  .storesuite-import-progress-step__bar {
+    max-width: 100%;
+  }
+}
+
 /* The bi-play glyph carries a lot of internal padding, so scale it up to read the same as the back arrow. */
 .storesuite-import-btn--run svg {
   width: 24px;

@@ -217,6 +217,55 @@ class ProductImportWizard extends \WC_Product_CSV_Importer_Controller {
 	}
 
 	/**
+	 * Import step.
+	 *
+	 * Mirrors WooCommerce's import step (nonce check, mapping persistence, script localisation) but renders
+	 * a StoreSuite-themed progress screen. The `woocommerce-importer` / `woocommerce-importer-progress`
+	 * hooks the importer script binds to are preserved in the template.
+	 *
+	 * @return void
+	 */
+	public function import() {
+		// Displaying this page triggers the Ajax import with a valid nonce, so it needs nonce protection too.
+		check_admin_referer( 'woocommerce-csv-importer' );
+		self::validate_file_path( $this->file );
+
+		if ( empty( $_POST['map_from'] ) || empty( $_POST['map_to'] ) ) {
+			wp_safe_redirect( esc_url_raw( $this->get_next_step_link( 'upload' ) ) );
+			exit;
+		}
+
+		$mapping_from = wc_clean( wp_unslash( $_POST['map_from'] ) );
+		$mapping_to   = wc_clean( wp_unslash( $_POST['map_to'] ) );
+
+		// Save mapping preferences for future imports.
+		update_user_option( get_current_user_id(), 'woocommerce_product_import_mapping', $mapping_to );
+
+		wp_localize_script(
+			'wc-product-import',
+			'wc_product_import_params',
+			array(
+				'import_nonce'       => wp_create_nonce( 'wc-product-import' ),
+				'mapping'            => array(
+					'from' => $mapping_from,
+					'to'   => $mapping_to,
+				),
+				'file'               => $this->file,
+				'update_existing'    => $this->update_existing,
+				'delimiter'          => $this->delimiter,
+				'character_encoding' => $this->character_encoding,
+			)
+		);
+		wp_enqueue_script( 'wc-product-import' );
+
+		storesuite_get_template_part(
+			'products/import-progress',
+			'',
+			array( 'file_name' => basename( $this->file ) )
+		);
+	}
+
+	/**
 	 * Resolve the category bucket for an auto-mapped field value.
 	 *
 	 * @param string $value Mapped field key (e.g. 'weight', 'meta:foo', 'attributes:name0').
