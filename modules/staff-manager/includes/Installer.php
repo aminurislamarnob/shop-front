@@ -84,7 +84,7 @@ class Installer {
 
 		// Table identifier can't be parameterised; it's built from the trusted
 		// $wpdb prefix and a hard-coded suffix, so interpolation is safe here.
-		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 		delete_option( self::SCHEMA_VERSION_OPTION );
 	}
