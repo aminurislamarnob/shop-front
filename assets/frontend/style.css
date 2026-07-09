@@ -7094,6 +7094,16 @@ body,
 [data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option {
   color: var(--storesuite-text-color);
 }
+[data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option--highlighted,
+[data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option:focus {
+  background-color: var(--storesuite-bg-color-light);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option--highlighted[aria-selected],
+[data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option--highlighted[data-selected] {
+  background-color: var(--storesuite-primary-bg);
+  color: #fff;
+}
 
 /* select2 fields that live outside .storesuite-main-dashboard (e.g., WC admin
    order/product screens, quick-edit modals) — make text light on dark surface. */
@@ -7103,6 +7113,16 @@ body,
 [data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__rendered,
 [data-theme="dark"] .select2-container .select2-selection--multiple .select2-search--inline .select2-search__field {
   color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .select2-container--default .select2-results__option--highlighted,
+[data-theme="dark"] .select2-container--default .select2-results__option:focus {
+  background-color: var(--storesuite-bg-color-light);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .select2-container--default .select2-results__option--highlighted[aria-selected],
+[data-theme="dark"] .select2-container--default .select2-results__option--highlighted[data-selected] {
+  background-color: var(--storesuite-primary-bg);
+  color: #fff;
 }
 [data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__placeholder {
   color: var(--storesuite-text-color-light);
