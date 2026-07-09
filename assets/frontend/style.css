@@ -861,9 +861,10 @@ form.storesuite-filters-form .row {
   width: 100%;
   cursor: pointer;
   gap: 8px;
-  padding: 5px 15px;
+  padding: 8px 15px;
   font-size: 14px;
   text-align: left;
+  white-space: nowrap;
   color: var(--storesuite-text-color);
   font-weight: 400;
   transition: .3s;
@@ -884,7 +885,9 @@ form.storesuite-filters-form .row {
   background: #fff;
   border-radius: 5px;
   z-index: 9;
-  width: 120px;
+  width: max-content;
+  min-width: 120px;
+  max-width: 260px;
   right: 0;
   top: 20px;
   padding: 5px 0;
@@ -2222,7 +2225,7 @@ span.storesuite-sidebar-trigger svg {
 .storesuite-dropdown .storesuite-dropdown-menu svg {
   width: 16px;
   height: 16px;
-  margin-right: 5px;
+  margin-right: 10px;
   position: relative;
   top: 1px;
 }
@@ -7618,4 +7621,64 @@ body,
 #storesuite-ai-bundle-modal .storesuite-form-control[readonly] {
   opacity: 0.55;
   cursor: not-allowed;
+}
+/* Order details "Documents" card (PDF-invoice / packing-slip integration). */
+.storesuite-order-documents .storesuite-order-documents-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button {
+  flex: 0 0 100%;
+  gap: 12px;
+  justify-content: flex-start;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-color: var(--storesuite-border-color);
+  color: var(--storesuite-text-color);
+  font-weight: 500;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+/* Short-labelled documents (WPO invoice / packing slip) sit two per row. */
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button.storesuite-document-half {
+  flex: 0 1 calc(50% - 3px);
+  min-width: 0;
+  padding-left: 10px;
+  padding-right: 10px;
+  gap: 8px;
+}
+/* The icon sits in a tinted tile so every label starts on the same x. */
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button svg {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex: 0 0 auto;
+  box-sizing: content-box;
+  padding: 6px;
+  border-radius: 6px;
+  fill: var(--storesuite-primary-bg);
+  background: var(--storesuite-bg-color-light);
+  transition: background-color 0.15s ease, fill 0.15s ease;
+}
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button:hover {
+  background: var(--storesuite-bg-color-light);
+  border-color: var(--storesuite-primary-bg);
+  color: var(--storesuite-primary-bg);
+}
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button:hover svg {
+  background: var(--storesuite-primary-bg);
+  fill: #fff;
+}
+/* Dark mode: see the "Dark mode overrides" section above. The button surface is
+   already re-skinned there; these rules keep the icon tile recessed against it
+   and stop the hover state from going darker than the button it sits on. */
+[data-theme="dark"] .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button svg {
+  background: var(--storesuite-page-bg);
+}
+[data-theme="dark"] .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button:hover {
+  background: var(--storesuite-surface-bg);
+}
+/* The tile rule above outranks the light-theme :hover rule, so restate the fill. */
+[data-theme="dark"] .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button:hover svg {
+  background: var(--storesuite-primary-bg);
 }
