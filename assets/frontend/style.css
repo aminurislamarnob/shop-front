@@ -5757,10 +5757,97 @@ body,
   background: var(--storesuite-surface-bg);
 }
 
+/* Overview chart cards. The wrapper hardcodes a white surface (see
+   src/analytics/stylesheets/_index.scss); its title + border already use
+   variables that flip. The "By day" interval-select input container and the
+   chart legend rows (Month to date / Previous year) also hardcode #fff. */
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-overview-chart-item,
+[data-theme="dark"] .storesuite-analytics-layout .components-input-control__container,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-legend__item button {
+  background: var(--storesuite-surface-bg);
+}
+/* Legend row hover hardcodes a light fill. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-legend__item button:hover {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Section headers (PERFORMANCE / CHARTS / leaderboards) hardcode a light
+   #e0e0e0 bottom divider and a #757575 heading; neither flips for dark. */
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-overview-section-header {
+  border-bottom-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-overview-section-header h3 {
+  color: var(--storesuite-text-color);
+}
+
 /* Near-black control/card text: card bodies and card header titles. */
 [data-theme="dark"] .storesuite-analytics-layout .components-card__body,
 [data-theme="dark"] .storesuite-analytics-layout .components-card__header .components-text {
   color: var(--storesuite-text-black);
+}
+
+/* Performance summary tiles + date-range dropdown button hardcode a white
+   surface (same WooCommerce components as the dashboard home, but the reskin
+   there is scoped to .storesuite-dashboard-layout so the Analytics page never
+   inherited it). */
+[data-theme="dark"] .storesuite-analytics-layout ul.woocommerce-summary,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item,
+[data-theme="dark"] .storesuite-analytics-layout .components-button.woocommerce-dropdown-button {
+  background: var(--storesuite-surface-bg);
+}
+
+/* Summary tile hover/selected states. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item:hover,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item:focus,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item.is-selected {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Dividers between summary tiles hardcode a light gray. */
+[data-theme="dark"] .storesuite-analytics-layout ul.woocommerce-summary li .woocommerce-summary__item {
+  border-color: var(--storesuite-border-color);
+}
+
+/* Near-black tile values + dropdown labels. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-value,
+[data-theme="dark"] .storesuite-analytics-layout .components-button.woocommerce-dropdown-button .woocommerce-dropdown-button__labels span {
+  color: var(--storesuite-text-black);
+}
+
+/* Muted tile labels. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-label {
+  color: var(--storesuite-text-color);
+}
+
+/* WooCommerce wraps tile label/value text in its <Text> component
+   (.components-text), which hardcodes a near-black color on the leaf element, so
+   the container color rules above never reach the glyphs. Make the wrapper
+   follow its container's token color (away from the delta pill). */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-label .components-text,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-value .components-text {
+  color: inherit;
+}
+
+/* Delta pill neutral fill + text (good/bad-trend keep their pastel greens/reds). */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item:not(.is-good-trend):not(.is-bad-trend) .woocommerce-summary__item-delta {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item:not(.is-good-trend):not(.is-bad-trend) .woocommerce-summary__item-delta .components-text {
+  color: var(--storesuite-text-color-light);
+}
+
+/* Data-status bar ("Last updated / Next update / Update now") hardcodes a white
+   surface with near-black item values; the wrapper label + "Update now" link
+   already use variables/blue that read on dark. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-analytics-import-status-bar {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-analytics-import-status-bar__value {
+  color: var(--storesuite-text-black);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-analytics-import-status-bar__label {
+  color: var(--storesuite-text-color-light);
 }
 
 /* Interval-select ("By hour") value. WooCommerce's emotion runtime injects a
