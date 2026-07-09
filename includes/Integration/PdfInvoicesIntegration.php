@@ -184,7 +184,10 @@ class PdfInvoicesIntegration {
 	 * Collect WebToffee Print Invoices / Packing Slips documents.
 	 *
 	 * Reuses the plugin's own `wt_print_actions` button filter so every document
-	 * the plugin exposes is included, with URLs and labels already built.
+	 * the plugin exposes (invoice, packing slip, delivery note, shipping label,
+	 * dispatch label, UBL invoice, …) is included. Each filtered entry describes
+	 * an action rather than a link, so URLs are built with the plugin's own
+	 * `get_print_url()` helper.
 	 *
 	 * @param WC_Order $order   The order.
 	 * @param string   $context Rendering context: 'list_page' or 'detail_page'.
@@ -194,17 +197,44 @@ class PdfInvoicesIntegration {
 	protected function get_webtoffee_documents( WC_Order $order, string $context ): array {
 		$items = array();
 
-		$buttons = apply_filters( 'wt_print_actions', array(), $order, $order->get_id(), $context );
+		if ( ! is_callable( array( 'Wf_Woocommerce_Packing_List_Admin', 'get_print_url' ) ) ) {
+			return $items;
+		}
+
+		$order_id = $order->get_id();
+		$buttons  = apply_filters( 'wt_print_actions', array(), $order, $order_id, $context );
 
 		if ( empty( $buttons ) || ! is_array( $buttons ) ) {
 			return $items;
 		}
 
 		foreach ( $buttons as $button ) {
-			$normalized = $this->normalize_webtoffee_button( $button );
+			if ( ! is_array( $button ) ) {
+				continue;
+			}
 
-			if ( ! empty( $normalized['url'] ) ) {
-				$items[] = $normalized;
+			// Aggregate / dropdown buttons carry their real actions in `items`,
+			// with short child labels ("Print", "Download") that only make sense
+			// prefixed by the parent label ("Invoice").
+			if ( ! empty( $button['items'] ) && is_array( $button['items'] ) ) {
+				$parent_label = isset( $button['label'] ) ? (string) $button['label'] : '';
+				$exists       = ! empty( $button['exist'] );
+
+				foreach ( $button['items'] as $child ) {
+					$item = $this->build_webtoffee_document( $child, $order_id, $parent_label, $exists );
+
+					if ( $item ) {
+						$items[] = $item;
+					}
+				}
+
+				continue;
+			}
+
+			$item = $this->build_webtoffee_document( $button, $order_id, '', ! empty( $button['exist'] ) );
+
+			if ( $item ) {
+				$items[] = $item;
 			}
 		}
 
@@ -212,50 +242,42 @@ class PdfInvoicesIntegration {
 	}
 
 	/**
-	 * Normalize a single WebToffee button entry into label + url + exists.
+	 * Build a normalized document entry from a single WebToffee button.
 	 *
-	 * The `wt_print_actions` filter may yield ready-built anchor HTML or an
-	 * associative array describing the action; both shapes are handled.
+	 * @param mixed  $button       Button args, keyed by `action` and `label`.
+	 * @param int    $order_id     Order ID the document belongs to.
+	 * @param string $parent_label Aggregate button label, prefixed onto the child label.
+	 * @param bool   $exists       Whether the document has already been generated.
 	 *
-	 * @param mixed $button Button data (HTML string or array).
-	 *
-	 * @return array{label:string, url:string, exists:bool}
+	 * @return array{label:string, url:string, exists:bool}|null Null when the button is not a usable link.
 	 */
-	protected function normalize_webtoffee_button( $button ): array {
-		$normalized = array(
-			'label'  => '',
-			'url'    => '',
-			'exists' => false,
+	protected function build_webtoffee_document( $button, int $order_id, string $parent_label, bool $exists ) {
+		if ( ! is_array( $button ) || empty( $button['action'] ) ) {
+			return null;
+		}
+
+		$action = (string) $button['action'];
+		$label  = isset( $button['label'] ) ? (string) $button['label'] : '';
+
+		if ( '' === $label ) {
+			$label = isset( $button['tooltip'] ) ? (string) $button['tooltip'] : __( 'Document', 'storesuite' );
+		}
+
+		if ( '' !== $parent_label ) {
+			/* translators: 1: document name, e.g. "Invoice". 2: action, e.g. "Download". */
+			$label = sprintf( __( '%1$s: %2$s', 'storesuite' ), $parent_label, $label );
+		}
+
+		$url = \Wf_Woocommerce_Packing_List_Admin::get_print_url( $order_id, $action );
+
+		if ( empty( $url ) ) {
+			return null;
+		}
+
+		return array(
+			'label'  => wp_strip_all_tags( $label ),
+			'url'    => $url,
+			'exists' => $exists,
 		);
-
-		// Ready-built anchor HTML: extract the href and inner text.
-		if ( is_string( $button ) ) {
-			if ( preg_match( '/href=["\']([^"\']+)["\']/', $button, $href_match ) ) {
-				$normalized['url'] = html_entity_decode( $href_match[1] );
-			}
-
-			$text = wp_strip_all_tags( $button );
-			if ( '' !== trim( $text ) ) {
-				$normalized['label'] = trim( $text );
-			}
-
-			return $normalized;
-		}
-
-		if ( is_array( $button ) ) {
-			$normalized['label'] = (string) ( $button['name'] ?? $button['label'] ?? $button['text'] ?? '' );
-			$normalized['url']   = (string) ( $button['url'] ?? $button['link'] ?? $button['href'] ?? '' );
-
-			// Some entries only carry a ready-built HTML fragment.
-			if ( '' === $normalized['url'] && isset( $button['html'] ) && is_string( $button['html'] ) ) {
-				return $this->normalize_webtoffee_button( $button['html'] );
-			}
-		}
-
-		if ( '' === $normalized['label'] && '' !== $normalized['url'] ) {
-			$normalized['label'] = __( 'Document', 'storesuite' );
-		}
-
-		return $normalized;
 	}
 }
