@@ -224,7 +224,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 													<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'order-details' ) . '%s', $order->get_id() ) ); ?>" class="dropdown-link"><svg width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-eye"></use></svg><?php esc_html_e( 'View', 'storesuite' ); ?></a>
 												</li>
 												<li>
-													<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-order' ) . '%s', $order->get_id() ) ); ?>" class="dropdown-link"><svg width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-pencil-square"></use></svg><?php echo esc_html__( 'Edit', 'storesuite' ); ?></a>
+													<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-order' ) . '%s', $order->get_id() ) ); ?>" class="dropdown-link"><svg width="16" height="16" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-edit"></use></svg><?php echo esc_html__( 'Edit', 'storesuite' ); ?></a>
 												</li>
 												<?php
 												/**
