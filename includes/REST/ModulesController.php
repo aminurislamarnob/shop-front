@@ -208,13 +208,40 @@ class ModulesController extends WP_REST_Controller {
 	 * @return \WP_REST_Response|WP_Error
 	 */
 	public function activate_item( $request ) {
-		$slug = (string) $request->get_param( 'slug' );
+		$slug    = (string) $request->get_param( 'slug' );
+		$manager = $this->get_manager();
 
-		if ( ! $this->get_manager()->activate( $slug ) ) {
+		if ( ! isset( $manager->get_all()[ $slug ] ) ) {
 			return new WP_Error(
 				'storesuite_module_not_found',
 				__( 'Module not found.', 'storesuite' ),
 				array( 'status' => 404 )
+			);
+		}
+
+		// Distinguish an unmet-dependency failure from a missing module so the
+		// UI can tell the user which plugin to install.
+		$missing = $manager->get_missing_requirements( $slug );
+		if ( $missing ) {
+			return new WP_Error(
+				'storesuite_module_requirements_unmet',
+				sprintf(
+					/* translators: %s: comma-separated list of required plugin identifiers. */
+					__( 'This module requires the following plugin(s) to be active: %s', 'storesuite' ),
+					implode( ', ', $missing )
+				),
+				array(
+					'status'  => 400,
+					'missing' => $missing,
+				)
+			);
+		}
+
+		if ( ! $manager->activate( $slug ) ) {
+			return new WP_Error(
+				'storesuite_module_activation_failed',
+				__( 'The module could not be activated.', 'storesuite' ),
+				array( 'status' => 400 )
 			);
 		}
 

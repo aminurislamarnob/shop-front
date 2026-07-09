@@ -126,9 +126,23 @@ abstract class Module {
 	/**
 	 * One-shot teardown work. Called when the user deactivates the module.
 	 *
+	 * Deactivation is intentionally non-destructive — a module that owns a DB
+	 * table or options should leave that data intact here so it survives a
+	 * toggle off/on. Destructive cleanup belongs in `uninstall()`.
+	 *
 	 * @return void
 	 */
 	public function deactivate() {}
+
+	/**
+	 * Permanent teardown. Called from the plugin's root `uninstall.php` (via
+	 * `Module\Manager::uninstall_all()`) when StoreSuite itself is deleted.
+	 * This is where a module drops its tables and deletes its options — the
+	 * one place data removal is expected.
+	 *
+	 * @return void
+	 */
+	public function uninstall() {}
 
 	/**
 	 * Does this module expose configurable settings on the admin Modules

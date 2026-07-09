@@ -82,23 +82,21 @@ class Manager {
 		$this->discovered = true;
 
 		$dir = $this->get_modules_dir();
-		if ( ! is_dir( $dir ) ) {
-			return;
-		}
 
-		foreach ( (array) glob( $dir . '/*/module.php' ) as $bootstrap ) {
-			$module = include_once $bootstrap;
+		// Only scan the bundled directory when it exists — but always run the
+		// registration filter below so third-party modules can register even
+		// when the bundled `modules/` directory is absent (custom builds,
+		// filtered directory).
+		if ( is_dir( $dir ) ) {
+			foreach ( (array) glob( $dir . '/*/module.php' ) as $bootstrap ) {
+				// `include_once` returns the file's return value only the first
+				// time it is included; a second include yields `true`. Discovery
+				// runs once per request (guarded by `$this->discovered`), so each
+				// bootstrap is included exactly once here and returns its Module.
+				$module = include_once $bootstrap;
 
-			if ( ! $module instanceof Module ) {
-				continue;
+				$this->register_module( $module );
 			}
-
-			$slug = $module->get_slug();
-			if ( empty( $slug ) || isset( $this->modules[ $slug ] ) ) {
-				continue;
-			}
-
-			$this->modules[ $slug ] = $module;
 		}
 
 		/**
@@ -106,7 +104,40 @@ class Manager {
 		 *
 		 * @param Module[] $modules Map of slug => Module instance.
 		 */
-		$this->modules = (array) apply_filters( 'storesuite_register_modules', $this->modules );
+		$registered = apply_filters( 'storesuite_register_modules', $this->modules );
+
+		// Re-validate after the filter: third-party callers can return anything,
+		// and an invalid entry would fatal later when `boot_active()` calls
+		// `->boot()` on it. Rebuild the registry from scratch so only valid
+		// Module instances survive.
+		if ( is_array( $registered ) && $registered !== $this->modules ) {
+			$this->modules = array();
+			foreach ( $registered as $module ) {
+				$this->register_module( $module );
+			}
+		}
+	}
+
+	/**
+	 * Validate a discovered/registered value and add it to the registry.
+	 *
+	 * Silently ignores anything that isn't a `Module` with a non-empty slug,
+	 * and never lets a later registration clobber an already-registered slug.
+	 *
+	 * @param mixed $module Candidate module instance.
+	 * @return void
+	 */
+	private function register_module( $module ) {
+		if ( ! $module instanceof Module ) {
+			return;
+		}
+
+		$slug = $module->get_slug();
+		if ( empty( $slug ) || isset( $this->modules[ $slug ] ) ) {
+			return;
+		}
+
+		$this->modules[ $slug ] = $module;
 	}
 
 	/**
@@ -117,6 +148,13 @@ class Manager {
 	 */
 	public function boot_active() {
 		foreach ( $this->get_active() as $module ) {
+			// A required plugin may have been deactivated after this module was
+			// activated. Skip booting rather than fataling on a missing
+			// dependency; the Modules screen still shows it as active.
+			if ( $this->get_missing_requirements( $module->get_slug() ) ) {
+				continue;
+			}
+
 			$module->boot();
 
 			/**
@@ -188,6 +226,11 @@ class Manager {
 			return false;
 		}
 
+		// Refuse activation when a declared dependency plugin is missing.
+		if ( $this->get_missing_requirements( $slug ) ) {
+			return false;
+		}
+
 		if ( ! $this->is_active( $slug ) ) {
 			$active   = $this->get_active_slugs();
 			$active[] = $slug;
@@ -200,6 +243,56 @@ class Manager {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Plugin dependencies a module declares (via `get_requires()`) that are not
+	 * currently active. Empty array means every requirement is satisfied.
+	 *
+	 * @param string $slug Module slug.
+	 * @return string[] Plugin basenames (e.g. `woocommerce/woocommerce.php`) that are missing.
+	 */
+	public function get_missing_requirements( $slug ) {
+		$modules = $this->get_all();
+		if ( ! isset( $modules[ $slug ] ) ) {
+			return array();
+		}
+
+		$missing = array();
+		foreach ( (array) $modules[ $slug ]->get_requires() as $plugin ) {
+			if ( $plugin && ! $this->is_plugin_active( (string) $plugin ) ) {
+				$missing[] = (string) $plugin;
+			}
+		}
+
+		return $missing;
+	}
+
+	/**
+	 * Thin wrapper over core `is_plugin_active()`, loading the admin plugin
+	 * helpers on the front end where they aren't included by default.
+	 *
+	 * @param string $plugin Plugin basename.
+	 * @return bool
+	 */
+	private function is_plugin_active( $plugin ) {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		return is_plugin_active( $plugin );
+	}
+
+	/**
+	 * Run every discovered module's `uninstall()` teardown. Intended to be
+	 * called from the plugin's root `uninstall.php` when StoreSuite is deleted,
+	 * giving each module a chance to drop its tables and options.
+	 *
+	 * @return void
+	 */
+	public function uninstall_all() {
+		foreach ( $this->get_all() as $module ) {
+			$module->uninstall();
+		}
 	}
 
 	/**
