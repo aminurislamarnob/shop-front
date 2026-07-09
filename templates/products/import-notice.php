@@ -14,14 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<?php foreach ( $errors as $error ) : ?>
+<?php /* Prefixed loop vars: $error and $action are WordPress globals. */ ?>
+<?php foreach ( $errors as $storesuite_error ) : ?>
 	<div class="storesuite-notice storesuite-notice-error storesuite-mb-24" role="alert">
-		<p><?php echo esc_html( $error['message'] ); ?></p>
+		<p><?php echo esc_html( $storesuite_error['message'] ); ?></p>
 
-		<?php if ( ! empty( $error['actions'] ) ) : ?>
+		<?php if ( ! empty( $storesuite_error['actions'] ) ) : ?>
 			<p class="storesuite-notice-actions">
-				<?php foreach ( $error['actions'] as $action ) : ?>
-					<a class="my-storesuite-button" href="<?php echo esc_url( $action['url'] ); ?>"><?php echo esc_html( $action['label'] ); ?></a>
+				<?php foreach ( $storesuite_error['actions'] as $storesuite_action ) : ?>
+					<a class="my-storesuite-button" href="<?php echo esc_url( $storesuite_action['url'] ); ?>"><?php echo esc_html( $storesuite_action['label'] ); ?></a>
 				<?php endforeach; ?>
 			</p>
 		<?php endif; ?>
