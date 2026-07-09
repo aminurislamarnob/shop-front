@@ -101,32 +101,43 @@ class ProductImportController {
 
 		$file = wc_clean( wp_unslash( $_POST['file'] ) );
 
-		try {
-			ProductImportWizard::validate_import_file( $file );
-		} catch ( \Exception $e ) {
-			wp_send_json_error( array( 'message' => $e->getMessage() ) );
-		}
-
 		include_once WC_ABSPATH . 'includes/import/class-wc-product-csv-importer.php';
 
 		$params = array(
-			'delimiter'       => ! empty( $_POST['delimiter'] ) ? wc_clean( wp_unslash( $_POST['delimiter'] ) ) : ',',
-			'start_pos'       => isset( $_POST['position'] ) ? absint( wp_unslash( $_POST['position'] ) ) : 0,
-			'mapping'         => isset( $_POST['mapping'] ) ? (array) wc_clean( wp_unslash( $_POST['mapping'] ) ) : array(),
-			'update_existing' => isset( $_POST['update_existing'] ) && (bool) $_POST['update_existing'],
-			'lines'           => apply_filters( 'woocommerce_product_import_batch_size', 30 ),
-			'parse'           => true,
+			'delimiter'          => ! empty( $_POST['delimiter'] ) ? wc_clean( wp_unslash( $_POST['delimiter'] ) ) : ',',
+			'start_pos'          => isset( $_POST['position'] ) ? absint( wp_unslash( $_POST['position'] ) ) : 0,
+			'mapping'            => isset( $_POST['mapping'] ) ? (array) wc_clean( wp_unslash( $_POST['mapping'] ) ) : array(),
+			'update_existing'    => isset( $_POST['update_existing'] ) && (bool) $_POST['update_existing'],
+			'character_encoding' => isset( $_POST['character_encoding'] ) ? wc_clean( wp_unslash( $_POST['character_encoding'] ) ) : '',
+			'lines'              => apply_filters( 'woocommerce_product_import_batch_size', 30 ),
+			'parse'              => true,
 		);
 
 		// Accumulate the error log across batches (reset on the first batch).
 		$error_log = 0 !== $params['start_pos'] ? array_filter( (array) get_user_option( 'product_import_error_log' ) ) : array();
 
-		$importer         = new \WC_Product_CSV_Importer( $file, $params );
-		$results          = $importer->import();
-		$percent_complete = $importer->get_percent_complete();
-		$error_log        = array_merge( $error_log, $results['failed'], $results['skipped'] );
+		try {
+			ProductImportWizard::validate_import_file( $file );
+
+			// get_importer() (not `new`) so the woocommerce_product_csv_importer_class/args filters apply.
+			$importer         = ProductImportWizard::get_importer( $file, $params );
+			$results          = $importer->import();
+			$percent_complete = $importer->get_percent_complete();
+		} catch ( \Exception $e ) {
+			wp_send_json_error( array( 'message' => $e->getMessage() ) );
+		}
+
+		$error_log = array_merge( $error_log, $results['failed'], $results['skipped'] );
 
 		update_user_option( get_current_user_id(), 'product_import_error_log', $error_log );
+
+		$counts = array(
+			'imported'            => count( $results['imported'] ),
+			'imported_variations' => isset( $results['imported_variations'] ) ? count( (array) $results['imported_variations'] ) : 0,
+			'failed'              => count( $results['failed'] ),
+			'updated'             => count( $results['updated'] ),
+			'skipped'             => count( $results['skipped'] ),
+		);
 
 		if ( 100 === $percent_complete ) {
 			$this->cleanup_import( $wpdb );
@@ -142,26 +153,24 @@ class ProductImportController {
 			);
 
 			wp_send_json_success(
-				array(
-					'position'   => 'done',
-					'percentage' => 100,
-					'url'        => $url,
-					'imported'   => count( $results['imported'] ),
-					'failed'     => count( $results['failed'] ),
-					'updated'    => count( $results['updated'] ),
-					'skipped'    => count( $results['skipped'] ),
+				array_merge(
+					array(
+						'position'   => 'done',
+						'percentage' => 100,
+						'url'        => $url,
+					),
+					$counts
 				)
 			);
 		}
 
 		wp_send_json_success(
-			array(
-				'position'   => $importer->get_file_position(),
-				'percentage' => $percent_complete,
-				'imported'   => count( $results['imported'] ),
-				'failed'     => count( $results['failed'] ),
-				'updated'    => count( $results['updated'] ),
-				'skipped'    => count( $results['skipped'] ),
+			array_merge(
+				array(
+					'position'   => $importer->get_file_position(),
+					'percentage' => $percent_complete,
+				),
+				$counts
 			)
 		);
 	}

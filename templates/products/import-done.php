@@ -4,22 +4,25 @@
  *
  * @package StoreSuite
  *
- * @var int   $imported Number of products created.
- * @var int   $updated  Number of products updated.
- * @var int   $failed   Number of products that failed.
- * @var int   $skipped  Number of products skipped.
- * @var array $errors   WP_Error objects for failed/skipped rows.
+ * @var int   $imported            Number of products created.
+ * @var int   $imported_variations Number of product variations created.
+ * @var int   $updated             Number of products updated.
+ * @var int   $failed              Number of products that failed.
+ * @var int   $skipped             Number of products skipped.
+ * @var array $errors              WP_Error objects for failed/skipped rows.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$imported = isset( $imported ) ? (int) $imported : 0;
-$updated  = isset( $updated ) ? (int) $updated : 0;
-$failed   = isset( $failed ) ? (int) $failed : 0;
-$skipped  = isset( $skipped ) ? (int) $skipped : 0;
-$errors   = isset( $errors ) ? (array) $errors : array();
+$imported            = isset( $imported ) ? (int) $imported : 0;
+$imported_variations = isset( $imported_variations ) ? (int) $imported_variations : 0;
+$updated             = isset( $updated ) ? (int) $updated : 0;
+$failed              = isset( $failed ) ? (int) $failed : 0;
+$skipped             = isset( $skipped ) ? (int) $skipped : 0;
+// Renamed from $errors to avoid overriding the WordPress global of the same name.
+$storesuite_errors   = isset( $errors ) ? (array) $errors : array();
 ?>
 <div class="wc-progress-form-content woocommerce-importer">
 	<section class="woocommerce-importer-done">
@@ -29,6 +32,10 @@ $errors   = isset( $errors ) ? (array) $errors : array();
 		if ( 0 < $imported ) {
 			/* translators: %s: number of products */
 			$storesuite_results[] = sprintf( _n( '%s product imported', '%s products imported', $imported, 'storesuite' ), '<strong>' . number_format_i18n( $imported ) . '</strong>' );
+		}
+		if ( 0 < $imported_variations ) {
+			/* translators: %s: number of product variations */
+			$storesuite_results[] = sprintf( _n( '%s variation imported', '%s variations imported', $imported_variations, 'storesuite' ), '<strong>' . number_format_i18n( $imported_variations ) . '</strong>' );
 		}
 		if ( 0 < $updated ) {
 			/* translators: %s: number of products */
@@ -60,7 +67,7 @@ $errors   = isset( $errors ) ? (array) $errors : array();
 			</thead>
 			<tbody>
 				<?php
-				foreach ( $errors as $storesuite_error ) {
+				foreach ( $storesuite_errors as $storesuite_error ) {
 					if ( ! is_wp_error( $storesuite_error ) ) {
 						continue;
 					}

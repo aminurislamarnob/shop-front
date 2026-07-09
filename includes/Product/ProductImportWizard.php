@@ -56,6 +56,27 @@ class ProductImportWizard extends \WC_Product_CSV_Importer_Controller {
 	}
 
 	/**
+	 * Add error message, rewriting wp-admin importer links to the frontend wizard.
+	 *
+	 * The inherited steps build error actions (e.g. mapping's "Upload a new file") pointing at the
+	 * wp-admin importer page, which StoreSuite blocks for shop managers. Point them back here instead.
+	 *
+	 * @param string $message Error message.
+	 * @param array  $actions List of actions with 'url' and 'label'.
+	 *
+	 * @return void
+	 */
+	protected function add_error( $message, $actions = array() ) {
+		foreach ( $actions as $key => $action ) {
+			if ( isset( $action['url'] ) && false !== strpos( $action['url'], 'page=product_importer' ) ) {
+				$actions[ $key ]['url'] = storesuite_get_navigation_url( 'import-products' );
+			}
+		}
+
+		parent::add_error( $message, $actions );
+	}
+
+	/**
 	 * Done step.
 	 *
 	 * Renders a StoreSuite-themed summary whose "View products" button points to the dashboard products
@@ -68,21 +89,23 @@ class ProductImportWizard extends \WC_Product_CSV_Importer_Controller {
 			return;
 		}
 
-		$imported = isset( $_REQUEST['products-imported'] ) ? absint( wp_unslash( $_REQUEST['products-imported'] ) ) : 0;
-		$updated  = isset( $_REQUEST['products-updated'] ) ? absint( wp_unslash( $_REQUEST['products-updated'] ) ) : 0;
-		$failed   = isset( $_REQUEST['products-failed'] ) ? absint( wp_unslash( $_REQUEST['products-failed'] ) ) : 0;
-		$skipped  = isset( $_REQUEST['products-skipped'] ) ? absint( wp_unslash( $_REQUEST['products-skipped'] ) ) : 0;
-		$errors   = array_filter( (array) get_user_option( 'product_import_error_log' ) );
+		$imported            = isset( $_REQUEST['products-imported'] ) ? absint( wp_unslash( $_REQUEST['products-imported'] ) ) : 0;
+		$imported_variations = isset( $_REQUEST['products-imported-variations'] ) ? absint( wp_unslash( $_REQUEST['products-imported-variations'] ) ) : 0;
+		$updated             = isset( $_REQUEST['products-updated'] ) ? absint( wp_unslash( $_REQUEST['products-updated'] ) ) : 0;
+		$failed              = isset( $_REQUEST['products-failed'] ) ? absint( wp_unslash( $_REQUEST['products-failed'] ) ) : 0;
+		$skipped             = isset( $_REQUEST['products-skipped'] ) ? absint( wp_unslash( $_REQUEST['products-skipped'] ) ) : 0;
+		$errors              = array_filter( (array) get_user_option( 'product_import_error_log' ) );
 
 		storesuite_get_template_part(
 			'products/import-done',
 			'',
 			array(
-				'imported' => $imported,
-				'updated'  => $updated,
-				'failed'   => $failed,
-				'skipped'  => $skipped,
-				'errors'   => $errors,
+				'imported'            => $imported,
+				'imported_variations' => $imported_variations,
+				'updated'             => $updated,
+				'failed'              => $failed,
+				'skipped'             => $skipped,
+				'errors'              => $errors,
 			)
 		);
 	}
