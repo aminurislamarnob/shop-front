@@ -5693,6 +5693,35 @@ body,
   background-color: var(--storesuite-surface-elevated);
 }
 
+/* Summary tile skeleton bars. WooCommerce puts the placeholder class on
+   .woocommerce-summary__item-container (not the <ul>) and fills the label/value/
+   delta children with #f0f0f0, so the tile title + value bars flash white. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-label,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-value,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-delta,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-label,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-value,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-delta {
+  background-color: var(--storesuite-surface-elevated);
+}
+
+/* StoreSuite's own lazy-chunk shimmer skeletons hardcode a white
+   #f0f0f0 -> #e0e0e0 gradient (see src/dashboard/stylesheets/_index.scss).
+   Matched on the theme alone since they render before the layout wrapper's
+   children mount; the storesuite-shimmer keyframe animates this gradient. */
+[data-theme="dark"] .storesuite-stats-skeleton,
+[data-theme="dark"] .storesuite-chart-skeleton,
+[data-theme="dark"] .storesuite-leaderboard-skeleton,
+[data-theme="dark"] .storesuite-table-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--storesuite-surface-bg) 25%,
+    var(--storesuite-surface-elevated) 50%,
+    var(--storesuite-surface-bg) 75%
+  );
+  background-size: 800px 100%;
+}
+
 /* ==========================================================================
    Analytics reports dark mode
    The Analytics page reskin (src/analytics/stylesheets/_reskin.scss) colors
