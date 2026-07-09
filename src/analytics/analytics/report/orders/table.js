@@ -1,5 +1,5 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Component } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 import { map } from 'lodash';
 import { Date, Link, OrderStatus } from '@woocommerce/components';
 import { formatValue } from '@woocommerce/number';
@@ -8,6 +8,7 @@ import { defaultTableDateFormat } from '@woocommerce/date';
 import { CurrencyContext } from '@woocommerce/currency';
 import ReportTable from '../../components/report-table';
 import { getAdminSetting } from '../../../utils/admin-settings';
+import { storeSuiteConfig } from '../../../config';
 
 class OrdersReportTable extends Component {
 	constructor() {
@@ -23,9 +24,12 @@ class OrdersReportTable extends Component {
 			{ label: __( 'Order #', 'storesuite' ),        key: 'order_number',   required: true },
 			{ label: __( 'Status', 'storesuite' ),         key: 'status',         required: false },
 			{ label: __( 'Customer', 'storesuite' ),       key: 'customer_id',    required: false },
+			{ label: __( 'Customer type', 'storesuite' ),  key: 'customer_type',  required: false },
 			{ label: __( 'Product(s)', 'storesuite' ),     key: 'products',       required: false },
 			{ label: __( 'Items sold', 'storesuite' ),     key: 'num_items_sold', required: false, isSortable: true, isNumeric: true },
+			{ label: __( 'Coupon(s)', 'storesuite' ),      key: 'coupons',        required: false },
 			{ label: __( 'Net sales', 'storesuite' ),      key: 'net_total',      required: true, isSortable: true, isNumeric: true },
+			{ label: __( 'Attribution', 'storesuite' ),    key: 'attribution',    required: false },
 		];
 	}
 
@@ -38,23 +42,46 @@ class OrdersReportTable extends Component {
 		return map( tableData, ( row ) => {
 			const {
 				date,
+				customer_type: customerType,
 				net_total:     netTotal,
 				num_items_sold: numItemsSold,
 				order_id:      orderId,
 				order_number:  orderNumber,
+				parent_id:     parentId,
 				status,
 			} = row;
 
+			// Refund rows report their own id; link to the parent order.
+			const orderDetailsUrl = `${ storeSuiteConfig.orderDetailsPath }${ parentId || orderId }/`;
+
 			const extendedInfo = row.extended_info || {};
-			const { customer, products = [] } = extendedInfo;
+			const { customer, products = [], coupons = [], attribution } = extendedInfo;
 			const customerName = customer
 				? [ customer.first_name, customer.last_name ].filter( Boolean ).join( ' ' )
 				: '';
 			const productNames = products.slice( 0, 2 ).map( ( p ) => p.name ).join( ', ' );
+			const customerTypeLabel = customerType
+				? customerType.charAt( 0 ).toUpperCase() + customerType.slice( 1 )
+				: '';
+			const couponsDisplay = coupons.map( ( coupon, index ) => (
+				<Fragment key={ coupon.id }>
+					{ index > 0 && ', ' }
+					<Link
+						href={ getNewPath( persistedQuery, '/analytics/coupons', {
+							filter:  'single_coupon',
+							coupons: coupon.id,
+						} ) }
+						type="wc-admin"
+					>
+						{ coupon.code }
+					</Link>
+				</Fragment>
+			) );
+			const attributionOrigin = ( attribution && attribution.origin ) || '';
 
 			return [
 				{ display: <Date date={ date } visibleFormat={ dateFormat } />, value: date },
-				{ display: <Link href={ `post.php?post=${ orderId }&action=edit` } type="external">{ orderNumber }</Link>, value: orderNumber },
+				{ display: <a href={ orderDetailsUrl }>{ orderNumber }</a>, value: orderNumber },
 				{
 					display: (
 						<OrderStatus
@@ -67,9 +94,12 @@ class OrdersReportTable extends Component {
 					value: status,
 				},
 				{ display: customerName, value: customerName },
+				{ display: customerTypeLabel, value: customerType },
 				{ display: productNames, value: productNames },
 				{ display: formatValue( getCurrencyConfig(), 'number', numItemsSold ), value: Number( numItemsSold ) },
+				{ display: couponsDisplay, value: coupons.map( ( c ) => c.code ).join( ', ' ) },
 				{ display: renderCurrency( netTotal ), value: Number( netTotal ) },
+				{ display: attributionOrigin, value: attributionOrigin },
 			];
 		} );
 	}

@@ -153,7 +153,9 @@ class Products {
 
 		// Add product IDs to the WHERE clause with OR logic
 		if ( count( $search_ids ) > 0 ) {
-			$where = str_replace( ')))', ") OR ({$wpdb->posts}.ID IN (" . implode( ',', $search_ids ) . '))))', $where );
+			$placeholders = implode( ',', array_fill( 0, count( $search_ids ), '%d' ) );
+			$in_clause    = $wpdb->prepare( $placeholders, $search_ids ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- %d placeholder list built from the IDs being prepared.
+			$where        = str_replace( ')))', ") OR ({$wpdb->posts}.ID IN ({$in_clause}))))", $where );
 		}
 
 		return $where;

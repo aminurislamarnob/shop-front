@@ -18,7 +18,7 @@ final class StoreSuite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.6';
+	public $version = '1.2.0';
 
 	/**
 	 * Instance of self
@@ -225,6 +225,10 @@ final class StoreSuite {
 	public function init_classes() {
 		require_once STORESUITE_INC_DIR . '/functions.php';
 
+		// Run pending data migrations before the rest of the services boot.
+		$this->container['storesuite_upgrader'] = new Upgrader();
+		$this->container['storesuite_upgrader']->maybe_upgrade();
+
 		$this->container['cache']                                  = new Cache();
 		$this->container['storesuite_main']                        = new Main();
 		$this->container['scripts']                                = new Assets();
@@ -245,9 +249,12 @@ final class StoreSuite {
 		$this->container['storesuite_product_tags']                = new ProductTag\Tags();
 		$this->container['storesuite_product_tag_controller']      = new ProductTag\TagController();
 		$this->container['storesuite_product_attribute_controller'] = new ProductAttribute\AttributeController();
+		$this->container['storesuite_list_actions']                = new ListTable\ListActions();
 		$this->container['storesuite_product_bulk_edit']           = new Product\ProductBulkEdit();
 		$this->container['storesuite_product_quick_edit']          = new Product\ProductQuickEdit();
 		$this->container['storesuite_product_controller']          = new Product\ProductController();
+		$this->container['storesuite_product_ai']                  = new Product\ProductAI();
+		$this->container['storesuite_product_image_ai']            = new Product\ProductImageAI();
 		$this->container['storesuite_product_export_controller']   = new Product\ProductExportController();
 		$this->container['storesuite_product_import_controller']   = new Product\ProductImportController();
 		$this->container['storesuite_product_hooks']               = new Product\ProductHooks();
@@ -258,6 +265,7 @@ final class StoreSuite {
 		$this->container['storesuite_order_hooks']                 = new Order\OrderHooks();
 		$this->container['storesuite_coupon_controller']           = new Coupon\CouponController();
 		$this->container['storesuite_coupon_manager']              = new Coupon\CouponManager();
+		$this->container['storesuite_coupon_bulk_edit']            = new Coupon\CouponBulkEdit();
 		$this->container['storesuite_account_controller']          = new Account\AccountController();
 		$this->container['storesuite_handle_paginations']          = new HandlePaginations();
 

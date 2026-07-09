@@ -5,6 +5,125 @@
 			this.handleSubmenuToggle();
 			this.handleDropdown();
 			this.closeDropdownOutside();
+			this.handleThemeToggle();
+		},
+
+		handleThemeToggle: function () {
+			var themePreferenceStorageKey = 'storesuite_theme_mode';
+			var $themeToggle = $( '.storesuite-theme-toggle' );
+			var $root = $( document.documentElement );
+
+			if ( ! $themeToggle.length ) {
+				return;
+			}
+
+			function persistThemePreference( mode ) {
+				try {
+					localStorage.setItem( themePreferenceStorageKey, mode );
+				} catch ( storageError ) {}
+			}
+
+			function currentMode() {
+				return $root.attr( 'data-theme' ) === 'dark' ? 'dark' : 'light';
+			}
+
+			// Dark styles for the TinyMCE content iframe. WordPress bundles
+			// TinyMCE 4 (lightgray skin) with no dark skin, and its init
+			// serialization mangles a server-side content_style that contains
+			// quotes — so we inject the stylesheet straight into the iframe and
+			// gate it on a data-theme attribute we toggle here.
+			function buildEditorDarkCss() {
+				var s = 'html[data-theme=dark] body.mce-content-body';
+				return (
+					s + '{background-color:#243449;color:rgb(203 213 225);}' +
+					s + ' h1,' + s + ' h2,' + s + ' h3,' + s + ' h4,' + s + ' h5,' + s + ' h6{color:#f1f5f9;}' +
+					s + ' a{color:#3b6ce0;}' +
+					s + ' blockquote{border-left-color:rgb(51 65 85);color:rgb(148 163 184);}' +
+					s + ' hr{border-color:rgb(51 65 85);}' +
+					s + ' table td,' + s + ' table th{border-color:rgb(51 65 85);}' +
+					s + ' code,' + s + ' pre{background-color:#172033;color:rgb(203 213 225);}'
+				);
+			}
+
+			// Mirror the dashboard theme onto a single TinyMCE content iframe.
+			function themeEditor( editor ) {
+				var doc = editor.getDoc && editor.getDoc();
+				if ( ! doc || ! doc.documentElement ) {
+					return;
+				}
+				if ( ! doc.getElementById( 'storesuite-editor-dark' ) ) {
+					var style = doc.createElement( 'style' );
+					style.id = 'storesuite-editor-dark';
+					style.textContent = buildEditorDarkCss();
+					( doc.head || doc.documentElement ).appendChild( style );
+				}
+				doc.documentElement.setAttribute( 'data-theme', currentMode() );
+			}
+
+			// Editors initialize asynchronously, so handle both editors that are
+			// already up and ones that init later (including after a toggle).
+			function syncEditorsTheme() {
+				if ( ! window.tinymce || ! window.tinymce.editors ) {
+					return;
+				}
+				window.tinymce.editors.forEach( function ( editor ) {
+					if ( editor.initialized ) {
+						themeEditor( editor );
+					} else {
+						editor.on( 'init', function () {
+							themeEditor( editor );
+						} );
+					}
+				} );
+			}
+
+			function applyThemeMode( mode ) {
+				$root.attr( 'data-theme', mode );
+				$themeToggle.attr(
+					'aria-pressed',
+					mode === 'dark' ? 'true' : 'false'
+				);
+				syncEditorsTheme();
+			}
+
+			// TinyMCE (wp-tinymce.js) often loads after this script, so polling
+			// avoids missing editors that initialize later — e.g. when the page
+			// is reloaded while dark mode is active.
+			function whenTinymceReady( onReady ) {
+				if ( window.tinymce ) {
+					onReady();
+					return;
+				}
+				var attempts = 0;
+				var poll = setInterval( function () {
+					attempts++;
+					if ( window.tinymce ) {
+						clearInterval( poll );
+						onReady();
+					} else if ( attempts > 50 ) {
+						clearInterval( poll );
+					}
+				}, 100 );
+			}
+
+			// Reflect the theme resolved by the inline head script on load.
+			applyThemeMode( currentMode() );
+
+			// Theme existing editors plus any added after TinyMCE is ready.
+			whenTinymceReady( function () {
+				syncEditorsTheme();
+				window.tinymce.on( 'AddEditor', function ( event ) {
+					event.editor.on( 'init', function () {
+						themeEditor( event.editor );
+					} );
+				} );
+			} );
+
+			$themeToggle.on( 'click', function () {
+				var nextMode = currentMode() === 'dark' ? 'light' : 'dark';
+				applyThemeMode( nextMode );
+				persistThemePreference( nextMode );
+			} );
 		},
 
 		handleSubmenuToggle: function () {
@@ -43,7 +162,8 @@
 
 		handleSidebarCollapseToggle: function () {
 			var collapsedPreferenceStorageKey = 'storesuite_sidebar_collapsed';
-			var minViewportWidthForCollapsedSidebar = 783;
+			var minViewportWidthForCollapsedSidebar = 768;
+			var maxTabletViewportWidth = 1024;
 			var $dashboardContainer = $( '.my-storesuite-container' );
 			var $sidebarCollapseToggle = $( '.storesuite-sidebar-trigger' );
 
@@ -55,7 +175,13 @@
 			}
 
 			function isViewportWideEnoughForCollapsedSidebar() {
-				return window.innerWidth >= minViewportWidthForCollapsedSidebar;
+				// Use the layout viewport (clientWidth) so this matches the CSS
+				// media queries; window.innerWidth tracks the visual viewport and
+				// can diverge under zoom / dev tools, desyncing JS from CSS.
+				return (
+					document.documentElement.clientWidth >=
+					minViewportWidthForCollapsedSidebar
+				);
 			}
 
 			function applySidebarCollapsedState( isCollapsed ) {
@@ -69,53 +195,108 @@
 				);
 			}
 
+			function isTabletViewport() {
+				var viewportWidth = document.documentElement.clientWidth;
+				return (
+					viewportWidth >= minViewportWidthForCollapsedSidebar &&
+					viewportWidth <= maxTabletViewportWidth
+				);
+			}
+
 			function persistCollapsedPreference( isCollapsed ) {
 				try {
-					if ( isCollapsed ) {
-						localStorage.setItem(
-							collapsedPreferenceStorageKey,
-							'1'
-						);
-					} else {
-						localStorage.removeItem(
-							collapsedPreferenceStorageKey
-						);
-					}
+					// '0' is stored explicitly (instead of removing the key) so an
+					// expanded choice survives the collapsed-by-default tablet range.
+					localStorage.setItem(
+						collapsedPreferenceStorageKey,
+						isCollapsed ? '1' : '0'
+					);
 				} catch ( storageError ) {}
 			}
 
 			function readCollapsedPreferenceFromStorage() {
+				var storedPreference = null;
 				try {
-					return (
-						localStorage.getItem(
-							collapsedPreferenceStorageKey
-						) === '1'
+					storedPreference = localStorage.getItem(
+						collapsedPreferenceStorageKey
 					);
-				} catch ( storageError ) {
+				} catch ( storageError ) {}
+				if ( '1' === storedPreference ) {
+					return true;
+				}
+				if ( '0' === storedPreference ) {
 					return false;
 				}
+				// No explicit choice: collapse on tablets, expand on desktop.
+				return isTabletViewport();
+			}
+
+			function applyMobileOpenState( isOpen ) {
+				$dashboardContainer.toggleClass(
+					'storesuite-sidebar-mobile-open',
+					isOpen
+				);
+				$sidebarCollapseToggle.attr(
+					'aria-expanded',
+					isOpen ? 'true' : 'false'
+				);
 			}
 
 			function syncSidebarCollapsedState() {
 				if ( ! isViewportWideEnoughForCollapsedSidebar() ) {
+					// Narrow viewport: drop the desktop collapse, start closed.
 					applySidebarCollapsedState( false );
+					applyMobileOpenState( false );
 					return;
 				}
+				// Wide viewport: drop the off-canvas state, restore preference.
+				$dashboardContainer.removeClass(
+					'storesuite-sidebar-mobile-open'
+				);
 				applySidebarCollapsedState(
 					readCollapsedPreferenceFromStorage()
 				);
 			}
 
 			function handleSidebarToggleInteraction( event ) {
+				event.preventDefault();
+
+				// Narrow viewport: the trigger opens/closes the off-canvas drawer.
 				if ( ! isViewportWideEnoughForCollapsedSidebar() ) {
+					applyMobileOpenState(
+						! $dashboardContainer.hasClass(
+							'storesuite-sidebar-mobile-open'
+						)
+					);
 					return;
 				}
-				event.preventDefault();
+
 				var shouldBeCollapsed = ! $dashboardContainer.hasClass(
 					'storesuite-sidebar-collapsed'
 				);
 				applySidebarCollapsedState( shouldBeCollapsed );
 				persistCollapsedPreference( shouldBeCollapsed );
+			}
+
+			// Close the off-canvas drawer when tapping the backdrop (outside
+			// the sidebar and away from the trigger).
+			function handleOutsideClickToClose( event ) {
+				if (
+					isViewportWideEnoughForCollapsedSidebar() ||
+					! $dashboardContainer.hasClass(
+						'storesuite-sidebar-mobile-open'
+					)
+				) {
+					return;
+				}
+				var $target = $( event.target );
+				if (
+					$target.closest( '.my-storesuite-sidebar' ).length ||
+					$target.closest( '.storesuite-sidebar-trigger' ).length
+				) {
+					return;
+				}
+				applyMobileOpenState( false );
 			}
 
 			syncSidebarCollapsedState();
@@ -124,6 +305,7 @@
 				'click',
 				handleSidebarToggleInteraction
 			);
+			$( document ).on( 'click', handleOutsideClickToClose );
 		},
 
 		handleDropdown: function () {
@@ -131,11 +313,14 @@
 				'click',
 				'.storesuite-dropdown-icon',
 				function () {
-					$( '.storesuite-dropdown-menu' ).hide();
-					$( this )
+					var $menu = $( this )
 						.closest( '.storesuite-dropdown' )
-						.find( '.storesuite-dropdown-menu' )
-						.toggle();
+						.find( '.storesuite-dropdown-menu' );
+					$( '.storesuite-dropdown-menu' )
+						.not( $menu )
+						.stop( true, false )
+						.slideUp( 200 );
+					$menu.stop( true, false ).slideToggle( 200 );
 				}
 			);
 		},
@@ -145,7 +330,9 @@
 				if (
 					! $( event.target ).closest( '.storesuite-dropdown' ).length
 				) {
-					$( '.storesuite-dropdown-menu' ).hide();
+					$( '.storesuite-dropdown-menu' )
+						.stop( true, false )
+						.slideUp( 200 );
 				}
 			} );
 		},

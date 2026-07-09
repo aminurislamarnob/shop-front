@@ -29,33 +29,54 @@ class AttributeController {
 		add_action( 'wp_ajax_storesuite_add_attribute_term', array( $this, 'handle_add_term' ) );
 		add_action( 'wp_ajax_storesuite_edit_attribute_term', array( $this, 'handle_edit_term' ) );
 		add_action( 'wp_ajax_storesuite_delete_attribute_term', array( $this, 'handle_delete_term' ) );
+		add_action( 'storesuite_attributes_toolbar_add_button', array( $this, 'render_toolbar_add_button' ) );
+		add_action( 'storesuite_dashboard_title_after', array( $this, 'render_title_add_button' ) );
 	}
 
-	/**
-	 * Verify capability and nonce helper.
-	 *
-	 * @param string $nonce_field Field name.
-	 * @param string $action Action name.
-	 */
-	protected function verify_request( $nonce_field, $action ) {
-		if ( ! isset( $_POST[ $nonce_field ] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST[ $nonce_field ] ) ), $action ) ) {
-			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
-		}
+	public function render_toolbar_add_button() {
+		$this->render_add_button(
+			storesuite_get_navigation_url( 'add-new-attribute' ),
+			__( 'Add Attribute', 'storesuite' )
+		);
+	}
 
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_send_json_error(
-				array(
-					'error' => __( 'You do not have permission to perform this action.', 'storesuite' ),
-				)
-			);
+	public function render_title_add_button() {
+		$query = pluginizelab_storesuite()->get_storesuite_query();
+		if ( ! $query || 'attributes' !== $query->get_current_endpoint() ) {
+			return;
 		}
+		$this->render_add_button(
+			storesuite_get_navigation_url( 'add-new-attribute' ),
+			__( 'Add Attribute', 'storesuite' ),
+			'storesuite-title-action'
+		);
+	}
+
+	private function render_add_button( $url, $label, $extra_class = '' ) {
+		$class = trim( 'my-storesuite-button ' . $extra_class );
+		?>
+		<a href="<?php echo esc_url( $url ); ?>" class="<?php echo esc_attr( $class ); ?>">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+				<path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z"/>
+			</svg>
+			<?php echo esc_html( $label ); ?>
+		</a>
+		<?php
 	}
 
 	/**
 	 * Handle add global product attribute.
 	 */
 	public function handle_add_attribute() {
-		$this->verify_request( 'storesuite_add_product_attribute_nonce', '_storesuite_add_product_attribute_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_add_product_attribute_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_add_product_attribute_nonce'] ) ), '_storesuite_add_product_attribute_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$attribute_label = isset( $_POST['attribute_label'] ) ? wc_clean( wp_unslash( $_POST['attribute_label'] ) ) : '';
 		$attribute_name  = isset( $_POST['attribute_name'] ) ? wc_sanitize_taxonomy_name( wp_unslash( $_POST['attribute_name'] ) ) : '';
@@ -106,7 +127,15 @@ class AttributeController {
 	 * Handle edit global product attribute.
 	 */
 	public function handle_edit_attribute() {
-		$this->verify_request( 'storesuite_edit_product_attribute_nonce', '_storesuite_edit_product_attribute_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_edit_product_attribute_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_edit_product_attribute_nonce'] ) ), '_storesuite_edit_product_attribute_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$attribute_id    = isset( $_POST['attribute_id'] ) ? absint( $_POST['attribute_id'] ) : 0;
 		$attribute_label = isset( $_POST['attribute_label'] ) ? wc_clean( wp_unslash( $_POST['attribute_label'] ) ) : '';
@@ -154,7 +183,15 @@ class AttributeController {
 	 * Handle delete global product attribute.
 	 */
 	public function handle_delete_attribute() {
-		$this->verify_request( 'storesuite_delete_product_attribute_nonce', '_storesuite_delete_nonce_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_delete_product_attribute_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_delete_product_attribute_nonce'] ) ), '_storesuite_delete_nonce_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$attribute_id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 
@@ -179,7 +216,15 @@ class AttributeController {
 	 * Handle add term for a given attribute taxonomy.
 	 */
 	public function handle_add_term() {
-		$this->verify_request( 'storesuite_add_attribute_term_nonce', '_storesuite_add_attribute_term_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_add_attribute_term_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_add_attribute_term_nonce'] ) ), '_storesuite_add_attribute_term_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$taxonomy = isset( $_POST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) ) : '';
 		$name     = isset( $_POST['term_name'] ) ? sanitize_text_field( wp_unslash( $_POST['term_name'] ) ) : '';
@@ -217,9 +262,6 @@ class AttributeController {
 			array(
 				'message'  => __( 'Term successfully created.', 'storesuite' ),
 				'term_id'  => $term->term_id,
-				'name'     => $term->name,
-				'slug'     => $term->slug,
-				'count'    => $term->count,
 				'taxonomy' => $taxonomy,
 			)
 		);
@@ -229,7 +271,15 @@ class AttributeController {
 	 * Handle edit attribute term.
 	 */
 	public function handle_edit_term() {
-		$this->verify_request( 'storesuite_edit_attribute_term_nonce', '_storesuite_edit_attribute_term_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_edit_attribute_term_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_edit_attribute_term_nonce'] ) ), '_storesuite_edit_attribute_term_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$taxonomy = isset( $_POST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) ) : '';
 		$term_id  = isset( $_POST['term_id'] ) ? absint( $_POST['term_id'] ) : 0;
@@ -280,7 +330,15 @@ class AttributeController {
 	 * Handle delete attribute term.
 	 */
 	public function handle_delete_term() {
-		$this->verify_request( 'storesuite_delete_attribute_term_nonce', '_storesuite_delete_nonce_' );
+		// Verify the nonce.
+		if ( ! isset( $_POST['storesuite_delete_attribute_term_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['storesuite_delete_attribute_term_nonce'] ) ), '_storesuite_delete_nonce_' ) ) {
+			wp_send_json_error( array( 'error' => __( 'Nonce verification failed.', 'storesuite' ) ) );
+		}
+
+		// Check user permissions.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error( array( 'error' => __( 'You do not have permission to perform this action.', 'storesuite' ) ) );
+		}
 
 		$taxonomy = isset( $_POST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) ) : '';
 		$term_id  = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
@@ -304,4 +362,3 @@ class AttributeController {
 		);
 	}
 }
-

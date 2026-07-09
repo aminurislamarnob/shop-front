@@ -11,6 +11,7 @@ import { defaultTableDateFormat } from '@woocommerce/date';
 
 import { getAdminSetting } from '../../utils/admin-settings';
 import { storeSuiteDashboard } from '../../config';
+import ResponsiveTable from '../responsive-table';
 
 const ORDERS_PER_PAGE = 5;
 
@@ -143,19 +144,21 @@ export default function RecentOrders() {
 
 	return (
 		<div className="storesuite-dashboard-recent-orders">
-			<TableCard
-				className="storesuite-recent-orders-table"
-				title={ __( 'Recent Orders', 'storesuite' ) }
-				headers={ HEADERS }
-				rows={ rows }
-				rowsPerPage={ ORDERS_PER_PAGE }
-				totalRows={ rows.length }
-				isLoading={ isLoading }
-				showMenu={ false }
-				onPageChange={ () => {} }
-				onQueryChange={ () => () => {} }
-				query={ {} }
-			/>
+			<ResponsiveTable>
+				<TableCard
+					className="storesuite-recent-orders-table"
+					title={ __( 'Recent Orders', 'storesuite' ) }
+					headers={ HEADERS }
+					rows={ rows }
+					rowsPerPage={ ORDERS_PER_PAGE }
+					totalRows={ rows.length }
+					isLoading={ isLoading }
+					showMenu={ false }
+					onPageChange={ () => {} }
+					onQueryChange={ () => () => {} }
+					query={ {} }
+				/>
+			</ResponsiveTable>
 		</div>
 	);
 }

@@ -6,13 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Include the WooCommerce product CSV exporter.
- *
- * WooCommerce only loads its exporter classes inside `WC_Admin_Exporters`, which runs in
- * wp-admin. StoreSuite's dashboard is a frontend page, so we pull the class in directly via
- * the always-defined `WC_ABSPATH` constant before declaring our subclass.
- */
+// WooCommerce loads its exporter only in wp-admin; pull it in for the frontend dashboard.
 if ( ! class_exists( '\WC_Product_CSV_Exporter', false ) && defined( 'WC_ABSPATH' ) ) {
 	include_once WC_ABSPATH . 'includes/export/class-wc-product-csv-exporter.php';
 }
@@ -20,18 +14,15 @@ if ( ! class_exists( '\WC_Product_CSV_Exporter', false ) && defined( 'WC_ABSPATH
 /**
  * Product CSV exporter for the StoreSuite frontend dashboard.
  *
- * Reuses WooCommerce's exporter engine (columns, batching, attribute/meta/download handling and
- * CSV-injection escaping). Only the constructor is overridden so we don't depend on the admin-only
- * `WC_Admin_Exporters::get_product_types()` helper.
+ * Reuses WooCommerce's exporter engine, overriding only the admin-dependent constructor.
  */
 class ProductExporter extends \WC_Product_CSV_Exporter {
 
 	/**
 	 * Constructor.
 	 *
-	 * Skips the parent `WC_Product_CSV_Exporter::__construct()` (which calls the admin-only
-	 * `WC_Admin_Exporters::get_product_types()`) and seeds the product types from the core
-	 * `wc_get_product_types()` helper instead.
+	 * Seeds product types from `wc_get_product_types()` instead of the admin-only
+	 * `WC_Admin_Exporters::get_product_types()`.
 	 */
 	public function __construct() {
 		\WC_CSV_Batch_Exporter::__construct();
@@ -39,10 +30,7 @@ class ProductExporter extends \WC_Product_CSV_Exporter {
 	}
 
 	/**
-	 * Product types to export.
-	 *
-	 * Expands the "variable-variation" UI option into both `variable` (parent) and `variation`
-	 * (children) so a variable product is exported together with all of its variations.
+	 * Expand the "variable-variation" UI option into both `variable` and `variation`.
 	 *
 	 * @param array $product_types_to_export Product type slugs selected for export.
 	 *

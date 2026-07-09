@@ -116,22 +116,25 @@ if ( $product && $product->is_type( 'variable' ) ) {
 			<div class="storesuite-default-attributes storesuite-mb-12" id="storesuite-default-attributes" style="display:none;">
 				<h4 class="storesuite-default-attributes-title"><?php esc_html_e( 'Default Form Values', 'storesuite' ); ?></h4>
 				<div class="row">
-					<?php foreach ( $variation_attributes as $attribute ) :
+					<?php
+                    foreach ( $variation_attributes as $attribute ) :
 						$attr_name   = $attribute->get_name();
 						$attr_key    = sanitize_title( $attr_name );
 						$attr_label  = wc_attribute_label( $attr_name );
 						$current_val = isset( $default_attributes[ $attr_key ] ) ? $default_attributes[ $attr_key ] : '';
 
 						if ( $attribute->is_taxonomy() ) {
-							$terms = get_terms( array(
-								'taxonomy'   => $attr_name,
-								'orderby'    => 'name',
-								'hide_empty' => false,
-							) );
+							$terms = get_terms(
+                                array(
+									'taxonomy'   => $attr_name,
+									'orderby'    => 'name',
+									'hide_empty' => false,
+                                )
+                            );
 						} else {
 							$terms = $attribute->get_options();
 						}
-					?>
+						?>
 						<div class="col-md-4">
 							<div class="storesuite-form-group">
 								<label><?php echo esc_html( $attr_label ); ?></label>

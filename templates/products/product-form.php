@@ -177,41 +177,41 @@ if ( $cogs_is_enabled ) {
 $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 ?>
 <form id="storesuite-add-product" method="POST">
-	<?php
-	/*
-	 * Reusable SVG icon symbols for the attributes and variations UI.
-	 * Defined once here and referenced via <use> in the attribute/variation
-	 * rows so the (potentially long) icon paths are not repeated per row.
-	 */
-	?>
-	<svg width="0" height="0" style="position:absolute;display:none;" aria-hidden="true" focusable="false">
-		<symbol id="storesuite-icon-edit" viewBox="0 0 24 24"><path d="m18.813,10c.309,0,.601-.143.79-.387s.255-.562.179-.861c-.311-1.217-.945-2.329-1.833-3.217l-3.485-3.485c-1.322-1.322-3.08-2.05-4.95-2.05h-4.515C2.243,0,0,2.243,0,5v14c0,2.757,2.243,5,5,5h3c.552,0,1-.448,1-1s-.448-1-1-1h-3c-1.654,0-3-1.346-3-3V5c0-1.654,1.346-3,3-3h4.515c.163,0,.325.008.485.023v4.977c0,1.654,1.346,3,3,3h5.813Zm-6.813-3V2.659c.379.218.732.488,1.05.806l3.485,3.485c.314.314.583.668.803,1.05h-4.338c-.551,0-1-.449-1-1Zm11.122,4.879c-1.134-1.134-3.11-1.134-4.243,0l-6.707,6.707c-.755.755-1.172,1.76-1.172,2.829v1.586c0,.552.448,1,1,1h1.586c1.069,0,2.073-.417,2.828-1.172l6.707-6.707c.567-.567.879-1.32.879-2.122s-.312-1.555-.878-2.121Zm-1.415,2.828l-6.708,6.707c-.377.378-.879.586-1.414.586h-.586v-.586c0-.534.208-1.036.586-1.414l6.708-6.707c.377-.378,1.036-.378,1.414,0,.189.188.293.439.293.707s-.104.518-.293.707Z"/></symbol>
-		<symbol id="storesuite-icon-edit-open" viewBox="0 0 24 24"><path d="m22.75,9.693c.806.914,1.25,2.088,1.25,3.307v5c0,2.757-2.243,5-5,5H5c-2.757,0-5-2.243-5-5v-5c0-2.757,2.243-5,5-5h4c.553,0,1,.448,1,1s-.447,1-1,1h-4c-1.654,0-3,1.346-3,3v5c0,1.654,1.346,3,3,3h14c1.654,0,3-1.346,3-3v-5c0-.731-.267-1.436-.75-1.984-.365-.414-.326-1.046.089-1.412.413-.364,1.045-.326,1.411.088ZM5,15.5c0,.828.672,1.5,1.5,1.5s1.5-.672,1.5-1.5-.672-1.5-1.5-1.5-1.5.672-1.5,1.5Zm6.5,1.5c.828,0,1.5-.672,1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5,1.5.672,1.5,1.5,1.5Zm.5-6v-1.586c0-1.068.416-2.073,1.172-2.828L18.879.879c1.17-1.17,3.072-1.17,4.242,0,.566.566.879,1.32.879,2.121s-.313,1.555-.879,2.122l-5.707,5.707c-.755.755-1.76,1.172-2.828,1.172h-1.586c-.553,0-1-.448-1-1Zm2-1h.586c.534,0,1.036-.208,1.414-.586l5.707-5.707c.189-.189.293-.44.293-.707s-.104-.518-.293-.707c-.391-.391-1.023-.39-1.414,0l-5.707,5.707c-.372.373-.586.888-.586,1.414v.586Z"/></symbol>
-		<symbol id="storesuite-icon-delete" viewBox="0 0 24 24"><path d="M21,4H17.9A5.009,5.009,0,0,0,13,0H11A5.009,5.009,0,0,0,6.1,4H3A1,1,0,0,0,3,6H4V19a5.006,5.006,0,0,0,5,5h6a5.006,5.006,0,0,0,5-5V6h1a1,1,0,0,0,0-2ZM11,2h2a3.006,3.006,0,0,1,2.829,2H8.171A3.006,3.006,0,0,1,11,2Zm7,17a3,3,0,0,1-3,3H9a3,3,0,0,1-3-3V6H18Z"/><path d="M10,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,10,18Z"/><path d="M14,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,14,18Z"/></symbol>
-	</svg>
 		<div class="row">
 			<div class="col-md-8">
 				<div class="storesuite-card storesuite-mb-24">
 					<div class="storesuite-card-content">
 					<div class="storesuite-form-group">
-						<label for="product_title"><?php esc_html_e( 'Product Title', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span></strong></label>
+						<label for="product_title"><?php esc_html_e( 'Product Title', 'storesuite' ); ?> <span class="req"><?php esc_html_e( '*', 'storesuite' ); ?></span>
+							<?php do_action( 'storesuite_product_form_field_label', 'title' ); ?>
+						</label>
 						<input type="text" class="storesuite-form-control" id="product_title" name="product_title" placeholder="<?php echo esc_attr__( 'Product name', 'storesuite' ); ?>" value="<?php echo esc_attr( $product_title ); ?>">
 					</div>
 					<div class="storesuite-form-group">
-						<label for="product_slug">
-							<?php esc_html_e( 'Product Slug', 'storesuite' ); ?>
-							<?php if ( $is_edit_mode && $product ) : ?>
-								<?php
-								$product_permalink = get_permalink( $product_id );
-								?>
-								<small>(<?php esc_html_e( 'Permalink: ', 'storesuite' ); ?><a href="<?php echo esc_url( $product_permalink ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $product_permalink ); ?></a>)</small>
+						<label for="product_slug"><?php esc_html_e( 'Permalink', 'storesuite' ); ?></label>
+						<?php
+						// Static URL base shown before the editable slug, e.g. http://site.test/product/.
+						$product_permalink_base = '';
+						if ( function_exists( 'wc_get_permalink_structure' ) ) {
+							$wc_permalinks = wc_get_permalink_structure();
+							$product_base  = isset( $wc_permalinks['product_base'] ) ? $wc_permalinks['product_base'] : '';
+							// Drop dynamic rewrite tags (e.g. %product_cat%) so only the static path remains.
+							$product_base           = trim( preg_replace( '#%[^%]+%#', '', $product_base ), '/' );
+							$product_permalink_base = trailingslashit( home_url( $product_base ? '/' . $product_base : '/' ) );
+						}
+						?>
+						<div class="storesuite-permalink-group">
+							<?php if ( $product_permalink_base ) : ?>
+								<span class="storesuite-permalink-prefix"><?php echo esc_html( $product_permalink_base ); ?></span>
 							<?php endif; ?>
-						</label>
-						<input type="text" class="storesuite-form-control" id="product_slug" name="product_slug" placeholder="<?php echo esc_attr__( 'Product slug', 'storesuite' ); ?>" value="<?php echo esc_attr( $product_slug ); ?>">
+							<input type="text" class="storesuite-form-control" id="product_slug" name="product_slug" placeholder="<?php echo esc_attr__( 'Enter product slug...', 'storesuite' ); ?>" value="<?php echo esc_attr( $product_slug ); ?>">
+						</div>
 						<small class="storesuite-form-text"><?php esc_html_e( 'It is usually all lowercase and contains only letters, numbers, and hyphens.', 'storesuite' ); ?></small>
 					</div>
 					<div class="storesuite-form-group">
-						<label for="product_description"><?php esc_html_e( 'Product Description', 'storesuite' ); ?></strong></label>
+						<label for="product_description"><?php esc_html_e( 'Product Description', 'storesuite' ); ?>
+							<?php do_action( 'storesuite_product_form_field_label', 'description' ); ?>
+						</label>
 							<?php
 							$editor_id = 'product_description';
 							$settings  = array(
@@ -231,13 +231,18 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 							?>
 						</div>
 						<div class="storesuite-form-group">
-							<label for="product_short_description"><?php esc_html_e( 'Prduct Short Description', 'storesuite' ); ?></strong></label>
+							<label for="product_short_description"><?php esc_html_e( 'Product Short Description', 'storesuite' ); ?>
+								<?php do_action( 'storesuite_product_form_field_label', 'short_description' ); ?>
+							</label>
 							<textarea class="storesuite-form-control" id="product_short_description" name="product_short_description" placeholder="<?php echo esc_attr__( 'Product short description', 'storesuite' ); ?>" rows="4"><?php echo esc_textarea( $product_excerpt ); ?></textarea>
 						</div>
 						<div class="storesuite-form-group">
 							<div class="row">
 								<div class="col-md-3">
-									<label for="product_thumbnail_id"><?php esc_html_e( 'Prouduct Image', 'storesuite' ); ?></label>
+									<label for="product_thumbnail_id" class="storesuite-ai-image-label">
+										<?php esc_html_e( 'Product Image', 'storesuite' ); ?>
+										<?php do_action( 'storesuite_product_form_field_label', 'featured' ); ?>
+									</label>
 									<?php
 									$thumbnail_url = '';
 									if ( $thumbnail_id ) {
@@ -263,7 +268,10 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 									</div>
 								</div>
 								<div class="col-md-9">
-									<label for="product_image_gallery"><?php esc_html_e( 'Prouduct Gallery Images', 'storesuite' ); ?></label>
+									<label for="product_image_gallery" class="storesuite-ai-image-label">
+										<?php esc_html_e( 'Product Gallery Images', 'storesuite' ); ?>
+										<?php do_action( 'storesuite_product_form_field_label', 'gallery' ); ?>
+									</label>
 									<?php
 									$gallery_ids_string = '';
 									$gallery_urls       = array();
@@ -422,14 +430,14 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 											$disabled_downloads_count += (int) $disabled_download;
 
 											storesuite_get_template_part(
-											'products/html-product-download',
-											'',
-											array(
-												'key'               => $key,
-												'file'              => $file,
-												'disabled_download' => $disabled_download,
-											)
-										);
+                                                'products/html-product-download',
+                                                '',
+                                                array(
+													'key'               => $key,
+													'file'              => $file,
+													'disabled_download' => $disabled_download,
+                                                )
+											);
 										}
 									}
 									?>
@@ -737,7 +745,7 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 							<?php endif; ?>
 							<div class="col-md-12 hide_if_external hide_if_grouped">
 								<div class="storesuite-form-group">
-									<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'storesuite' ); ?></strong></label>
+									<label for="_purchase_note"><?php esc_html_e( 'Purchase Note', 'storesuite' ); ?></label>
 									<textarea class="storesuite-form-control" id="_purchase_note" name="_purchase_note" rows="2" cols="20"><?php echo esc_textarea( $purchase_note ); ?></textarea>
 								</div>
 							</div>
@@ -856,9 +864,19 @@ $pos_feature_enabled = FeaturesUtil::feature_is_enabled( 'point_of_sale' );
 				<div class="storesuite-sticky-actions-buttons">
 					<button type="button" class="my-storesuite-button storesuite-sticky-discard"><?php esc_html_e( 'Discard', 'storesuite' ); ?></button>
 					<button type="submit" name="save_product" class="my-storesuite-button storesuite-sticky-save">
-						<?php echo $is_edit_mode ? esc_html__( 'Update Product', 'storesuite' ) : esc_html__( 'Add Product', 'storesuite' ); ?>
+						<?php echo $is_edit_mode ? esc_html__( 'Update', 'storesuite' ) : esc_html__( 'Add', 'storesuite' ); ?> <span class="storesuite-sticky-save-label"><?php esc_html_e( 'Product', 'storesuite' ); ?></span>
 					</button>
 				</div>
 			</div>
 		</div>
 	</form>
+
+	<?php
+	/**
+	 * Fires after the product add/edit form.
+	 *
+	 * Use this to render markup that belongs at the page level rather than inside
+	 * the form, such as dialogs or modals.
+	 */
+	do_action( 'storesuite_product_form_after' );
+	?>

@@ -71,7 +71,7 @@ $is_editing = empty( $attr_options );
 				<span><?php echo esc_html( $attr_label ); ?></span>
 				<input type="hidden" name="attribute_names[<?php echo esc_attr( $i ); ?>]" value="<?php echo esc_attr( $attr_name ); ?>">
 			<?php else : ?>
-				<span class="storesuite-attribute-custom-label"><?php echo esc_html( $attr_label ?: __( 'Attribute', 'storesuite' ) ); ?></span>
+				<span class="storesuite-attribute-custom-label"><?php echo esc_html( ! empty( $attr_label ) ? $attr_label : __( 'Attribute', 'storesuite' ) ); ?></span>
 			<?php endif; ?>
 			<input type="hidden" name="attribute_position[<?php echo esc_attr( $i ); ?>]" class="attribute_position" value="<?php echo esc_attr( $position ); ?>">
 			<input type="hidden" name="attribute_is_taxonomy[<?php echo esc_attr( $i ); ?>]" value="<?php echo esc_attr( $is_taxonomy ? 1 : 0 ); ?>">
@@ -123,13 +123,13 @@ $is_editing = empty( $attr_options );
 			</div>
 		</div>
 	</td>
-	<td class="storesuite-attribute-col-visible">
+	<td class="storesuite-attribute-col-visible" data-title="<?php esc_attr_e( 'Visible', 'storesuite' ); ?>">
 		<div class="storesuite-form-group storesuite-form-switch storesuite-attribute-variation-switch">
 			<input id="attribute_visibility_<?php echo esc_attr( $i ); ?>" type="checkbox" name="attribute_visibility[<?php echo esc_attr( $i ); ?>]" value="1" <?php checked( $is_visible ); ?>>
 			<label for="attribute_visibility_<?php echo esc_attr( $i ); ?>" aria-label="<?php esc_attr_e( 'Visible on the product page', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Visible on the product page', 'storesuite' ); ?>"></label>
 		</div>
 	</td>
-	<td class="storesuite-attribute-col-variation">
+	<td class="storesuite-attribute-col-variation" data-title="<?php esc_attr_e( 'Variation', 'storesuite' ); ?>">
 		<div class="storesuite-form-group storesuite-form-switch storesuite-attribute-variation-switch">
 			<input id="attribute_variation_<?php echo esc_attr( $i ); ?>" type="checkbox" name="attribute_variation[<?php echo esc_attr( $i ); ?>]" value="1" <?php checked( $is_variation ); ?>>
 			<label for="attribute_variation_<?php echo esc_attr( $i ); ?>" aria-label="<?php esc_attr_e( 'Used for variations', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Used for variations', 'storesuite' ); ?>"></label>

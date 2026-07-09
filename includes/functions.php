@@ -19,7 +19,7 @@ function storesuite_get_template_part( $slug, $name = '', $args = array() ) {
 	$args = wp_parse_args( $args, $defaults );
 
 	if ( $args && is_array( $args ) ) {
-        extract( $args ); // phpcs:ignore
+		extract( $args ); // phpcs:ignore
 	}
 
 	$template = '';
@@ -224,6 +224,34 @@ function storesuite_get_option_by_key( $key ) {
 		return $storesuite_settings[ $key ];
 	}
 	return '';
+}
+
+/**
+ * Whether AI generation is enabled for a given product form field.
+ *
+ * Controlled from the admin "AI" settings page. Each field defaults to enabled
+ * until a merchant explicitly turns it off, so existing installs keep their
+ * current behaviour.
+ *
+ * @param string $field Field key: title, description, short_description,
+ *                      featured, or gallery.
+ * @return bool
+ */
+function storesuite_is_ai_field_enabled( $field ) {
+	$option_map = array(
+		'title'             => 'storesuite_ai_field_title',
+		'description'       => 'storesuite_ai_field_description',
+		'short_description' => 'storesuite_ai_field_short_description',
+		'featured'          => 'storesuite_ai_field_featured_image',
+		'gallery'           => 'storesuite_ai_field_gallery_image',
+		'bundle'            => 'storesuite_ai_field_bundle',
+	);
+
+	if ( ! isset( $option_map[ $field ] ) ) {
+		return false;
+	}
+
+	return 'no' !== storesuite_get_option_by_key( $option_map[ $field ] );
 }
 
 

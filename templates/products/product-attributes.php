@@ -76,7 +76,7 @@ $product_attributes   = $product ? $product->get_attributes( 'edit' ) : array();
 					<?php endforeach; ?>
 				</select>
 				<button type="button" id="storesuite-add-attribute-btn" class="my-storesuite-button my-storesuite-button-soft">
-					<?php esc_html_e( 'Add Attribute', 'storesuite' ); ?>
+					<?php esc_html_e( 'Add', 'storesuite' ); ?> <span class="storesuite-add-attribute-btn-label"><?php esc_html_e( 'Attribute', 'storesuite' ); ?></span>
 				</button>
 			</div>
 		<?php endif; ?>

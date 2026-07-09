@@ -25,6 +25,11 @@ class Categories {
 		add_action( 'storesuite_product_category_created', array( $this, 'clear_cache' ) );
 		add_action( 'storesuite_product_category_updated', array( $this, 'clear_cache' ) );
 		add_action( 'storesuite_product_category_deleted', array( $this, 'clear_cache' ) );
+
+		// Core taxonomy hooks so categories changed outside StoreSuite (wp-admin, REST, WP-CLI, imports) also bust the cache.
+		add_action( 'created_product_cat', array( $this, 'clear_cache' ) );
+		add_action( 'edited_product_cat', array( $this, 'clear_cache' ) );
+		add_action( 'delete_product_cat', array( $this, 'clear_cache' ) );
 	}
 
 	/**

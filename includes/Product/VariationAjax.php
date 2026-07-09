@@ -38,16 +38,24 @@ class VariationAjax {
      *
      * @return void
      */
-    public function storesuite_ajax_add_attribute(){
+    public function storesuite_ajax_add_attribute() {
         if ( ! check_ajax_referer( 'add-attribute', 'security', false ) ) {
             wp_send_json_error( array( 'message' => __( 'Invalid nonce.', 'storesuite' ) ) );
+        }
+
+        if ( ! current_user_can( 'edit_products' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You are not allowed to do this.', 'storesuite' ) ) );
         }
 
         $taxonomy     = isset( $_POST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_POST['taxonomy'] ) ) : '';
         $index        = isset( $_POST['i'] ) ? absint( $_POST['i'] ) : 0;
         $product_id   = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
         $product_type = isset( $_POST['product_type'] ) ? wc_clean( wp_unslash( $_POST['product_type'] ) ) : 'simple';
-    
+
+        if ( $product_id && ! current_user_can( 'edit_post', $product_id ) ) {
+            wp_send_json_error( array( 'message' => __( 'You are not allowed to edit this product.', 'storesuite' ) ) );
+        }
+
         // Build an attribute object or array compatible with your template.
         $attribute = new WC_Product_Attribute();
         $attribute->set_id( wc_attribute_taxonomy_id_by_name( $taxonomy ) );
@@ -65,7 +73,7 @@ class VariationAjax {
 			)
 		);
 		/* phpcs: enable */
-    
+
         ob_start();
         storesuite_get_template_part(
             'products/product-attribute-row',
@@ -78,13 +86,13 @@ class VariationAjax {
             )
         );
         $html = ob_get_clean();
-    
+
         if ( ! $html ) {
             wp_send_json_error(
                 array( 'message' => __( 'Could not generate attribute row.', 'storesuite' ) )
             );
         }
-    
+
         wp_send_json_success(
             array(
                 'html'    => $html,
@@ -114,6 +122,10 @@ class VariationAjax {
 
 		if ( ! $product || ! $product->is_type( 'variable' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_post', $product_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to edit this product.', 'storesuite' ) ) );
 		}
 
 		$total       = count( $product->get_children() );
@@ -191,6 +203,10 @@ class VariationAjax {
 			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
 		}
 
+		if ( ! current_user_can( 'edit_post', $product_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to edit this product.', 'storesuite' ) ) );
+		}
+
 		// Collect variation attribute options.
 		$variation_attributes = array();
 		foreach ( $product->get_attributes( 'edit' ) as $attribute ) {
@@ -201,23 +217,27 @@ class VariationAjax {
 			$attr_key = sanitize_title( $attribute->get_name() );
 
 			if ( $attribute->is_taxonomy() ) {
-				$terms   = get_terms( array(
-					'taxonomy'   => $attribute->get_name(),
-					'orderby'    => 'name',
-					'hide_empty' => false,
-					'fields'     => 'slugs',
-				) );
+				$terms   = get_terms(
+                    array(
+						'taxonomy'   => $attribute->get_name(),
+						'orderby'    => 'name',
+						'hide_empty' => false,
+						'fields'     => 'slugs',
+                    )
+                );
 				$options = is_wp_error( $terms ) ? array() : $terms;
 
 				// Only include terms that are assigned to this product attribute.
 				$assigned_ids = $attribute->get_options();
 				if ( ! empty( $assigned_ids ) ) {
-					$assigned_terms = get_terms( array(
-						'taxonomy'   => $attribute->get_name(),
-						'include'    => $assigned_ids,
-						'hide_empty' => false,
-						'fields'     => 'slugs',
-					) );
+					$assigned_terms = get_terms(
+                        array(
+							'taxonomy'   => $attribute->get_name(),
+							'include'    => $assigned_ids,
+							'hide_empty' => false,
+							'fields'     => 'slugs',
+                        )
+                    );
 					$options = is_wp_error( $assigned_terms ) ? array() : $assigned_terms;
 				}
 			} else {
@@ -325,6 +345,10 @@ class VariationAjax {
 			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
 		}
 
+		if ( ! current_user_can( 'edit_post', $product_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to edit this product.', 'storesuite' ) ) );
+		}
+
 		$variation = new WC_Product_Variation();
 		$variation->set_parent_id( $product_id );
 		$variation->set_status( 'publish' );
@@ -382,6 +406,11 @@ class VariationAjax {
 		}
 
 		$parent_id = $variation->get_parent_id();
+
+		if ( ! current_user_can( 'edit_post', $parent_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to edit this product.', 'storesuite' ) ) );
+		}
+
 		$variation->delete( true );
 
 		// Sync parent product data (price range, stock, etc.).
@@ -416,6 +445,10 @@ class VariationAjax {
 
 		if ( ! $product || ! $product->is_type( 'variable' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_post', $product_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to edit this product.', 'storesuite' ) ) );
 		}
 
 		// phpcs:disable WordPress.Security.ValidatedSanitizedInput
@@ -635,6 +668,10 @@ class VariationAjax {
 
 		if ( ! $product || ! $product->is_type( 'variable' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_post', $product_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to edit this product.', 'storesuite' ) ) );
 		}
 
 		$children = $product->get_children();
@@ -885,6 +922,10 @@ class VariationAjax {
 
 		if ( ! $product || ! $product->is_type( 'variable' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Invalid variable product.', 'storesuite' ) ) );
+		}
+
+		if ( ! current_user_can( 'edit_post', $product_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'You are not allowed to edit this product.', 'storesuite' ) ) );
 		}
 
 		$defaults   = array();

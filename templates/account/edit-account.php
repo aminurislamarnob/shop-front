@@ -187,6 +187,8 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 												if ( '' === $storesuite_value && 'billing_email' === $storesuite_key ) {
 													$storesuite_value = $user->user_email;
 												}
+												// Address fields are optional here, so drop the required "*" marker.
+												$storesuite_field['required'] = false;
 												woocommerce_form_field( $storesuite_key, $storesuite_field, $storesuite_value );
 											}
 											?>
@@ -203,7 +205,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								<div class="storesuite-form-group">
 									<label for="password_current"><?php esc_html_e( 'Current password (leave blank to leave unchanged)', 'storesuite' ); ?></label>
 									<div class="storesuite-password-field">
-										<input type="password" class="storesuite-form-control" name="password_current" id="password_current" autocomplete="current-password" />
+										<input type="password" class="storesuite-form-control" name="password_current" id="password_current" autocomplete="off" readonly />
 										<button
 											type="button"
 											class="storesuite-password-toggle"
@@ -225,7 +227,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								<div class="storesuite-form-group">
 									<label for="password_1"><?php esc_html_e( 'New password (leave blank to leave unchanged)', 'storesuite' ); ?></label>
 									<div class="storesuite-password-field">
-										<input type="password" class="storesuite-form-control" name="password_1" id="password_1" autocomplete="new-password" />
+										<input type="password" class="storesuite-form-control" name="password_1" id="password_1" autocomplete="new-password" readonly />
 										<button
 											type="button"
 											class="storesuite-password-toggle"
@@ -247,7 +249,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 								<div class="storesuite-form-group">
 									<label for="password_2"><?php esc_html_e( 'Confirm new password', 'storesuite' ); ?></label>
 									<div class="storesuite-password-field">
-										<input type="password" class="storesuite-form-control" name="password_2" id="password_2" autocomplete="new-password" />
+										<input type="password" class="storesuite-form-control" name="password_2" id="password_2" autocomplete="new-password" readonly />
 										<button
 											type="button"
 											class="storesuite-password-toggle"

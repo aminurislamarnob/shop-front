@@ -97,6 +97,16 @@
 					self.toggleCategoryField();
 				} );
 
+			// "Clear your selection" inside the bulk export notice: export everything instead.
+			this.$form.on(
+				'click',
+				'.storesuite-export-clear-selection',
+				function ( event ) {
+					event.preventDefault();
+					self.clearSelection();
+				}
+			);
+
 			// Run the export.
 			this.$form.on( 'submit', function ( event ) {
 				event.preventDefault();
@@ -146,21 +156,77 @@
 		},
 
 		openModal: function ( selectedProductIds ) {
+			var ids = Array.isArray( selectedProductIds )
+				? selectedProductIds
+				: [];
+
 			this.$form
 				.find( '#storesuite-export-product-ids' )
-				.val(
-					Array.isArray( selectedProductIds )
-						? selectedProductIds.join( ',' )
-						: ''
-				);
+				.val( ids.join( ',' ) );
 
+			this.renderBulkNotice( ids.length );
+			this.toggleBulkFields( ids.length > 0 );
 			this.resetProgress();
-			this.toggleCategoryField();
 
 			var suiteModal = this.suiteModal();
 			if ( suiteModal ) {
 				suiteModal.open( this.$modal );
 			}
+		},
+
+		// Bulk export targets an explicit product list, so the type / category filters
+		// don't apply — hide them and leave only columns + custom meta (matching WooCommerce).
+		toggleBulkFields: function ( isBulk ) {
+			var $typesRow = this.$form.find( '.storesuite-export-types-row' );
+			var $categoryRow = this.$form.find( '.storesuite-export-category-row' );
+
+			if ( isBulk ) {
+				// Drop any stale filter values so they don't narrow the selected products.
+				this.$form
+					.find(
+						'.storesuite-export-types, .storesuite-export-category'
+					)
+					.val( null )
+					.trigger( 'change' );
+				$typesRow.hide();
+				$categoryRow.hide();
+				return;
+			}
+
+			$typesRow.show();
+			$categoryRow.show();
+			this.toggleCategoryField();
+		},
+
+		// Show WooCommerce-style "You are about to export N products" notice for bulk exports.
+		renderBulkNotice: function ( count ) {
+			var $notice = this.$form.find( '.storesuite-export-bulk-notice' );
+
+			if ( ! count ) {
+				$notice.empty().attr( 'hidden', 'hidden' );
+				return;
+			}
+
+			var i18n = this.i18n();
+			var link =
+				'<a href="#" class="storesuite-export-clear-selection">' +
+				$( '<div>' ).text( i18n.clear_selection || '' ).html() +
+				'</a>';
+			var html = ( i18n.bulk_export_notice || '' )
+				.replace( '%1$s', String( count ) )
+				.replace( '%2$s', link );
+
+			$notice.html( html ).removeAttr( 'hidden' );
+		},
+
+		clearSelection: function () {
+			this.$form.find( '#storesuite-export-product-ids' ).val( '' );
+			this.renderBulkNotice( 0 );
+			this.toggleBulkFields( false );
+
+			// Mirror WooCommerce: clearing the selection unchecks the product list.
+			$( 'input[name="bulk_product_ids[]"]:checked, #cb-select-all-products' )
+				.prop( 'checked', false );
 		},
 
 		closeModal: function () {

@@ -32,6 +32,41 @@
   --storesuite-sidebar-active-background: #213fd4;
   --storesuite-sidebar-width-expanded: 250px;
   --storesuite-sidebar-width-collapsed: 72px;
+  --storesuite-page-bg: #f3f4f6;
+  --storesuite-surface-bg: #ffffff;
+  --storesuite-surface-elevated: #ffffff;
+}
+
+/*
+ * Dark mode palette.
+ *
+ * `data-theme="dark"` is set on the <html> element before first paint by the
+ * inline script printed in Main::add_storesuite_theme_mode_script(), then
+ * toggled at runtime by handleThemeToggle() in global.js. The `:root[...]`
+ * selector outranks the admin's injected `:root{}` custom colors
+ * (Main::add_storesuite_css_variables), so dark mode always wins regardless of
+ * the active light-mode palette.
+ */
+:root[data-theme="dark"] {
+  --storesuite-primary-bg: #3b6ce0;
+  --storesuite-primary-bg-hover: #2d5bdb;
+  --storesuite-text-black: #f1f5f9;
+  --storesuite-text-color: rgb(203 213 225);
+  --storesuite-text-color-light: rgb(148 163 184);
+  --storesuite-icon-color: rgb(148 163 184);
+  --storesuite-bg-color-light: #1e293b;
+  --storesuite-bg-color-muted: #172033;
+  --storesuite-border-color: rgb(51 65 85);
+  --storesuite-button-text-color: #ffffff;
+  --storesuite-button-text-hover-color: #ffffff;
+  --storesuite-sidebar-bg-color: #1e293b;
+  --storesuite-sidebar-border-color: rgb(51 65 85);
+  --storesuite-sidebar-menu-text: rgb(203 213 225);
+  --storesuite-sidebar-active-text: #ffffff;
+  --storesuite-sidebar-active-background: #3b6ce0;
+  --storesuite-page-bg: #0f172a;
+  --storesuite-surface-bg: #1e293b;
+  --storesuite-surface-elevated: #243449;
 }
 /* Apply border-box to all elements and pseudo-elements */
 *,
@@ -537,6 +572,41 @@ template {
   border: 1px solid var(--storesuite-primary-bg);
 }
 
+/* Permalink field: a static URL-base prefix joined to the editable slug input. */
+.my-storesuite-container .storesuite-permalink-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  background-color: #fff;
+  overflow: hidden;
+  transition: .3s;
+}
+.my-storesuite-container .storesuite-permalink-group:focus-within {
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-permalink-prefix {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #6c757d;
+  background-color: #f5f5f5;
+  border-right: 1px solid var(--storesuite-border-color);
+  white-space: nowrap;
+  user-select: none;
+}
+.my-storesuite-container .storesuite-permalink-group .storesuite-form-control,
+.my-storesuite-container .storesuite-permalink-group .storesuite-form-control:focus {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
 .my-storesuite-container .storesuite-password-field {
   position: relative;
 }
@@ -602,12 +672,6 @@ template {
   width: 100%;
   margin-right: auto;
   margin-left: auto;
-}
-
-@media (min-width: 1920px) {
-  .my-storesuite-page-content {
-    max-width: 1920px;
-  }
 }
 
 /*Left Navigation*/
@@ -928,6 +992,8 @@ form.storesuite-filters-form .row {
 .my-storesuite-tick {
   position: absolute;
   top: 0;
+  left: 0;
+  bottom: 0;
   color: #fff;
   transition: .3s;
   opacity: 0;
@@ -1104,6 +1170,11 @@ span.order-failed {
   line-height: 1.15;
   border: 1px solid var(--storesuite-primary-bg);
   justify-content: center;
+}
+.my-storesuite-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 .my-storesuite-button svg{
   fill: var(--storesuite-button-text-color);
@@ -1918,7 +1989,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   white-space: normal;
 }
 
-@media (max-width: 782px) {
+@media (max-width: 767px) {
   .my-storesuite-container.storesuite-sidebar-collapsed {
     --storesuite-sidebar-current-width: var(--storesuite-sidebar-width-expanded);
   }
@@ -1984,6 +2055,13 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   padding: 24px;
 }
 
+/* Dashboard home mounts a React layout (.woocommerce-layout__main) that already
+   supplies its own 24px gutter. Drop the outer page padding here so the
+   left/right (and top/bottom) gap isn't doubled to 48px. */
+.storesuite-main-dashboard {
+  padding: 0;
+}
+
 /*Header design*/
 .storesuite-dashboard-header {
   background: var(--storesuite-sidebar-bg-color);
@@ -1996,7 +2074,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   background: #ffffff;
 }
 .storesuite-palette-predefined span.storesuite-sidebar-trigger svg {
-  fill: var(--storesuite-title-text-color);
+  fill: var(--storesuite-text-black);
 }
 
 .storesuite-dropdown.storesuite-header-dropdown img {
@@ -2072,7 +2150,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   align-items: center;
 }
 span.storesuite-sidebar-trigger {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   cursor: pointer;
 }
@@ -2111,7 +2189,7 @@ span.storesuite-sidebar-trigger svg {
   font-size: 14px;
   font-weight: 600;
   line-height: 1.3;
-  color: var(--storesuite-title-text-color);
+  color: var(--storesuite-text-black);
 }
 .storesuite-header-dropdown .storesuite-dropdown-user-email {
   font-size: 12px;
@@ -2154,6 +2232,24 @@ span.storesuite-sidebar-trigger svg {
   margin-bottom: 0;
   font-size: 20px;
   color: var(--storesuite-text-color);
+}
+.storesuite-title-view-link {
+  display: inline-flex;
+  align-items: center;
+  /* Hug the page title; let space-between push other header items right. */
+  margin-left: 8px;
+  margin-right: auto;
+  color: var(--storesuite-primary-bg);
+  transition: color 0.2s ease;
+}
+.storesuite-title-view-link:hover {
+  color: var(--storesuite-text-color);
+}
+.storesuite-title-view-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;
 }
 .storesuite-dashboard-braedcrumb ul {
   display: flex;
@@ -2200,7 +2296,6 @@ span.storesuite-sidebar-trigger svg {
   margin: 0;
   position: relative;
   vertical-align: middle;
-  width: 100%!important;
 }
 .storesuite-main-dashboard .select2-container .select2-selection--single {
   height: 38px;
@@ -2466,63 +2561,6 @@ span.select2-selection__clear {
 }
 
 /* Make internal dividers single-line like WooCommerce summary */
-@media (min-width: 576px) {
-  .storesuite-kpi-summary .col .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(2n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 2) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 768px) {
-  .storesuite-kpi-summary .col:nth-child(2n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(3n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 3) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 992px) {
-  .storesuite-kpi-summary .col:nth-child(3n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(4n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 4) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 1200px) {
-  .storesuite-kpi-summary .col:nth-child(4n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(5n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 5) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (max-width: 575.98px) {
-  .storesuite-kpi-summary .col .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:last-child .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
 .storesuite-kpi-card--up .storesuite-kpi-change {
   color: #059669;
 }
@@ -4032,10 +4070,9 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .my-storesuite-wrapper .storesuite-form-group.storesuite-bulk-order-actions {
     gap: 10px;
 }
-.storesuite-bulk-order-actions select.storesuite-form-control{
-  width: 255px;
+.storesuite-bulk-order-actions{
+  max-width: 250px;
 }
-
 
 /* Hide the default checkbox */
 .storesuite-form-group.storesuite-form-switch input[type="checkbox"] {
@@ -4115,7 +4152,7 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: var(--storesuite-title-text-color);
+  color: var(--storesuite-text-black);
 }
 .storesuite-account-header-subtitle {
   margin: 4px 0 0;
@@ -4132,17 +4169,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 }
 
 /* Account settings layout: fixed-width nav + flexible content */
-@media (min-width: 768px) {
-  .storesuite-account-layout > .col-md-3 {
-    flex: 0 0 305px;
-    max-width: 305px;
-  }
-  .storesuite-account-layout > .col-md-9 {
-    flex: 1 1 0;
-    max-width: 100%;
-  }
-}
-
 /* Account settings sidebar nav */
 .storesuite-account-nav {
   padding: 8px;
@@ -4237,18 +4263,15 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
   padding: 0 8px;
   margin: 0 0 16px;
 }
-@media (min-width: 768px) {
-  .storesuite-address-grid .form-row-first,
-  .storesuite-address-grid .form-row-last {
-    width: 50%;
-  }
-}
 .storesuite-address-grid .form-row label {
   display: block;
   margin-bottom: 5px;
   font-size: 14px;
   font-weight: 500;
   color: var(--storesuite-text-color);
+}
+.storesuite-address-grid .form-row label .optional {
+  display: none;
 }
 .storesuite-address-grid .form-row .woocommerce-input-wrapper {
   display: block;
@@ -4467,8 +4490,8 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-filter-offcanvas {
   position: fixed;
   top: 0;
-  right: -100%;
-  width: 100%;
+  right: -100vw;
+  width: 100vw;
   max-width: 400px;
   height: 100vh;
   background-color: #fff;
@@ -4549,17 +4572,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-filter-toggle svg{
   width: 14px;
   height: 14px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .storesuite-filter-offcanvas {
-    max-width: 100%;
-  }
-
-  .storesuite-filter-toggle {
-    display: inline-flex !important;
-  }
 }
 
 /* Scrollbar styling for off-canvas */
@@ -4724,6 +4736,12 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 }
 
 /* Product bulk edit modal */
+/* SweetAlert2 (z-index 1060 by default) must sit above the modal overlay
+   (100050) so alerts triggered from inside a modal stay visible. It renders on
+   <body>, so this rule is intentionally not scoped to .my-storesuite-container. */
+.swal2-container {
+  z-index: 100060 !important;
+}
 .storesuite-product-bulk-modal-overlay {
   position: fixed;
   inset: 0;
@@ -4792,7 +4810,9 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 }
 
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost {
   flex-shrink: 0;
   box-sizing: border-box;
   width: 30px;
@@ -4816,14 +4836,20 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
 .storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
   color: #fff;
   background-color: rgb(244, 63, 94);
   border-color: rgb(244, 63, 94);
 }
 
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg {
   display: block;
   width: 20px;
   height: 20px;
@@ -4848,6 +4874,24 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 .storesuite-product-export-intro {
   margin: 0 0 1rem;
   color: #6b7280;
+}
+
+.storesuite-export-bulk-notice {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--storesuite-primary-bg);
+  background-color: #f9fafb;
+  color: #374151;
+  border-radius: 4px;
+}
+
+.storesuite-export-bulk-notice[hidden] {
+  display: none;
+}
+
+.storesuite-export-clear-selection {
+  color: var(--storesuite-primary-bg);
+  text-decoration: underline;
 }
 
 .my-storesuite-button.storesuite-export-toggle svg,
@@ -5757,11 +5801,6 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   margin-bottom: 0.5rem;
 }
 
-@media (min-width: 768px) {
-  .storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-dimensions-row .storesuite-form-control {
-    margin-bottom: 0;
-  }
-}
 
 .storesuite-product-bulk-modal-footer {
   display: flex;
@@ -5826,6 +5865,11 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 /* Product quick edit modal: wider dialog than bulk edit */
 .storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
   max-width: 920px;
+}
+
+/* The taxonomy/attribute quick edit forms are single column, so use a narrower dialog. */
+.storesuite-list-quick-edit-modal .storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
+  max-width: 480px;
 }
 
 .storesuite-product-quick-edit-modal-scroll {
@@ -6105,7 +6149,7 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   font-size: 18px;
   font-weight: 600;
   line-height: 1.4;
-  color: var(--storesuite-title-text-color);
+  color: var(--storesuite-text-black);
 }
 .swal2-html-container {
   margin: 10px 0 0;
@@ -6205,4 +6249,1357 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   background: transparent;
   font-size: 13px;
   color: #ef4444;
+}
+
+/* ==========================================================================
+   Dark mode overrides
+   The color variables flip via :root[data-theme="dark"] above; the rules below
+   re-skin surfaces that hardcode #fff / pastel colors and cannot follow a
+   variable. Keep this section together so it is easy to scan and maintain.
+   ========================================================================== */
+
+/* Smooth the transition when the user flips the theme toggle. */
+body,
+.my-storesuite-container,
+.storesuite-card,
+.storesuite-dashboard-header,
+.my-storesuite-sidebar,
+.storesuite-badge {
+  transition: background-color 0.25s ease, color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+[data-theme="dark"] body {
+  background: var(--storesuite-page-bg);
+}
+
+/*
+ * Plain (non-link) text in cells and elsewhere inherits the body color, which
+ * the light theme leaves at the browser default (near-black). Give the dark
+ * dashboard a readable default so SKU, price, product type and similar plain
+ * text are legible.
+ */
+[data-theme="dark"] body,
+[data-theme="dark"] .my-storesuite-page-content {
+  color: var(--storesuite-text-color);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--storesuite-text-color-light);
+  opacity: 1;
+}
+
+/* Card / panel surfaces that hardcode a white background. */
+[data-theme="dark"] .storesuite-card,
+[data-theme="dark"] .storesuite-mb-24,
+[data-theme="dark"] .storesuite-table-filter,
+[data-theme="dark"] table.my-storesuite-tbl thead,
+[data-theme="dark"] table.my-storesuite-tbl > tbody,
+[data-theme="dark"] table.my-storesuite-product-list-table tbody tr td.tbl-product-name,
+[data-theme="dark"] .storesuite-dropdown,
+[data-theme="dark"] .storesuite-dropdown-menu,
+[data-theme="dark"] .product-gallery-images-wrapper.gallery-has-no-image,
+[data-theme="dark"] .storesuite-dashboard-header,
+[data-theme="dark"] .storesuite-header-right,
+[data-theme="dark"] .storesuite-kpi-summary,
+[data-theme="dark"] .storesuite-modal-fade,
+[data-theme="dark"] table.storesuite-downloadable-files {
+  background-color: var(--storesuite-surface-bg);
+}
+
+/*
+ * Bulk-edit, quick-edit and list quick-edit modal cards hardcode a white
+ * surface (#fff) and light chrome. Give the dialog a dark surface plus a
+ * defining border (the drop shadow is invisible on a dark backdrop) and
+ * re-skin the header/footer dividers and dividing rule.
+ */
+[data-theme="dark"] .storesuite-product-bulk-modal-dialog {
+  background: var(--storesuite-surface-bg);
+  border: 1px solid var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-product-bulk-modal-header {
+  border-bottom-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-product-bulk-modal-footer {
+  border-top-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-quick-edit-hr {
+  border-top-color: var(--storesuite-border-color);
+}
+
+/* Modal notices and warnings hardcode pale pastel fills. */
+[data-theme="dark"] .storesuite-export-bulk-notice {
+  background-color: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-wc-quick-edit-warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: rgb(251 191 36);
+}
+
+/* Secondary / ghost buttons (export + bulk modal actions) hardcode light fills. */
+[data-theme="dark"] .my-storesuite-button.storesuite-button-secondary {
+  background: var(--storesuite-surface-elevated);
+  border-color: var(--storesuite-border-color);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .my-storesuite-button.storesuite-button-ghost {
+  border-color: var(--storesuite-border-color);
+}
+
+/* ==========================================================================
+   Dashboard home (React widgets) dark mode
+   The dashboard home renders WooCommerce admin components (summary tiles,
+   chart, tables) plus custom quick-action cards. Their SCSS hardcodes white
+   surfaces and near-black text, so re-skin them for dark here. Scoped to
+   .storesuite-dashboard-layout so the Analytics page reskin is untouched.
+   ========================================================================== */
+
+/* Card surfaces: summary tiles, chart, tables, quick actions. */
+[data-theme="dark"] .storesuite-dashboard-layout ul.woocommerce-summary,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-actions,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-action-item,
+[data-theme="dark"] .storesuite-dashboard-layout .components-card,
+[data-theme="dark"] .storesuite-dashboard-layout .components-input-control__container,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item button,
+[data-theme="dark"] .storesuite-dashboard-layout .components-button.woocommerce-dropdown-button {
+  background: var(--storesuite-surface-bg);
+}
+
+/* Chart legend rows (Today / Previous period) hardcode a white button fill. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item button:hover {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Summary tile hover/selected states. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item:hover,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item:focus {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item.is-selected {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Dividers between summary tiles and inside cards. */
+[data-theme="dark"] .storesuite-dashboard-layout ul.woocommerce-summary li .woocommerce-summary__item,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__header,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__header,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__item,
+[data-theme="dark"] .storesuite-dashboard-layout .components-card__header,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-dashboard-section-header {
+  border-color: var(--storesuite-border-color);
+}
+
+/* Table header cells hardcode a light gray fill. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__header {
+  background: var(--storesuite-surface-bg);
+}
+
+/* Row hover. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table tr:hover .woocommerce-table__item {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Near-black text: titles, values, numbers, dropdown labels. */
+[data-theme="dark"] .storesuite-dashboard-layout h2.woocommerce-chart__title,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__title,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-value,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__caption,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__header,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__header .components-button,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__item,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-actions__title,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-recent-orders__number,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-leaderboard__title,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item-title,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__item-total,
+[data-theme="dark"] .storesuite-dashboard-layout .components-card__body,
+[data-theme="dark"] .storesuite-dashboard-layout .components-button.woocommerce-dropdown-button .woocommerce-dropdown-button__labels span {
+  color: var(--storesuite-text-black);
+}
+
+/* Interval-select ("By day") value. WooCommerce's emotion runtime injects a
+   tripled-class rule (.css-x.css-x.css-x { color: currentColor }, specificity
+   0,3,0) into <head> after this file, so a plain .components-select-control__input
+   rule ties and loses on source order. Add the interval-select ancestor to
+   reach 0,4,0 and win. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__interval-select .components-select-control__input {
+  color: var(--storesuite-text-black);
+}
+
+/* Empty-state messages (chart "No data for the selected date range" and the
+   leaderboard/table "No data recorded...") hardcode a muted #757575 that is too
+   dark on the dark surface. Shared by the dashboard home and Analytics. */
+[data-theme="dark"] .storesuite-dashboard-layout .d3-chart__empty-message,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table.is-empty,
+[data-theme="dark"] .storesuite-analytics-layout .d3-chart__empty-message,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table.is-empty {
+  color: var(--storesuite-text-color);
+}
+
+/* Chart hover tooltip (d3) hardcodes a white surface with a light-gray title. */
+[data-theme="dark"] .storesuite-dashboard-layout .d3-chart__tooltip {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .d3-chart__tooltip h4 {
+  color: var(--storesuite-text-color);
+}
+
+/* Muted/secondary text: labels, section headers, empty notices, deltas. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-label,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-action-item__label,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-dashboard-empty-notice,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-dashboard-section-header h3 {
+  color: var(--storesuite-text-color);
+}
+
+/*
+ * WooCommerce wraps stat labels, values and table cell text in its <Text>
+ * component (.components-text), which hardcodes a near-black color on the leaf
+ * element — so the container color rules above never reach the actual glyphs.
+ * Make the wrapper follow its container's token color. Scoped away from the
+ * delta pill so is-good/is-bad-trend text colors are preserved.
+ */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-label .components-text,
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-stat-label,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-value .components-text,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table .components-text {
+  color: inherit;
+}
+
+/* Card header titles (Recent Orders, Top products) render as a <Text> heading
+   inside .components-card__header and stay near-black. */
+[data-theme="dark"] .storesuite-dashboard-layout .components-card__header .components-text {
+  color: var(--storesuite-text-black);
+}
+
+/* Quick-action card border + hover. */
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-action-item {
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .storesuite-quick-action-item:hover {
+  border-color: var(--storesuite-primary-bg);
+}
+
+/* Delta pill neutral fill + text (good/bad-trend keep their pastel greens/reds). */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item:not(.is-good-trend):not(.is-bad-trend) .woocommerce-summary__item-delta {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item:not(.is-good-trend):not(.is-bad-trend) .woocommerce-summary__item-delta .components-text {
+  color: var(--storesuite-text-color-light);
+}
+
+/* Chart interval select + dropdown backdrops hardcode a light border
+   (#e0e0e0). WooCommerce sets it via .components-input-base descendant, so
+   match that ancestor to win over the default. */
+[data-theme="dark"] .storesuite-dashboard-layout .components-input-control__backdrop,
+[data-theme="dark"] .storesuite-dashboard-layout .components-input-base .components-input-control__backdrop {
+  border-color: var(--storesuite-border-color);
+}
+
+/* Chart grid/axis lines hardcode a light stroke; dim them for dark mode. */
+[data-theme="dark"] .storesuite-dashboard-layout .tick line,
+[data-theme="dark"] .storesuite-dashboard-layout .grid line,
+[data-theme="dark"] .storesuite-dashboard-layout .domain {
+  stroke: var(--storesuite-border-color);
+}
+
+/* Date-range dropdown chevron is a masked SVG colored via ::after background. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-dropdown-button::after {
+  background-color: var(--storesuite-text-black);
+}
+
+/* Interval-select vertical divider + legend list top border hardcode a light
+   #e2e4e7 / #ccc. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__interval-select {
+  border-right-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-legend__list {
+  border-top-color: var(--storesuite-border-color);
+}
+
+/* Interval-select ("By day") chevron icon. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__interval-select svg,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__interval-select svg path {
+  color: var(--storesuite-text-black);
+  fill: var(--storesuite-text-black);
+}
+
+/* Active chart-type toggle (line/bar) should read as primary, not muted gray. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__type-button-selected,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__type-button-selected svg,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart__type-button-selected svg path {
+  color: var(--storesuite-primary-bg);
+  fill: var(--storesuite-primary-bg);
+}
+
+/* Mobile stacked-table rows hardcode white / zebra light gray. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__table tbody tr {
+  background: var(--storesuite-surface-bg);
+}
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table__table tbody tr:nth-child(odd) {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Loading skeletons (chart + summary/table value placeholders) hardcode a light
+   #f0f0f0 fill that flashes white before data arrives. Shared by the dashboard
+   home and Analytics reports. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-chart-placeholder,
+[data-theme="dark"] .storesuite-dashboard-layout .is-placeholder,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart-placeholder,
+[data-theme="dark"] .storesuite-analytics-layout .is-placeholder {
+  background-color: var(--storesuite-surface-elevated);
+}
+
+/* Summary tile skeleton bars. WooCommerce puts the placeholder class on
+   .woocommerce-summary__item-container (not the <ul>) and fills the label/value/
+   delta children with #f0f0f0, so the tile title + value bars flash white. */
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-label,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-value,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-delta,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-label,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-value,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-container.is-placeholder .woocommerce-summary__item-delta {
+  background-color: var(--storesuite-surface-elevated);
+}
+
+/* StoreSuite's own lazy-chunk shimmer skeletons hardcode a white
+   #f0f0f0 -> #e0e0e0 gradient (see src/dashboard/stylesheets/_index.scss).
+   Matched on the theme alone since they render before the layout wrapper's
+   children mount; the storesuite-shimmer keyframe animates this gradient. */
+[data-theme="dark"] .storesuite-stats-skeleton,
+[data-theme="dark"] .storesuite-chart-skeleton,
+[data-theme="dark"] .storesuite-leaderboard-skeleton,
+[data-theme="dark"] .storesuite-table-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--storesuite-surface-bg) 25%,
+    var(--storesuite-surface-elevated) 50%,
+    var(--storesuite-surface-bg) 75%
+  );
+  background-size: 800px 100%;
+}
+
+/* ==========================================================================
+   Analytics reports dark mode
+   The Analytics page reskin (src/analytics/stylesheets/_reskin.scss) colors
+   text with CSS variables (which flip in dark mode) but hardcodes white card
+   surfaces and near-black control text, which do not. Re-skin those surfaces
+   here, scoped to .storesuite-analytics-layout so the light theme is untouched.
+   ========================================================================== */
+
+/* Card surfaces: the chart card, report tables (incl. sticky header row) and
+   generic components cards (e.g. Top products) all hardcode #fff. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table .woocommerce-table__header,
+[data-theme="dark"] .storesuite-analytics-layout .components-card {
+  background: var(--storesuite-surface-bg);
+}
+
+/* Overview chart cards. The wrapper hardcodes a white surface (see
+   src/analytics/stylesheets/_index.scss); its title + border already use
+   variables that flip. The "By day" interval-select input container and the
+   chart legend rows (Month to date / Previous year) also hardcode #fff. */
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-overview-chart-item,
+[data-theme="dark"] .storesuite-analytics-layout .components-input-control__container,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-legend__item button {
+  background: var(--storesuite-surface-bg);
+}
+/* Legend row hover hardcodes a light fill. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-legend__item button:hover {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Section headers (PERFORMANCE / CHARTS / leaderboards) hardcode a light
+   #e0e0e0 bottom divider and a #757575 heading; neither flips for dark. */
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-overview-section-header {
+  border-bottom-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-overview-section-header h3 {
+  color: var(--storesuite-text-color);
+}
+
+/* Near-black control/card text: card bodies and card header titles. */
+[data-theme="dark"] .storesuite-analytics-layout .components-card__body,
+[data-theme="dark"] .storesuite-analytics-layout .components-card__header .components-text {
+  color: var(--storesuite-text-black);
+}
+
+/* Sorted report-table column. WooCommerce highlights the active sort column's
+   body cells with a hardcoded light #f0f0f0, which buries the (already light)
+   text. Use the elevated surface so the column stays subtly highlighted on
+   dark. The sorted header cell inherits the dark header fill already. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__item.is-sorted {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Horizontal-scroll fade at the table's left/right edges. WooCommerce fades to
+   opaque white, which reads as a glare against the dark card. The transparent
+   stop is spelled out as rgba() rather than `transparent` so the gradient does
+   not run through black on its way to the surface color. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__table::after {
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0), var(--storesuite-surface-bg));
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__table::before {
+  background: linear-gradient(90deg, var(--storesuite-surface-bg), rgba(30, 41, 59, 0));
+}
+
+/* Cell links (product titles, order counts, categories) render in the primary
+   blue, which is low-contrast against the dark rows and speckles the table. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__item a {
+  color: var(--storesuite-text-black);
+}
+
+/* Row hover is a hardcoded #e0e0e0 that washes the whole row out on dark. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__table tr:hover {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* The "No data to display" cell keeps a #757575 fill that reads as a muddy
+   smudge against the dark table. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__empty-item {
+  color: var(--storesuite-text-color-light);
+}
+
+/* Table pagination. The bar paints its own white fill over the card footer, and
+   the labels, page input and prev/next button group all keep light defaults. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination {
+  background: transparent;
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__page-arrows-label,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__page-picker-label,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__per-page-picker .components-input-control__label {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__page-arrows-buttons {
+  background: var(--storesuite-surface-elevated);
+  border-color: var(--storesuite-border-color);
+}
+/* The divider between the prev/next arrows. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__link {
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__page-picker-input {
+  background: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-black);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-pagination__per-page-picker select {
+  color: var(--storesuite-text-black);
+}
+
+/* Advanced-filters + Compare Variations panels. The card surface is already
+   dark via the .components-card rule, but WooCommerce whitens the inner band
+   with `.woocommerce-filters__advanced-filters .components-card__body` (#f0f0f0,
+   specificity 0,2,0) — shared by the Orders advanced filters and the Compare
+   panel — so match that ancestor to exceed it (0,4,0). The advanced "match"
+   select also renders near-black text. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-filters__advanced-filters .components-card__body {
+  background: var(--storesuite-bg-color-muted);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-filters-advanced .components-select-control__input {
+  color: var(--storesuite-text-black);
+}
+
+/* Analytics settings selects ("Date type"). Same emotion tripled-class rule as
+   the interval selects (0,3,0), so the settings-panel ancestor is needed to
+   reach 0,4,0. The dropdown chevron is filled black on top of that. */
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-analytics-settings .components-select-control__input {
+  color: var(--storesuite-text-black);
+}
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-analytics-settings .components-input-control__suffix svg {
+  fill: var(--storesuite-text-color-light);
+}
+
+/* Performance summary tiles + date-range dropdown button hardcode a white
+   surface (same WooCommerce components as the dashboard home, but the reskin
+   there is scoped to .storesuite-dashboard-layout so the Analytics page never
+   inherited it). */
+[data-theme="dark"] .storesuite-analytics-layout ul.woocommerce-summary,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item,
+[data-theme="dark"] .storesuite-analytics-layout .components-button.woocommerce-dropdown-button {
+  background: var(--storesuite-surface-bg);
+}
+
+/* Summary tile hover/selected states. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item:hover,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item:focus,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item.is-selected {
+  background: var(--storesuite-surface-elevated);
+}
+
+/* Dividers between summary tiles hardcode a light gray. */
+[data-theme="dark"] .storesuite-analytics-layout ul.woocommerce-summary li .woocommerce-summary__item {
+  border-color: var(--storesuite-border-color);
+}
+
+/* Near-black tile values + dropdown labels. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-value,
+[data-theme="dark"] .storesuite-analytics-layout .components-button.woocommerce-dropdown-button .woocommerce-dropdown-button__labels span {
+  color: var(--storesuite-text-black);
+}
+
+/* Muted tile labels. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-label {
+  color: var(--storesuite-text-color);
+}
+
+/* WooCommerce wraps tile label/value text in its <Text> component
+   (.components-text), which hardcodes a near-black color on the leaf element, so
+   the container color rules above never reach the glyphs. Make the wrapper
+   follow its container's token color (away from the delta pill). */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-label .components-text,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item-value .components-text {
+  color: inherit;
+}
+
+/* Delta pill neutral fill + text (good/bad-trend keep their pastel greens/reds). */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item:not(.is-good-trend):not(.is-bad-trend) .woocommerce-summary__item-delta {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-summary__item:not(.is-good-trend):not(.is-bad-trend) .woocommerce-summary__item-delta .components-text {
+  color: var(--storesuite-text-color-light);
+}
+
+/* Data-status bar ("Last updated / Next update / Update now") hardcodes a white
+   surface with near-black item values; the wrapper label + "Update now" link
+   already use variables/blue that read on dark. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-analytics-import-status-bar {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-analytics-import-status-bar__value {
+  color: var(--storesuite-text-black);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-analytics-import-status-bar__label {
+  color: var(--storesuite-text-color-light);
+}
+
+/* Interval-select ("By hour") value. WooCommerce's emotion runtime injects a
+   tripled-class rule (.css-x.css-x.css-x { color: currentColor }, specificity
+   0,3,0) into <head> after this file, so a plain .components-select-control__input
+   rule ties and loses on source order. Add the interval-select ancestor to
+   reach 0,4,0 and win. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__interval-select .components-select-control__input {
+  color: var(--storesuite-text-black);
+}
+
+/* Chart hover tooltip (d3) hardcodes a white surface with a light-gray title. */
+[data-theme="dark"] .storesuite-analytics-layout .d3-chart__tooltip {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .d3-chart__tooltip h4 {
+  color: var(--storesuite-text-color);
+}
+
+/* Chart grid/axis lines hardcode a light stroke; dim them for dark mode. */
+[data-theme="dark"] .storesuite-analytics-layout .tick line,
+[data-theme="dark"] .storesuite-analytics-layout .grid line,
+[data-theme="dark"] .storesuite-analytics-layout .domain {
+  stroke: var(--storesuite-border-color);
+}
+
+/* Date-range dropdown chevron is a masked SVG colored via ::after background. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-dropdown-button::after {
+  background-color: var(--storesuite-text-black);
+}
+
+/* Interval-select vertical divider + legend list top border hardcode a light
+   #e2e4e7 / #ccc. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__interval-select {
+  border-right-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-legend__list {
+  border-top-color: var(--storesuite-border-color);
+}
+
+/* Interval-select ("By day") chevron icon. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__interval-select svg,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__interval-select svg path {
+  color: var(--storesuite-text-black);
+  fill: var(--storesuite-text-black);
+}
+
+/* Active chart-type toggle (line/bar) should read as primary, not muted gray. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__type-button-selected,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__type-button-selected svg,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-chart__type-button-selected svg path {
+  color: var(--storesuite-primary-bg);
+  fill: var(--storesuite-primary-bg);
+}
+
+/* Chart interval select dropdown border hardcodes a light #e0e0e0. */
+[data-theme="dark"] .storesuite-analytics-layout .components-input-control__backdrop,
+[data-theme="dark"] .storesuite-analytics-layout .components-input-base .components-input-control__backdrop {
+  border-color: var(--storesuite-border-color);
+}
+
+/*
+ * WooCommerce date-range picker popover. Shared by the dashboard home and the
+ * Analytics reports, and rendered as a WordPress popover whose position in the
+ * DOM is not guaranteed to sit inside a layout wrapper — so these are matched
+ * on the dark theme alone. The container surface plus its inner preset list,
+ * custom-range inputs and Presets/Custom tabs all hardcode white / near-black.
+ */
+/* Generic popovers (chart ellipsis menus, tooltips) — beats WordPress's
+   single-class .components-popover__content default. */
+[data-theme="dark"] .components-popover__content {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+/*
+ * The date-range picker popover specifically. WooCommerce's admin CSS whitens
+ * it with `.woocommerce-filters-date__content .components-popover__content`
+ * (specificity 0,2,0) and loads AFTER this file, so a single-class override
+ * only ties and loses on order. Match that same ancestor to exceed it (0,3,0).
+ */
+[data-theme="dark"] .woocommerce-filters-date__content .components-popover__content {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .woocommerce-segmented-selection__label,
+[data-theme="dark"] .woocommerce-filters-date__text,
+[data-theme="dark"] .woocommerce-filters-date__content-controls {
+  background: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-segmented-selection__label {
+  border-color: var(--storesuite-border-color);
+}
+/* Preset grid dividers + tabs separator hardcode a light #ccc. */
+[data-theme="dark"] .woocommerce-segmented-selection__container,
+[data-theme="dark"] .woocommerce-segmented-selection__item,
+[data-theme="dark"] .woocommerce-filters-date__tabs {
+  border-color: var(--storesuite-border-color);
+}
+/*
+ * Selected preset/compare cell. WooCommerce paints the checked label white via
+ * `.__input:checked + label .__label` (specificity 0,3,1); match that chain so
+ * the selected item's surface goes dark while its blue indicator + text stay.
+ */
+[data-theme="dark"] .woocommerce-segmented-selection__input:checked + label .woocommerce-segmented-selection__label {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .woocommerce-segmented-selection__input:checked + label {
+  color: var(--storesuite-primary-bg);
+}
+[data-theme="dark"] .components-tab-panel__tabs-item {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .components-tab-panel__tabs-item.is-active,
+[data-theme="dark"] .components-tab-panel__tabs-item[aria-selected="true"] {
+  color: var(--storesuite-primary-bg);
+}
+
+/*
+ * The "Show:" filter dropdown menu (All orders / Advanced filters). Its popover
+ * surface is handled by the generic .components-popover__content rule above, but
+ * each option button hardcodes an #f0f0f0 fill with #757575 text. WooCommerce
+ * paints it via `.__content-list-item .__button` (specificity 0,2,0) loaded
+ * AFTER this file, so match that same ancestor to exceed it (0,3,0). Portals out
+ * of the layout, so matched on theme alone.
+ */
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button {
+  background: var(--storesuite-surface-bg);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button:hover,
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item.is-selected .woocommerce-filters-filter__button {
+  background: var(--storesuite-surface-elevated);
+}
+/*
+ * Focused option. WooCommerce highlights the focused button white via a long
+ * :not():not():focus chain (specificity 0,6,0 — 0,7,0 for the selected item)
+ * loaded after this file, so match the same chains prefixed with [data-theme]
+ * to exceed them (0,7,0 / 0,8,0).
+ */
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item .woocommerce-filters-filter__button.components-button:not(:disabled):not([aria-disabled="true"]):focus,
+[data-theme="dark"] .woocommerce-filters-filter__content-list-item.is-selected .woocommerce-filters-filter__button.components-button:not(:disabled):not([aria-disabled="true"]):focus {
+  background: var(--storesuite-surface-elevated);
+}
+
+/*
+ * The "Add a filter" type menu (Coupon code / Customer type / Order status …).
+ * Options are base .components-button with #1e1e1e text and a light hover
+ * (#e0e0e0) / focus (#f0f0f0) fill. Menu portals out of the layout so matched
+ * on theme alone. The focus chain mirrors WooCommerce's (0,5,0) prefixed with
+ * [data-theme] to exceed it (0,6,0).
+ */
+[data-theme="dark"] .woocommerce-filters-advanced__add-dropdown .components-button {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-filters-advanced__add-dropdown .components-button:hover,
+[data-theme="dark"] .woocommerce-filters-advanced__add-dropdown .components-button:not(:disabled):not([aria-disabled="true"]):focus {
+  background: var(--storesuite-surface-elevated);
+}
+
+/*
+ * "Single product" (and similar) search inside a filter dropdown. WooCommerce's
+ * select-control search box, its results listbox and options hardcode white /
+ * #f0f0f0 fills with near-black or purple link text. Portals out of the layout,
+ * so matched on theme alone. Each selector mirrors WooCommerce's ancestor chain
+ * (control/listbox 0,2,0, option 0,3,0) with a [data-theme] prefix to exceed it.
+ */
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__control {
+  background: var(--storesuite-surface-elevated);
+}
+/* The report-table search box reuses this control but StoreSuite's own
+   index.css whitens it with a 0,4,0 chain (.storesuite-analytics-layout
+   .woocommerce-table__actions .woocommerce-search .__control), so match that
+   same chain here to exceed it (0,5,0). */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__actions .woocommerce-search .woocommerce-select-control__control {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__control-input {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__control-input::placeholder {
+  color: var(--storesuite-text-color-light);
+}
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__listbox {
+  background: var(--storesuite-surface-bg);
+}
+[data-theme="dark"] .woocommerce-search.woocommerce-select-control .woocommerce-select-control__option {
+  background: var(--storesuite-surface-bg);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-search.woocommerce-select-control .woocommerce-select-control__option:hover,
+[data-theme="dark"] .woocommerce-search.woocommerce-select-control .woocommerce-select-control__option.is-selected,
+[data-theme="dark"] .woocommerce-search.woocommerce-select-control .woocommerce-select-control__option[aria-selected="true"] {
+  background: var(--storesuite-surface-elevated);
+}
+/* The bold matched substring keeps a brighter tone so it still stands out. */
+[data-theme="dark"] .woocommerce-select-control__option .components-form-token-field__suggestion-match {
+  color: var(--storesuite-text-black);
+}
+
+/* The magnifier glyph is filled black, which all but disappears on the dark
+   input. */
+[data-theme="dark"] .woocommerce-select-control .woocommerce-select-control__control-icon {
+  fill: var(--storesuite-text-color-light);
+}
+
+/* Selected-item chips. Both halves of the pill (label + remove button) carry
+   their own #f0f0f0 fill and near-black text; the remove glyph is filled black. */
+[data-theme="dark"] .woocommerce-tag .woocommerce-tag__text,
+[data-theme="dark"] .woocommerce-tag .woocommerce-tag__remove {
+  background: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .woocommerce-tag .woocommerce-tag__remove svg {
+  fill: var(--storesuite-text-color-light);
+}
+[data-theme="dark"] .woocommerce-tag .woocommerce-tag__remove:hover svg {
+  fill: var(--storesuite-text-black);
+}
+
+/* Compare Variations panel. The secondary "Compare" button hardcodes a white
+   fill and a #ddd inset ring, and the variation checkboxes hardcode a white box
+   with a light-gray border. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-compare-button.is-secondary {
+  background: var(--storesuite-surface-elevated);
+  box-shadow: inset 0 0 0 1px var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-compare-button.is-secondary:hover:not(:disabled) {
+  background: var(--storesuite-surface-bg);
+  color: var(--storesuite-text-black);
+  box-shadow: inset 0 0 0 1px var(--storesuite-text-color-light);
+}
+[data-theme="dark"] .storesuite-analytics-layout .components-checkbox-control__input:not(:checked) {
+  background: var(--storesuite-surface-elevated);
+  border-color: var(--storesuite-border-color);
+}
+
+/* Form fields, selects and select2 controls sit one step above the surface. */
+[data-theme="dark"] .my-storesuite-container .storesuite-form-control,
+[data-theme="dark"] .woocommerce_order_items_wrapper input[type="text"],
+[data-theme="dark"] .woocommerce_order_items_wrapper input[type="number"],
+[data-theme="dark"] .woocommerce_order_items_wrapper select,
+[data-theme="dark"] .woocommerce_order_items_wrapper textarea,
+[data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection,
+[data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection--single .select2-selection__rendered,
+[data-theme="dark"] .storesuite-main-dashboard .select2-dropdown,
+[data-theme="dark"] .storesuite-table-search-input,
+[data-theme="dark"] .storesuite-table-search-input input,
+[data-theme="dark"] .storesuite-search-form.storesuite-order-search-form .storesuite-table-search-input,
+[data-theme="dark"] select#customer_user,
+[data-theme="dark"] select#storesuite_product_search,
+[data-theme="dark"] .my-storesuite-checkbox-back {
+  background-color: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+
+/* Card title divider hardcodes a light gray border. */
+[data-theme="dark"] .storesuite-card-title,
+[data-theme="dark"] .storesuite-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column h2.woocommerce-column__title,
+[data-theme="dark"] .storesuite-dashboard-order-details .card-title-with-link,
+[data-theme="dark"] .storesuite-dashboard-order-details .card-title-with-checkbox {
+  border-bottom-color: var(--storesuite-border-color);
+}
+
+/* Variation row body divider hardcodes a light gray border. */
+[data-theme="dark"] .storesuite-variation-body .storesuite-card-content {
+  border-top-color: var(--storesuite-border-color);
+}
+
+/* Selected select2 chips hardcode dark text; recolor for dark mode. */
+[data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection--multiple .select2-selection__choice {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection--multiple .select2-selection__choice__remove {
+  color: var(--storesuite-text-color-light);
+}
+
+/* select2 dropdown search field stays white; results need light text. */
+[data-theme="dark"] .select2-search--dropdown .select2-search__field {
+  background-color: var(--storesuite-surface-elevated);
+  border-color: var(--storesuite-border-color);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option {
+  color: var(--storesuite-text-color);
+}
+
+/* Loading overlay uses a white scrim and dark text. */
+[data-theme="dark"] .storesuite-loader-overlay {
+  background: rgba(15, 23, 42, 0.6);
+}
+[data-theme="dark"] .storesuite-loader-text {
+  color: var(--storesuite-text-color);
+}
+
+/*
+ * SweetAlert2 dialogs default to a white popup. The title/text/confirm button
+ * already use variables that flip; only the popup surface, the secondary
+ * (cancel) button and the inputs hardcode light backgrounds. The popup is
+ * appended to <body>, still under <html data-theme>, so these match.
+ */
+[data-theme="dark"] .swal2-popup {
+  background: var(--storesuite-surface-bg);
+}
+[data-theme="dark"] .swal2-styled.swal2-cancel {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .swal2-input,
+[data-theme="dark"] .swal2-select,
+[data-theme="dark"] .swal2-textarea {
+  background: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .swal2-input::placeholder,
+[data-theme="dark"] .swal2-textarea::placeholder {
+  color: var(--storesuite-text-color-light);
+}
+
+/*
+ * WooCommerce address fields (rendered via woocommerce_form_field) set border
+ * and text color from variables but no background, so they fall back to the
+ * browser's default white. Give them the dark field surface.
+ */
+[data-theme="dark"] .storesuite-address-grid .form-row .input-text,
+[data-theme="dark"] .storesuite-address-grid .form-row select {
+  background-color: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+
+/*
+ * Account inner-nav active item mixes its tint with #fff (light). Match the
+ * global sidebar's translucent active tint so it reads on dark.
+ */
+[data-theme="dark"] .storesuite-account-nav-link.is-active {
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 12%, transparent);
+  color: var(--storesuite-text-black);
+}
+
+/* Order list "All" filter select hardcodes a white background. */
+[data-theme="dark"] .storesuite-search-form.storesuite-order-search-form #order-search-filter {
+  background-color: var(--storesuite-surface-elevated);
+}
+
+/*
+ * Filter offcanvas panel (orders + products) hardcodes a white surface; its
+ * title/close use text-black (light in dark) so they read once the panel is
+ * dark. The close icon's <path> has no fill (defaults to black), so point it
+ * at the text color too.
+ */
+[data-theme="dark"] .storesuite-filter-offcanvas {
+  background-color: var(--storesuite-surface-bg);
+}
+[data-theme="dark"] .storesuite-filter-close svg {
+  fill: var(--storesuite-text-black);
+}
+/* Filter reset button uses a light neutral fill; darken the resting state
+ * (hover already goes primary, so leave it untouched). */
+[data-theme="dark"] .my-storesuite-button.storesuite-button-neutral-panel:not(:hover):not(:focus-visible) {
+  background-color: var(--storesuite-surface-elevated);
+  border-color: var(--storesuite-border-color);
+}
+
+/*
+ * Order details page: address cards and the WooCommerce customer columns force
+ * a white surface, the address text is dark, and the order notes hardcode a
+ * light bubble + gray borders. Recolor them all for dark mode.
+ */
+[data-theme="dark"] .storesuite-dashboard-order-details .storesuite-card,
+[data-theme="dark"] .storesuite-dashboard-order-details .woocommerce-customer-details .woocommerce-columns.woocommerce-columns--2 .woocommerce-column,
+[data-theme="dark"] .storesuite-card.storesuite-card-with-header {
+  background: var(--storesuite-surface-bg);
+}
+[data-theme="dark"] .customer-billing-address,
+[data-theme="dark"] .customer-shipping-address {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-dashboard-order-details .note_content {
+  background-color: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+  border-left-color: rgb(71 85 105);
+}
+[data-theme="dark"] .storesuite-dashboard-order-details .meta {
+  color: var(--storesuite-text-color-light);
+}
+[data-theme="dark"] .storesuite-dashboard-order-details .add-note-section {
+  border-top-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-dashboard-order-details .add-note-title {
+  color: var(--storesuite-text-black);
+}
+/* Customer History stat dividers hardcode a light gray border. */
+[data-theme="dark"] .customer-history-item:not(:last-child) {
+  border-bottom-color: var(--storesuite-border-color);
+}
+
+/* Light/secondary buttons (e.g. "Back") hardcode a white background. */
+[data-theme="dark"] .my-storesuite-button.my-storesuite-button-light,
+[data-theme="dark"] .wc-order-data-row.wc-order-bulk-actions button.button.refund-items,
+[data-theme="dark"] .wc-order-data-row.wc-order-add-item .button.cancel-action {
+  background: var(--storesuite-surface-elevated);
+}
+
+/*
+ * Soft (tinted) buttons mix their tint with #fff, which is too bright on dark.
+ * Only the resting state needs darkening — hover/focus already invert to a
+ * solid fill, so :not(:hover):not(:focus) leaves those untouched.
+ */
+[data-theme="dark"] .my-storesuite-button.my-storesuite-button-soft:not(:hover):not(:focus) {
+  background: rgba(59, 108, 224, 0.18);
+  border-color: rgba(59, 108, 224, 0.35);
+  color: #a8c4f7;
+}
+[data-theme="dark"] .my-storesuite-button.my-storesuite-button-soft:not(:hover):not(:focus) svg {
+  fill: #a8c4f7;
+}
+[data-theme="dark"] .my-storesuite-button.my-storesuite-button-danger-soft:not(:hover):not(:focus) {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+[data-theme="dark"] .my-storesuite-button.my-storesuite-button-danger-soft:not(:hover):not(:focus) svg {
+  fill: #fca5a5;
+}
+
+/* Field labels are plain text — recolor them, but keep them background-free. */
+[data-theme="dark"] .my-storesuite-wrapper .storesuite-form-group label {
+  color: var(--storesuite-text-color);
+}
+
+/* Image / gallery upload drop zones hardcode white + light inner panel. */
+[data-theme="dark"] .image-drop-container {
+  background: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .image-drop-container .image-drop-text {
+  background: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+/* The "+" upload icon defaults to black fill. */
+[data-theme="dark"] .image-drop-container .add-gl-img-icon svg {
+  fill: var(--storesuite-icon-color);
+}
+/* Existing gallery image previews hardcode a light dashed border. */
+[data-theme="dark"] .preview-image.privew-gimages .preview-image-box {
+  border-color: var(--storesuite-border-color);
+}
+
+/*
+ * Rich-text (TinyMCE) editor chrome. The toolbar/panels live in the parent
+ * document and can be recolored here; the typing area is a separate iframe
+ * themed via the content_style injected in StoreSuite\Product\ProductHooks and
+ * synced by global.js.
+ */
+[data-theme="dark"] .mce-panel {
+  background-color: var(--storesuite-surface-bg);
+  border-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-form-group div.mce-toolbar-grp,
+[data-theme="dark"] .mce-toolbar-grp {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .mce-toolbar .mce-btn button,
+[data-theme="dark"] .mce-toolbar .mce-btn .mce-ico,
+[data-theme="dark"] .mce-toolbar .mce-btn:hover .mce-ico,
+[data-theme="dark"] .mce-toolbar .mce-btn:focus .mce-ico,
+[data-theme="dark"] .mce-toolbar .mce-btn.mce-active .mce-ico,
+[data-theme="dark"] .mce-menubar .mce-ico,
+[data-theme="dark"] .mce-panel i.mce-ico {
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .mce-toolbar .mce-btn-group .mce-btn:hover,
+[data-theme="dark"] .mce-toolbar .mce-btn-group .mce-btn:focus,
+[data-theme="dark"] .mce-toolbar .mce-btn-group .mce-btn.mce-active,
+[data-theme="dark"] .mce-toolbar .mce-btn-group .mce-btn.mce-active:hover,
+[data-theme="dark"] .qt-dfw:hover,
+[data-theme="dark"] .qt-dfw:focus {
+  background: var(--storesuite-bg-color-muted);
+  border-color: var(--storesuite-border-color);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .mce-statusbar {
+  background: var(--storesuite-surface-bg);
+  border-top-color: var(--storesuite-border-color);
+}
+[data-theme="dark"] .wp-editor-container,
+[data-theme="dark"] .mce-tinymce {
+  border-color: var(--storesuite-border-color);
+}
+
+/*
+ * Pagination buttons hardcode a white background; the active page keeps the
+ * brand color from the .current/:hover rule, so only the inactive links need a
+ * dark surface.
+ */
+[data-theme="dark"] .storesuite-pagination li a,
+[data-theme="dark"] .storesuite-pagination li span.page-numbers:not(.current) {
+  background: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+  border: 1px solid var(--storesuite-border-color);
+}
+[data-theme="dark"] .storesuite-pagination li a:hover {
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+  color: var(--storesuite-button-text-color);
+}
+
+/* Switch off-state tracks hardcode light gray; the white knob stays white. */
+[data-theme="dark"] .storesuite-dashboard-order-details .toggle-slider,
+[data-theme="dark"] .storesuite-form-group.storesuite-form-switch label::before {
+  background-color: rgb(71 85 105);
+}
+
+/* Status badges: darken pastel fills, brighten text for contrast. */
+[data-theme="dark"] .storesuite-badge {
+  background-color: rgb(51 65 85);
+  color: rgb(203 213 225);
+}
+[data-theme="dark"] .storesuite-badge.storesuite-badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: rgb(52 211 153);
+}
+[data-theme="dark"] .storesuite-badge.storesuite-badge-danger {
+  background: rgba(244, 63, 94, 0.15);
+  color: rgb(251 113 133);
+}
+[data-theme="dark"] .storesuite-badge.storesuite-badge-warning {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: rgb(251 191 36);
+}
+[data-theme="dark"] .storesuite-badge.storesuite-badge-info {
+  background-color: rgba(99, 102, 241, 0.18);
+  color: rgb(165 180 252);
+}
+
+/* Header theme toggle button + sun/moon icon swap. */
+.storesuite-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.storesuite-theme-toggle:hover,
+.storesuite-theme-toggle:focus {
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+}
+.storesuite-theme-toggle svg {
+  width: 15px;
+  height: 15px;
+  fill: var(--storesuite-text-color);
+  transition: fill 0.15s ease;
+}
+.storesuite-theme-toggle:hover svg,
+.storesuite-theme-toggle:focus svg {
+  fill: var(--storesuite-button-text-color);
+}
+.storesuite-theme-toggle .storesuite-theme-toggle-sun {
+  display: none;
+}
+[data-theme="dark"] .storesuite-theme-toggle .storesuite-theme-toggle-moon {
+  display: none;
+}
+[data-theme="dark"] .storesuite-theme-toggle .storesuite-theme-toggle-sun {
+  display: inline-block;
+}
+
+/* Dark mode: keep the bordered header circles on a dark surface instead of white */
+[data-theme="dark"] .storesuite-header-icon-link,
+[data-theme="dark"] .storesuite-theme-toggle {
+  background: var(--storesuite-surface-elevated);
+}
+/* AI "Generate with AI" buttons on the product form. */
+.my-storesuite-container .storesuite-form-group label:has(.storesuite-ai-generate) {
+  display: flex;
+  align-items: center;
+}
+/* Shared styling for the small AI action buttons (field label, per-field
+   regenerate, and image). Keep them visually identical; per-button deltas live
+   in their own rules below. */
+.my-storesuite-container .storesuite-ai-generate,
+.my-storesuite-container .storesuite-ai-field-regenerate,
+.my-storesuite-container .storesuite-ai-image-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  cursor: pointer;
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 10%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--storesuite-primary-bg) 30%, transparent);
+  border-radius: 4px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.my-storesuite-container .storesuite-ai-generate:hover:not(:disabled),
+.my-storesuite-container .storesuite-ai-field-regenerate:hover:not(:disabled),
+.my-storesuite-container .storesuite-ai-image-generate:hover:not(:disabled) {
+  color: var(--storesuite-button-text-color);
+  background: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-ai-generate:disabled,
+.my-storesuite-container .storesuite-ai-field-regenerate:disabled,
+.my-storesuite-container .storesuite-ai-image-generate:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-generate .storesuite-ai-icon,
+.my-storesuite-container .storesuite-ai-field-regenerate .storesuite-ai-icon,
+.my-storesuite-container .storesuite-ai-image-generate .storesuite-ai-icon {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+/* The field-label "Generate with AI" button pushes to the row's trailing edge. */
+.my-storesuite-container .storesuite-ai-generate {
+  margin-left: auto;
+}
+/* The explicit display on buttons overrides the UA [hidden] rule, so restore it. */
+.my-storesuite-container .my-storesuite-button[hidden],
+.my-storesuite-container .storesuite-ai-bundle-step[hidden] {
+  display: none;
+}
+/* Per-field "Regenerate" buttons inside the bundle result step. */
+.my-storesuite-container
+  .storesuite-form-group
+  label:has(.storesuite-ai-field-regenerate) {
+  display: flex;
+  align-items: center;
+}
+/* Right-aligned group holding the per-field history pager and Regenerate. */
+.my-storesuite-container .storesuite-ai-field-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+/* Per-field "‹ n/m ›" history pager. */
+.my-storesuite-container .storesuite-ai-field-pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.my-storesuite-container .storesuite-ai-field-pager button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--storesuite-text-color);
+  background: #fff;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 4px;
+}
+.my-storesuite-container .storesuite-ai-field-pager button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-field-pager-status {
+  min-width: 30px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--storesuite-text-color);
+}
+.my-storesuite-container .storesuite-ai-field-regenerate .la-spin {
+  animation: storesuite-ai-spin 0.8s linear infinite;
+}
+/* Small "AI" image button beside the Product Image label. */
+.my-storesuite-container label.storesuite-ai-image-label {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+/* Generated image preview inside the image modal. */
+.my-storesuite-container .storesuite-ai-image-preview {
+  margin-top: 14px;
+  text-align: center;
+}
+.my-storesuite-container .storesuite-ai-image-preview img {
+  max-width: 100%;
+  max-height: 360px;
+  border-radius: 6px;
+  border: 1px solid var(--storesuite-border-color);
+}
+/* Global "Generate with AI" launcher in the page header. */
+.my-storesuite-container .storesuite-ai-bundle-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 12%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--storesuite-primary-bg) 24%,
+    transparent
+  );
+}
+.my-storesuite-container .storesuite-ai-bundle-launch:hover {
+  color: var(--storesuite-button-text-color);
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-ai-bundle-launch svg {
+  fill: currentColor;
+}
+.my-storesuite-container .storesuite-ai-bundle-launch .storesuite-ai-icon {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+/* Subtitle and pager share one row: subtitle left, pager right. */
+.my-storesuite-container .storesuite-ai-modal-subhead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 12px;
+}
+.my-storesuite-container .storesuite-ai-modal-subtitle {
+  margin: 0 auto 0 0;
+  font-size: 13px;
+  color: var(--storesuite-text-color-light);
+}
+.my-storesuite-container .storesuite-ai-modal-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.my-storesuite-container .storesuite-ai-modal-pager button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--storesuite-text-color);
+  background: #fff;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 4px;
+}
+.my-storesuite-container .storesuite-ai-modal-pager button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-pager-icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+.my-storesuite-container .storesuite-ai-pager-status {
+  min-width: 34px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--storesuite-text-color);
+}
+.my-storesuite-container .storesuite-ai-generate .la-spin {
+  animation: storesuite-ai-spin 0.8s linear infinite;
+}
+@keyframes storesuite-ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* AI generation skeleton loader. Reuses the shimmer placeholder design from the
+   dashboard skeletons (src/dashboard/stylesheets/_index.scss), adapted for the
+   frontend AI modals where the result will appear. */
+@keyframes storesuite-skeleton-shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+.my-storesuite-container .storesuite-skeleton {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: storesuite-skeleton-shimmer 1.4s infinite;
+}
+/* Stacked text lines (suggestion modal). */
+.my-storesuite-container .storesuite-skeleton-lines .storesuite-skeleton {
+  height: 14px;
+  margin-bottom: 10px;
+}
+.my-storesuite-container .storesuite-skeleton-lines .storesuite-skeleton:last-child {
+  width: 60%;
+  margin-bottom: 0;
+}
+/* Image placeholder (image modal preview). */
+.my-storesuite-container .storesuite-skeleton-image {
+  height: 240px;
+  margin-top: 14px;
+}
+/* Inputs in the AI modals read as disabled while a request is in flight. */
+#storesuite-ai-modal .storesuite-form-control[readonly],
+#storesuite-ai-prompt-modal .storesuite-form-control[readonly],
+#storesuite-ai-image-modal .storesuite-form-control[readonly],
+#storesuite-ai-bundle-modal .storesuite-form-control[readonly] {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
