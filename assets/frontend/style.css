@@ -7093,9 +7093,15 @@ body,
 }
 [data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option {
   color: var(--storesuite-text-color);
+  background-color: var(--storesuite-surface-elevated);
 }
 [data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option--highlighted,
 [data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option:focus {
+  background-color: var(--storesuite-bg-color-light);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option[aria-selected=true],
+[data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-results__option[data-selected=true] {
   background-color: var(--storesuite-bg-color-light);
   color: var(--storesuite-text-color);
 }
@@ -7107,6 +7113,10 @@ body,
 
 /* select2 fields that live outside .storesuite-main-dashboard (e.g., WC admin
    order/product screens, quick-edit modals) — make text light on dark surface. */
+[data-theme="dark"] .select2-dropdown,
+[data-theme="dark"] .select2-container--default .select2-results__option {
+  background-color: var(--storesuite-surface-elevated);
+}
 [data-theme="dark"] .select2-container .select2-selection,
 [data-theme="dark"] .select2-container .select2-selection--single .select2-selection__rendered,
 [data-theme="dark"] .select2-container--default .select2-results__option,
@@ -7116,6 +7126,11 @@ body,
 }
 [data-theme="dark"] .select2-container--default .select2-results__option--highlighted,
 [data-theme="dark"] .select2-container--default .select2-results__option:focus {
+  background-color: var(--storesuite-bg-color-light);
+  color: var(--storesuite-text-color);
+}
+[data-theme="dark"] .select2-container--default .select2-results__option[aria-selected=true],
+[data-theme="dark"] .select2-container--default .select2-results__option[data-selected=true] {
   background-color: var(--storesuite-bg-color-light);
   color: var(--storesuite-text-color);
 }
