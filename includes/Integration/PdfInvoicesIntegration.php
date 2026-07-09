@@ -75,7 +75,7 @@ class PdfInvoicesIntegration {
 			}
 			?>
 			<li>
-				<a href="<?php echo esc_url( $document['url'] ); ?>" class="dropdown-link" target="_blank" rel="noopener noreferrer">
+				<a href="<?php echo esc_url( $document['url'] ); ?>" class="dropdown-link<?php echo empty( $document['print'] ) ? '' : ' storesuite-print-document'; ?>" target="_blank" rel="noopener noreferrer">
 					<?php echo esc_html( $document['label'] ); ?>
 				</a>
 			</li>
@@ -111,7 +111,7 @@ class PdfInvoicesIntegration {
 			<div class="storesuite-card-content">
 				<div class="storesuite-order-documents-list">
 					<?php foreach ( $documents as $document ) : ?>
-						<a href="<?php echo esc_url( $document['url'] ); ?>" class="my-storesuite-button my-storesuite-button-light" target="_blank" rel="noopener noreferrer">
+						<a href="<?php echo esc_url( $document['url'] ); ?>" class="my-storesuite-button my-storesuite-button-light<?php echo empty( $document['print'] ) ? '' : ' storesuite-print-document'; ?>" target="_blank" rel="noopener noreferrer">
 							<?php echo esc_html( $document['label'] ); ?>
 						</a>
 					<?php endforeach; ?>
@@ -128,7 +128,7 @@ class PdfInvoicesIntegration {
 	 * @param WC_Order $order   The order.
 	 * @param string   $context Rendering context: 'list_page' or 'detail_page'.
 	 *
-	 * @return array<int, array{label:string, url:string, exists:bool}>
+	 * @return array<int, array{label:string, url:string, exists:bool, print:bool}>
 	 */
 	public function get_documents_for_order( WC_Order $order, string $context ): array {
 		$documents = array();
@@ -151,7 +151,7 @@ class PdfInvoicesIntegration {
 	 *
 	 * @param WC_Order $order The order.
 	 *
-	 * @return array<int, array{label:string, url:string, exists:bool}>
+	 * @return array<int, array{label:string, url:string, exists:bool, print:bool}>
 	 */
 	protected function get_wpo_documents( WC_Order $order ): array {
 		$items = array();
@@ -174,6 +174,8 @@ class PdfInvoicesIntegration {
 				'label'  => $doc->get_title(),
 				'url'    => WPO_WCPDF()->endpoint->get_document_link( $order, $type ),
 				'exists' => is_callable( array( $doc, 'exists' ) ) ? $doc->exists() : false,
+				// WPO streams a PDF, which the browser renders in the new tab.
+				'print'  => false,
 			);
 		}
 
@@ -192,7 +194,7 @@ class PdfInvoicesIntegration {
 	 * @param WC_Order $order   The order.
 	 * @param string   $context Rendering context: 'list_page' or 'detail_page'.
 	 *
-	 * @return array<int, array{label:string, url:string, exists:bool}>
+	 * @return array<int, array{label:string, url:string, exists:bool, print:bool}>
 	 */
 	protected function get_webtoffee_documents( WC_Order $order, string $context ): array {
 		$items = array();
@@ -249,7 +251,7 @@ class PdfInvoicesIntegration {
 	 * @param string $parent_label Aggregate button label, prefixed onto the child label.
 	 * @param bool   $exists       Whether the document has already been generated.
 	 *
-	 * @return array{label:string, url:string, exists:bool}|null Null when the button is not a usable link.
+	 * @return array{label:string, url:string, exists:bool, print:bool}|null Null when the button is not a usable link.
 	 */
 	protected function build_webtoffee_document( $button, int $order_id, string $parent_label, bool $exists ) {
 		if ( ! is_array( $button ) || empty( $button['action'] ) ) {
@@ -278,6 +280,9 @@ class PdfInvoicesIntegration {
 			'label'  => wp_strip_all_tags( $label ),
 			'url'    => $url,
 			'exists' => $exists,
+			// `print_*` actions return printable HTML rather than a PDF stream; the
+			// frontend script prints them instead of navigating to them.
+			'print'  => 0 === strpos( $action, 'print_' ),
 		);
 	}
 }
