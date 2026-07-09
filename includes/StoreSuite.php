@@ -18,7 +18,7 @@ final class StoreSuite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.2.11';
+	public $version = '1.2.12';
 
 	/**
 	 * Instance of self

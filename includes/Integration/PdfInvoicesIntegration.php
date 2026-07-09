@@ -101,10 +101,8 @@ class PdfInvoicesIntegration {
 			}
 			?>
 			<li>
-				<a href="<?php echo esc_url( $document['url'] ); ?>" class="dropdown-link<?php echo empty( $document['print'] ) ? '' : ' storesuite-print-document'; ?>" target="_blank" rel="noopener noreferrer">
-					<?php echo $this->get_document_icon( $document['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in get_document_icon(). ?>
-					<?php echo esc_html( $document['label'] ); ?>
-				</a>
+				<?php // The icon and label must not be separated by whitespace: `.dropdown-link` is a block, so a text node between them renders as a leading space and offsets the label. ?>
+				<a href="<?php echo esc_url( $document['url'] ); ?>" class="dropdown-link<?php echo empty( $document['print'] ) ? '' : ' storesuite-print-document'; ?>" target="_blank" rel="noopener noreferrer"><?php echo $this->get_document_icon( $document['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in get_document_icon(). ?><?php echo esc_html( $document['label'] ); ?></a>
 			</li>
 			<?php
 		}
