@@ -826,7 +826,7 @@ form.storesuite-filters-form .row {
   width: 100%;
   cursor: pointer;
   gap: 8px;
-  padding: 5px 15px;
+  padding: 8px 15px;
   font-size: 14px;
   text-align: left;
   white-space: nowrap;
@@ -2190,7 +2190,7 @@ span.storesuite-sidebar-trigger svg {
 .storesuite-dropdown .storesuite-dropdown-menu svg {
   width: 16px;
   height: 16px;
-  margin-right: 5px;
+  margin-right: 10px;
   position: relative;
   top: 1px;
 }
