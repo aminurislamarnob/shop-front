@@ -7072,6 +7072,12 @@ body,
   color: var(--storesuite-text-color-light);
 }
 
+/* select2.css hardcodes #444 on the single-select placeholder, which is unreadable on a
+   dark surface. The multi-select inline search placeholder already follows the token. */
+[data-theme="dark"] .storesuite-main-dashboard .select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: var(--storesuite-text-color-light);
+}
+
 /* select2 dropdown search field stays white; results need light text. */
 [data-theme="dark"] .select2-search--dropdown .select2-search__field {
   background-color: var(--storesuite-surface-elevated);
