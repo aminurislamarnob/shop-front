@@ -5794,6 +5794,23 @@ body,
   background: var(--storesuite-surface-elevated);
 }
 
+/* Horizontal-scroll fade at the table's left/right edges. WooCommerce fades to
+   opaque white, which reads as a glare against the dark card. The transparent
+   stop is spelled out as rgba() rather than `transparent` so the gradient does
+   not run through black on its way to the surface color. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__table::after {
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0), var(--storesuite-surface-bg));
+}
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__table::before {
+  background: linear-gradient(90deg, var(--storesuite-surface-bg), rgba(30, 41, 59, 0));
+}
+
+/* Cell links (product titles, order counts, categories) render in the primary
+   blue, which is low-contrast against the dark rows and speckles the table. */
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__item a {
+  color: var(--storesuite-text-black);
+}
+
 /* Row hover is a hardcoded #e0e0e0 that washes the whole row out on dark. */
 [data-theme="dark"] .storesuite-analytics-layout .woocommerce-table__table tr:hover {
   background: var(--storesuite-surface-elevated);
@@ -5844,6 +5861,16 @@ body,
 }
 [data-theme="dark"] .storesuite-analytics-layout .woocommerce-filters-advanced .components-select-control__input {
   color: var(--storesuite-text-black);
+}
+
+/* Analytics settings selects ("Date type"). Same emotion tripled-class rule as
+   the interval selects (0,3,0), so the settings-panel ancestor is needed to
+   reach 0,4,0. The dropdown chevron is filled black on top of that. */
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-analytics-settings .components-select-control__input {
+  color: var(--storesuite-text-black);
+}
+[data-theme="dark"] .storesuite-analytics-layout .storesuite-analytics-settings .components-input-control__suffix svg {
+  fill: var(--storesuite-text-color-light);
 }
 
 /* Performance summary tiles + date-range dropdown button hardcode a white
