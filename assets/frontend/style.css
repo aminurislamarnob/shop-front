@@ -5620,9 +5620,38 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
 .storesuite-order-documents .storesuite-order-documents-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button {
-  justify-content: center;
   width: 100%;
+  gap: 12px;
+  justify-content: flex-start;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-color: var(--storesuite-border-color);
+  color: var(--storesuite-text-color);
+  font-weight: 500;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+/* The icon sits in a tinted tile so every label starts on the same x. */
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button svg {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex: 0 0 auto;
+  box-sizing: content-box;
+  padding: 6px;
+  border-radius: 6px;
+  fill: var(--storesuite-primary-bg);
+  background: var(--storesuite-bg-color-light);
+  transition: background-color 0.15s ease, fill 0.15s ease;
+}
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button:hover {
+  background: var(--storesuite-bg-color-light);
+  border-color: var(--storesuite-primary-bg);
+  color: var(--storesuite-primary-bg);
+}
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button:hover svg {
+  background: var(--storesuite-primary-bg);
+  fill: #fff;
 }
