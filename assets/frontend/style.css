@@ -6312,6 +6312,17 @@ body,
 }
 
 /*
+ * The import wizard's progress step also carries WooCommerce's `.woocommerce-importer`
+ * class, and admin.css paints `.woocommerce-progress-form-wrapper .woocommerce-importer`
+ * white. That selector ties with `[data-theme="dark"] .storesuite-card` on specificity
+ * and admin.css is enqueued after our stylesheet, so it wins the cascade. Qualify the
+ * card class to outrank it.
+ */
+[data-theme="dark"] .storesuite-card.storesuite-import-card {
+  background-color: var(--storesuite-surface-bg);
+}
+
+/*
  * Bulk-edit, quick-edit and list quick-edit modal cards hardcode a white
  * surface (#fff) and light chrome. Give the dialog a dark surface plus a
  * defining border (the drop shadow is invisible on a dark backdrop) and
