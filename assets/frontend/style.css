@@ -5586,6 +5586,16 @@ body,
   color: var(--storesuite-text-black);
 }
 
+/* Empty-state messages (chart "No data for the selected date range" and the
+   leaderboard/table "No data recorded...") hardcode a muted #757575 that is too
+   dark on the dark surface. Shared by the dashboard home and Analytics. */
+[data-theme="dark"] .storesuite-dashboard-layout .d3-chart__empty-message,
+[data-theme="dark"] .storesuite-dashboard-layout .woocommerce-table.is-empty,
+[data-theme="dark"] .storesuite-analytics-layout .d3-chart__empty-message,
+[data-theme="dark"] .storesuite-analytics-layout .woocommerce-table.is-empty {
+  color: var(--storesuite-text-color);
+}
+
 /* Chart hover tooltip (d3) hardcodes a white surface with a light-gray title. */
 [data-theme="dark"] .storesuite-dashboard-layout .d3-chart__tooltip {
   background: var(--storesuite-surface-bg);
