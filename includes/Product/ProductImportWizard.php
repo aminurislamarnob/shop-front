@@ -56,6 +56,205 @@ class ProductImportWizard extends \WC_Product_CSV_Importer_Controller {
 	}
 
 	/**
+	 * Output wizard errors.
+	 *
+	 * Replaces WooCommerce's admin `.error.inline` notice with the dashboard's notice component.
+	 *
+	 * @return void
+	 */
+	protected function output_errors() {
+		if ( ! $this->errors ) {
+			return;
+		}
+
+		storesuite_get_template_part( 'products/import-notice', '', array( 'errors' => $this->errors ) );
+	}
+
+	/**
+	 * Output the step indicator.
+	 *
+	 * Replaces WooCommerce's admin `.wc-progress-steps` bar with a StoreSuite-themed stepper.
+	 *
+	 * @return void
+	 */
+	protected function output_steps() {
+		storesuite_get_template_part(
+			'products/import-steps',
+			'',
+			array(
+				'steps'        => $this->steps,
+				'current_step' => $this->step,
+			)
+		);
+	}
+
+	/**
+	 * Output the upload step form.
+	 *
+	 * Replaces WooCommerce's admin upload form view with a StoreSuite-themed dropzone while keeping the
+	 * inherited field names so the parent upload handler continues to work.
+	 *
+	 * @return void
+	 */
+	protected function upload_form() {
+		$bytes      = apply_filters( 'import_upload_size_limit', wp_max_upload_size() );
+		$size       = size_format( $bytes );
+		$upload_dir = wp_upload_dir();
+
+		storesuite_get_template_part(
+			'products/import-upload-form',
+			'',
+			array(
+				'bytes'      => $bytes,
+				'size'       => $size,
+				'upload_dir' => $upload_dir,
+			)
+		);
+	}
+
+	/**
+	 * Column mapping step.
+	 *
+	 * Reuses WooCommerce's importer data prep (headers, auto-mapping, sample row, mapping options) but
+	 * renders a StoreSuite-themed template. Columns are bucketed into field categories so the template can
+	 * group them; the mapped/ignored status shown per row stays driven by the current select value.
+	 *
+	 * @return void
+	 */
+	protected function mapping_form() {
+		check_admin_referer( 'woocommerce-csv-importer' );
+		self::validate_file_path( $this->file );
+
+		$args = array(
+			'lines'              => 1,
+			'delimiter'          => $this->delimiter,
+			'character_encoding' => $this->character_encoding,
+		);
+
+		$importer     = self::get_importer( $this->file, $args );
+		$headers      = $importer->get_raw_keys();
+		$mapped_items = $this->auto_map_columns( $headers );
+		$sample       = current( $importer->get_raw_data() );
+
+		if ( empty( $sample ) ) {
+			$this->add_error(
+				__( 'The file is empty or using a different encoding than UTF-8, please try again with a new file.', 'storesuite' ),
+				array(
+					array(
+						'url'   => storesuite_get_navigation_url( 'import-products' ),
+						'label' => __( 'Upload a new file', 'storesuite' ),
+					),
+				)
+			);
+
+			$this->output_errors();
+			return;
+		}
+
+		// Ordered category buckets. A column is grouped by the field WooCommerce auto-detected for it, so it
+		// keeps its group even if the user later sets the select to "Do not import".
+		$group_labels = array(
+			'general'    => __( 'General', 'storesuite' ),
+			'pricing'    => __( 'Pricing', 'storesuite' ),
+			'inventory'  => __( 'Inventory & shipping', 'storesuite' ),
+			'linked'     => __( 'Linked products', 'storesuite' ),
+			'downloads'  => __( 'External & downloads', 'storesuite' ),
+			'attributes' => __( 'Attributes', 'storesuite' ),
+			'meta'       => __( 'Meta data', 'storesuite' ),
+			'unmapped'   => __( 'Unrecognized columns', 'storesuite' ),
+		);
+
+		$groups = array();
+		foreach ( $group_labels as $key => $label ) {
+			$groups[ $key ] = array(
+				'label'   => $label,
+				'columns' => array(),
+			);
+		}
+
+		$mapped_count = 0;
+		foreach ( $headers as $index => $name ) {
+			$mapped_value = isset( $mapped_items[ $index ] ) ? $mapped_items[ $index ] : '';
+
+			if ( '' !== (string) $mapped_value ) {
+				++$mapped_count;
+			}
+
+			$category = $this->get_mapping_field_category( (string) $mapped_value );
+
+			$groups[ $category ]['columns'][] = array(
+				'index'        => $index,
+				'name'         => $name,
+				'sample'       => isset( $sample[ $index ] ) ? $sample[ $index ] : '',
+				'mapped_value' => $mapped_value,
+				'options'      => $this->get_mapping_options( $mapped_value ),
+			);
+		}
+
+		// Drop empty categories so the template only renders groups that have columns.
+		$groups = array_filter(
+			$groups,
+			static function ( $group ) {
+				return ! empty( $group['columns'] );
+			}
+		);
+
+		storesuite_get_template_part(
+			'products/import-mapping',
+			'',
+			array(
+				'groups'             => $groups,
+				'total_columns'      => count( $headers ),
+				'mapped_count'       => $mapped_count,
+				'next_step_url'      => $this->get_next_step_link(),
+				'back_url'           => storesuite_get_navigation_url( 'import-products' ),
+				'file'               => $this->file,
+				'delimiter'          => $this->delimiter,
+				'update_existing'    => $this->update_existing,
+				'character_encoding' => $args['character_encoding'],
+			)
+		);
+	}
+
+	/**
+	 * Resolve the category bucket for an auto-mapped field value.
+	 *
+	 * @param string $value Mapped field key (e.g. 'weight', 'meta:foo', 'attributes:name0').
+	 *
+	 * @return string Category key matching the $group_labels keys in mapping_form().
+	 */
+	protected function get_mapping_field_category( $value ) {
+		if ( '' === $value ) {
+			return 'unmapped';
+		}
+		if ( 0 === strpos( $value, 'meta:' ) ) {
+			return 'meta';
+		}
+		if ( 0 === strpos( $value, 'attributes:' ) ) {
+			return 'attributes';
+		}
+		if ( 0 === strpos( $value, 'downloads:' ) ) {
+			return 'downloads';
+		}
+
+		$map = array(
+			'general'   => array( 'id', 'type', 'sku', 'global_unique_id', 'name', 'published', 'featured', 'catalog_visibility', 'short_description', 'description', 'reviews_allowed', 'purchase_note', 'menu_order', 'cogs_value' ),
+			'pricing'   => array( 'regular_price', 'sale_price', 'date_on_sale_from', 'date_on_sale_to', 'tax_status', 'tax_class' ),
+			'inventory' => array( 'stock_status', 'stock_quantity', 'backorders', 'low_stock_amount', 'sold_individually', 'weight', 'length', 'width', 'height', 'shipping_class_id' ),
+			'linked'    => array( 'category_ids', 'tag_ids', 'tag_ids_spaces', 'images', 'parent_id', 'upsell_ids', 'cross_sell_ids', 'grouped_products' ),
+			'downloads' => array( 'product_url', 'button_text', 'download_limit', 'download_expiry' ),
+		);
+
+		foreach ( $map as $category => $keys ) {
+			if ( in_array( $value, $keys, true ) ) {
+				return $category;
+			}
+		}
+
+		return 'general';
+	}
+
+	/**
 	 * Add error message, rewriting wp-admin importer links to the frontend wizard.
 	 *
 	 * The inherited steps build error actions (e.g. mapping's "Upload a new file") pointing at the
