@@ -7107,6 +7107,16 @@ body,
 [data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__placeholder {
   color: var(--storesuite-text-color-light);
 }
+
+/* Permalink group hardcodes white backgrounds. */
+[data-theme="dark"] .my-storesuite-container .storesuite-permalink-group {
+  background-color: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .my-storesuite-container .storesuite-permalink-prefix {
+  background-color: var(--storesuite-bg-color-light);
+  color: var(--storesuite-text-color-light);
+  border-right-color: var(--storesuite-border-color);
+}
 [data-theme="dark"] .select2-container .select2-selection--multiple .select2-selection__rendered {
   color: var(--storesuite-text-color);
 }
