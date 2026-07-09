@@ -96,11 +96,17 @@ $storesuite_clean   = 0 === $failed && 0 === $skipped;
 		</ul>
 	<?php endif; ?>
 
-	<?php if ( $storesuite_has_log ) : ?>
-		<button type="button" class="my-storesuite-button my-storesuite-button-light storesuite-import-done__log-toggle" aria-expanded="false" aria-controls="storesuite-import-error-log">
-			<?php esc_html_e( 'View import log', 'storesuite' ); ?>
-		</button>
+	<div class="storesuite-import-done__actions">
+		<a class="my-storesuite-button storesuite-import-btn" href="<?php echo esc_url( storesuite_get_navigation_url( 'products' ) ); ?>"><?php esc_html_e( 'View products', 'storesuite' ); ?></a>
+		<a class="my-storesuite-button my-storesuite-button-light storesuite-import-btn" href="<?php echo esc_url( storesuite_get_navigation_url( 'import-products' ) ); ?>"><?php esc_html_e( 'Import another file', 'storesuite' ); ?></a>
+		<?php if ( $storesuite_has_log ) : ?>
+			<button type="button" class="my-storesuite-button my-storesuite-button-light storesuite-import-btn storesuite-import-done__log-toggle" aria-expanded="false" aria-controls="storesuite-import-error-log">
+				<?php esc_html_e( 'View import log', 'storesuite' ); ?>
+			</button>
+		<?php endif; ?>
+	</div>
 
+	<?php if ( $storesuite_has_log ) : ?>
 		<div class="storesuite-import-done__log" id="storesuite-import-error-log" hidden>
 			<div class="storesuite-table-responsive">
 				<table class="my-storesuite-tbl">
@@ -130,11 +136,6 @@ $storesuite_clean   = 0 === $failed && 0 === $skipped;
 			</div>
 		</div>
 	<?php endif; ?>
-
-	<div class="storesuite-import-done__actions">
-		<a class="my-storesuite-button storesuite-import-btn" href="<?php echo esc_url( storesuite_get_navigation_url( 'products' ) ); ?>"><?php esc_html_e( 'View products', 'storesuite' ); ?></a>
-		<a class="my-storesuite-button my-storesuite-button-light storesuite-import-btn" href="<?php echo esc_url( storesuite_get_navigation_url( 'import-products' ) ); ?>"><?php esc_html_e( 'Import another file', 'storesuite' ); ?></a>
-	</div>
 </div>
 <?php if ( $storesuite_has_log ) : ?>
 	<script type="text/javascript">
