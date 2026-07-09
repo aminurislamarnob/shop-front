@@ -3,6 +3,8 @@
 /.github
 /node_modules
 /src
+/modules/*/src
+/modules/*/node_modules
 /tests
 /bin
 /docs

@@ -71,6 +71,25 @@ class Installer {
 	}
 
 	/**
+	 * Drop the staff table and forget the schema version. Called only from the
+	 * module's `uninstall()` — never on deactivation — so staff data survives a
+	 * module toggle and is removed only when the plugin is deleted.
+	 *
+	 * @return void
+	 */
+	public static function uninstall() {
+		global $wpdb;
+
+		$table_name = self::table_name();
+
+		// Table identifier can't be parameterised; it's built from the trusted
+		// $wpdb prefix and a hard-coded suffix, so interpolation is safe here.
+		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		delete_option( self::SCHEMA_VERSION_OPTION );
+	}
+
+	/**
 	 * Run dbDelta only when the stored schema version is behind. Called on
 	 * every boot so a plugin update can ship a schema change without forcing
 	 * the user to toggle the module off and on again.

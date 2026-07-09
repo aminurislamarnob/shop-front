@@ -184,7 +184,7 @@ class Assets {
 	/**
 	 * Walk the active module list and ask each one to enqueue its admin
 	 * assets. The default `Abstracts\Module::enqueue_admin_assets()` looks
-	 * for `assets/build/modules/<slug>/script.js`; modules without an admin
+	 * for `modules/<slug>/assets/build/script.js`; modules without an admin
 	 * React surface (i.e. no `src/index.js`) silently no-op.
 	 *
 	 * @return void

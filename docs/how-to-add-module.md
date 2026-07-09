@@ -120,10 +120,41 @@ class Module extends BaseModule {
         add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
         add_filter( 'storesuite_query_var_filter', array( $this, 'register_query_var' ) );
         add_filter( 'storesuite_dashboard_menus', array( $this, 'register_menu' ), 20 );
+        add_action( 'storesuite_load_custom_template', array( $this, 'load_template' ) );
+    }
+
+    /**
+     * Permanent teardown — runs only from the plugin's root uninstall.php.
+     * Drop tables and delete options here, NEVER in deactivate().
+     */
+    public function uninstall() {
+        Installer::uninstall();
+        delete_option( Settings::OPTION_KEY );
+        delete_option( ScreenController::OPTION_KEY );
     }
 
     public function register_endpoint() {
         add_rewrite_endpoint( self::ENDPOINT, EP_PAGES );
+    }
+
+    /**
+     * Render the front-end page for `/storesuite-dashboard/<endpoint>/`.
+     * The core dashboard shortcode fires `storesuite_load_custom_template`
+     * for any request that doesn't match a built-in query var. Claim it when
+     * your endpoint var is present, or the sidebar link renders a blank page.
+     */
+    public function load_template( $query_vars ) {
+        if ( ! is_array( $query_vars ) || ! isset( $query_vars[ self::ENDPOINT ] ) ) {
+            return;
+        }
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            storesuite_get_template_part( 'global/no-permission' );
+            return;
+        }
+        $template = $this->get_path() . '/templates/customers.php';
+        if ( file_exists( $template ) ) {
+            include $template;
+        }
     }
 
     public function register_query_var( $vars ) {
@@ -143,7 +174,10 @@ class Module extends BaseModule {
         }
         $menus['customers'] = array(
             'title'      => __( 'Customers', 'storesuite' ),
-            'url'        => home_url( '/storesuite-dashboard/' . self::ENDPOINT . '/' ),
+            // Resolve against the configured dashboard page permalink — do NOT
+            // hard-code `/storesuite-dashboard/`, which breaks if the page is
+            // renamed or uses a different permalink structure.
+            'url'        => storesuite_get_navigation_url( self::ENDPOINT ),
             'permission' => 'manage_woocommerce',
             'icon'       => '<svg ...>...</svg>', // inline SVG, no JS wrapper
         );
@@ -218,11 +252,20 @@ class Installer {
             self::install();
         }
     }
+
+    public static function uninstall() {
+        global $wpdb;
+        $table_name = self::table_name();
+        $wpdb->query( "DROP TABLE IF EXISTS {$table_name}" ); // phpcs:ignore
+        delete_option( self::SCHEMA_VERSION_OPTION );
+    }
 }
 ```
 
 **Don't drop the table on `deactivate()`** — preserve user data. Drops belong
-in a separate uninstall.php only.
+in the module's `uninstall()` method (shown in the `Module` class above),
+which the plugin's root `uninstall.php` invokes via
+`Module\Manager::uninstall_all()` when StoreSuite is deleted.
 
 ### 3.4 Settings (Modules → Configure form) — `modules/customer-manager/includes/Settings.php`
 
@@ -538,10 +581,12 @@ Smoke test:
    - The dashboard sidebar shows the new menu item.
    - The top-nav tab appears (if `get_admin_tabs()` returns one).
    - `Modules → Configure` renders your settings schema (if any).
-   - Visiting `/storesuite-dashboard/<endpoint>/` returns the dashboard page
-     (not a 404) — flush rewrites if needed.
+   - Visiting `/storesuite-dashboard/<endpoint>/` renders your `load_template()`
+     output (not a 404 or blank page) — flush rewrites if needed.
 3. Deactivate. Confirm the menu/tab vanish, the option no longer lists the
    slug, and the DB table is preserved.
+4. Delete the plugin (or run its uninstall). Confirm your `uninstall()` ran:
+   the DB table is dropped and the module's options are gone.
 
 ---
 
@@ -555,6 +600,7 @@ PHP actions and filters the module commonly hooks:
 | `storesuite_dashboard_menus` | filter | Add a sidebar item. |
 | `storesuite_query_var_filter` | filter | Expose a new endpoint to `Rewrites`. |
 | `init` | action | Add rewrite endpoint via `add_rewrite_endpoint()`. |
+| `storesuite_load_custom_template` | action | Render the front-end page for your endpoint (fires for unmatched query vars). |
 | `rest_api_init` | action | Register module-owned REST controllers. |
 | `storesuite_module_<slug>_loaded` | action | Other modules can react to yours booting. |
 | `storesuite_module_activated` / `_deactivated` | action | Audit logs, cache busts. |
@@ -570,9 +616,10 @@ Module abstract methods to override (all optional unless noted):
 | `boot()` | — | **Required.** Register hooks. |
 | `get_description()` | `''` | Modules screen card body. |
 | `get_version()` | `'1.0.0'` | Modules screen version badge. |
-| `get_requires()` | `[]` | Reserved for future dependency checks. |
+| `get_requires()` | `[]` | Plugin basenames the module depends on. Enforced by the Manager: activation is refused and boot is skipped while any are inactive. |
 | `activate()` | no-op | One-shot setup (DB table, seed options). |
 | `deactivate()` | no-op | One-shot teardown (NEVER drop data). |
+| `uninstall()` | no-op | Permanent teardown (drop tables, delete options). Runs from root `uninstall.php`. |
 | `has_settings()` | `false` | Show Configure link on the card. |
 | `get_settings_schema()` | `[]` | Drives the Configure form. |
 | `get_settings()` | `[]` | Current values with defaults merged. |
