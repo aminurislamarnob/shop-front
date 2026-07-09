@@ -226,6 +226,17 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 												<li>
 													<a href="<?php echo esc_url( sprintf( storesuite_get_navigation_url( 'edit-order' ) . '%s', $order->get_id() ) ); ?>" class="dropdown-link"><?php echo esc_html__( 'Edit', 'storesuite' ); ?></a>
 												</li>
+												<?php
+												/**
+												 * Fires inside an order row's action dropdown.
+												 *
+												 * Allows plugins to add extra <li> action items (e.g. PDF-invoice
+												 * / packing-slip document links).
+												 *
+												 * @param WC_Order $order Current order.
+												 */
+												do_action( 'storesuite_order_list_row_actions', $order );
+												?>
 											</ul>
 										</div>
 									</td>

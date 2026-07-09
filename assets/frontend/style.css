@@ -5613,3 +5613,13 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   opacity: 0.55;
   cursor: not-allowed;
 }
+/* Order details "Documents" card (PDF-invoice / packing-slip integration). */
+.storesuite-order-documents .storesuite-order-documents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button {
+  justify-content: center;
+  width: 100%;
+}

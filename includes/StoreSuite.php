@@ -18,7 +18,7 @@ final class StoreSuite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.2.0';
+	public $version = '1.2.1';
 
 	/**
 	 * Instance of self
@@ -262,6 +262,7 @@ final class StoreSuite {
 		$this->container['storesuite_create_new_order']            = new Order\CreateNewOrder();
 		$this->container['storesuite_order_manager']               = new Order\OrderManager();
 		$this->container['storesuite_order_hooks']                 = new Order\OrderHooks();
+		$this->container['storesuite_pdf_invoices_integration']    = new Integration\PdfInvoicesIntegration();
 		$this->container['storesuite_coupon_controller']           = new Coupon\CouponController();
 		$this->container['storesuite_coupon_manager']              = new Coupon\CouponManager();
 		$this->container['storesuite_coupon_bulk_edit']            = new Coupon\CouponBulkEdit();
