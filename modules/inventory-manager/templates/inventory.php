@@ -47,6 +47,32 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 				null,
 				array( 'page_title' => __( 'Inventory', 'storesuite' ) )
 			);
+
+			// Low-stock summary banner (skipped while already filtering low-only).
+			if ( ! $storesuite_low_only ) {
+				$storesuite_low_count = StockRepository::get_paginated(
+					array(
+						'low_only' => true,
+						'per_page' => 1,
+						'paged'    => 1,
+					)
+				)['total'];
+				if ( $storesuite_low_count > 0 ) {
+					$storesuite_low_url = add_query_arg( 'low_only', '1', storesuite_get_navigation_url( 'inventory' ) );
+					?>
+					<div class="storesuite-bulk-edit-feedback storesuite-form-group storesuite-inventory-low-banner" role="status">
+						<span class="storesuite-badge storesuite-badge-warning"><?php echo esc_html( $storesuite_low_count ); ?></span>
+						<?php
+						printf(
+							/* translators: %s: link to the low-stock view */
+							esc_html__( 'product(s) are at or below their low-stock threshold. %s', 'storesuite' ),
+							'<a href="' . esc_url( $storesuite_low_url ) . '">' . esc_html__( 'View low stock', 'storesuite' ) . '</a>'
+						);
+						?>
+					</div>
+					<?php
+				}
+			}
 			?>
 
 			<div class="storesuite-table-header-part">
