@@ -30,6 +30,38 @@ class Main {
 		add_action( 'woocommerce_account_dashboard', array( $this, 'add_storesuite_dashboard_btn' ), 1 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_dashboard_btn_css' ), 20 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_css_variables' ), 20 );
+		add_filter( 'user_has_cap', array( $this, 'grant_storesuite_caps_to_managers' ), 10, 2 );
+	}
+
+	/**
+	 * Treat `manage_woocommerce` as implicitly holding every granular
+	 * `storesuite_{area}` capability.
+	 *
+	 * The granular caps back the per-area permission model
+	 * (see storesuite_current_user_can()). Most call sites go through that
+	 * helper, which already accepts manage_woocommerce — but a few check a
+	 * granular cap with the raw current_user_can() (e.g. DashboardMenu's per-item
+	 * `permission` key). Without this, a shop manager or admin would lose menu
+	 * items whose permission was set to a granular cap. Granting the caps on
+	 * demand keeps managers all-powerful while letting granular-permission
+	 * modules restrict individual staff roles.
+	 *
+	 * @param array $allcaps The user's current capabilities.
+	 * @param array $caps    The primitive caps being checked this call.
+	 * @return array
+	 */
+	public function grant_storesuite_caps_to_managers( $allcaps, $caps ) {
+		if ( empty( $allcaps['manage_woocommerce'] ) ) {
+			return $allcaps;
+		}
+
+		foreach ( (array) $caps as $cap ) {
+			if ( is_string( $cap ) && 0 === strpos( $cap, 'storesuite_' ) ) {
+				$allcaps[ $cap ] = true;
+			}
+		}
+
+		return $allcaps;
 	}
 
 	/**
