@@ -75,8 +75,86 @@ class Module extends BaseModule {
 		add_action( 'init', array( $this, 'register_endpoint' ) );
 		add_filter( 'storesuite_query_var_filter', array( $this, 'register_query_var' ) );
 		add_filter( 'storesuite_dashboard_menus', array( $this, 'register_menu' ), 20 );
+		add_action( 'storesuite_load_custom_template', array( $this, 'load_template' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
 		( new AjaxController() )->register();
+	}
+
+	/**
+	 * Render the Team screens when the `/employees/` endpoint is requested.
+	 *
+	 * A `view` query arg switches between the sub-screens (employees list,
+	 * roles editor, activity log) — all under the same endpoint.
+	 *
+	 * @param array $query_vars Current WP query vars.
+	 * @return void
+	 */
+	public function load_template( $query_vars ) {
+		if ( ! is_array( $query_vars ) || ! isset( $query_vars[ self::ENDPOINT ] ) ) {
+			return;
+		}
+
+		if ( ! storesuite_current_user_can( 'manage_employees' ) ) {
+			storesuite_get_template_part( 'global/no-permission' );
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view switch.
+		$view = isset( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : 'employees';
+		$view = in_array( $view, array( 'roles', 'activity' ), true ) ? $view : 'employees';
+
+		$files    = array(
+			'employees' => 'employees.php',
+			'roles'     => 'roles.php',
+			'activity'  => 'activity-log.php',
+		);
+		$template = $this->get_path() . '/templates/' . $files[ $view ];
+
+		if ( file_exists( $template ) ) {
+			$current_view = $view;
+			include $template;
+		}
+	}
+
+	/**
+	 * Enqueue the Team screen script on the employees endpoint.
+	 *
+	 * @return void
+	 */
+	public function enqueue_assets() {
+		if ( ! storesuite_is_endpoint_url( self::ENDPOINT ) ) {
+			return;
+		}
+
+		$handle = 'storesuite-employee-manager';
+		$src    = $this->get_url() . '/assets/employee.js';
+
+		wp_enqueue_script(
+			$handle,
+			$src,
+			array( 'jquery', 'storesuite_sweetalert2_script' ),
+			$this->get_version(),
+			true
+		);
+
+		wp_localize_script(
+			$handle,
+			'StoreSuiteEmployee',
+			array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'nonce'    => wp_create_nonce( AjaxController::NONCE ),
+				'listUrl'  => storesuite_get_navigation_url( self::ENDPOINT ),
+				'i18n'     => array(
+					'confirmDelete'    => __( 'Remove this employee? Their account is kept but loses dashboard access.', 'storesuite' ),
+					'confirmSuspend'   => __( 'Suspend this employee? They will be locked out until reactivated.', 'storesuite' ),
+					'confirmDeleteRole' => __( 'Delete this role? Members are moved to Customer.', 'storesuite' ),
+					'saving'           => __( 'Saving…', 'storesuite' ),
+					'success'          => __( 'Done', 'storesuite' ),
+					'error'            => __( 'Something went wrong', 'storesuite' ),
+				),
+			)
+		);
 	}
 
 	/**
