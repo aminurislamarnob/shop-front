@@ -9,7 +9,6 @@ import { formatValue } from '@woocommerce/number';
 import {
 	getReportTableQuery,
 	REPORTS_STORE_NAME,
-	SETTINGS_STORE_NAME,
 	QUERY_DEFAULTS,
 	OPTIONS_STORE_NAME,
 } from '@woocommerce/data';
@@ -22,6 +21,7 @@ import { stringify } from 'qs';
 import { CurrencyContext } from '@woocommerce/currency';
 import ReportTable from '../../components/report-table';
 import { getAdminSetting } from '../../../utils/admin-settings';
+import { getDefaultDateRange } from '../../../utils/date';
 
 const EMPTY_ARRAY = [];
 
@@ -153,9 +153,7 @@ const formatTableQuery = memoize(
 export default compose(
 	withSelect( ( select, props ) => {
 		const { query, filters, advancedFilters } = props;
-		const { woocommerce_default_date_range: defaultDateRange } = select(
-			SETTINGS_STORE_NAME
-		).getSetting( 'wc_admin', 'wcAdminSettings' );
+		const defaultDateRange = getDefaultDateRange( select );
 		const datesFromQuery = getCurrentDates( query, defaultDateRange );
 		const { getReportStats, getReportStatsError, isResolving } = select( REPORTS_STORE_NAME );
 

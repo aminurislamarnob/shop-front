@@ -41,7 +41,7 @@ class Rewrites {
 		$this->query_vars = apply_filters(
 			'storesuite_query_var_filter',
 			array(
-				// 'analytics'        => get_option( 'storesuite_myshop_analytics_endpoint', 'analytics' ),
+				'analytics'        => get_option( 'storesuite_myshop_analytics_endpoint', 'analytics' ),
 				'products'         => get_option( 'storesuite_myshop_products_endpoint', 'products' ),
 				'add-new-product'  => get_option( 'storesuite_myshop_new_product_endpoint', 'add-new-product' ),
 				'edit-product'     => get_option( 'storesuite_myshop_edit_product_endpoint', 'edit-product' ),
@@ -163,6 +163,13 @@ class Rewrites {
 			'top'
 		);
 
+		// Add rewrite rule for attribute terms list pagination.
+		add_rewrite_rule(
+			$this->store_front_base . '/attribute-terms/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&attribute-terms=1&paged=$matches[1]',
+			'top'
+		);
+
 		// Add rewrite rule for coupon list pagination.
 		add_rewrite_rule(
 			$this->store_front_base . '/coupons/page/([^/]+)/?$',
@@ -229,7 +236,7 @@ class Rewrites {
 				$title = ( $order ) ? sprintf( __( 'Order #%s', 'storesuite' ), $order->get_order_number() ) : '';
 				break;
 			case 'categories':
-				$title = __( 'Product Categories', 'storesuite' );
+				$title = __( 'Categories', 'storesuite' );
 				break;
 			case 'add-new-category':
 				$title = __( 'Add New Category', 'storesuite' );
@@ -238,7 +245,7 @@ class Rewrites {
 				$title = __( 'Edit Product Category', 'storesuite' );
 				break;
 			case 'tags':
-				$title = __( 'Product Tags', 'storesuite' );
+				$title = __( 'Tags', 'storesuite' );
 				break;
 			case 'add-new-tag':
 				$title = __( 'Add New Tag', 'storesuite' );
@@ -247,7 +254,7 @@ class Rewrites {
 				$title = __( 'Edit Product Tag', 'storesuite' );
 				break;
 			case 'brands':
-				$title = __( 'Product Brands', 'storesuite' );
+				$title = __( 'Brands', 'storesuite' );
 				break;
 			case 'add-new-brand':
 				$title = __( 'Add New Brand', 'storesuite' );
@@ -256,7 +263,7 @@ class Rewrites {
 				$title = __( 'Edit Product Brand', 'storesuite' );
 				break;
 			case 'attributes':
-				$title = __( 'Product Attributes', 'storesuite' );
+				$title = __( 'Attributes', 'storesuite' );
 				break;
 			case 'add-new-attribute':
 				$title = __( 'Add New Attribute', 'storesuite' );

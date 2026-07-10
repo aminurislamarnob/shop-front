@@ -1,47 +1,59 @@
-=== StoreSuite - A frontend dashboard to manage your WooCommerce store ===
+=== StoreSuite – AI-Powered WooCommerce Frontend Dashboard & Complete Store Management Solution ===
 Contributors: aminurislam01
-Tags: woocommerce, store management, shop manager, store suite, front-end shop manager
+Tags: frontend manager, shop manager, woocommerce order management, woocommerce product management, woocommerce ai
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Manage your WooCommerce store easily from a front-end dashboard.
+AI-assisted frontend dashboard to manage your WooCommerce store — products, orders, coupons, categories, and analytics in one place.
 
 == Description ==
 
 StoreSuite adds a frontend store management dashboard for WooCommerce. Give store managers one place to run the day-to-day: products, categories, tags, brands, coupons, orders, and key metrics—without switching between multiple admin screens.
 
-= Key Features =
+= 💎 Premium-grade features, completely free =
 
-* **Manage WooCommerce store easily** – Single dashboard for store operations
-* **Products** – List, add, and edit WooCommerce simple products
-* **Variable products** – Manage attributes and variations with bulk actions and generate-all-variations
-* **Product attributes** – Manage attributes and their terms (add, edit, list)
-* **Product export** – Export products to CSV with a configurable export modal
-* **Categories** – Manage product categories (add, edit, list)
-* **Tags** – Manage product tags (add, edit, list)
-* **Brands** – Manage product brands
-* **Coupons** – Create, edit, and manage WooCommerce coupons
-* **Orders** – View, create, and edit orders with customer and item details
-* **Dashboard quick analytics** – Store performance KPIs and leaderboards:
-  * Total sales, gross sales, net sales
-  * Orders count and average order value
-  * Products sold and variations sold
-  * Returns, discounted orders, net discount amount
-  * Tax and shipping totals, download counts
-  * Top products by items sold
-  * Top categories by items sold
-  * Top customers by total spend
-  * Top coupons by order count
+StoreSuite includes capabilities that other store-management dashboards often lock behind a Pro plan — at no cost:
+
+* 🤖 AI product content, image, and all-in-one generation
+* 🧩 Full variable products, attributes, and variations (with generate-all-variations)
+* 📊 Real-time analytics, KPIs, and leaderboards
+* 📈 A full Analytics suite with WooCommerce-admin report parity (Revenue, Orders, Products, and more)
+* 📱 Fully responsive on mobile, tablet, and desktop
+* 📤 CSV product export
+
+No feature gates. No trial limits. No upsell.
+
+= 🚀 Key Features =
+
+* 🖥️ **Manage WooCommerce store easily** – Single dashboard for store operations
+* 🤖 **AI content generation** – Draft product titles and descriptions with regenerate and history
+* 🪄 **AI all-in-one generator** – One hint drafts the title, short, and long description together
+* 🎨 **AI image generation** – Create featured and gallery images from a text prompt
+* 🧠 **AI settings** – Toggle AI per field and set custom instructions
+* 📦 **Products** – List, add, and edit all WooCommerce product types: simple, variable, grouped, and external/affiliate
+* 🧩 **Variable products** – Manage attributes and variations with bulk actions and generate-all-variations
+* 📋 **Product attributes** – Manage attributes and their terms (add, edit, list)
+* 📤 **CSV export** – Export product lists to CSV for reporting, accounting, or migration, with a configurable export modal
+* 🗂️ **Categories** – Manage product categories (add, edit, list)
+* 🏷️ **Tags** – Manage product tags (add, edit, list)
+* 🏢 **Brands** – Manage product brands
+* 🎟️ **Coupons** – Create, edit, and manage WooCommerce coupons
+* 🛒 **Orders** – View, create, and edit orders with customer and item details
+* 📊 **Real-time dashboard analytics** – Sales KPIs, net sales chart, top products, recent orders, and quick actions
+* 📈 **Analytics reports** – A full analytics suite with WooCommerce-admin parity: Revenue, Orders, Products, Variations, Categories, Coupons, Taxes, Downloads, Stock, and Customers reports, each with summary KPIs, an interactive line/bar chart, sortable and paginated data tables, advanced filters, date-range comparison, and CSV export
+* 📱 **Fully responsive** – The entire frontend dashboard and analytics reports adapt to mobile and desktop screens with an off-canvas sidebar, stacked cards, and touch-friendly controls
+* 🔑 **Bring your own AI** – Built on the WordPress 7.0 central AI connector; generation runs on the provider and keys you configure in WordPress
+* ⚡ **Built for WooCommerce HPOS** – Fully compatible with High-Performance Order Storage
 
 = How It Works =
 
 1. Install and activate StoreSuite (WooCommerce must be active).
-2. Create a page and add the shortcode `[storesuite_dashboard]`.
-3. In **WooCommerce → StoreSuite** settings, select that page as the dashboard page and save.
+2. Create a page and add the shortcode `[storesuite_dashboard]`. Normally, on plugin activation StoreSuite creates this dashboard page with the required shortcode and auto-selects it on the StoreSuite settings dashboard page for you.
+3. In **WooCommerce → StoreSuite → General** settings, if the dashboard page is not already auto-selected, select that page as the dashboard page and save.
 4. Visit the dashboard page when logged in with `manage_woocommerce` capability to manage your store.
 5. StoreSuite is compatible with WooCommerce High-Performance Order Storage (HPOS).
 
@@ -51,45 +63,45 @@ StoreSuite adds a frontend store management dashboard for WooCommerce. Give stor
 1. Install and activate WooCommerce if you have not already.
 2. In your WordPress admin, go to **Plugins → Add New**, search for "StoreSuite", and click **Install Now**, then **Activate**.
 3. Alternatively, download the plugin zip and upload it to `/wp-content/plugins/` and activate from **Plugins**.
-4. Go to **Settings → Permalinks** and click **Save Changes** to flush rewrite rules.
-5. Create a new page (e.g. "Store Dashboard"), add the shortcode `[storesuite_dashboard]`, and publish.
-6. Go to **WooCommerce → StoreSuite** in the admin menu.
-7. In **Select Dashboard Page**, choose the page you created and click **Save Changes**.
+4. StoreSuite flushes rewrite rules automatically on activation. If dashboard URLs return 404s, go to **Settings → Permalinks** and click **Save Changes** to refresh them.
+5. On activation, StoreSuite normally creates the dashboard page with the `[storesuite_dashboard]` shortcode automatically. If it was not created, add a new page (e.g. "Store Dashboard"), insert the shortcode `[storesuite_dashboard]`, and publish.
+6. Go to **WooCommerce → StoreSuite → General** in the admin menu.
+7. In **Select Dashboard Page**, if the dashboard page is not already auto-selected, choose the page and click **Save Changes**.
 8. Visit that page when logged in as a user with store management permissions to use the dashboard.
 
 = Permalinks =
 
-After installing or reactivating StoreSuite, go to **Settings → Permalinks** and click **Save Changes** so dashboard URLs work correctly.
+Normally StoreSuite flushes rewrite rules automatically on activation and update. If dashboard URLs return 404s, go to **Settings → Permalinks** and click **Save Changes** so the routes refresh and dashboard URLs work correctly.
 
 == Screenshots ==
 
 1. General Settings
-2. Dashboard Settings
-3. Predefined/Custom Color Palette Settings
-4. Paginations Settings
+2. Predefined/Custom Color Palette Settings
+3. Paginations Settings
+4. AI Settings
 5. Frontend Dashboard
 6. Products List
-7. Products Filter
-8. Add New Product
-9. Edit Product
-10. Orders List
-11. Orders Filter
-12. Orders Details View
-13. Edit Order
-14. Add New Order
-15. Product Categories List
-16. Add New Product Category
-17. Edit Product Category
-18. Product Brands List
-19. Add New Product Brand
-20. Edit Product Brand
-21. Product Tags List
-22. Add New Product Tag
-23. Edit Product Tag
-24. Coupons List
-25. Add New Coupon
-26. Edit Coupon
-27. Account Settings
+7. Add New Product
+8. Edit Simple Product
+9. Edit Variable Product
+10. Product Categories List
+11. Add New Product Category & Same UI for Edit Category
+12. Product Brands List
+13. Add New Product Brand & Same UI for Edit Brand
+14. Product Tags List
+15. Add New Product Tag & Same UI for Edit Tag
+16. Product Attributes List
+17. Attribute Terms List with Add/Edit terms
+18. Orders List
+19. Orders Details View
+20. Add New Order
+21. Edit Order
+22. Coupons List
+23. Add New Coupon & Same UI for Edit Coupon
+24. Account Settings Profile Tab
+25. Account Settings Address Tab
+26. Account Settings Password Tab
+
 
 == Frequently Asked Questions ==
 
@@ -103,7 +115,7 @@ Users with the `manage_woocommerce` capability (e.g. Administrators and Shop Man
 
 = Is it mandatory to update permalinks after installing the plugin? =
 
-Yes. Go to **Settings → Permalinks** and click **Save Changes** after activation so dashboard routes work properly.
+No. StoreSuite flushes rewrite rules automatically on activation and update. Only if dashboard URLs return 404s, go to **Settings → Permalinks** and click **Save Changes** so the routes refresh.
 
 = How do I set the dashboard page? =
 
@@ -114,6 +126,36 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.2.0 =
+* Add a full **Analytics** suite with WooCommerce-admin report parity: Revenue, Orders, Products, Variations, Categories, Coupons, Taxes, Downloads, Stock, and Customers reports.
+* Each report includes summary KPIs, an interactive chart (line/bar; by day, week, month, quarter, or year), sortable and paginated data tables, and CSV export.
+* Add date-range comparison (previous period / previous year) and per-report advanced filters (e.g. product, category, coupon, order status, customer type) for WooCommerce Analytics parity.
+* Add a "Data status" import bar and re-skin every report to match the StoreSuite dashboard design language.
+* Make the Analytics reports fully responsive on mobile: the report header stacks, summary stats collapse to one per row, charts align to the page gutter, and the table actions row wraps so nothing is clipped.
+* Link analytics order numbers to the StoreSuite order-details page and rewrite WooCommerce admin URLs to their frontend dashboard equivalents.
+
+= 1.1.4 =
+* Make the entire frontend dashboard responsive for mobile and tablet viewports.
+* Off-canvas sidebar on mobile with overlay; all list tables collapse to stacked label/value cards; tables scroll horizontally on tablet.
+* Dashboard home: full-width filters, stacked analytics tables, 2-column quick-actions grid.
+* Product, order, coupon, category, tag, brand, and attribute pages: toolbar actions, forms, and buttons adapt to available width on every screen size.
+* On mobile, the primary Add button moves beside the page title; Export/Filter/Search toolbar buttons become compact icon-only buttons.
+* Shorten list page titles: "Product Categories" → "Categories", "Product Tags" → "Tags", "Product Brands" → "Brands", "Product Attributes" → "Attributes".
+* Add `storesuite_categories_toolbar_add_button`, `storesuite_tags_toolbar_add_button`, `storesuite_brands_toolbar_add_button`, and `storesuite_attributes_toolbar_add_button` action hooks for customising the Add button in each list toolbar.
+
+= 1.1.3 =
+* Fix the Brands and Categories lists showing stale data on the frontend dashboard after brands or categories were added, edited, or deleted outside StoreSuite — for example from the WordPress admin, the WooCommerce REST API, WP-CLI, or a product import. The cached list now refreshes immediately regardless of where the change is made.
+
+= 1.1.2 =
+* Add AI product generation: per-field "Generate with AI" buttons for the product title, short description, and long description, with an editable suggestion modal, regenerate, and a history pager to step through suggestions.
+* Add an all-in-one "Generate with AI" generator on the Add New and Edit Product pages: enter one hint to draft the title, short description, and long description together, each with its own regenerate and history pager.
+* Add AI product image generation for the featured image and gallery images: describe the image, preview it, regenerate, and insert it straight into the media library.
+* Add an AI settings page to enable or disable generation per field and to set custom system instructions for each text field and for images.
+* Prefix the product slug field with the live permalink base (e.g. https://example.com/product/) on the Add New and Edit Product pages.
+* Add a link beside the Edit Product page title that opens the live product page in a new tab.
+* Reset the product image and gallery previews after a product is successfully added.
+* AI generation features require WordPress 7.0 or later (built on the WordPress core AI Client) and are hidden automatically when unavailable.
 
 = 1.1.1 =
 * Prevent browsers from autofilling the account password fields on load.

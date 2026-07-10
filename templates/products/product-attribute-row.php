@@ -123,13 +123,13 @@ $is_editing = empty( $attr_options );
 			</div>
 		</div>
 	</td>
-	<td class="storesuite-attribute-col-visible">
+	<td class="storesuite-attribute-col-visible" data-title="<?php esc_attr_e( 'Visible', 'storesuite' ); ?>">
 		<div class="storesuite-form-group storesuite-form-switch storesuite-attribute-variation-switch">
 			<input id="attribute_visibility_<?php echo esc_attr( $i ); ?>" type="checkbox" name="attribute_visibility[<?php echo esc_attr( $i ); ?>]" value="1" <?php checked( $is_visible ); ?>>
 			<label for="attribute_visibility_<?php echo esc_attr( $i ); ?>" aria-label="<?php esc_attr_e( 'Visible on the product page', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Visible on the product page', 'storesuite' ); ?>"></label>
 		</div>
 	</td>
-	<td class="storesuite-attribute-col-variation">
+	<td class="storesuite-attribute-col-variation" data-title="<?php esc_attr_e( 'Variation', 'storesuite' ); ?>">
 		<div class="storesuite-form-group storesuite-form-switch storesuite-attribute-variation-switch">
 			<input id="attribute_variation_<?php echo esc_attr( $i ); ?>" type="checkbox" name="attribute_variation[<?php echo esc_attr( $i ); ?>]" value="1" <?php checked( $is_variation ); ?>>
 			<label for="attribute_variation_<?php echo esc_attr( $i ); ?>" aria-label="<?php esc_attr_e( 'Used for variations', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Used for variations', 'storesuite' ); ?>"></label>

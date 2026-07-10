@@ -537,6 +537,41 @@ template {
   border: 1px solid var(--storesuite-primary-bg);
 }
 
+/* Permalink field: a static URL-base prefix joined to the editable slug input. */
+.my-storesuite-container .storesuite-permalink-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 6px;
+  background-color: #fff;
+  overflow: hidden;
+  transition: .3s;
+}
+.my-storesuite-container .storesuite-permalink-group:focus-within {
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-permalink-prefix {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #6c757d;
+  background-color: #f5f5f5;
+  border-right: 1px solid var(--storesuite-border-color);
+  white-space: nowrap;
+  user-select: none;
+}
+.my-storesuite-container .storesuite-permalink-group .storesuite-form-control,
+.my-storesuite-container .storesuite-permalink-group .storesuite-form-control:focus {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
 .my-storesuite-container .storesuite-password-field {
   position: relative;
 }
@@ -602,12 +637,6 @@ template {
   width: 100%;
   margin-right: auto;
   margin-left: auto;
-}
-
-@media (min-width: 1920px) {
-  .my-storesuite-page-content {
-    max-width: 1920px;
-  }
 }
 
 /*Left Navigation*/
@@ -928,6 +957,8 @@ form.storesuite-filters-form .row {
 .my-storesuite-tick {
   position: absolute;
   top: 0;
+  left: 0;
+  bottom: 0;
   color: #fff;
   transition: .3s;
   opacity: 0;
@@ -1104,6 +1135,11 @@ span.order-failed {
   line-height: 1.15;
   border: 1px solid var(--storesuite-primary-bg);
   justify-content: center;
+}
+.my-storesuite-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 .my-storesuite-button svg{
   fill: var(--storesuite-button-text-color);
@@ -1918,7 +1954,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   white-space: normal;
 }
 
-@media (max-width: 782px) {
+@media (max-width: 767px) {
   .my-storesuite-container.storesuite-sidebar-collapsed {
     --storesuite-sidebar-current-width: var(--storesuite-sidebar-width-expanded);
   }
@@ -1982,6 +2018,13 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
 }
 .my-storesuite-page-content {
   padding: 24px;
+}
+
+/* Dashboard home mounts a React layout (.woocommerce-layout__main) that already
+   supplies its own 24px gutter. Drop the outer page padding here so the
+   left/right (and top/bottom) gap isn't doubled to 48px. */
+.storesuite-main-dashboard {
+  padding: 0;
 }
 
 /*Header design*/
@@ -2072,7 +2115,7 @@ ul.storesuite-dashboard-menu li.has-submenu.is-open > a svg:not(.storesuite-menu
   align-items: center;
 }
 span.storesuite-sidebar-trigger {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   cursor: pointer;
 }
@@ -2155,6 +2198,24 @@ span.storesuite-sidebar-trigger svg {
   font-size: 20px;
   color: var(--storesuite-text-color);
 }
+.storesuite-title-view-link {
+  display: inline-flex;
+  align-items: center;
+  /* Hug the page title; let space-between push other header items right. */
+  margin-left: 8px;
+  margin-right: auto;
+  color: var(--storesuite-primary-bg);
+  transition: color 0.2s ease;
+}
+.storesuite-title-view-link:hover {
+  color: var(--storesuite-text-color);
+}
+.storesuite-title-view-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;
+}
 .storesuite-dashboard-braedcrumb ul {
   display: flex;
   align-items: center;
@@ -2200,7 +2261,6 @@ span.storesuite-sidebar-trigger svg {
   margin: 0;
   position: relative;
   vertical-align: middle;
-  width: 100%!important;
 }
 .storesuite-main-dashboard .select2-container .select2-selection--single {
   height: 38px;
@@ -2466,63 +2526,6 @@ span.select2-selection__clear {
 }
 
 /* Make internal dividers single-line like WooCommerce summary */
-@media (min-width: 576px) {
-  .storesuite-kpi-summary .col .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(2n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 2) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 768px) {
-  .storesuite-kpi-summary .col:nth-child(2n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(3n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 3) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 992px) {
-  .storesuite-kpi-summary .col:nth-child(3n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(4n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 4) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (min-width: 1200px) {
-  .storesuite-kpi-summary .col:nth-child(4n) .storesuite-kpi-card {
-    border-right: 1px solid var(--storesuite-border-color);
-  }
-  .storesuite-kpi-summary .col:nth-child(5n) .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:nth-last-child(-n + 5) .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
-@media (max-width: 575.98px) {
-  .storesuite-kpi-summary .col .storesuite-kpi-card {
-    border-right: none;
-  }
-  .storesuite-kpi-summary .col:last-child .storesuite-kpi-card {
-    border-bottom: none;
-  }
-}
-
 .storesuite-kpi-card--up .storesuite-kpi-change {
   color: #059669;
 }
@@ -4016,10 +4019,9 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .my-storesuite-wrapper .storesuite-form-group.storesuite-bulk-order-actions {
     gap: 10px;
 }
-.storesuite-bulk-order-actions select.storesuite-form-control{
-  width: 255px;
+.storesuite-bulk-order-actions{
+  max-width: 250px;
 }
-
 
 /* Hide the default checkbox */
 .storesuite-form-group.storesuite-form-switch input[type="checkbox"] {
@@ -4116,17 +4118,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 }
 
 /* Account settings layout: fixed-width nav + flexible content */
-@media (min-width: 768px) {
-  .storesuite-account-layout > .col-md-3 {
-    flex: 0 0 305px;
-    max-width: 305px;
-  }
-  .storesuite-account-layout > .col-md-9 {
-    flex: 1 1 0;
-    max-width: 100%;
-  }
-}
-
 /* Account settings sidebar nav */
 .storesuite-account-nav {
   padding: 8px;
@@ -4220,12 +4211,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
   width: 100%;
   padding: 0 8px;
   margin: 0 0 16px;
-}
-@media (min-width: 768px) {
-  .storesuite-address-grid .form-row-first,
-  .storesuite-address-grid .form-row-last {
-    width: 50%;
-  }
 }
 .storesuite-address-grid .form-row label {
   display: block;
@@ -4454,8 +4439,8 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-filter-offcanvas {
   position: fixed;
   top: 0;
-  right: -100%;
-  width: 100%;
+  right: -100vw;
+  width: 100vw;
   max-width: 400px;
   height: 100vh;
   background-color: #fff;
@@ -4536,17 +4521,6 @@ table.storesuite-table.order-items .wc-order-item-thumbnail img {
 .storesuite-filter-toggle svg{
   width: 14px;
   height: 14px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .storesuite-filter-offcanvas {
-    max-width: 100%;
-  }
-
-  .storesuite-filter-toggle {
-    display: inline-flex !important;
-  }
 }
 
 /* Scrollbar styling for off-canvas */
@@ -4711,6 +4685,12 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 }
 
 /* Product bulk edit modal */
+/* SweetAlert2 (z-index 1060 by default) must sit above the modal overlay
+   (100050) so alerts triggered from inside a modal stay visible. It renders on
+   <body>, so this rule is intentionally not scoped to .my-storesuite-container. */
+.swal2-container {
+  z-index: 100060 !important;
+}
 .storesuite-product-bulk-modal-overlay {
   position: fixed;
   inset: 0;
@@ -4779,7 +4759,9 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 }
 
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost {
   flex-shrink: 0;
   box-sizing: border-box;
   width: 30px;
@@ -4803,14 +4785,20 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
 .storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:hover,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost:focus-visible {
   color: #fff;
   background-color: rgb(244, 63, 94);
   border-color: rgb(244, 63, 94);
 }
 
 .storesuite-product-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg,
-.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg {
+.storesuite-product-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg,
+.storesuite-list-quick-edit-modal-close.my-storesuite-button.storesuite-button-ghost svg,
+.storesuite-coupon-bulk-modal-close.my-storesuite-button.storesuite-button-ghost svg {
   display: block;
   width: 20px;
   height: 20px;
@@ -4933,11 +4921,6 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
   margin-bottom: 0.5rem;
 }
 
-@media (min-width: 768px) {
-  .storesuite-product-bulk-edit-scroll .storesuite-bulk-wc-dimensions-row .storesuite-form-control {
-    margin-bottom: 0;
-  }
-}
 
 .storesuite-product-bulk-modal-footer {
   display: flex;
@@ -5002,6 +4985,11 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 /* Product quick edit modal: wider dialog than bulk edit */
 .storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
   max-width: 920px;
+}
+
+/* The taxonomy/attribute quick edit forms are single column, so use a narrower dialog. */
+.storesuite-list-quick-edit-modal .storesuite-product-bulk-modal-dialog.storesuite-product-quick-edit-modal-dialog {
+  max-width: 480px;
 }
 
 .storesuite-product-quick-edit-modal-scroll {
@@ -5381,4 +5369,247 @@ a.my-storesuite-button.storesuite-add-downloadable-file {
   background: transparent;
   font-size: 13px;
   color: #ef4444;
+}
+
+/* AI "Generate with AI" buttons on the product form. */
+.my-storesuite-container .storesuite-form-group label:has(.storesuite-ai-generate) {
+  display: flex;
+  align-items: center;
+}
+/* Shared styling for the small AI action buttons (field label, per-field
+   regenerate, and image). Keep them visually identical; per-button deltas live
+   in their own rules below. */
+.my-storesuite-container .storesuite-ai-generate,
+.my-storesuite-container .storesuite-ai-field-regenerate,
+.my-storesuite-container .storesuite-ai-image-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  cursor: pointer;
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 10%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--storesuite-primary-bg) 30%, transparent);
+  border-radius: 4px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.my-storesuite-container .storesuite-ai-generate:hover:not(:disabled),
+.my-storesuite-container .storesuite-ai-field-regenerate:hover:not(:disabled),
+.my-storesuite-container .storesuite-ai-image-generate:hover:not(:disabled) {
+  color: var(--storesuite-button-text-color);
+  background: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-ai-generate:disabled,
+.my-storesuite-container .storesuite-ai-field-regenerate:disabled,
+.my-storesuite-container .storesuite-ai-image-generate:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-generate .storesuite-ai-icon,
+.my-storesuite-container .storesuite-ai-field-regenerate .storesuite-ai-icon,
+.my-storesuite-container .storesuite-ai-image-generate .storesuite-ai-icon {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+/* The field-label "Generate with AI" button pushes to the row's trailing edge. */
+.my-storesuite-container .storesuite-ai-generate {
+  margin-left: auto;
+}
+/* The explicit display on buttons overrides the UA [hidden] rule, so restore it. */
+.my-storesuite-container .my-storesuite-button[hidden],
+.my-storesuite-container .storesuite-ai-bundle-step[hidden] {
+  display: none;
+}
+/* Per-field "Regenerate" buttons inside the bundle result step. */
+.my-storesuite-container
+  .storesuite-form-group
+  label:has(.storesuite-ai-field-regenerate) {
+  display: flex;
+  align-items: center;
+}
+/* Right-aligned group holding the per-field history pager and Regenerate. */
+.my-storesuite-container .storesuite-ai-field-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+/* Per-field "‹ n/m ›" history pager. */
+.my-storesuite-container .storesuite-ai-field-pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.my-storesuite-container .storesuite-ai-field-pager button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--storesuite-text-color);
+  background: #fff;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 4px;
+}
+.my-storesuite-container .storesuite-ai-field-pager button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-field-pager-status {
+  min-width: 30px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  color: var(--storesuite-text-color);
+}
+.my-storesuite-container .storesuite-ai-field-regenerate .la-spin {
+  animation: storesuite-ai-spin 0.8s linear infinite;
+}
+/* Small "AI" image button beside the Product Image label. */
+.my-storesuite-container label.storesuite-ai-image-label {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+/* Generated image preview inside the image modal. */
+.my-storesuite-container .storesuite-ai-image-preview {
+  margin-top: 14px;
+  text-align: center;
+}
+.my-storesuite-container .storesuite-ai-image-preview img {
+  max-width: 100%;
+  max-height: 360px;
+  border-radius: 6px;
+  border: 1px solid var(--storesuite-border-color);
+}
+/* Global "Generate with AI" launcher in the page header. */
+.my-storesuite-container .storesuite-ai-bundle-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--storesuite-primary-bg);
+  background: color-mix(in srgb, var(--storesuite-primary-bg) 12%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--storesuite-primary-bg) 24%,
+    transparent
+  );
+}
+.my-storesuite-container .storesuite-ai-bundle-launch:hover {
+  color: var(--storesuite-button-text-color);
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg);
+}
+.my-storesuite-container .storesuite-ai-bundle-launch svg {
+  fill: currentColor;
+}
+.my-storesuite-container .storesuite-ai-bundle-launch .storesuite-ai-icon {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+/* Subtitle and pager share one row: subtitle left, pager right. */
+.my-storesuite-container .storesuite-ai-modal-subhead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 12px;
+}
+.my-storesuite-container .storesuite-ai-modal-subtitle {
+  margin: 0 auto 0 0;
+  font-size: 13px;
+  color: var(--storesuite-text-color-light);
+}
+.my-storesuite-container .storesuite-ai-modal-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.my-storesuite-container .storesuite-ai-modal-pager button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--storesuite-text-color);
+  background: #fff;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 4px;
+}
+.my-storesuite-container .storesuite-ai-modal-pager button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.my-storesuite-container .storesuite-ai-pager-icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+.my-storesuite-container .storesuite-ai-pager-status {
+  min-width: 34px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--storesuite-text-color);
+}
+.my-storesuite-container .storesuite-ai-generate .la-spin {
+  animation: storesuite-ai-spin 0.8s linear infinite;
+}
+@keyframes storesuite-ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* AI generation skeleton loader. Reuses the shimmer placeholder design from the
+   dashboard skeletons (src/dashboard/stylesheets/_index.scss), adapted for the
+   frontend AI modals where the result will appear. */
+@keyframes storesuite-skeleton-shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+.my-storesuite-container .storesuite-skeleton {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: storesuite-skeleton-shimmer 1.4s infinite;
+}
+/* Stacked text lines (suggestion modal). */
+.my-storesuite-container .storesuite-skeleton-lines .storesuite-skeleton {
+  height: 14px;
+  margin-bottom: 10px;
+}
+.my-storesuite-container .storesuite-skeleton-lines .storesuite-skeleton:last-child {
+  width: 60%;
+  margin-bottom: 0;
+}
+/* Image placeholder (image modal preview). */
+.my-storesuite-container .storesuite-skeleton-image {
+  height: 240px;
+  margin-top: 14px;
+}
+/* Inputs in the AI modals read as disabled while a request is in flight. */
+#storesuite-ai-modal .storesuite-form-control[readonly],
+#storesuite-ai-prompt-modal .storesuite-form-control[readonly],
+#storesuite-ai-image-modal .storesuite-form-control[readonly],
+#storesuite-ai-bundle-modal .storesuite-form-control[readonly] {
+  opacity: 0.55;
+  cursor: not-allowed;
 }

@@ -22,6 +22,7 @@ import GeneralSettings from './Components/GeneralSettings';
 import ModulesSettings from './Components/ModulesSettings';
 import ModuleSettings from './Components/ModuleSettings';
 import PaginationSettings from './Components/PaginationSettings';
+import AISettings from './Components/AISettings';
 
 /**
  * Module routes are contributed via the `storesuite_admin_routes`
@@ -120,6 +121,7 @@ const App = () => {
 							path="pagination-settings"
 							element={ <PaginationSettings /> }
 						/>
+						<Route path="ai-settings" element={ <AISettings /> } />
 						<Route path="modules" element={ <ModulesSettings /> } />
 						<Route
 							path="modules/:slug"

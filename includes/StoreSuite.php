@@ -18,7 +18,7 @@ final class StoreSuite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.1.1';
+	public $version = '1.2.0';
 
 	/**
 	 * Instance of self
@@ -271,9 +271,12 @@ final class StoreSuite {
 		$this->container['storesuite_product_tags']                = new ProductTag\Tags();
 		$this->container['storesuite_product_tag_controller']      = new ProductTag\TagController();
 		$this->container['storesuite_product_attribute_controller'] = new ProductAttribute\AttributeController();
+		$this->container['storesuite_list_actions']                = new ListTable\ListActions();
 		$this->container['storesuite_product_bulk_edit']           = new Product\ProductBulkEdit();
 		$this->container['storesuite_product_quick_edit']          = new Product\ProductQuickEdit();
 		$this->container['storesuite_product_controller']          = new Product\ProductController();
+		$this->container['storesuite_product_ai']                  = new Product\ProductAI();
+		$this->container['storesuite_product_image_ai']            = new Product\ProductImageAI();
 		$this->container['storesuite_product_export_controller']   = new Product\ProductExportController();
 		$this->container['storesuite_product_hooks']               = new Product\ProductHooks();
 		$this->container['storesuite_variation_ajax']              = new Product\VariationAjax();
@@ -283,6 +286,7 @@ final class StoreSuite {
 		$this->container['storesuite_order_hooks']                 = new Order\OrderHooks();
 		$this->container['storesuite_coupon_controller']           = new Coupon\CouponController();
 		$this->container['storesuite_coupon_manager']              = new Coupon\CouponManager();
+		$this->container['storesuite_coupon_bulk_edit']            = new Coupon\CouponBulkEdit();
 		$this->container['storesuite_account_controller']          = new Account\AccountController();
 		$this->container['storesuite_handle_paginations']          = new HandlePaginations();
 

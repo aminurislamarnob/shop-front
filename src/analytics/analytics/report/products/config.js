@@ -1,6 +1,6 @@
 import { __, _x } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
-import { getProductLabels } from '../../../lib/async-requests';
+import { getProductLabels, getVariationLabels } from '../../../lib/async-requests';
 
 export const charts = applyFilters( 'storesuite_analytics_products_report_charts', [
 	{ key: 'items_sold',  label: __( 'Items sold', 'storesuite' ),  order: 'desc', orderby: 'items_sold',  type: 'number' },
@@ -58,6 +58,53 @@ export const filters = applyFilters( 'storesuite_analytics_products_report_filte
 						helpText:    __( 'Check at least two products below to compare', 'storesuite' ),
 						placeholder: __( 'Search for products to compare', 'storesuite' ),
 						title:       __( 'Compare Products', 'storesuite' ),
+						update:      __( 'Compare', 'storesuite' ),
+					},
+				},
+			},
+		],
+	},
+	{
+		// Secondary filter shown only when viewing a single variable product,
+		// letting the report drill into that product's variations.
+		showFilters:  ( query ) =>
+			'single_product' === query.filter && !! query.products && query[ 'is-variable' ],
+		staticParams: [ 'filter', 'products', 'chartType', 'paged', 'per_page' ],
+		param:        'filter-variations',
+		filters: [
+			{ label: __( 'All variations', 'storesuite' ), chartMode: 'item-comparison', value: 'all' },
+			{
+				label:     __( 'Single variation', 'storesuite' ),
+				value:     'select_variation',
+				subFilters: [
+					{
+						component: 'Search',
+						value:     'single_variation',
+						path:      [ 'select_variation' ],
+						settings: {
+							type:      'variations',
+							param:     'variations',
+							getLabels: getVariationLabels,
+							labels: {
+								placeholder: __( 'Type to search for a variation', 'storesuite' ),
+								button:      __( 'Single variation', 'storesuite' ),
+							},
+						},
+					},
+				],
+			},
+			{
+				label:     __( 'Comparison', 'storesuite' ),
+				value:     'compare-variations',
+				chartMode: 'item-comparison',
+				settings: {
+					type:      'variations',
+					param:     'variations',
+					getLabels: getVariationLabels,
+					labels: {
+						helpText:    __( 'Check at least two variations below to compare', 'storesuite' ),
+						placeholder: __( 'Search for variations to compare', 'storesuite' ),
+						title:       __( 'Compare Variations', 'storesuite' ),
 						update:      __( 'Compare', 'storesuite' ),
 					},
 				},

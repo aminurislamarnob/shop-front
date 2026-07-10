@@ -41,6 +41,10 @@ class Upgrader {
 			$this->migrate_to_1_1_0();
 		}
 
+		if ( version_compare( $stored, '1.1.4', '<' ) ) {
+			$this->migrate_to_1_1_4();
+		}
+
 		update_option( self::DB_VERSION_OPTION, $current );
 	}
 
@@ -60,6 +64,20 @@ class Upgrader {
 	 * @return void
 	 */
 	private function migrate_to_1_1_0() {
+		update_option( 'storesuite_flush_rewrite_rules', 1 );
+	}
+
+	/**
+	 * Schedule a rewrite-rules flush for the attribute terms pagination rule
+	 * added in 1.1.4.
+	 *
+	 * Without a flush, existing installs would 404 on
+	 * `attribute-terms/page/N` until permalinks were saved by hand. Reuses the
+	 * same `storesuite_flush_rewrite_rules` flag consumed on init.
+	 *
+	 * @return void
+	 */
+	private function migrate_to_1_1_4() {
 		update_option( 'storesuite_flush_rewrite_rules', 1 );
 	}
 }

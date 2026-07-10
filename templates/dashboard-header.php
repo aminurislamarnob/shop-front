@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 <header class="storesuite-dashboard-header">
-	<div class="row align-items-center">
-		<div class="col-md-6">
+	<div class="row align-items-center justify-content-between">
+		<div class="col-auto">
 			<span
 				class="storesuite-sidebar-trigger"
 				role="button"
@@ -23,11 +23,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M24,3c0,.55-.45,1-1,1H1c-.55,0-1-.45-1-1s.45-1,1-1H23c.55,0,1,.45,1,1ZM7,20H1c-.55,0-1,.45-1,1s.45,1,1,1H7c.55,0,1-.45,1-1s-.45-1-1-1ZM15,11H1c-.55,0-1,.45-1,1s.45,1,1,1H15c.55,0,1-.45,1-1s-.45-1-1-1Z"/></svg>
 			</span>
 		</div>
-		<div class="col-md-6">
+		<div class="col-auto">
 			<div class="storesuite-header-right">
 				<a href="<?php echo esc_url( get_home_url() ); ?>" class="my-storesuite-button" target="_blank">
 					<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="24" height="24"><path d="M20,11v8c0,2.757-2.243,5-5,5H5c-2.757,0-5-2.243-5-5V9c0-2.757,2.243-5,5-5H13c.552,0,1,.448,1,1s-.448,1-1,1H5c-1.654,0-3,1.346-3,3v10c0,1.654,1.346,3,3,3H15c1.654,0,3-1.346,3-3V11c0-.552,.448-1,1-1s1,.448,1,1ZM21,0h-7c-.552,0-1,.448-1,1s.448,1,1,1h6.586L8.293,14.293c-.391,.391-.391,1.023,0,1.414,.195,.195,.451,.293,.707,.293s.512-.098,.707-.293L22,3.414v6.586c0,.552,.448,1,1,1s1-.448,1-1V3c0-1.654-1.346-3-3-3Z"/></svg>
-					<?php esc_html_e( 'Visit Home', 'storesuite' ); ?>
+					<span class="storesuite-button-label"><?php esc_html_e( 'Visit Home', 'storesuite' ); ?></span>
 				</a>
 				<?php $storesuite_shop_url = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : get_home_url(); ?>
 				<a href="<?php echo esc_url( $storesuite_shop_url ); ?>" class="storesuite-header-icon-link" target="_blank" aria-label="<?php esc_attr_e( 'Visit Store', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Visit Store', 'storesuite' ); ?>">

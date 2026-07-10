@@ -202,6 +202,7 @@
 		 * @param {string} [options.dialogSelector]
 		 * @param {string} [options.closeSelector] Delegated selector for close controls.
 		 * @param {boolean} [options.fade] Opacity fade (requires .storesuite-modal-fade CSS on overlay).
+		 * @param {boolean} [options.closeOnOverlayClick] Close when the backdrop is clicked. Defaults to true.
 		 */
 		initOverlay: function ( $overlay, options ) {
 			options = options || {};
@@ -209,6 +210,7 @@
 			var closeSelector =
 				options.closeSelector ||
 				'.storesuite-modal-cancel, .storesuite-modal-close';
+			var closeOnOverlayClick = options.closeOnOverlayClick !== false;
 
 			if ( $overlay.data( 'storesuite-modal-a11y-bound' ) ) {
 				return;
@@ -254,11 +256,13 @@
 				}
 			} );
 
-			$overlay.on( 'click.storesuiteModal', function ( e ) {
-				if ( e.target === $overlay[ 0 ] ) {
-					self.close( $overlay );
-				}
-			} );
+			if ( closeOnOverlayClick ) {
+				$overlay.on( 'click.storesuiteModal', function ( e ) {
+					if ( e.target === $overlay[ 0 ] ) {
+						self.close( $overlay );
+					}
+				} );
+			}
 
 			$overlay.on(
 				'click.storesuiteModal',
@@ -291,6 +295,25 @@
 			this.handleFilterOffcanvas(); // Handle filter off-canvas
 			this.handleOrderFilterOffcanvas(); // Handle order filter off-canvas
 			this.handleBulkActionCheckbox(); // Handle bulk action checkbox
+			this.handleSearchToggle(); // Toggle the search box on mobile
+		},
+		handleSearchToggle: function () {
+			var searchToggle = $( '#storesuite-search-toggle' );
+			var toolbar = $( '.storesuite-products-toolbar' );
+
+			searchToggle.on( 'click', function ( event ) {
+				event.preventDefault();
+				var isOpen = toolbar
+					.toggleClass( 'storesuite-search-open' )
+					.hasClass( 'storesuite-search-open' );
+				searchToggle.attr(
+					'aria-expanded',
+					isOpen ? 'true' : 'false'
+				);
+				if ( isOpen ) {
+					toolbar.find( '#search_by' ).trigger( 'focus' );
+				}
+			} );
 		},
 		handleBulkActionCheckbox: function () {
 			$( '#cb-select-all-orders' ).on( 'click', function () {
@@ -829,7 +852,7 @@
 			} );
 		},
 		handleOrderFilterOffcanvas: function () {
-			var orderFilterToggle = $( '#storesuite-order-filter-toggle' );
+			var orderFilterToggle = $( '#storesuite-order-filter-toggle, #storesuite-order-filter-toggle-title' );
 			var orderFilterOffcanvas = $(
 				'#storesuite-order-filter-offcanvas'
 			);
