@@ -48,7 +48,16 @@ class Main {
 		$valid_pages = array( 'admin-ajax.php', 'admin-post.php', 'async-upload.php', 'media-upload.php' );
 		$user_role   = reset( $current_user->roles );
 
-		if ( ( 'yes' === $is_prevent_admin_access ) && in_array( $user_role, array( 'shop_manager', 'customer' ), true ) && ( ! in_array( $pagenow, $valid_pages, true ) ) ) {
+		/**
+		 * Filter the roles blocked from wp-admin when "prevent admin access" is
+		 * on. A granular-permission module registers its custom staff roles
+		 * here so they are kept out of wp-admin like shop managers.
+		 *
+		 * @param string[] $roles Role slugs to block.
+		 */
+		$blocked_roles = apply_filters( 'storesuite_blocked_admin_roles', array( 'shop_manager', 'customer' ) );
+
+		if ( ( 'yes' === $is_prevent_admin_access ) && in_array( $user_role, $blocked_roles, true ) && ( ! in_array( $pagenow, $valid_pages, true ) ) ) {
 			wp_safe_redirect( home_url() );
 			exit;
 		}
@@ -100,8 +109,9 @@ class Main {
 			exit();
 		}
 	
-		// 2) Non-admins who can manage WooCommerce → StoreSuite dashboard.
-		if ( user_can( $user, 'manage_woocommerce' ) ) {
+		// 2) Non-admins who can manage WooCommerce, or hold a granular
+		// StoreSuite dashboard capability → StoreSuite dashboard.
+		if ( user_can( $user, 'manage_woocommerce' ) || user_can( $user, 'storesuite_access_dashboard' ) ) {
 			$this->redirect_to_storesuite_dashboard(); // This already redirects & exits if page is set.
 		}
 	
