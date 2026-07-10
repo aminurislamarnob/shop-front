@@ -34,6 +34,31 @@ class PermissionsEnforcer {
 		add_filter( 'storesuite_dashboard_menus', array( $this, 'rewrite_menu_permissions' ), 99 );
 		add_filter( 'storesuite_user_can', array( $this, 'block_suspended' ), 10, 3 );
 		add_filter( 'user_has_cap', array( $this, 'grant_scoped_caps' ), 10, 3 );
+		add_filter( 'woocommerce_rest_check_permissions', array( $this, 'grant_analytics_rest_read' ), 21, 2 );
+	}
+
+	/**
+	 * Let staff holding the analytics area read WooCommerce REST data, which the
+	 * Analytics React app needs. Scoped to the read context only — write
+	 * operations still require the matching area's caps. Mirrors the intent of
+	 * Analytics\RestPermissions, which grants the same for manage_woocommerce.
+	 *
+	 * @param bool   $permission Current decision.
+	 * @param string $context    Request context (read|create|edit|delete|batch).
+	 * @return bool
+	 */
+	public function grant_analytics_rest_read( $permission, $context ) {
+		if ( $permission || 'read' !== $context ) {
+			return $permission;
+		}
+
+		// Grant read when the current user holds the granular analytics cap and
+		// is not a suspended employee.
+		if ( current_user_can( Capabilities::cap_for_area( 'analytics' ) ) && ! self::is_suspended( get_current_user_id() ) ) {
+			return true;
+		}
+
+		return $permission;
 	}
 
 	/**
