@@ -478,22 +478,16 @@ class OrderController {
 				continue;
 			}
 
-			switch ( $action ) {
-				case 'mark_processing':
-					$order->update_status( 'processing' );
-					break;
-				case 'mark_on-hold':
-					$order->update_status( 'on-hold' );
-					break;
-				case 'mark_completed':
-					$order->update_status( 'completed' );
-					break;
-				case 'mark_cancelled':
-					$order->update_status( 'cancelled' );
-					break;
-				case 'trash':
-					$order->delete();
-					break;
+			if ( 'trash' === $action ) {
+				$order->delete();
+			} elseif ( 0 === strpos( $action, 'mark_' ) ) {
+				// Generic "mark_{status}" handling: valid for any registered
+				// order status, so custom statuses (e.g. from an order-status
+				// module) work without extending this switch.
+				$status = substr( $action, 5 );
+				if ( array_key_exists( 'wc-' . $status, wc_get_order_statuses() ) ) {
+					$order->update_status( $status );
+				}
 			}
 		}
 
