@@ -79,6 +79,18 @@ class Module extends BaseModule {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
 		( new AjaxController() )->register();
+		( new ActivityLogger() )->register();
+		( new PermissionsEnforcer() )->register();
+	}
+
+	/**
+	 * One-shot teardown when the module is deactivated (non-destructive: keeps
+	 * data and roles, clears the scheduled log purge only).
+	 *
+	 * @return void
+	 */
+	public function deactivate() {
+		ActivityLogger::unschedule();
 	}
 
 	/**
