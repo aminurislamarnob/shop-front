@@ -31,6 +31,7 @@ class AjaxController {
 		add_action( 'wp_ajax_storesuite_delete_employee', array( $this, 'delete_employee' ) );
 		add_action( 'wp_ajax_storesuite_save_custom_role', array( $this, 'save_custom_role' ) );
 		add_action( 'wp_ajax_storesuite_delete_custom_role', array( $this, 'delete_custom_role' ) );
+		add_action( 'wp_ajax_storesuite_resend_welcome_email', array( $this, 'resend_welcome_email' ) );
 	}
 
 	/**
@@ -191,5 +192,28 @@ class AjaxController {
 		}
 
 		wp_send_json_success( array( 'message' => __( 'Role deleted.', 'storesuite' ) ) );
+	}
+
+	/**
+	 * POST handler — resend the account-setup email to an employee.
+	 *
+	 * @return void
+	 */
+	public function resend_welcome_email() {
+		$this->guard();
+
+		$user_id = isset( $_POST['user_id'] ) ? absint( wp_unslash( $_POST['user_id'] ) ) : 0;
+
+		if ( ! EmployeeManager::is_employee( $user_id ) ) {
+			$this->fail( new \WP_Error( 'storesuite_not_employee', __( 'That employee could not be found.', 'storesuite' ) ) );
+		}
+
+		$sent = ( new WelcomeEmail() )->send( $user_id );
+
+		if ( ! $sent ) {
+			$this->fail( new \WP_Error( 'storesuite_email_failed', __( 'The email could not be sent. Check your site email configuration.', 'storesuite' ) ) );
+		}
+
+		wp_send_json_success( array( 'message' => __( 'Setup email resent.', 'storesuite' ) ) );
 	}
 }

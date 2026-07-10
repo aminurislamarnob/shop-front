@@ -175,6 +175,28 @@
 	} );
 
 	/* ---------------------------------------------------------------------
+	 * Resend welcome / setup email
+	 * ------------------------------------------------------------------- */
+	$( document ).on( 'click', '.storesuite-resend-invite', function () {
+		var $row = $( this ).closest( 'tr' );
+
+		post( {
+			action: 'storesuite_resend_welcome_email',
+			user_id: $row.data( 'user-id' ),
+		} ).done( function ( res ) {
+			if ( res && res.success ) {
+				if ( typeof Swal !== 'undefined' ) {
+					Swal.fire( { icon: 'success', title: cfg.i18n.success, text: res.data.message } );
+				}
+			} else {
+				notifyError( res && res.data ? res.data.error : cfg.i18n.error );
+			}
+		} ).fail( function () {
+			notifyError( cfg.i18n.error );
+		} );
+	} );
+
+	/* ---------------------------------------------------------------------
 	 * Roles editor
 	 * ------------------------------------------------------------------- */
 	function resetRoleForm() {

@@ -115,6 +115,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 									<td data-title="<?php esc_attr_e( 'Actions', 'storesuite' ); ?>">
 										<div class="action-buttons">
 											<button type="button" class="my-storesuite-button edit storesuite-edit-employee"><?php esc_html_e( 'Edit', 'storesuite' ); ?></button>
+											<button type="button" class="my-storesuite-button view storesuite-resend-invite"><?php esc_html_e( 'Resend invite', 'storesuite' ); ?></button>
 											<?php if ( 'suspended' === $storesuite_emp['status'] ) : ?>
 												<button type="button" class="my-storesuite-button view storesuite-toggle-suspend" data-status="active"><?php esc_html_e( 'Activate', 'storesuite' ); ?></button>
 											<?php else : ?>

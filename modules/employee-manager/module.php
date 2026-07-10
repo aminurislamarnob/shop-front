@@ -19,6 +19,8 @@ require_once __DIR__ . '/includes/Settings.php';
 require_once __DIR__ . '/includes/EmployeeManager.php';
 require_once __DIR__ . '/includes/ActivityLogger.php';
 require_once __DIR__ . '/includes/PermissionsEnforcer.php';
+require_once __DIR__ . '/includes/LoginHandler.php';
+require_once __DIR__ . '/includes/WelcomeEmail.php';
 require_once __DIR__ . '/includes/AjaxController.php';
 require_once __DIR__ . '/includes/Module.php';
 

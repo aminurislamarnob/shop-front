@@ -62,6 +62,7 @@ class Module extends BaseModule {
 	public function activate() {
 		Installer::install();
 		Roles::install();
+		LoginHandler::create_page();
 	}
 
 	/**
@@ -81,6 +82,8 @@ class Module extends BaseModule {
 		( new AjaxController() )->register();
 		( new ActivityLogger() )->register();
 		( new PermissionsEnforcer() )->register();
+		( new LoginHandler() )->register();
+		( new WelcomeEmail() )->register();
 	}
 
 	/**
@@ -250,6 +253,7 @@ class Module extends BaseModule {
 	public function uninstall() {
 		Roles::remove_all();
 		Installer::uninstall();
+		LoginHandler::remove_page();
 		delete_option( Settings::OPTION_KEY );
 	}
 }
