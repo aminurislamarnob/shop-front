@@ -75,6 +75,8 @@ class Module extends BaseModule {
 		add_action( 'init', array( $this, 'register_endpoint' ) );
 		add_filter( 'storesuite_query_var_filter', array( $this, 'register_query_var' ) );
 		add_filter( 'storesuite_dashboard_menus', array( $this, 'register_menu' ), 20 );
+
+		( new AjaxController() )->register();
 	}
 
 	/**
