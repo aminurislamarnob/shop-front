@@ -5,6 +5,7 @@
 /src
 /modules/*/src
 /modules/*/node_modules
+/sample-modules
 /tests
 /bin
 /docs

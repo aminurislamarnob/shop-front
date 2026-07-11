@@ -213,7 +213,7 @@ class Main {
 			border: 1px solid #213fd4;
 		}';
 
-		wp_register_style( 'storesuite-dashboard-btn', false );
+		wp_register_style( 'storesuite-dashboard-btn', false, array(), STORESUITE_PLUGIN_VERSION );
 		wp_enqueue_style( 'storesuite-dashboard-btn' );
 		wp_add_inline_style( 'storesuite-dashboard-btn', $css );
 	}
@@ -260,7 +260,7 @@ class Main {
 				. '.storesuite-dropdown svg{fill:#94a3b8}';
 		}
 
-		wp_register_style( 'storesuite-css-variables', false );
+		wp_register_style( 'storesuite-css-variables', false, array(), STORESUITE_PLUGIN_VERSION );
 		wp_enqueue_style( 'storesuite-css-variables' );
 		wp_add_inline_style( 'storesuite-css-variables', $css );
 	}
