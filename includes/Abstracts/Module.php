@@ -36,8 +36,8 @@ abstract class Module {
 	 * Constructor.
 	 *
 	 * @param string $file Absolute path to the module's bootstrap file
-	 *                     (e.g. `modules/staff-manager/module.php`). Stored so
-	 *                     the module can resolve its own directory/URL.
+	 *                     (e.g. `modules/employee-manager/module.php`). Stored
+	 *                     so the module can resolve its own directory/URL.
 	 */
 	public function __construct( $file = '' ) {
 		$this->file = $file;
@@ -164,7 +164,8 @@ abstract class Module {
 	/**
 	 * Schema describing the module's settings fields. Used by the React app
 	 * to render a form generically. Subclasses override this — see
-	 * `Modules\StaffManager\Settings::get_schema()` for an example.
+	 * `Settings::get_schema()` in `sample-modules/staff-manager/` for an
+	 * example.
 	 *
 	 * Each field is keyed by setting name with the shape:
 	 *   array(

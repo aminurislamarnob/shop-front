@@ -8,8 +8,9 @@
 > this first.
 >
 > Source: PR [#143](https://github.com/aminurislamarnob/storesuite/pull/143).
-> All file references exclude `modules/staff-manager/` — that directory
-> ships as a worked example, not as code under review.
+> All file references exclude the staff-manager worked example — it lives in
+> `sample-modules/staff-manager/` as reference code, not code under review
+> (it is not discovered, built, or shipped).
 
 ---
 
@@ -471,7 +472,7 @@ preprocessor, no nesting, plain selectors prefixed `.storesuite-`.
 
 1. **Module entry auto-discovery.** Globs `modules/*/src/index.js` and
    adds an entry per match. The entry **key** uses `../../` (e.g.,
-   `'../../modules/staff-manager/assets/build/script'`) so the output,
+   `'../../modules/employee-manager/assets/build/script'`) so the output,
    normally written under `assets/build/`, escapes that directory and
    lands inside the module's own `modules/<slug>/assets/build/script.js`.
    This trick is borrowed from Dokan Pro's `webpack-entries.js` and

@@ -2,10 +2,13 @@
 
 This document is a build-by-numbers guide for an AI agent (or human developer)
 to add a new opt-in module to StoreSuite, mirroring every feature shipped by
-`modules/staff-manager`.
+the `staff-manager` sample.
 
-Treat `modules/staff-manager/` as the canonical reference. Read it before
-starting — every pattern in this doc is implemented there.
+Treat `sample-modules/staff-manager/` as the canonical reference. Read it
+before starting — every pattern in this doc is implemented there. Note that
+`sample-modules/` is reference-only: nothing in it is discovered, built, or
+shipped. A real module must live under `modules/<slug>/` (copy the sample
+there as a starting point; see `sample-modules/README.md`).
 
 ---
 
@@ -503,7 +506,7 @@ addFilter(
 ```
 
 **`modules/customer-manager/src/admin/CustomerManagerAdmin.js`** —
-standard React component. See `modules/staff-manager/src/admin/StaffManagerAdmin.js`
+standard React component. See `sample-modules/staff-manager/src/admin/StaffManagerAdmin.js`
 for a complete reference (fetch on mount, form, snackbar on save).
 
 **Imports the module bundle may use freely** (all externalized to
