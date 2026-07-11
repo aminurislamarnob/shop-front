@@ -140,13 +140,13 @@ class Main {
 			wp_safe_redirect( admin_url() );
 			exit();
 		}
-	
+
 		// 2) Non-admins who can manage WooCommerce, or hold a granular
 		// StoreSuite dashboard capability → StoreSuite dashboard.
 		if ( user_can( $user, 'manage_woocommerce' ) || user_can( $user, 'storesuite_access_dashboard' ) ) {
 			$this->redirect_to_storesuite_dashboard(); // This already redirects & exits if page is set.
 		}
-	
+
 		// 3) Everyone else → normal My Account page.
 		wp_safe_redirect( wc_get_page_permalink( 'myaccount' ) );
 		exit();
