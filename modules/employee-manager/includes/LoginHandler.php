@@ -134,13 +134,18 @@ class LoginHandler {
 	/**
 	 * The login page URL, falling back to My Account if the page is missing.
 	 *
-	 * @param string $default Incoming default URL.
+	 * @param string $default_url Incoming default URL.
 	 * @return string
 	 */
-	public function login_url( $default = '' ) {
+	public function login_url( $default_url = '' ) {
 		$page_id = (int) get_option( self::PAGE_OPTION );
 		$url     = $page_id ? get_permalink( $page_id ) : '';
-		return $url ? $url : ( $default ?: wc_get_page_permalink( 'myaccount' ) );
+
+		if ( $url ) {
+			return $url;
+		}
+
+		return $default_url ? $default_url : wc_get_page_permalink( 'myaccount' );
 	}
 
 	/**
@@ -252,7 +257,17 @@ class LoginHandler {
 		}
 
 		if ( '' === $pass1 || $pass1 !== $pass2 ) {
-			wp_safe_redirect( add_query_arg( array( 'action' => 'setup', 'key' => rawurlencode( $key ), 'login' => rawurlencode( $login ), 'err' => 'mismatch' ), $this->login_url() ) );
+			wp_safe_redirect(
+				add_query_arg(
+					array(
+						'action' => 'setup',
+						'key'    => rawurlencode( $key ),
+						'login'  => rawurlencode( $login ),
+						'err'    => 'mismatch',
+					),
+					$this->login_url()
+				)
+			);
 			exit;
 		}
 

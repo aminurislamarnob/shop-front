@@ -16,8 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *   {prefix}storesuite_employees     — one row per staff account.
  *   {prefix}storesuite_activity_log  — audit trail of dashboard actions.
  *
- * dbDelta is additive, so deactivation is non-destructive (data survives a
- * toggle). Tables are dropped only from the module's uninstall().
+ * Uses dbDelta, which is additive, so deactivation is non-destructive (data
+ * survives a toggle). Tables are dropped only from the module's uninstall().
  */
 class Installer {
 

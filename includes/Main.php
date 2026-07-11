@@ -140,13 +140,13 @@ class Main {
 			wp_safe_redirect( admin_url() );
 			exit();
 		}
-	
+
 		// 2) Non-admins who can manage WooCommerce, or hold a granular
 		// StoreSuite dashboard capability → StoreSuite dashboard.
 		if ( user_can( $user, 'manage_woocommerce' ) || user_can( $user, 'storesuite_access_dashboard' ) ) {
 			$this->redirect_to_storesuite_dashboard(); // This already redirects & exits if page is set.
 		}
-	
+
 		// 3) Everyone else → normal My Account page.
 		wp_safe_redirect( wc_get_page_permalink( 'myaccount' ) );
 		exit();
@@ -213,7 +213,7 @@ class Main {
 			border: 1px solid #213fd4;
 		}';
 
-		wp_register_style( 'storesuite-dashboard-btn', false );
+		wp_register_style( 'storesuite-dashboard-btn', false, array(), STORESUITE_PLUGIN_VERSION );
 		wp_enqueue_style( 'storesuite-dashboard-btn' );
 		wp_add_inline_style( 'storesuite-dashboard-btn', $css );
 	}
@@ -260,7 +260,7 @@ class Main {
 				. '.storesuite-dropdown svg{fill:#94a3b8}';
 		}
 
-		wp_register_style( 'storesuite-css-variables', false );
+		wp_register_style( 'storesuite-css-variables', false, array(), STORESUITE_PLUGIN_VERSION );
 		wp_enqueue_style( 'storesuite-css-variables' );
 		wp_add_inline_style( 'storesuite-css-variables', $css );
 	}

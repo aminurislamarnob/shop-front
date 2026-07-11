@@ -90,7 +90,7 @@ class EmployeeManager {
 	private static function to_row( $user ) {
 		$record = self::get_record( $user->ID );
 		$roles  = Roles::all();
-		$role   = $record['role'] ?? ( reset( $user->roles ) ?: '' );
+		$role   = $record['role'] ?? (string) reset( $user->roles );
 
 		return array(
 			'user_id'     => $user->ID,
@@ -116,7 +116,7 @@ class EmployeeManager {
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE user_id = %d", $user_id ), ARRAY_A );
 
-		return $row ?: null;
+		return is_array( $row ) ? $row : null;
 	}
 
 	/**
@@ -177,6 +177,11 @@ class EmployeeManager {
 		$first = isset( $data['first_name'] ) ? sanitize_text_field( $data['first_name'] ) : '';
 		$last  = isset( $data['last_name'] ) ? sanitize_text_field( $data['last_name'] ) : '';
 
+		$display_name = trim( $first . ' ' . $last );
+		if ( '' === $display_name ) {
+			$display_name = $email;
+		}
+
 		// No password set — the welcome email sends a secure setup link.
 		$user_id = wp_insert_user(
 			array(
@@ -185,7 +190,7 @@ class EmployeeManager {
 				'user_pass'    => wp_generate_password( 24, true, true ),
 				'first_name'   => $first,
 				'last_name'    => $last,
-				'display_name' => trim( $first . ' ' . $last ) ?: $email,
+				'display_name' => $display_name,
 				'role'         => $role,
 			)
 		);
@@ -228,8 +233,10 @@ class EmployeeManager {
 			$fields['last_name'] = sanitize_text_field( $data['last_name'] );
 		}
 		if ( isset( $data['first_name'] ) || isset( $data['last_name'] ) ) {
-			$user = get_userdata( $user_id );
-			$fields['display_name'] = trim( ( $fields['first_name'] ?? $user->first_name ) . ' ' . ( $fields['last_name'] ?? $user->last_name ) ) ?: $user->user_email;
+			$user         = get_userdata( $user_id );
+			$display_name = trim( ( $fields['first_name'] ?? $user->first_name ) . ' ' . ( $fields['last_name'] ?? $user->last_name ) );
+
+			$fields['display_name'] = '' !== $display_name ? $display_name : $user->user_email;
 		}
 
 		$result = wp_update_user( $fields );
@@ -404,13 +411,15 @@ class EmployeeManager {
 	 * @return string
 	 */
 	private static function unique_login( $email ) {
-		$base  = sanitize_user( current( explode( '@', $email ) ), true );
-		$base  = $base ?: 'staff';
+		$base = sanitize_user( current( explode( '@', $email ) ), true );
+		if ( '' === $base ) {
+			$base = 'staff';
+		}
 		$login = $base;
 		$i     = 1;
 		while ( username_exists( $login ) ) {
 			$login = $base . $i;
-			$i++;
+			++$i;
 		}
 		return $login;
 	}

@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// phpcs:disable WordPress.Security.NonceVerification.Missing -- every handler calls guard(), which verifies the module nonce before any $_POST read.
+
 /**
  * Registers the `wp_ajax_storesuite_*` handlers that power the Team screens.
  * Every handler verifies the module nonce and the manage-employees capability.
