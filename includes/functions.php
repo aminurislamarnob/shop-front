@@ -369,10 +369,14 @@ function storesuite_log( $message, $level = 'debug' ) {
  * Check whether the current user may access a StoreSuite dashboard area.
  *
  * The dashboard was historically gated on the single `manage_woocommerce`
- * capability. This helper keeps that behaviour (admins and shop managers pass
- * every area) while adding a granular escape hatch: a user who holds the
- * area-specific `storesuite_{$area}` capability also passes. Modules (e.g. a
- * staff/role manager) grant those granular capabilities to custom roles.
+ * capability. This helper keeps that behaviour intact: users who can
+ * `manage_woocommerce` (admins and shop managers) pass every area
+ * unconditionally and are never affected by the `storesuite_user_can` filter,
+ * preserving the guarantee that they never lose a dashboard area. For everyone
+ * else it adds a granular escape hatch: a user who holds the area-specific
+ * `storesuite_{$area}` capability passes, and the filter has the final say —
+ * so modules (e.g. a staff/role manager) can grant or restrict individual
+ * areas per custom role.
  *
  * Area names are plain identifiers such as `access_dashboard`, `products`,
  * `orders`, `coupons`, `taxonomies`, `analytics`.
@@ -384,10 +388,18 @@ function storesuite_log( $message, $level = 'debug' ) {
  * @return bool
  */
 function storesuite_current_user_can( $area, $object_id = 0 ) {
-	$allowed = current_user_can( 'manage_woocommerce' ) || current_user_can( 'storesuite_' . $area );
+	// Managers are all-powerful and always pass, regardless of the filter.
+	if ( current_user_can( 'manage_woocommerce' ) ) {
+		return true;
+	}
+
+	$allowed = current_user_can( 'storesuite_' . $area );
 
 	/**
 	 * Filter the result of a StoreSuite area permission check.
+	 *
+	 * Only runs for non-`manage_woocommerce` users; managers short-circuit
+	 * above and cannot be restricted through this filter.
 	 *
 	 * @param bool   $allowed   Whether the current user may access the area.
 	 * @param string $area      Area identifier (e.g. `products`, `orders`).

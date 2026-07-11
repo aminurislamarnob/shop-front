@@ -80,7 +80,9 @@ class DashboardMenu {
 
 			echo '<li' . $li_class_attr . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
-			echo '<a href="' . esc_url( $menu['url'] ) . '" class="' . ( $is_active ? 'active' : '' ) . '" target="' . esc_attr( $menu['target'] ) . '" data-storesuite-tooltip="' . esc_attr( $menu['title'] ) . '">';
+			$menu_target = ! empty( $menu['target'] ) ? $menu['target'] : '_self';
+
+			echo '<a href="' . esc_url( $menu['url'] ) . '" class="' . ( $is_active ? 'active' : '' ) . '" target="' . esc_attr( $menu_target ) . '" data-storesuite-tooltip="' . esc_attr( $menu['title'] ) . '">';
 			echo wp_kses( $menu['icon'], $this->allowed_icon_tags() );
 			echo '<span>' . esc_html( $menu['title'] ) . '</span>';
 			if ( $has_submenu ) {
