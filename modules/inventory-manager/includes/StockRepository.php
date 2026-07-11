@@ -153,7 +153,13 @@ class StockRepository {
 			$product->set_manage_stock( true );
 		}
 		$product->set_stock_quantity( $qty );
+
+		// We log this change explicitly below; suppress the generic WC-hook
+		// capture the save fires so it isn't logged twice. Unsuppress after in
+		// case the save didn't fire the hook (e.g. unchanged quantity).
+		StockLog::suppress( $product->get_id() );
 		$product->save();
+		StockLog::unsuppress( $product->get_id() );
 
 		StockLog::record( $product->get_id(), $before, $qty, $reason );
 

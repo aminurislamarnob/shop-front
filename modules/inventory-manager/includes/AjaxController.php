@@ -30,14 +30,13 @@ class AjaxController {
 	}
 
 	/**
-	 * Verify nonce + capability or die with a JSON error.
+	 * Verify the manage-inventory capability or die with a JSON error. Nonce
+	 * verification happens inline in each handler via check_ajax_referer() so
+	 * the PHPCS nonce sniff can see it.
 	 *
 	 * @return void
 	 */
 	private function guard() {
-		if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['security'] ) ), self::NONCE ) ) {
-			wp_send_json_error( array( 'error' => __( 'Security check failed. Please reload and try again.', 'storesuite' ) ) );
-		}
 		if ( ! storesuite_current_user_can( 'manage_inventory' ) ) {
 			wp_send_json_error( array( 'error' => __( 'You do not have permission to manage inventory.', 'storesuite' ) ) );
 		}
@@ -49,6 +48,7 @@ class AjaxController {
 	 * @return void
 	 */
 	public function set_stock() {
+		check_ajax_referer( self::NONCE, 'security' );
 		$this->guard();
 
 		$id  = isset( $_POST['product_id'] ) ? absint( wp_unslash( $_POST['product_id'] ) ) : 0;
@@ -73,11 +73,13 @@ class AjaxController {
 	 * @return void
 	 */
 	public function bulk_update() {
+		check_ajax_referer( self::NONCE, 'security' );
 		$this->guard();
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- absint sanitizes each ID.
 		$ids = isset( $_POST['ids'] ) ? array_map( 'absint', (array) wp_unslash( $_POST['ids'] ) ) : array();
 		$op  = isset( $_POST['op'] ) ? sanitize_text_field( wp_unslash( $_POST['op'] ) ) : 'set';
-		$qty = isset( $_POST['qty'] ) ? (int) wp_unslash( $_POST['qty'] ) : 0;
+		$qty = isset( $_POST['qty'] ) ? absint( wp_unslash( $_POST['qty'] ) ) : 0;
 
 		if ( empty( $ids ) ) {
 			wp_send_json_error( array( 'error' => __( 'No products selected.', 'storesuite' ) ) );
@@ -106,7 +108,7 @@ class AjaxController {
 
 			$result = StockRepository::set_quantity( $id, $new, 'bulk' );
 			if ( ! is_wp_error( $result ) ) {
-				$updated++;
+				++$updated;
 			}
 		}
 
