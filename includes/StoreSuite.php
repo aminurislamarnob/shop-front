@@ -18,7 +18,7 @@ final class StoreSuite {
 	 *
 	 * @var string
 	 */
-	public $version = '1.2.0';
+	public $version = '1.3.0';
 
 	/**
 	 * Instance of self
@@ -98,6 +98,14 @@ final class StoreSuite {
 
 		// Create plugin page.
 		Installer::create_plugin_page();
+
+		// Create the notifications table.
+		Notification\NotificationInstaller::create_table();
+
+		// Schedule the daily notifications retention cleanup.
+		if ( ! wp_next_scheduled( Notification\NotificationHooks::CLEANUP_HOOK ) ) {
+			wp_schedule_event( time(), 'daily', Notification\NotificationHooks::CLEANUP_HOOK );
+		}
 	}
 
 	/**
@@ -107,6 +115,7 @@ final class StoreSuite {
 	 */
 	public function register_rest_route() {
 		$this->container['storesuite_admin_settings_controller']->register_routes();
+		$this->container['storesuite_notifications_rest_controller']->register_routes();
 	}
 
 	/**
@@ -145,7 +154,9 @@ final class StoreSuite {
 	 *
 	 * Nothing being called here yet.
 	 */
-	public function deactivate() {     }
+	public function deactivate() {
+		wp_clear_scheduled_hook( Notification\NotificationHooks::CLEANUP_HOOK );
+	}
 
 	/**
 	 * Define all constants
@@ -267,6 +278,10 @@ final class StoreSuite {
 		$this->container['storesuite_coupon_bulk_edit']            = new Coupon\CouponBulkEdit();
 		$this->container['storesuite_account_controller']          = new Account\AccountController();
 		$this->container['storesuite_handle_paginations']          = new HandlePaginations();
+		$this->container['storesuite_notification_manager']        = new Notification\NotificationManager();
+		$this->container['storesuite_notification_hooks']          = new Notification\NotificationHooks();
+		$this->container['storesuite_notification_controller']     = new Notification\NotificationController();
+		$this->container['storesuite_notifications_rest_controller'] = new REST\NotificationsController();
 
 		// Analytics (uses WooCommerce analytics packages — no SQL filtering needed).
 		$this->container['analytics_permissions'] = new Analytics\RestPermissions();

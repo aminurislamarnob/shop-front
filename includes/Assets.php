@@ -97,6 +97,7 @@ class Assets {
 
 		wp_register_script( 'storesuite_admin_script', $admin_script, array(), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_global_script', STORESUITE_PLUGIN_ASSET . '/frontend/global.js', array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_notifications_script', STORESUITE_PLUGIN_ASSET . '/frontend/notifications.js', array( 'jquery', 'storesuite_global_script' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_script', $frontend_script, array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
@@ -213,6 +214,39 @@ class Assets {
 		// Sidebar collapse, submenu, and dropdown behaviours run on every
 		// dashboard page including the React root and analytics route.
 		wp_enqueue_script( 'storesuite_global_script' );
+
+		// Notifications bell polling — every dashboard page, managers only.
+		if ( current_user_can( 'manage_woocommerce' ) ) {
+			wp_enqueue_script( 'storesuite_notifications_script' );
+			wp_localize_script(
+				'storesuite_notifications_script',
+				'StoreSuite_Notifications',
+				array(
+					'rest_url'          => esc_url_raw( rest_url( 'storesuite/v1/notifications' ) ),
+					'nonce'             => wp_create_nonce( 'wp_rest' ),
+					/**
+					 * Filters the notifications poll interval in seconds.
+					 *
+					 * @param int $interval Poll interval in seconds.
+					 */
+					'interval'          => max( 15, (int) apply_filters( 'storesuite_notification_poll_interval', 60 ) ),
+					'cursor'            => ( new \PluginizeLab\StoreSuite\Notification\NotificationManager() )->get_cursor(),
+					'notifications_url' => storesuite_get_navigation_url( 'notifications' ),
+					'i18n'              => array(
+						'are_you_sure'      => __( 'Are you sure?', 'storesuite' ),
+						'confirm_clear_all' => __( 'Delete all notifications? This cannot be undone.', 'storesuite' ),
+						'yes_clear'         => __( 'Yes, clear all!', 'storesuite' ),
+						'cancel_button'     => __( 'Cancel', 'storesuite' ),
+					),
+				)
+			);
+
+			// The Clear all confirmation on the notifications page uses SweetAlert2.
+			if ( storesuite_is_endpoint_url( 'notifications' ) ) {
+				wp_enqueue_script( 'storesuite_sweetalert2_script' );
+				wp_enqueue_style( 'storesuite_sweetalert2_style' );
+			}
+		}
 
 		// React-only routes (dashboard root + analytics) render with
 		// @woocommerce/components and don't need the legacy jQuery stack

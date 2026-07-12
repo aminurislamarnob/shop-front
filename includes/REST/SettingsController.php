@@ -150,6 +150,17 @@ class SettingsController extends WP_REST_Controller {
 			}
 		}
 
+		$notification_keys = array(
+			'storesuite_notification_new_order',
+			'storesuite_notification_new_customer',
+			'storesuite_notification_product_review',
+		);
+		foreach ( $notification_keys as $key ) {
+			if ( $request->has_param( $key ) ) {
+				$storesuite_settings[ $key ] = 'no' === $request->get_param( $key ) ? 'no' : 'yes';
+			}
+		}
+
 		$ai_instruction_keys = array(
 			'storesuite_ai_instruction_title',
 			'storesuite_ai_instruction_description',
@@ -395,6 +406,24 @@ class SettingsController extends WP_REST_Controller {
 				),
 				'storesuite_ai_field_bundle'          => array(
 					'description' => __( 'Enable the global "Generate with AI" button that drafts all product copy at once.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_notification_new_order'   => array(
+					'description' => __( 'Record a dashboard notification when a new order is placed.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_notification_new_customer' => array(
+					'description' => __( 'Record a dashboard notification when a new customer registers.', 'storesuite' ),
+					'type'        => 'string',
+					'enum'        => array( 'yes', 'no' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_notification_product_review' => array(
+					'description' => __( 'Record a dashboard notification when a product review is submitted.', 'storesuite' ),
 					'type'        => 'string',
 					'enum'        => array( 'yes', 'no' ),
 					'context'     => array( 'view', 'edit' ),

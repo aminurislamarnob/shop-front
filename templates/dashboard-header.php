@@ -33,6 +33,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<a href="<?php echo esc_url( $storesuite_shop_url ); ?>" class="storesuite-header-icon-link" target="_blank" aria-label="<?php esc_attr_e( 'Visit Store', 'storesuite' ); ?>" title="<?php esc_attr_e( 'Visit Store', 'storesuite' ); ?>">
 					<svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M24,10a.988.988,0,0,0-.024-.217l-1.3-5.868A4.968,4.968,0,0,0,17.792,0H6.208a4.968,4.968,0,0,0-4.88,3.915L.024,9.783A.988.988,0,0,0,0,10v1a3.984,3.984,0,0,0,1,2.643V19a5.006,5.006,0,0,0,5,5H18a5.006,5.006,0,0,0,5-5V13.643A3.984,3.984,0,0,0,24,11ZM2,10.109l1.28-5.76A2.982,2.982,0,0,1,6.208,2H7V5A1,1,0,0,0,9,5V2h6V5a1,1,0,0,0,2,0V2h.792A2.982,2.982,0,0,1,20.72,4.349L22,10.109V11a2,2,0,0,1-2,2H19a2,2,0,0,1-2-2,1,1,0,0,0-2,0,2,2,0,0,1-2,2H11a2,2,0,0,1-2-2,1,1,0,0,0-2,0,2,2,0,0,1-2,2H4a2,2,0,0,1-2-2ZM18,22H6a3,3,0,0,1-3-3V14.873A3.978,3.978,0,0,0,4,15H5a3.99,3.99,0,0,0,3-1.357A3.99,3.99,0,0,0,11,15h2a3.99,3.99,0,0,0,3-1.357A3.99,3.99,0,0,0,19,15h1a3.978,3.978,0,0,0,1-.127V19A3,3,0,0,1,18,22Z"/></svg>
 				</a>
+				<?php if ( current_user_can( 'manage_woocommerce' ) ) : ?>
+					<?php
+					$storesuite_notification_manager = new \PluginizeLab\StoreSuite\Notification\NotificationManager();
+					$storesuite_unseen_count         = $storesuite_notification_manager->count_unseen( get_current_user_id() );
+					$storesuite_recent_notifications = $storesuite_notification_manager->get_recent( get_current_user_id(), 5 );
+					?>
+					<div class="storesuite-dropdown storesuite-header-dropdown storesuite-notifications-dropdown">
+						<span
+							class="storesuite-dropdown-icon storesuite-notification-bell"
+							role="button"
+							tabindex="0"
+							aria-label="<?php esc_attr_e( 'Notifications', 'storesuite' ); ?>"
+							title="<?php esc_attr_e( 'Notifications', 'storesuite' ); ?>"
+						>
+							<svg width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false"><use href="#storesuite-icon-bell"></use></svg>
+							<span class="storesuite-notification-badge" <?php echo $storesuite_unseen_count > 0 ? '' : 'hidden'; ?>>
+								<?php echo esc_html( $storesuite_unseen_count > 9 ? '9+' : (string) $storesuite_unseen_count ); ?>
+							</span>
+						</span>
+						<div class="storesuite-dropdown-menu storesuite-notifications-menu">
+							<div class="storesuite-notifications-menu-header">
+								<span class="storesuite-notifications-menu-title"><?php esc_html_e( 'Notifications', 'storesuite' ); ?></span>
+							</div>
+							<ul class="storesuite-dropdown-list storesuite-notifications-menu-list">
+								<?php if ( ! empty( $storesuite_recent_notifications ) ) : ?>
+									<?php foreach ( $storesuite_recent_notifications as $storesuite_notification ) : ?>
+										<li class="storesuite-notification-item<?php echo $storesuite_notification['is_seen'] ? '' : ' is-unseen'; ?>">
+											<a href="<?php echo esc_url( $storesuite_notification['url'] ? $storesuite_notification['url'] : storesuite_get_navigation_url( 'notifications' ) ); ?>" class="dropdown-link">
+												<span class="storesuite-notification-title"><?php echo esc_html( $storesuite_notification['title'] ); ?></span>
+												<span class="storesuite-notification-message"><?php echo esc_html( $storesuite_notification['message'] ); ?></span>
+												<span class="storesuite-notification-time"><?php echo esc_html( $storesuite_notification['time_ago'] ); ?></span>
+											</a>
+										</li>
+									<?php endforeach; ?>
+								<?php else : ?>
+									<li class="storesuite-notifications-empty"><?php esc_html_e( 'No notifications yet.', 'storesuite' ); ?></li>
+								<?php endif; ?>
+							</ul>
+							<div class="storesuite-notifications-menu-footer">
+								<a href="<?php echo esc_url( storesuite_get_navigation_url( 'notifications' ) ); ?>"><?php esc_html_e( 'View all', 'storesuite' ); ?></a>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
 				<div class="storesuite-dropdown storesuite-header-dropdown">
 					<span class="storesuite-dropdown-icon">
 						<?php
