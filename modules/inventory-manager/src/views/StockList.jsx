@@ -10,6 +10,8 @@ import { toast } from '../components/ui/sonner';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Checkbox } from '../components/ui/checkbox';
+import { Switch } from '../components/ui/switch';
+import { EmptyState } from '../components/EmptyState';
 import { Badge } from '../components/ui/badge';
 import {
 	Select,
@@ -92,6 +94,8 @@ function Row( { item, checked, onToggle, onSaved } ) {
 		label: item.stock_status,
 	};
 
+	const isDirty = String( qty ) !== String( item.stock_qty );
+
 	async function save() {
 		setSaving( true );
 		try {
@@ -131,8 +135,8 @@ function Row( { item, checked, onToggle, onSaved } ) {
 					/>
 					<Button
 						size="sm"
-						variant="outline"
-						disabled={ saving || String( qty ) === String( item.stock_qty ) }
+						variant={ isDirty ? 'default' : 'outline' }
+						disabled={ saving || ! isDirty }
 						onClick={ save }
 					>
 						{ __( 'Save', 'storesuite' ) }
@@ -319,8 +323,8 @@ export default function StockList() {
 							<SelectItem value="onbackorder">{ __( 'On backorder', 'storesuite' ) }</SelectItem>
 						</SelectContent>
 					</Select>
-					<label className="ss:flex ss:items-center ss:gap-2 ss:text-sm ss:text-foreground">
-						<Checkbox
+					<label className="ss:flex ss:items-center ss:gap-3 ss:text-sm ss:text-foreground ss:cursor-pointer">
+						<Switch
 							checked={ filters.low_only }
 							onCheckedChange={ ( c ) => update( { low_only: !! c, page: 1 } ) }
 						/>
@@ -349,7 +353,13 @@ export default function StockList() {
 					) : data.items.length === 0 ? (
 						<TableRow>
 							<TableCell colSpan={ 6 }>
-								{ __( 'No stock-managed products found.', 'storesuite' ) }
+								<EmptyState
+									title={ __( 'No stock-managed products found!', 'storesuite' ) }
+									description={ __(
+										'There is nothing to display at the moment. Enable stock management on a product to see it here.',
+										'storesuite'
+									) }
+								/>
 							</TableCell>
 						</TableRow>
 					) : (
