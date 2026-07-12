@@ -16,7 +16,6 @@ require_once __DIR__ . '/includes/Installer.php';
 require_once __DIR__ . '/includes/Settings.php';
 require_once __DIR__ . '/includes/StockRepository.php';
 require_once __DIR__ . '/includes/StockLog.php';
-require_once __DIR__ . '/includes/AjaxController.php';
 require_once __DIR__ . '/includes/RestController.php';
 require_once __DIR__ . '/includes/Alerts.php';
 require_once __DIR__ . '/includes/Module.php';

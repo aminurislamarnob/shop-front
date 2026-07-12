@@ -88,9 +88,7 @@ class Module extends BaseModule {
 
 		add_filter( 'storesuite_endpoint_capability_map', array( $this, 'register_endpoint_area' ) );
 		add_filter( 'storesuite_capability_registry', array( $this, 'register_capability' ) );
-		add_filter( 'storesuite_ajax_capability_map', array( $this, 'register_ajax_area' ) );
 
-		( new AjaxController() )->register();
 		( new StockLog() )->register();
 		( new Alerts() )->register();
 		RestController::register_cache_busting();
@@ -137,20 +135,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Map the module's AJAX actions to the inventory area so staff grants work.
-	 *
-	 * @param array $map Action => area.
-	 * @return array
-	 */
-	public function register_ajax_area( $map ) {
-		if ( is_array( $map ) ) {
-			$map['storesuite_inventory_set_stock']   = self::AREA;
-			$map['storesuite_inventory_bulk_update'] = self::AREA;
-		}
-		return $map;
-	}
-
-	/**
 	 * @return void
 	 */
 	public function register_rest_routes() {
@@ -166,11 +150,30 @@ class Module extends BaseModule {
 			return $menus;
 		}
 
+		$list_url = storesuite_get_navigation_url( self::ENDPOINT );
+
 		$menus['inventory'] = array(
 			'title'      => __( 'Inventory', 'storesuite' ),
-			'url'        => storesuite_get_navigation_url( self::ENDPOINT ),
+			'url'        => $list_url,
 			'permission' => 'storesuite_' . self::AREA,
 			'icon'       => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M21,4H3A3,3,0,0,0,0,7v10a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V7A3,3,0,0,0,21,4Zm1,13a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V7A1,1,0,0,1,3,6H21a1,1,0,0,1,1,1ZM6,9a1,1,0,0,0-1,1v4a1,1,0,0,0,2,0V10A1,1,0,0,0,6,9Zm5,0a1,1,0,0,0-1,1v4a1,1,0,0,0,2,0V10A1,1,0,0,0,11,9Zm5,0a1,1,0,0,0-1,1v4a1,1,0,0,0,2,0V10A1,1,0,0,0,16,9Z"/></svg>',
+			'submenu'    => array(
+				'stock-list'   => array(
+					'title'      => __( 'Stock list', 'storesuite' ),
+					'url'        => $list_url,
+					'permission' => 'storesuite_' . self::AREA,
+					'endpoint'   => self::ENDPOINT,
+					'view'       => 'list',
+					'default'    => true,
+				),
+				'movement-log' => array(
+					'title'      => __( 'Movement log', 'storesuite' ),
+					'url'        => add_query_arg( 'view', 'log', $list_url ),
+					'permission' => 'storesuite_' . self::AREA,
+					'endpoint'   => self::ENDPOINT,
+					'view'       => 'log',
+				),
+			),
 		);
 
 		return $menus;
@@ -192,9 +195,9 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view switch.
-		$view    = isset( $_GET['view'] ) && 'log' === $_GET['view'] ? 'stock-log' : 'inventory';
-		$template = $this->get_path() . '/templates/' . $view . '.php';
+		// The React app renders both the stock list and the movement log; the
+		// active view is switched client-side via `?view=`.
+		$template = $this->get_path() . '/templates/inventory.php';
 
 		if ( file_exists( $template ) ) {
 			include $template;
@@ -202,6 +205,8 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Enqueue the React inventory app on the inventory endpoint.
+	 *
 	 * @return void
 	 */
 	public function enqueue_assets() {
@@ -209,28 +214,58 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$handle = 'storesuite-inventory-manager';
+		$handle     = 'storesuite-inventory-manager';
+		$build      = $this->get_path() . '/assets/build';
+		$build_url  = $this->get_url() . '/assets/build';
+		$asset_file = $build . '/script.asset.php';
+
+		if ( ! file_exists( $asset_file ) ) {
+			return;
+		}
+
+		$asset = include $asset_file;
+
 		wp_enqueue_script(
 			$handle,
-			$this->get_url() . '/assets/inventory.js',
-			array( 'jquery', 'storesuite_sweetalert2_script' ),
-			$this->get_version(),
+			$build_url . '/script.js',
+			$asset['dependencies'],
+			$asset['version'],
 			true
 		);
-		wp_localize_script(
+
+		if ( file_exists( $build . '/script.css' ) ) {
+			wp_enqueue_style(
+				$handle,
+				$build_url . '/script.css',
+				array(),
+				$asset['version']
+			);
+		}
+
+		wp_add_inline_script(
 			$handle,
-			'StoreSuiteInventory',
-			array(
-				'ajax_url' => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( AjaxController::NONCE ),
-				'i18n'     => array(
-					'error'          => __( 'Something went wrong', 'storesuite' ),
-					'selectProducts' => __( 'Select at least one product.', 'storesuite' ),
-					'confirmBulk'    => __( 'Apply this stock change to the selected products?', 'storesuite' ),
-				),
-			)
+			'window.StoreSuiteInventory = ' . wp_json_encode(
+				array(
+					'root'       => esc_url_raw( rest_url() ),
+					'nonce'      => wp_create_nonce( 'wp_rest' ),
+					'perPage'    => (int) apply_filters( 'storesuite_inventory_per_page', 20 ),
+					'logPerPage' => (int) apply_filters( 'storesuite_stock_log_per_page', 30 ),
+				)
+			) . ';',
+			'before'
 		);
+
+		wp_set_script_translations( $handle, 'storesuite' );
 	}
+
+	/**
+	 * This module has no wp-admin React surface, so suppress the base class's
+	 * default admin bundle enqueue (it would otherwise load our frontend build,
+	 * which expects a mount div and config that only exist on the dashboard).
+	 *
+	 * @return void
+	 */
+	public function enqueue_admin_assets() {}
 
 	/**
 	 * {@inheritDoc}

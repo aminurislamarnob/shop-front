@@ -2,7 +2,7 @@ const path = require( 'path' );
 const glob = require( 'glob' );
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
-// Discover every module's React entry at `modules/<slug>/src/index.js`.
+// Discover every module's React entry at `modules/<slug>/src/index.{js,jsx}`.
 //
 // The entry key intentionally uses `../../` so the build output escapes the
 // shared `assets/build/` directory and lands inside the module's own
@@ -12,7 +12,7 @@ const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 // fully self-contained on disk. This mirrors Dokan Pro's webpack-entries
 // convention.
 const moduleEntries = glob
-	.sync( './modules/*/src/index.js' )
+	.sync( './modules/*/src/index.{js,jsx}' )
 	.reduce( ( acc, entry ) => {
 		const match = entry.match( /^\.\/modules\/([^/]+)\// );
 		if ( ! match ) {
