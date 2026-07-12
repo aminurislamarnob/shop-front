@@ -1,11 +1,12 @@
 /**
  * Inventory app root — renders either the stock list or the movement log,
- * chosen by the `?view=` query arg. Switching between the two now lives in the
+ * chosen by the `?view=` query arg. Switching between the two lives in the
  * dashboard sidebar (Inventory ▸ Stock list / Movement log), so each view is a
  * normal page load rather than an in-page tab.
+ *
+ * The page title + breadcrumb are rendered server-side by the dashboard shell
+ * (see Module::endpoint_title()), so the app itself starts at the content.
  */
-import { __ } from '@wordpress/i18n';
-import PageTitle from './components/PageTitle';
 import { Toaster } from './components/ui/sonner';
 import StockList from './views/StockList';
 import StockLog from './views/StockLog';
@@ -22,14 +23,6 @@ export default function App() {
 
 	return (
 		<div className="ss:text-foreground">
-			<PageTitle
-				title={
-					view === 'log'
-						? __( 'Movement log', 'storesuite' )
-						: __( 'Stock list', 'storesuite' )
-				}
-			/>
-
 			{ view === 'log' ? <StockLog /> : <StockList /> }
 
 			<Toaster />

@@ -88,6 +88,7 @@ class Module extends BaseModule {
 
 		add_filter( 'storesuite_endpoint_capability_map', array( $this, 'register_endpoint_area' ) );
 		add_filter( 'storesuite_capability_registry', array( $this, 'register_capability' ) );
+		add_filter( 'storesuite_endpoint_inventory_title', array( $this, 'endpoint_title' ) );
 
 		( new StockLog() )->register();
 		( new Alerts() )->register();
@@ -177,6 +178,23 @@ class Module extends BaseModule {
 		);
 
 		return $menus;
+	}
+
+	/**
+	 * Supply the dashboard page title (and breadcrumb leaf) for the inventory
+	 * endpoint. The endpoint hosts two views on one page, switched via `?view=`,
+	 * so the title reflects the active view.
+	 *
+	 * @param string $title Incoming title (empty for this endpoint).
+	 * @return string
+	 */
+	public function endpoint_title( $title ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view switch for the page title.
+		$view = isset( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : 'list';
+
+		return ( 'log' === $view )
+			? __( 'Movement log', 'storesuite' )
+			: __( 'Stock list', 'storesuite' );
 	}
 
 	/**
