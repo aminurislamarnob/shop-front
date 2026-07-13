@@ -7,6 +7,7 @@ export { RectangleStackIcon as CollectionIcon } from '@heroicons/react/24/outlin
 export { SparklesIcon } from '@heroicons/react/24/outline';
 export {
 	CheckBadgeIcon,
+	ClockIcon,
 	CodeBracketSquareIcon,
 	ExclamationCircleIcon,
 	Squares2X2Icon,
