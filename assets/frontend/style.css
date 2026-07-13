@@ -7920,6 +7920,27 @@ ul.storesuite-notifications-list {
   margin-top: 6px;
   flex: 0 0 auto;
 }
+/* Dark mode: see the "Dark mode overrides" section above. The bell hardcodes a
+   white fill, and the hover/unseen highlights use --storesuite-bg-color-light,
+   which in dark mode matches the dropdown/card surface — lift them to the
+   elevated tone so they stay visible, and recess the page icon tile instead. */
+[data-theme="dark"] .storesuite-notifications-dropdown .storesuite-notification-bell {
+  background: var(--storesuite-surface-bg);
+}
+[data-theme="dark"] .storesuite-notifications-dropdown .storesuite-notification-bell:hover {
+  background: var(--storesuite-surface-elevated);
+}
+/* The light-theme hover rule carries !important, so restate it to win. */
+[data-theme="dark"] .storesuite-dropdown.storesuite-notifications-dropdown .storesuite-dropdown-menu a.dropdown-link:hover {
+  background: var(--storesuite-surface-elevated) !important;
+}
+[data-theme="dark"] .storesuite-notifications-menu-list .storesuite-notification-item.is-unseen,
+[data-theme="dark"] .storesuite-notifications-list .storesuite-notification-item.is-unseen {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .storesuite-notification-icon {
+  background: var(--storesuite-page-bg);
+}
 /* Order details "Documents" card (PDF-invoice / packing-slip integration). */
 .storesuite-order-documents .storesuite-order-documents-list {
   display: flex;
