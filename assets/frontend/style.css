@@ -38,18 +38,20 @@
 }
 
 /*
- * Dark mode palette.
+ * Dark mode neutrals.
  *
  * `data-theme="dark"` is set on the <html> element before first paint by the
  * inline script printed in Main::add_storesuite_theme_mode_script(), then
- * toggled at runtime by handleThemeToggle() in global.js. The `:root[...]`
- * selector outranks the admin's injected `:root{}` custom colors
- * (Main::add_storesuite_css_variables), so dark mode always wins regardless of
- * the active light-mode palette.
+ * toggled at runtime by handleThemeToggle() in global.js.
+ *
+ * Only the neutrals are redefined here — surfaces, text and borders. The accent
+ * variables (--storesuite-primary-bg, button text, sidebar active background) are
+ * deliberately absent so they keep inheriting from the `:root{}` block, i.e. the
+ * store's light palette. That is what lets a Crimson store stay crimson in dark
+ * mode. A saved dark theme overrides these via the `html[data-theme="dark"]:root`
+ * block injected by Main::add_storesuite_css_variables().
  */
 :root[data-theme="dark"] {
-  --storesuite-primary-bg: #3b6ce0;
-  --storesuite-primary-bg-hover: #2d5bdb;
   --storesuite-text-black: #f1f5f9;
   --storesuite-text-color: rgb(203 213 225);
   --storesuite-text-color-light: rgb(148 163 184);
@@ -57,13 +59,10 @@
   --storesuite-bg-color-light: #1e293b;
   --storesuite-bg-color-muted: #172033;
   --storesuite-border-color: rgb(51 65 85);
-  --storesuite-button-text-color: #ffffff;
-  --storesuite-button-text-hover-color: #ffffff;
   --storesuite-sidebar-bg-color: #1e293b;
   --storesuite-sidebar-border-color: rgb(51 65 85);
   --storesuite-sidebar-menu-text: rgb(203 213 225);
   --storesuite-sidebar-active-text: #ffffff;
-  --storesuite-sidebar-active-background: #3b6ce0;
   --storesuite-page-bg: #0f172a;
   --storesuite-surface-bg: #1e293b;
   --storesuite-surface-elevated: #243449;
