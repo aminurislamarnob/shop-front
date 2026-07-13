@@ -59,6 +59,7 @@ class Module extends BaseModule {
 	 */
 	public function activate() {
 		Installer::install();
+		Emails\Manager::sync_digest_schedule();
 	}
 
 	/**
@@ -68,7 +69,7 @@ class Module extends BaseModule {
 	 */
 	public function deactivate() {
 		StockLog::unschedule();
-		Alerts::unschedule();
+		Emails\Manager::unschedule();
 	}
 
 	/**
@@ -91,7 +92,7 @@ class Module extends BaseModule {
 		add_filter( 'storesuite_endpoint_inventory_title', array( $this, 'endpoint_title' ) );
 
 		( new StockLog() )->register();
-		( new Alerts() )->register();
+		( new Emails\Manager() )->register();
 		RestController::register_cache_busting();
 	}
 
@@ -321,6 +322,8 @@ class Module extends BaseModule {
 	public function uninstall() {
 		Installer::uninstall();
 		delete_option( Settings::OPTION_KEY );
-		delete_option( Alerts::QUEUE_OPTION );
+		delete_option( Emails\Manager::QUEUE_OPTION );
+		delete_option( 'woocommerce_storesuite_low_stock_alert_settings' );
+		delete_option( Emails\Manager::DIGEST_SETTINGS_OPTION );
 	}
 }

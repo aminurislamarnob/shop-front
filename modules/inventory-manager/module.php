@@ -17,7 +17,9 @@ require_once __DIR__ . '/includes/Settings.php';
 require_once __DIR__ . '/includes/StockRepository.php';
 require_once __DIR__ . '/includes/StockLog.php';
 require_once __DIR__ . '/includes/RestController.php';
-require_once __DIR__ . '/includes/Alerts.php';
+// The WC_Email subclasses in includes/Emails/ are required lazily by the
+// Manager once WooCommerce's mailer (and the WC_Email base class) is loaded.
+require_once __DIR__ . '/includes/Emails/Manager.php';
 require_once __DIR__ . '/includes/Module.php';
 
 return new \PluginizeLab\StoreSuite\Modules\InventoryManager\Module( __FILE__ );

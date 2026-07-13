@@ -76,15 +76,15 @@ class StockLog {
 		}
 
 		if ( (bool) Settings::value( 'enable_stock_log' ) ) {
-			if ( false === as_next_scheduled_action( self::CRON_HOOK, array(), Alerts::AS_GROUP ) ) {
-				as_schedule_recurring_action( time() + HOUR_IN_SECONDS, DAY_IN_SECONDS, self::CRON_HOOK, array(), Alerts::AS_GROUP, true );
+			if ( false === as_next_scheduled_action( self::CRON_HOOK, array(), Emails\Manager::AS_GROUP ) ) {
+				as_schedule_recurring_action( time() + HOUR_IN_SECONDS, DAY_IN_SECONDS, self::CRON_HOOK, array(), Emails\Manager::AS_GROUP, true );
 				\storesuite_log( '[inventory-manager] Scheduled the recurring stock-log purge action.', 'info' );
 			}
 			return;
 		}
 
-		if ( false !== as_next_scheduled_action( self::CRON_HOOK, array(), Alerts::AS_GROUP ) ) {
-			as_unschedule_all_actions( self::CRON_HOOK, array(), Alerts::AS_GROUP );
+		if ( false !== as_next_scheduled_action( self::CRON_HOOK, array(), Emails\Manager::AS_GROUP ) ) {
+			as_unschedule_all_actions( self::CRON_HOOK, array(), Emails\Manager::AS_GROUP );
 			\storesuite_log( '[inventory-manager] Unscheduled the stock-log purge action (stock log is off).', 'info' );
 		}
 	}
@@ -323,7 +323,7 @@ class StockLog {
 	 */
 	public static function unschedule() {
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
-			as_unschedule_all_actions( self::CRON_HOOK, array(), Alerts::AS_GROUP );
+			as_unschedule_all_actions( self::CRON_HOOK, array(), Emails\Manager::AS_GROUP );
 		}
 
 		// Also clear the legacy WP-Cron event from pre-Action Scheduler versions.

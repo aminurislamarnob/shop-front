@@ -22,29 +22,9 @@ class Settings {
 	 * @return array
 	 */
 	public static function get_schema() {
+		// Email alerts (immediate + daily digest) are configured per-email under
+		// WooCommerce → Settings → Emails, not here.
 		return array(
-			'enable_alerts'               => array(
-				'type'        => 'toggle',
-				'label'       => __( 'Low-stock email alerts', 'storesuite' ),
-				'description' => __( 'Email a notification when a product drops to or below its low-stock threshold.', 'storesuite' ),
-				'default'     => true,
-			),
-			'alert_mode'                  => array(
-				'type'        => 'select',
-				'label'       => __( 'Alert delivery', 'storesuite' ),
-				'description' => __( 'Send an email immediately per product, or one daily digest.', 'storesuite' ),
-				'default'     => 'immediate',
-				'options'     => array(
-					'immediate' => __( 'Immediate', 'storesuite' ),
-					'daily'     => __( 'Daily digest', 'storesuite' ),
-				),
-			),
-			'alert_recipients'            => array(
-				'type'        => 'text',
-				'label'       => __( 'Alert recipients', 'storesuite' ),
-				'description' => __( 'Comma-separated email addresses. Leave empty to use the site admin email.', 'storesuite' ),
-				'default'     => '',
-			),
 			'enable_stock_log'            => array(
 				'type'        => 'toggle',
 				'label'       => __( 'Record stock movement log', 'storesuite' ),
@@ -118,9 +98,7 @@ class Settings {
 
 		update_option( self::OPTION_KEY, $clean );
 
-		// Keep the scheduled actions in step with the new settings so a mode
-		// switch never strands queued alerts or leaves an orphan action.
-		Alerts::sync_schedule();
+		// Keep the purge action in step with the new settings.
 		StockLog::sync_schedule();
 		return $clean;
 	}
