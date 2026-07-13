@@ -275,6 +275,18 @@ const ModuleSettings = () => {
 											values[ key ],
 											onFieldChange
 										) }
+										{ !! field.link?.url && (
+											<a
+												className="storesuite-settings-field-link"
+												href={ field.link.url }
+											>
+												{ field.link.label ||
+													__(
+														'Configure',
+														'storesuite'
+													) }
+											</a>
+										) }
 									</div>
 								) ) }
 								{ fieldEntries.length > 0 && (

@@ -256,6 +256,13 @@
     margin-top: 6px;
 }
 
+.storesuite-settings-field-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 13px;
+    text-decoration: none;
+}
+
 .storesuite-settings-sec-header {
     margin-bottom: 20px;
 }

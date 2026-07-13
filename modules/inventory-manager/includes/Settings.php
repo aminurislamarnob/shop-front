@@ -19,12 +19,54 @@ class Settings {
 	const OPTION_KEY = 'storesuite_inventory_manager_settings';
 
 	/**
+	 * Virtual fields mirroring the enabled flag of the module's WooCommerce
+	 * emails. They render as toggles on the module settings screen but are
+	 * stored in the emails' own `woocommerce_{email_id}_settings` options
+	 * (the source of truth), never in OPTION_KEY.
+	 *
+	 * @return array key => [option, default]
+	 */
+	private static function email_toggle_fields() {
+		return array(
+			'enable_low_stock_alert_email'   => array(
+				'option'  => Emails\Manager::ALERT_SETTINGS_OPTION,
+				'default' => true,
+			),
+			'enable_daily_stock_digest_email' => array(
+				'option'  => Emails\Manager::DIGEST_SETTINGS_OPTION,
+				'default' => false,
+			),
+		);
+	}
+
+	/**
 	 * @return array
 	 */
 	public static function get_schema() {
-		// Email alerts (immediate + daily digest) are configured per-email under
-		// WooCommerce → Settings → Emails, not here.
 		return array(
+			// The two email toggles mirror (and write to) each email's
+			// enabled flag under WooCommerce → Settings → Emails; recipients,
+			// subjects and templates are managed there.
+			'enable_low_stock_alert_email' => array(
+				'type'        => 'toggle',
+				'label'       => __( 'Immediate low-stock alert email', 'storesuite' ),
+				'description' => __( 'Email a notification the moment a product drops to or below its low-stock threshold or runs out of stock.', 'storesuite' ),
+				'default'     => true,
+				'link'        => array(
+					'url'   => admin_url( Emails\Manager::ALERT_SETTINGS_URL ),
+					'label' => __( 'Configure this email in WooCommerce →', 'storesuite' ),
+				),
+			),
+			'enable_daily_stock_digest_email' => array(
+				'type'        => 'toggle',
+				'label'       => __( 'Daily stock digest email', 'storesuite' ),
+				'description' => __( 'Send one daily email listing every product that went low on stock or out of stock since the previous digest.', 'storesuite' ),
+				'default'     => false,
+				'link'        => array(
+					'url'   => admin_url( Emails\Manager::DIGEST_SETTINGS_URL ),
+					'label' => __( 'Configure this email in WooCommerce →', 'storesuite' ),
+				),
+			),
 			'enable_stock_log'            => array(
 				'type'        => 'toggle',
 				'label'       => __( 'Record stock movement log', 'storesuite' ),
@@ -69,7 +111,14 @@ class Settings {
 		if ( ! is_array( $stored ) ) {
 			$stored = array();
 		}
-		return array_merge( self::get_defaults(), $stored );
+		$values = array_merge( self::get_defaults(), $stored );
+
+		// The email toggles always reflect the WooCommerce email settings.
+		foreach ( self::email_toggle_fields() as $key => $email ) {
+			$values[ $key ] = Emails\Manager::is_email_enabled( $email['option'], $email['default'] );
+		}
+
+		return $values;
 	}
 
 	/**
@@ -89,18 +138,33 @@ class Settings {
 		$schema = self::get_schema();
 		$clean  = self::get();
 
+		$email_toggles = self::email_toggle_fields();
+
 		foreach ( $schema as $key => $field ) {
 			if ( ! array_key_exists( $key, $data ) ) {
 				continue;
 			}
+
+			// Email toggles write through to the WooCommerce email settings
+			// (the source of truth) instead of this module's option.
+			if ( isset( $email_toggles[ $key ] ) ) {
+				Emails\Manager::set_email_enabled( $email_toggles[ $key ]['option'], (bool) $data[ $key ] );
+				continue;
+			}
+
 			$clean[ $key ] = self::sanitize_field( $data[ $key ], $field );
+		}
+
+		foreach ( array_keys( $email_toggles ) as $key ) {
+			unset( $clean[ $key ] );
 		}
 
 		update_option( self::OPTION_KEY, $clean );
 
-		// Keep the purge action in step with the new settings.
+		// Keep the scheduled actions in step with the new settings.
+		Emails\Manager::sync_digest_schedule();
 		StockLog::sync_schedule();
-		return $clean;
+		return self::get();
 	}
 
 	/**

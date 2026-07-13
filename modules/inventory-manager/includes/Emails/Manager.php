@@ -27,10 +27,17 @@ class Manager {
 	const AS_GROUP     = 'storesuite';
 
 	/**
-	 * Option WooCommerce stores the digest email's settings under
+	 * Options WooCommerce stores each email's settings under
 	 * (`woocommerce_{email_id}_settings`).
 	 */
+	const ALERT_SETTINGS_OPTION  = 'woocommerce_storesuite_low_stock_alert_settings';
 	const DIGEST_SETTINGS_OPTION = 'woocommerce_storesuite_daily_stock_digest_settings';
+
+	/**
+	 * WooCommerce → Settings → Emails sections for each email.
+	 */
+	const ALERT_SETTINGS_URL  = 'admin.php?page=wc-settings&tab=email&section=storesuite_email_low_stock_alert';
+	const DIGEST_SETTINGS_URL = 'admin.php?page=wc-settings&tab=email&section=storesuite_email_daily_stock_digest';
 
 	/**
 	 * Register hooks. Called from Module::boot().
@@ -102,14 +109,48 @@ class Manager {
 	}
 
 	/**
+	 * Whether an email is enabled in WooCommerce → Settings → Emails. Reads
+	 * the raw option so it works before/without the mailer being loaded.
+	 *
+	 * @param string $option_name The `woocommerce_{email_id}_settings` option.
+	 * @param bool   $default     Enabled state when the email was never saved.
+	 * @return bool
+	 */
+	public static function is_email_enabled( $option_name, $default = false ) {
+		$settings = get_option( $option_name, array() );
+
+		if ( ! is_array( $settings ) || ! isset( $settings['enabled'] ) ) {
+			return $default;
+		}
+
+		return 'yes' === $settings['enabled'];
+	}
+
+	/**
+	 * Flip an email's enabled flag in its WooCommerce settings option,
+	 * preserving any other saved fields (recipient, subject, …).
+	 *
+	 * @param string $option_name The `woocommerce_{email_id}_settings` option.
+	 * @param bool   $enabled     New enabled state.
+	 * @return void
+	 */
+	public static function set_email_enabled( $option_name, $enabled ) {
+		$settings = get_option( $option_name, array() );
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+
+		$settings['enabled'] = $enabled ? 'yes' : 'no';
+		update_option( $option_name, $settings );
+	}
+
+	/**
 	 * Whether the digest email is enabled in WooCommerce → Settings → Emails.
-	 * Reads the raw option so it works before/without the mailer being loaded.
 	 *
 	 * @return bool
 	 */
 	public static function is_digest_enabled() {
-		$settings = get_option( self::DIGEST_SETTINGS_OPTION, array() );
-		return is_array( $settings ) && isset( $settings['enabled'] ) && 'yes' === $settings['enabled'];
+		return self::is_email_enabled( self::DIGEST_SETTINGS_OPTION, false );
 	}
 
 	/**

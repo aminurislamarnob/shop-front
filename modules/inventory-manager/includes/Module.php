@@ -323,7 +323,7 @@ class Module extends BaseModule {
 		Installer::uninstall();
 		delete_option( Settings::OPTION_KEY );
 		delete_option( Emails\Manager::QUEUE_OPTION );
-		delete_option( 'woocommerce_storesuite_low_stock_alert_settings' );
+		delete_option( Emails\Manager::ALERT_SETTINGS_OPTION );
 		delete_option( Emails\Manager::DIGEST_SETTINGS_OPTION );
 	}
 }
