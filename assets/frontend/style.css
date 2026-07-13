@@ -6293,6 +6293,12 @@ body,
   opacity: 1;
 }
 
+/* The empty-state heading hardcodes a near-black #374151, invisible on the dark
+   backdrop. (The paragraph below it already uses a variable.) */
+[data-theme="dark"] .storesuite-no-data-found h2 {
+  color: var(--storesuite-text-black);
+}
+
 /* Card / panel surfaces that hardcode a white background. */
 [data-theme="dark"] .storesuite-card,
 [data-theme="dark"] .storesuite-mb-24,
