@@ -117,6 +117,11 @@ class Settings {
 		}
 
 		update_option( self::OPTION_KEY, $clean );
+
+		// Keep the scheduled actions in step with the new settings so a mode
+		// switch never strands queued alerts or leaves an orphan action.
+		Alerts::sync_schedule();
+		StockLog::sync_schedule();
 		return $clean;
 	}
 

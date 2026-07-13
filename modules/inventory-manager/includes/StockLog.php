@@ -51,9 +51,41 @@ class StockLog {
 			add_action( 'woocommerce_restore_order_item_stock', array( $this, 'on_order_item_restore' ), 10, 4 );
 
 			add_action( self::CRON_HOOK, array( $this, 'purge' ) );
-			if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
-				wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', self::CRON_HOOK );
+			// Action Scheduler can't accept new actions before `init`.
+			add_action( 'init', array( __CLASS__, 'sync_schedule' ) );
+		}
+	}
+
+	/**
+	 * Reconcile the recurring purge action with the current settings. Runs on
+	 * `init` while the stock log is enabled and directly after every settings
+	 * save, so toggling the log never leaves an orphan action.
+	 *
+	 * @return void
+	 */
+	public static function sync_schedule() {
+		if ( ! function_exists( 'as_schedule_recurring_action' ) ) {
+			return;
+		}
+
+		// Clean up the legacy WP-Cron event from pre-Action Scheduler versions.
+		$legacy_ts = wp_next_scheduled( self::CRON_HOOK );
+		if ( $legacy_ts ) {
+			wp_unschedule_event( $legacy_ts, self::CRON_HOOK );
+			\storesuite_log( '[inventory-manager] Migrated stock-log purge schedule from WP-Cron to Action Scheduler.', 'info' );
+		}
+
+		if ( (bool) Settings::value( 'enable_stock_log' ) ) {
+			if ( false === as_next_scheduled_action( self::CRON_HOOK, array(), Alerts::AS_GROUP ) ) {
+				as_schedule_recurring_action( time() + HOUR_IN_SECONDS, DAY_IN_SECONDS, self::CRON_HOOK, array(), Alerts::AS_GROUP, true );
+				\storesuite_log( '[inventory-manager] Scheduled the recurring stock-log purge action.', 'info' );
 			}
+			return;
+		}
+
+		if ( false !== as_next_scheduled_action( self::CRON_HOOK, array(), Alerts::AS_GROUP ) ) {
+			as_unschedule_all_actions( self::CRON_HOOK, array(), Alerts::AS_GROUP );
+			\storesuite_log( '[inventory-manager] Unscheduled the stock-log purge action (stock log is off).', 'info' );
 		}
 	}
 
@@ -290,6 +322,11 @@ class StockLog {
 	 * @return void
 	 */
 	public static function unschedule() {
+		if ( function_exists( 'as_unschedule_all_actions' ) ) {
+			as_unschedule_all_actions( self::CRON_HOOK, array(), Alerts::AS_GROUP );
+		}
+
+		// Also clear the legacy WP-Cron event from pre-Action Scheduler versions.
 		$ts = wp_next_scheduled( self::CRON_HOOK );
 		if ( $ts ) {
 			wp_unschedule_event( $ts, self::CRON_HOOK );
