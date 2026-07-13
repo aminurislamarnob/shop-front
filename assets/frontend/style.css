@@ -6293,6 +6293,12 @@ body,
   opacity: 1;
 }
 
+/* The empty-state heading hardcodes a near-black #374151, invisible on the dark
+   backdrop. (The paragraph below it already uses a variable.) */
+[data-theme="dark"] .storesuite-no-data-found h2 {
+  color: var(--storesuite-text-black);
+}
+
 /* Card / panel surfaces that hardcode a white background. */
 [data-theme="dark"] .storesuite-card,
 [data-theme="dark"] .storesuite-mb-24,
@@ -7712,6 +7718,234 @@ body,
 #storesuite-ai-bundle-modal .storesuite-form-control[readonly] {
   opacity: 0.55;
   cursor: not-allowed;
+}
+/* ============================================
+   Notifications (header bell + dropdown + page)
+   ============================================ */
+.storesuite-notifications-dropdown .storesuite-notification-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border: 1px solid var(--storesuite-border-color);
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.storesuite-notifications-dropdown .storesuite-notification-bell svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--storesuite-text-color);
+}
+.storesuite-notifications-dropdown .storesuite-notification-bell:hover {
+  background: var(--storesuite-bg-color-light);
+}
+.storesuite-notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--storesuite-primary-bg);
+  color: var(--storesuite-button-text-color);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+}
+.storesuite-notification-badge[hidden] {
+  display: none;
+}
+.storesuite-dropdown.storesuite-header-dropdown.storesuite-notifications-dropdown .storesuite-dropdown-menu {
+  width: 320px;
+}
+.storesuite-notifications-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--storesuite-border-color);
+}
+.storesuite-notifications-menu-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--storesuite-text-black);
+}
+.storesuite-notifications-menu-list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+.storesuite-dropdown.storesuite-notifications-dropdown .storesuite-dropdown-menu a.dropdown-link {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 16px;
+}
+/* The generic dropdown hover is solid primary + !important, which makes the
+   multi-line notification rows unreadable — keep their hover light instead. */
+.storesuite-dropdown.storesuite-notifications-dropdown .storesuite-dropdown-menu a.dropdown-link:hover {
+  background: var(--storesuite-bg-color-light) !important;
+  color: inherit;
+}
+.storesuite-notifications-menu-list .storesuite-notification-item.is-unseen {
+  background: var(--storesuite-bg-color-light);
+}
+.storesuite-notifications-menu-list .storesuite-notification-item:not(:last-child) {
+  border-bottom: 1px solid var(--storesuite-border-color);
+}
+.storesuite-notifications-dropdown .storesuite-notification-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--storesuite-text-black);
+}
+.storesuite-notifications-dropdown .storesuite-notification-message {
+  font-size: 12px;
+  color: var(--storesuite-text-color);
+  white-space: normal;
+}
+.storesuite-notifications-dropdown .storesuite-notification-time {
+  font-size: 11px;
+  color: var(--storesuite-text-color-light);
+}
+.storesuite-notifications-empty {
+  padding: 20px 16px;
+  font-size: 13px;
+  color: var(--storesuite-text-color-light);
+  text-align: center;
+  list-style: none;
+}
+.storesuite-notifications-menu-footer {
+  padding: 10px 16px;
+  border-top: 1px solid var(--storesuite-border-color);
+  text-align: center;
+}
+.storesuite-notifications-menu-footer a {
+  font-size: 13px;
+  color: var(--storesuite-primary-bg);
+  text-decoration: none;
+}
+.storesuite-notifications-menu-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Notifications page */
+.storesuite-notifications-card .storesuite-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.storesuite-notifications-card .storesuite-card-content {
+  padding: 0;
+}
+.storesuite-notifications-actions {
+  display: inline-flex;
+  gap: 8px;
+}
+.storesuite-notifications-mark-all,
+.storesuite-notifications-clear-all {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.storesuite-notifications-clear-all:hover {
+  background: rgb(244 63 94);
+  border-color: rgb(244 63 94);
+  color: #fff;
+}
+ul.storesuite-notifications-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.storesuite-notifications-list .storesuite-notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 24px;
+}
+.storesuite-notifications-list .storesuite-notification-item:not(:last-child) {
+  border-bottom: 1px solid var(--storesuite-border-color);
+}
+.storesuite-notifications-list .storesuite-notification-item.is-unseen {
+  background: var(--storesuite-bg-color-light);
+}
+.storesuite-notification-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--storesuite-bg-color-light);
+  flex: 0 0 auto;
+}
+.storesuite-notification-icon svg {
+  fill: var(--storesuite-icon-color);
+}
+.storesuite-notification-item.is-unseen .storesuite-notification-icon svg {
+  fill: var(--storesuite-primary-bg);
+}
+.storesuite-notification-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.storesuite-notifications-list .storesuite-notification-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--storesuite-text-black);
+}
+.storesuite-notifications-list .storesuite-notification-message {
+  font-size: 13px;
+  color: var(--storesuite-text-color);
+}
+.storesuite-notifications-list .storesuite-notification-message a {
+  color: var(--storesuite-primary-bg);
+  text-decoration: none;
+}
+.storesuite-notifications-list .storesuite-notification-message a:hover {
+  text-decoration: underline;
+}
+.storesuite-notifications-list .storesuite-notification-time {
+  font-size: 12px;
+  color: var(--storesuite-text-color-light);
+}
+.storesuite-notification-unseen-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--storesuite-primary-bg);
+  margin-top: 6px;
+  flex: 0 0 auto;
+}
+/* Dark mode: see the "Dark mode overrides" section above. The bell hardcodes a
+   white fill, and the hover/unseen highlights use --storesuite-bg-color-light,
+   which in dark mode matches the dropdown/card surface — lift them to the
+   elevated tone so they stay visible, and recess the page icon tile instead. */
+[data-theme="dark"] .storesuite-notifications-dropdown .storesuite-notification-bell {
+  background: var(--storesuite-surface-bg);
+}
+[data-theme="dark"] .storesuite-notifications-dropdown .storesuite-notification-bell:hover {
+  background: var(--storesuite-surface-elevated);
+}
+/* The light-theme hover rule carries !important, so restate it to win. */
+[data-theme="dark"] .storesuite-dropdown.storesuite-notifications-dropdown .storesuite-dropdown-menu a.dropdown-link:hover {
+  background: var(--storesuite-surface-elevated) !important;
+}
+[data-theme="dark"] .storesuite-notifications-menu-list .storesuite-notification-item.is-unseen,
+[data-theme="dark"] .storesuite-notifications-list .storesuite-notification-item.is-unseen {
+  background: var(--storesuite-surface-elevated);
+}
+[data-theme="dark"] .storesuite-notification-icon {
+  background: var(--storesuite-page-bg);
 }
 /* Order details "Documents" card (PDF-invoice / packing-slip integration). */
 .storesuite-order-documents .storesuite-order-documents-list {

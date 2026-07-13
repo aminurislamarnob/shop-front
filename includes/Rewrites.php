@@ -67,6 +67,7 @@ class Rewrites {
 				'add-new-coupon'   => get_option( 'storesuite_myshop_new_coupon_endpoint', 'add-new-coupon' ),
 				'edit-coupon'      => get_option( 'storesuite_myshop_edit_coupon_endpoint', 'edit-coupon' ),
 				'edit-account-details' => get_option( 'storesuite_myshop_edit_account_endpoint', 'edit-account-details' ),
+				'notifications'    => get_option( 'storesuite_myshop_notifications_endpoint', 'notifications' ),
 			)
 		);
 	}
@@ -175,6 +176,13 @@ class Rewrites {
 		add_rewrite_rule(
 			$this->store_front_base . '/coupons/page/([^/]+)/?$',
 			'index.php?pagename=' . $this->store_front_base . '&coupons=1&paged=$matches[1]',
+			'top'
+		);
+
+		// Add rewrite rule for notification list pagination.
+		add_rewrite_rule(
+			$this->store_front_base . '/notifications/page/([^/]+)/?$',
+			'index.php?pagename=' . $this->store_front_base . '&notifications=1&paged=$matches[1]',
 			'top'
 		);
 
@@ -306,6 +314,9 @@ class Rewrites {
 				break;
 			case 'edit-account-details':
 				$title = __( 'Account details', 'storesuite' );
+				break;
+			case 'notifications':
+				$title = __( 'Notifications', 'storesuite' );
 				break;
 			default:
 				$title = '';

@@ -196,6 +196,11 @@ class Dashboard extends MyStoreSuiteShortcode {
 			return ob_get_clean();
 		}
 
+		if ( isset( $wp->query_vars['notifications'] ) ) {
+			do_action( 'storesuite_load_notifications_template', $wp->query_vars );
+			return ob_get_clean();
+		}
+
 		do_action( 'storesuite_load_custom_template', $wp->query_vars );
 
 		return ob_get_clean();
