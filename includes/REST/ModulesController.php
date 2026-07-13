@@ -295,6 +295,7 @@ class ModulesController extends WP_REST_Controller {
 
 		return rest_ensure_response(
 			array(
+				'name'   => $module->get_name(),
 				'schema' => $module->get_settings_schema(),
 				'values' => $module->get_settings(),
 			)
@@ -322,6 +323,7 @@ class ModulesController extends WP_REST_Controller {
 
 		return rest_ensure_response(
 			array(
+				'name'   => $module->get_name(),
 				'schema' => $module->get_settings_schema(),
 				'values' => $module->update_settings( $values ),
 			)
