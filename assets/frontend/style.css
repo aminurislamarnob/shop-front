@@ -7776,7 +7776,7 @@ body,
 .storesuite-notifications-menu-title {
   font-size: 14px;
   font-weight: 600;
-  color: var(--storesuite-title-text-color);
+  color: var(--storesuite-text-black);
 }
 .storesuite-notifications-menu-list {
   max-height: 320px;
@@ -7803,7 +7803,7 @@ body,
 .storesuite-notifications-dropdown .storesuite-notification-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--storesuite-title-text-color);
+  color: var(--storesuite-text-black);
 }
 .storesuite-notifications-dropdown .storesuite-notification-message {
   font-size: 12px;
@@ -7901,7 +7901,7 @@ ul.storesuite-notifications-list {
 .storesuite-notifications-list .storesuite-notification-title {
   font-size: 14px;
   font-weight: 600;
-  color: var(--storesuite-title-text-color);
+  color: var(--storesuite-text-black);
 }
 .storesuite-notifications-list .storesuite-notification-message {
   font-size: 13px;
