@@ -7050,10 +7050,31 @@ body,
 [data-theme="dark"] .storesuite-table-search-input input,
 [data-theme="dark"] .storesuite-search-form.storesuite-order-search-form .storesuite-table-search-input,
 [data-theme="dark"] select#customer_user,
-[data-theme="dark"] select#storesuite_product_search,
-[data-theme="dark"] .my-storesuite-checkbox-back {
+[data-theme="dark"] select#storesuite_product_search {
   background-color: var(--storesuite-surface-elevated);
   color: var(--storesuite-text-color);
+}
+
+/* Table checkboxes (select-all and per-row).
+ *
+ * The base .my-storesuite-checkbox-back paints a white box with an
+ * `!important` rgba(0,0,0,.3) border, which on a dark surface is a black
+ * outline on near-black — the boxes read as ghosts. The !important also beats
+ * the non-important border-color on the :checked rule, so the checked box keeps
+ * a dark rim in light mode too. Restate both here, matching that specificity. */
+[data-theme="dark"] .my-storesuite-checkbox-back {
+  background-color: var(--storesuite-surface-elevated);
+  border-color: var(--storesuite-text-color-light) !important;
+}
+
+[data-theme="dark"] .my-storesuite-checkbox-input:checked ~ .my-storesuite-checkbox-back {
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg) !important;
+}
+
+[data-theme="dark"] .my-storesuite-checkbox-input:focus-visible ~ .my-storesuite-checkbox-back {
+  outline: 2px solid var(--storesuite-primary-bg);
+  outline-offset: 1px;
 }
 
 /* Card title divider hardcodes a light gray border. */
