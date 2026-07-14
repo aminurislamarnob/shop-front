@@ -272,6 +272,7 @@ const COLOR_FIELDS = [
 const DARK_THEMES = [
 	{
 		value: 'default',
+		colorOptions: [ '#0f172a', '#1e293b', '#334155', '#cbd5e1' ],
 		label: __( 'Dark default', 'storesuite' ),
 		description: __(
 			'The standard dark theme, with full contrast on a slate background.',
@@ -294,6 +295,7 @@ const DARK_THEMES = [
 	},
 	{
 		value: 'soft',
+		colorOptions: [ '#1c2128', '#22272e', '#373e47', '#adbac7' ],
 		label: __( 'Soft dark', 'storesuite' ),
 		description: __(
 			'A dark theme with reduced contrast for comfortable viewing in low-light environments.',
@@ -316,6 +318,7 @@ const DARK_THEMES = [
 	},
 	{
 		value: 'midnight',
+		colorOptions: [ '#010409', '#0d1117', '#21262d', '#c9d1d9' ],
 		label: __( 'Midnight black', 'storesuite' ),
 		description: __(
 			'A near-black theme that saves power on OLED screens.',
@@ -338,6 +341,7 @@ const DARK_THEMES = [
 	},
 	{
 		value: 'carbon',
+		colorOptions: [ '#000000', '#0a0a0a', '#333333', '#a1a1a1' ],
 		label: __( 'Carbon', 'storesuite' ),
 		description: __(
 			'A true-black canvas with charcoal cards, grey text and subtle borders.',
@@ -518,104 +522,57 @@ const ModeCard = ( { isActive, onClick, title, description } ) => (
 		</div>
 	</div>
 );
-// GitHub-style theme card: a miniature of the dashboard painted in the theme's
-// neutrals, with the light palette's accent so the inherited brand color is visible.
-const DarkThemeCard = ( { darkTheme, accentColor, isActive, onSelect } ) => {
-	const { colors, label, description, value } = darkTheme;
+// Same row as a light palette: radio, name, and a strip of the theme's neutrals.
+const DarkThemeItem = ( { darkTheme, isActive, onSelect } ) => {
+	const { label, value, colorOptions } = darkTheme;
 
 	return (
 		<div
-			className={ `storesuite-dark-theme-card${
+			className={ `storesuite-palette-item${
 				isActive ? ' is-active' : ''
 			}` }
+			onClick={ () => onSelect( value ) }
+			role="button"
+			tabIndex={ 0 }
+			onKeyDown={ ( event ) => {
+				if ( event.key === 'Enter' || event.key === ' ' ) {
+					onSelect( value );
+				}
+			} }
 		>
-			<div
-				className="storesuite-dark-theme-mock"
-				style={ {
-					backgroundColor: colors.pageBg,
-					borderColor: colors.borderColor,
-				} }
-				aria-hidden="true"
-			>
-				<div
-					className="storesuite-dark-theme-mock__bar"
-					style={ {
-						backgroundColor: colors.surfaceBg,
-						borderColor: colors.borderColor,
-					} }
+			<div className="storesuite-palette-item__radio">
+				<input
+					id={ `storesuite-dark-theme-${ value }` }
+					type="radio"
+					name="storesuite_dark_theme"
+					value={ value }
+					checked={ isActive }
+					onChange={ () => onSelect( value ) }
+				/>
+				<span
+					className="storesuite-palette-item__indicator"
+					aria-hidden="true"
 				>
-					{ [ 1, 2, 3 ].map( ( pill ) => (
-						<span
-							key={ pill }
-							className="storesuite-dark-theme-mock__pill"
-							style={ { backgroundColor: colors.liteTextColor } }
+					<svg viewBox="0 0 20 20" fill="currentColor">
+						<path
+							fillRule="evenodd"
+							d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+							clipRule="evenodd"
 						/>
-					) ) }
-				</div>
-				<div className="storesuite-dark-theme-mock__body">
-					<div
-						className="storesuite-dark-theme-mock__sidebar"
-						style={ {
-							backgroundColor: colors.sidebarBackground,
-							borderColor: colors.sidebarBorderColor,
-						} }
-					>
-						{ [ 1, 2, 3, 4 ].map( ( item ) => (
-							<span
-								key={ item }
-								className="storesuite-dark-theme-mock__menu"
-								style={ {
-									backgroundColor:
-										item === 1
-											? accentColor
-											: colors.sidebarMenuText,
-								} }
-							/>
-						) ) }
-					</div>
-					<div className="storesuite-dark-theme-mock__content">
-						<span
-							className="storesuite-dark-theme-mock__accent"
-							style={ { backgroundColor: accentColor } }
-						/>
-						<span
-							className="storesuite-dark-theme-mock__card"
-							style={ {
-								backgroundColor: colors.surfaceBg,
-								borderColor: colors.borderColor,
-							} }
-						/>
-					</div>
-				</div>
+					</svg>
+				</span>
+				<label htmlFor={ `storesuite-dark-theme-${ value }` }>
+					{ label }
+				</label>
 			</div>
-
-			<div className="storesuite-dark-theme-meta">
-				<div className="storesuite-palette-item__radio">
-					<input
-						id={ `storesuite-dark-theme-${ value }` }
-						type="radio"
-						name="storesuite_dark_theme"
-						value={ value }
-						checked={ isActive }
-						onChange={ () => onSelect( value ) }
+			<div className="storesuite-color-swatches">
+				{ colorOptions.map( ( swatchColor, swatchIndex ) => (
+					<div
+						key={ swatchIndex }
+						className="storesuite-color-swatch"
+						style={ { backgroundColor: swatchColor } }
 					/>
-					<span
-						className="storesuite-palette-item__indicator"
-						aria-hidden="true"
-					>
-						<svg viewBox="0 0 20 20" fill="currentColor">
-							<path
-								fillRule="evenodd"
-								d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-								clipRule="evenodd"
-							/>
-						</svg>
-					</span>
-					<label htmlFor={ `storesuite-dark-theme-${ value }` }>
-						{ label }
-					</label>
-				</div>
-				<p className="storesuite-dark-theme-desc">{ description }</p>
+				) ) }
 			</div>
 		</div>
 	);
@@ -1017,27 +974,31 @@ const ColorsSettings = () => {
 										'storesuite'
 									) }
 								</p>
-								<div className="storesuite-dark-theme-grid">
-									{ DARK_THEMES.map( ( theme ) => (
-										<DarkThemeCard
-											key={ theme.value }
-											darkTheme={ theme }
-											accentColor={
-												colors.buttonBackground
-											}
-											isActive={
-												selectedDarkTheme ===
-												theme.value
-											}
-											onSelect={ setSelectedDarkTheme }
+								<div className="storesuite-colors-layout">
+									<div className="storesuite-colors-left">
+										<div className="storesuite-palette-list">
+											{ DARK_THEMES.map( ( theme ) => (
+												<DarkThemeItem
+													key={ theme.value }
+													darkTheme={ theme }
+													isActive={
+														selectedDarkTheme ===
+														theme.value
+													}
+													onSelect={
+														setSelectedDarkTheme
+													}
+												/>
+											) ) }
+										</div>
+									</div>
+
+									<div className="storesuite-colors-right">
+										<ColorPreview
+											colors={ darkColors }
+											theme="dark"
 										/>
-									) ) }
-								</div>
-								<div className="storesuite-colors-right storesuite-dark-theme-preview">
-									<ColorPreview
-										colors={ darkColors }
-										theme="dark"
-									/>
+									</div>
 								</div>
 							</>
 						) }
