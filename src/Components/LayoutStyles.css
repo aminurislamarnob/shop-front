@@ -1000,3 +1000,9 @@
     font-size: 14px;
     color: #646970;
 }
+
+.storesuite-changelog-load-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
