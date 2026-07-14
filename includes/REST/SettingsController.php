@@ -94,21 +94,24 @@ class SettingsController extends WP_REST_Controller {
 			$storesuite_settings['storesuite_prevent_admin_access'] = sanitize_text_field( $val );
 		}
 
-		if ( $request->has_param( 'storesuite_dashboard_sidebar_logo_id' ) ) {
-			$logo_id = absint( $request->get_param( 'storesuite_dashboard_sidebar_logo_id' ) );
-			if ( $logo_id > 0 && wp_attachment_is_image( $logo_id ) ) {
-				$storesuite_settings['storesuite_dashboard_sidebar_logo_id'] = $logo_id;
-			} else {
-				unset( $storesuite_settings['storesuite_dashboard_sidebar_logo_id'] );
-			}
-		}
+		$branding_image_keys = array(
+			'storesuite_dashboard_sidebar_logo_id',
+			'storesuite_dashboard_sidebar_icon_id',
+			'storesuite_dashboard_sidebar_logo_dark_id',
+			'storesuite_dashboard_sidebar_icon_dark_id',
+		);
 
-		if ( $request->has_param( 'storesuite_dashboard_sidebar_icon_id' ) ) {
-			$icon_id = absint( $request->get_param( 'storesuite_dashboard_sidebar_icon_id' ) );
-			if ( $icon_id > 0 && wp_attachment_is_image( $icon_id ) ) {
-				$storesuite_settings['storesuite_dashboard_sidebar_icon_id'] = $icon_id;
+		foreach ( $branding_image_keys as $key ) {
+			if ( ! $request->has_param( $key ) ) {
+				continue;
+			}
+
+			$attachment_id = absint( $request->get_param( $key ) );
+
+			if ( $attachment_id > 0 && wp_attachment_is_image( $attachment_id ) ) {
+				$storesuite_settings[ $key ] = $attachment_id;
 			} else {
-				unset( $storesuite_settings['storesuite_dashboard_sidebar_icon_id'] );
+				unset( $storesuite_settings[ $key ] );
 			}
 		}
 
@@ -190,7 +193,27 @@ class SettingsController extends WP_REST_Controller {
 			'storesuite_color_border',
 			'storesuite_color_lite_bg',
 		);
-		foreach ( $color_keys as $key ) {
+		/*
+		 * Dark mode only overrides the neutrals (surfaces, text, borders). Button and
+		 * active-menu accents are deliberately absent so the light palette's primary
+		 * colors carry over into dark mode.
+		 */
+		$dark_color_keys = array(
+			'storesuite_dark_text_color',
+			'storesuite_dark_title_text_color',
+			'storesuite_dark_lite_text_color',
+			'storesuite_dark_icon_color',
+			'storesuite_dark_color_sidebar_menu_text',
+			'storesuite_dark_color_sidebar_background',
+			'storesuite_dark_color_sidebar_active_text',
+			'storesuite_dark_color_sidebar_border',
+			'storesuite_dark_color_border',
+			'storesuite_dark_color_lite_bg',
+			'storesuite_dark_color_page_bg',
+			'storesuite_dark_color_surface_bg',
+		);
+
+		foreach ( array_merge( $color_keys, $dark_color_keys ) as $key ) {
 			if ( $request->has_param( $key ) ) {
 				$sanitized_hex               = sanitize_hex_color( $request->get_param( $key ) );
 				$storesuite_settings[ $key ] = $sanitized_hex ? $sanitized_hex : sanitize_text_field( $request->get_param( $key ) );
@@ -206,6 +229,10 @@ class SettingsController extends WP_REST_Controller {
 
 		if ( $request->has_param( 'storesuite_color_palette_name' ) ) {
 			$storesuite_settings['storesuite_color_palette_name'] = sanitize_text_field( $request->get_param( 'storesuite_color_palette_name' ) );
+		}
+
+		if ( $request->has_param( 'storesuite_dark_theme' ) ) {
+			$storesuite_settings['storesuite_dark_theme'] = sanitize_text_field( $request->get_param( 'storesuite_dark_theme' ) );
 		}
 
 		if ( $request->has_param( 'storesuite_attribution_logo_variant' ) ) {
@@ -269,6 +296,16 @@ class SettingsController extends WP_REST_Controller {
 				),
 				'storesuite_dashboard_sidebar_icon_id'     => array(
 					'description' => __( 'Attachment ID for the dashboard sidebar icon (shown when the sidebar is collapsed).', 'storesuite' ),
+					'type'        => 'integer',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_dashboard_sidebar_logo_dark_id' => array(
+					'description' => __( 'Attachment ID for the dashboard sidebar logo used in dark mode. Falls back to the light logo when empty.', 'storesuite' ),
+					'type'        => 'integer',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_dashboard_sidebar_icon_dark_id' => array(
+					'description' => __( 'Attachment ID for the dashboard sidebar icon used in dark mode. Falls back to the light icon when empty.', 'storesuite' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 				),
@@ -361,6 +398,11 @@ class SettingsController extends WP_REST_Controller {
 					'description' => __( 'Color palette mode: predefined or custom.', 'storesuite' ),
 					'type'        => 'string',
 					'enum'        => array( 'predefined', 'custom' ),
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_dark_theme' => array(
+					'description' => __( 'Active dark mode theme slug. Only the neutrals change; the light palette supplies the accent colors.', 'storesuite' ),
+					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'storesuite_color_palette_name' => array(

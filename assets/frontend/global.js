@@ -77,12 +77,31 @@
 				} );
 			}
 
+			// The sidebar logo and icon can each have a dark variant. Both URLs
+			// ride along on the image as data attributes so the swap is a src
+			// change rather than a re-render.
+			function applyBrandingImages( mode ) {
+				$( '.storesuite-sidebar-logo [data-storesuite-dark-src]' ).attr(
+					'src',
+					function () {
+						return (
+							$( this ).data(
+								mode === 'dark'
+									? 'storesuiteDarkSrc'
+									: 'storesuiteLightSrc'
+							) || $( this ).attr( 'src' )
+						);
+					}
+				);
+			}
+
 			function applyThemeMode( mode ) {
 				$root.attr( 'data-theme', mode );
 				$themeToggle.attr(
 					'aria-pressed',
 					mode === 'dark' ? 'true' : 'false'
 				);
+				applyBrandingImages( mode );
 				syncEditorsTheme();
 			}
 
