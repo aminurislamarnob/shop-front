@@ -831,7 +831,7 @@
 .storesuite-sidebar-image-control__label {
     font-weight: 600;
     font-size: 13px;
-    margin: 0 0 4px;
+    margin: 0 0 8px;
 }
 
 .storesuite-sidebar-image-control__help {
@@ -856,6 +856,21 @@
     border-radius: 6px;
     padding: 4px;
     background: #fff;
+}
+
+/* Preview the dark logo on a dark plate — that is the sidebar it lands on. */
+.storesuite-sidebar-image-control__preview.is-dark img {
+    border-color: #334155;
+    background: #1e293b;
+}
+
+.storesuite-sidebar-image-control .storesuite-theme-tabs--compact {
+    margin-bottom: 12px;
+}
+
+.storesuite-theme-tabs--compact .storesuite-theme-tab {
+    padding: 5px 12px;
+    font-size: 12px;
 }
 
 .storesuite-sidebar-image-control__actions {

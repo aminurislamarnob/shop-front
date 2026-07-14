@@ -94,21 +94,24 @@ class SettingsController extends WP_REST_Controller {
 			$storesuite_settings['storesuite_prevent_admin_access'] = sanitize_text_field( $val );
 		}
 
-		if ( $request->has_param( 'storesuite_dashboard_sidebar_logo_id' ) ) {
-			$logo_id = absint( $request->get_param( 'storesuite_dashboard_sidebar_logo_id' ) );
-			if ( $logo_id > 0 && wp_attachment_is_image( $logo_id ) ) {
-				$storesuite_settings['storesuite_dashboard_sidebar_logo_id'] = $logo_id;
-			} else {
-				unset( $storesuite_settings['storesuite_dashboard_sidebar_logo_id'] );
-			}
-		}
+		$branding_image_keys = array(
+			'storesuite_dashboard_sidebar_logo_id',
+			'storesuite_dashboard_sidebar_icon_id',
+			'storesuite_dashboard_sidebar_logo_dark_id',
+			'storesuite_dashboard_sidebar_icon_dark_id',
+		);
 
-		if ( $request->has_param( 'storesuite_dashboard_sidebar_icon_id' ) ) {
-			$icon_id = absint( $request->get_param( 'storesuite_dashboard_sidebar_icon_id' ) );
-			if ( $icon_id > 0 && wp_attachment_is_image( $icon_id ) ) {
-				$storesuite_settings['storesuite_dashboard_sidebar_icon_id'] = $icon_id;
+		foreach ( $branding_image_keys as $key ) {
+			if ( ! $request->has_param( $key ) ) {
+				continue;
+			}
+
+			$attachment_id = absint( $request->get_param( $key ) );
+
+			if ( $attachment_id > 0 && wp_attachment_is_image( $attachment_id ) ) {
+				$storesuite_settings[ $key ] = $attachment_id;
 			} else {
-				unset( $storesuite_settings['storesuite_dashboard_sidebar_icon_id'] );
+				unset( $storesuite_settings[ $key ] );
 			}
 		}
 
@@ -293,6 +296,16 @@ class SettingsController extends WP_REST_Controller {
 				),
 				'storesuite_dashboard_sidebar_icon_id'     => array(
 					'description' => __( 'Attachment ID for the dashboard sidebar icon (shown when the sidebar is collapsed).', 'storesuite' ),
+					'type'        => 'integer',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_dashboard_sidebar_logo_dark_id' => array(
+					'description' => __( 'Attachment ID for the dashboard sidebar logo used in dark mode. Falls back to the light logo when empty.', 'storesuite' ),
+					'type'        => 'integer',
+					'context'     => array( 'view', 'edit' ),
+				),
+				'storesuite_dashboard_sidebar_icon_dark_id' => array(
+					'description' => __( 'Attachment ID for the dashboard sidebar icon used in dark mode. Falls back to the light icon when empty.', 'storesuite' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 				),
