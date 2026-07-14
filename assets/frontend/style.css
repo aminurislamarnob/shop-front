@@ -1679,6 +1679,17 @@ ul.my-storesuite-metas {
     max-height: 30px;
     height: auto;
 }
+/* Both attribution logos are rendered when the palette resolved to the dark one;
+   the sidebar turns dark under dark mode, so show the light logo there. */
+.storesuite-sidebar-branding-logo--dark-mode {
+  display: none;
+}
+[data-theme="dark"] .storesuite-sidebar-branding-logo--light-mode {
+  display: none;
+}
+[data-theme="dark"] .storesuite-sidebar-branding-logo--dark-mode {
+  display: block;
+}
 .my-storesuite-container.storesuite-sidebar-collapsed .storesuite-sidebar-branding {
   display: none;
 }
