@@ -18,7 +18,7 @@ npm run format                   # Prettier
 bash bin/build.sh                # release ZIP
 ```
 
-No test suite exists yet (PHPUnit is configured but there's no `tests/`).
+**Tests:** `composer test` runs the wp-phpunit integration suite in `tests/` (currently `Module\Manager` lifecycle coverage). Bootstrap (`tests/bootstrap.php`) loads WooCommerce + StoreSuite into a throwaway WP install backed by a local MySQL database (`storesuite_tests`); connection/ABSPATH defaults live in `tests/wp-tests-config.php` and can be overridden via `WP_TESTS_*` env vars — locally set in the gitignored `phpunit.xml`. Keep `wp-phpunit/wp-phpunit` matched to the WP core version. Tests inject fixture modules via the `storesuite_register_modules` filter and point `storesuite_modules_dir` away from real modules; note `Manager::discover()` uses `include_once`, so only one test per process may discover `tests/fixtures/modules/` from disk.
 
 ## Architecture
 
