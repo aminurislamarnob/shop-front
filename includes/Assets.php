@@ -101,7 +101,7 @@ class Assets {
 		wp_register_script( 'storesuite_script', $frontend_script, array( 'jquery' ), STORESUITE_PLUGIN_VERSION, true );
 
 		// Dashboard scripts.
-		wp_register_script( 'storesuite_form_handler_script', $frontend_form_handler_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), filemtime( STORESUITE_DIR . '/assets/frontend/form-handler.js' ), true );
+		wp_register_script( 'storesuite_form_handler_script', $frontend_form_handler_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_sweetalert2_script', $frontend_sweetalert2, array(), '11.14.5', true );
 
 		// Order scripts.
