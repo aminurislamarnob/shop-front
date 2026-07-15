@@ -4,7 +4,7 @@ Tags: frontend manager, shop manager, woocommerce order management, woocommerce 
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,7 +23,9 @@ StoreSuite includes capabilities that other store-management dashboards often lo
 * 📊 Real-time analytics, KPIs, and leaderboards
 * 📈 A full Analytics suite with WooCommerce-admin report parity (Revenue, Orders, Products, and more)
 * 📱 Fully responsive on mobile, tablet, and desktop
-* 📤 CSV product export
+* 📤 CSV product import and export
+* 🌗 Dark and light mode with per-user theme toggle
+* 🔔 Realtime dashboard notifications
 
 No feature gates. No trial limits. No upsell.
 
@@ -38,6 +40,7 @@ No feature gates. No trial limits. No upsell.
 * 🧩 **Variable products** – Manage attributes and variations with bulk actions and generate-all-variations
 * 📋 **Product attributes** – Manage attributes and their terms (add, edit, list)
 * 📤 **CSV export** – Export product lists to CSV for reporting, accounting, or migration, with a configurable export modal
+* 📥 **CSV import** – Import products from a CSV file with a guided wizard: upload, map columns to product fields, watch live progress, and review the results
 * 🗂️ **Categories** – Manage product categories (add, edit, list)
 * 🏷️ **Tags** – Manage product tags (add, edit, list)
 * 🏢 **Brands** – Manage product brands
@@ -45,6 +48,9 @@ No feature gates. No trial limits. No upsell.
 * 🛒 **Orders** – View, create, and edit orders with customer and item details
 * 📊 **Real-time dashboard analytics** – Sales KPIs, net sales chart, top products, recent orders, and quick actions
 * 📈 **Analytics reports** – A full analytics suite with WooCommerce-admin parity: Revenue, Orders, Products, Variations, Categories, Coupons, Taxes, Downloads, Stock, and Customers reports, each with summary KPIs, an interactive line/bar chart, sortable and paginated data tables, advanced filters, date-range comparison, and CSV export
+* 🌗 **Dark and light mode** – A header toggle switches the whole dashboard between light and dark; the choice is remembered per user and the operating system preference is honoured on the first visit
+* 🔔 **Dashboard notifications** – A bell in the header surfaces new orders, customer registrations, and product reviews in realtime, with a full notifications page and per-event settings
+* 🧾 **PDF invoice support** – Invoice, packing slip, and delivery note actions appear on the order list and order details when WooCommerce PDF Invoices & Packing Slips or WebToffee Print Invoices is active
 * 📱 **Fully responsive** – The entire frontend dashboard and analytics reports adapt to mobile and desktop screens with an off-canvas sidebar, stacked cards, and touch-friendly controls
 * 🔑 **Bring your own AI** – Built on the WordPress 7.0 central AI connector; generation runs on the provider and keys you configure in WordPress
 * ⚡ **Built for WooCommerce HPOS** – Fully compatible with High-Performance Order Storage
@@ -126,6 +132,17 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.3.0 =
+* Add **dark mode** to the frontend dashboard: a sun/moon toggle in the header flips between light and dark, the choice is saved per user, and the operating system `prefers-color-scheme` setting is honoured on the first visit. The theme resolves before the first paint, so there is no flash of the wrong theme on load.
+* Dark mode covers the whole dashboard — tables, forms, badges, buttons, pagination, switches, selects, dialogs, the quick-edit modal, the filter off-canvas, the loading skeletons, order details, account and address forms, and the TinyMCE editor content.
+* Add a **dark mode theme picker** in **WooCommerce → StoreSuite → Appearance**: choose from Dark default, Soft dark, Midnight black, and Carbon, or set your own dark colours.
+* Add optional dark variants for the sidebar logo and sidebar icon, so branding stays legible in both themes.
+* Add **product CSV import** on the Products page: a guided wizard walks through uploading a CSV, mapping its columns to product fields, live import progress, and a summary of what was imported, with an expandable import log.
+* Add a **realtime notifications** system: a bell in the dashboard header badges new activity, with a full notifications page and per-event toggles in **WooCommerce → StoreSuite → Notifications** for new orders, new customer registrations, and new product reviews. Polling pauses while the browser tab is hidden.
+* Add **PDF invoice plugin support**: when WooCommerce PDF Invoices & Packing Slips or WebToffee Print Invoices, Packing Slips, Delivery Notes & Shipping Labels is active, their documents appear as print and download actions in the order list row actions and in a Documents card on the order details page.
+* Add icons to the order row actions and open the browser print dialog directly for print actions.
+* Fix undefined `--storesuite-title-text-color` references so title text uses the defined colour token.
 
 = 1.2.0 =
 * Add a full **Analytics** suite with WooCommerce-admin report parity: Revenue, Orders, Products, Variations, Categories, Coupons, Taxes, Downloads, Stock, and Customers reports.
