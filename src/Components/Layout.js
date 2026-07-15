@@ -14,6 +14,7 @@ import { store as noticesStore } from '@wordpress/notices';
 
 import { useSettings } from '../context/SettingsContext';
 import {
+	ClockIcon,
 	CodeBracketSquareIcon,
 	GearIcon,
 	PaletteIcon,
@@ -44,6 +45,11 @@ const BUILT_IN_TABS = [
 		to: '/modules',
 		icon: PuzzlePieceIcon,
 		label: __( 'Modules', 'storesuite' ),
+	},
+	{
+		to: '/changelog',
+		icon: ClockIcon,
+		label: __( 'Changelog', 'storesuite' ),
 	},
 ];
 

@@ -2261,6 +2261,10 @@ span.storesuite-sidebar-trigger svg {
   margin: 0;
   position: relative;
   vertical-align: middle;
+  /* selectWoo resolves its inline width from the original hidden/empty
+     select (~0px), collapsing the field to its truncated placeholder.
+     !important is required to beat that inline style. */
+  width: 100% !important;
 }
 .storesuite-main-dashboard .select2-container .select2-selection--single {
   height: 38px;

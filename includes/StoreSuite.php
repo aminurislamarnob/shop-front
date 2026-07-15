@@ -124,6 +124,7 @@ final class StoreSuite {
 	public function register_rest_route() {
 		$this->container['storesuite_admin_settings_controller']->register_routes();
 		$this->container['storesuite_modules_controller']->register_routes();
+		$this->container['storesuite_admin_changelog_controller']->register_routes();
 	}
 
 	/**
@@ -264,6 +265,7 @@ final class StoreSuite {
 		$this->container['storesuite_admin_bar']                   = new Admin\AdminBar();
 		$this->container['storesuite_admin_settings_controller']   = new REST\SettingsController();
 		$this->container['storesuite_modules_controller']          = new REST\ModulesController();
+		$this->container['storesuite_admin_changelog_controller']  = new REST\ChangelogController();
 		$this->container['storesuite_product_categories']          = new ProductCategory\Categories();
 		$this->container['storesuite_product_category_controller'] = new ProductCategory\CategoryController();
 		$this->container['storesuite_product_brands']              = new ProductBrand\Brands();
