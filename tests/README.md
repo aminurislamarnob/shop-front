@@ -1,0 +1,188 @@
+# StoreSuite Test Suite — How It Works
+
+This document explains how the PHPUnit test suite in `tests/` is put together,
+what happens when you run it, and how to add your own tests.
+
+## Quick start
+
+```bash
+composer test
+```
+
+That runs `vendor/bin/phpunit`, which reads `phpunit.xml` (your local,
+gitignored copy) or `phpunit.xml.dist` (the committed default). Both point at
+`tests/bootstrap.php` and pick up every `*Test.php` file under `tests/`.
+
+## What kind of tests are these?
+
+These are **WordPress integration tests**, not plain unit tests. Each test runs
+inside a real (throwaway) WordPress install with WooCommerce and StoreSuite
+loaded, backed by a real local MySQL database (`storesuite_tests`). That means
+tests can call `update_option()`, `add_filter()`, `do_action()`, etc. and they
+behave exactly like they do on a live site.
+
+The machinery that makes this possible is the
+[`wp-phpunit/wp-phpunit`](https://github.com/wp-phpunit/wp-phpunit) package —
+the same test framework WordPress core uses, installed via Composer.
+
+## The boot sequence (what happens on `composer test`)
+
+Everything is wired up in `tests/bootstrap.php`, in this order:
+
+1. **Composer autoloader** — loads StoreSuite's PSR-4 classes and dev
+   dependencies.
+2. **Locate wp-phpunit** — defaults to `vendor/wp-phpunit/wp-phpunit`; can be
+   overridden with the `WP_PHPUNIT__DIR` env var.
+3. **Point at the test config** — `tests/wp-tests-config.php` holds the DB
+   credentials and ABSPATH for the throwaway install. Every setting can be
+   overridden with `WP_TESTS_*` env vars (locally these live in the gitignored
+   `phpunit.xml`).
+4. **Queue the plugins** — a `muplugins_loaded` callback loads WooCommerce
+   *first* (StoreSuite bails on `plugins_loaded` if the `WooCommerce` class is
+   missing), then `storesuite.php`.
+5. **Install WooCommerce** — WooCommerce normally creates its tables and roles
+   on plugin *activation*, which never fires in a test run. A `setup_theme`
+   callback calls `WC_Install::install()` manually and reloads the roles.
+6. **Boot WordPress** — wp-phpunit's `includes/bootstrap.php` installs a fresh
+   WP into the test database and fires the normal load sequence, so
+   StoreSuite's `plugins_loaded` / `init` hooks all run for real.
+7. **Load fixtures** — `tests/fixtures/FixtureModule.php` is required so tests
+   can use it.
+
+## Test isolation — why tests don't leak into each other
+
+Every test class extends `WP_UnitTestCase`, which gives two big guarantees:
+
+- **Database rollback.** Each test runs inside a MySQL transaction that is
+  rolled back afterwards. Any option, post, or user a test creates simply
+  disappears.
+- **Hook restoration.** All `add_filter()` / `add_action()` calls made during a
+  test are undone afterwards. Tests can safely hook anything.
+
+On top of that, `ManagerTest::set_up()` deletes the two options the module
+Manager writes (`storesuite_active_modules`, `storesuite_flush_rewrite_rules`)
+so every test starts from a blank slate even within the same transaction.
+
+## The fixtures
+
+### `FixtureModule` — a counting test double
+
+`tests/fixtures/FixtureModule.php` extends the real `Abstracts\Module`, but its
+slug and required plugins are passed to the constructor, and every lifecycle
+method (`boot`, `activate`, `deactivate`, `uninstall`) just increments a public
+counter:
+
+```php
+$module = new FixtureModule( 'plain' );
+$manager->activate( 'plain' );
+$this->assertSame( 1, $module->activate_calls ); // hook ran exactly once
+```
+
+Those counters are what make idempotency tests meaningful — e.g. "activating
+twice must run the hook only once".
+
+### Disk fixtures and the `include_once` rule ⚠️
+
+`Manager::discover()` loads each `modules/<slug>/module.php` with
+`include_once`, and PHP returns a file's `return` value **only the first time**
+it is included — a second `include_once` of the same file returns `true`.
+
+Consequence: **each disk fixture directory can be scanned by exactly one test
+per PHPUnit process.** That's why there are two separate fixture trees:
+
+| Directory                       | Returns module | Used by (one test each)                                    |
+| ------------------------------- | -------------- | ---------------------------------------------------------- |
+| `fixtures/modules/alpha/`       | `alpha`        | `test_discovery_finds_module_bootstraps_on_disk`           |
+| `fixtures/modules-merge/beta/`  | `beta`         | `test_register_modules_filter_merges_with_disk_discovered_modules` |
+
+If you write a new test that needs disk discovery, **create a new fixture
+directory** — never reuse an existing one.
+
+## The two injection points every test relies on
+
+The Manager was built with two filters that make it testable without ever
+touching the real `modules/` directory:
+
+1. **`storesuite_modules_dir`** — where the Manager scans for modules. Most
+   tests point it at a nonexistent directory so *nothing* is loaded from disk.
+2. **`storesuite_register_modules`** — receives the slug ⇒ instance map after
+   the disk scan; tests use it to inject `FixtureModule` instances.
+
+The `make_manager()` helper in `ManagerTest` bundles both:
+
+```php
+$manager = $this->make_manager( array( new FixtureModule( 'plain' ) ) );
+```
+
+One more trick: `activate_fake_dependency()` marks a fake plugin as "active"
+just by writing its basename into the `active_plugins` option. This works
+because core `is_plugin_active()` only reads that option — it never checks
+whether the file exists.
+
+## What `ManagerTest` covers, group by group
+
+### 1. Dependency gating
+A module can declare required plugins via `get_requires()`.
+
+- `activate()` refuses (returns `false`, persists nothing, runs no hook) when
+  a required plugin is inactive.
+- `get_missing_requirements()` lists only the inactive requirements, returns
+  `[]` once they're active, and returns `[]` (not an error) for unknown slugs.
+- Activation succeeds once the requirement is met.
+- `boot_active()` silently *skips* (doesn't fatal on) an active module whose
+  dependency was deactivated later — but keeps it listed as active.
+
+### 2. Activate / deactivate lifecycle & idempotency
+- Unknown slugs return `false` and persist nothing.
+- `activate()` persists the slug, runs the module's `activate()` hook once,
+  and fires `storesuite_module_activated` with `( $slug, $instance )`.
+- Re-activating is a no-op that still returns `true` (no duplicate slug, no
+  re-run hook). Same idea for deactivating an inactive module.
+- `deactivate()` mirrors all of that, firing `storesuite_module_deactivated`
+  with `( $slug, $instance )`.
+- Both activate **and** deactivate set the `storesuite_flush_rewrite_rules`
+  flag so rewrite rules refresh on the next request. (The deactivate test
+  deletes the flag left over from activation first, so the assertion can only
+  be satisfied by `deactivate()` itself.)
+
+### 3. Boot ordering & lifecycle actions
+- `boot_active()` boots only active modules and fires
+  `storesuite_module_{slug}_loaded` per module, then
+  `storesuite_modules_loaded` once at the end.
+
+### 4. Registry / active-option hygiene
+- `get_active_slugs()` hides slugs that no longer exist on disk, **but** the
+  stored option keeps them — so a module that reappears comes back active.
+- Values returned from the `storesuite_register_modules` filter are
+  re-validated: strings, `null`, and modules with an empty slug are dropped.
+- The first registration of a slug wins; a later duplicate never clobbers it.
+- The filter *merges* with disk-discovered modules rather than replacing them.
+- `uninstall_all()` runs `uninstall()` on every discovered module, active or
+  not (it's meant for `uninstall.php`, where everything should clean up).
+
+## Writing a new test — checklist
+
+1. Create `tests/<Area>/SomethingTest.php` in namespace
+   `PluginizeLab\StoreSuite\Tests\<Area>`, extending `WP_UnitTestCase`.
+   The `*Test.php` suffix is what PHPUnit discovers.
+2. Reset any options/state your code-under-test writes in `set_up()`
+   (call `parent::set_up()` first).
+3. Inject fixtures through filters instead of touching real modules or the
+   real `modules/` directory.
+4. Need disk discovery? Make a **new** fixture directory (see the
+   `include_once` rule above).
+5. Assert on *behavior you can observe*: return values, options, fired
+   actions, and fixture call counters.
+6. Run `composer test`, then `vendor/bin/phpcs tests/...` — test code follows
+   the same WPCS standard as the plugin.
+
+## Troubleshooting
+
+- **DB connection errors:** the suite needs a local MySQL with a
+  `storesuite_tests` database; credentials come from `tests/wp-tests-config.php`
+  or `WP_TESTS_*` env vars in your gitignored `phpunit.xml`.
+- **Weird failures after a WP upgrade:** keep `wp-phpunit/wp-phpunit` matched
+  to the WP core version (`composer update wp-phpunit/wp-phpunit`).
+- **A disk-discovery test suddenly gets no module:** two tests are scanning
+  the same fixture directory — the second `include_once` returns `true`
+  instead of the module. Give each test its own directory.

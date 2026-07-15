@@ -8,4 +8,5 @@ debug.log
 vendor
 phpcs-report.txt
 .phpunit.result.cache
+phpunit.xml
 .gitkeep
