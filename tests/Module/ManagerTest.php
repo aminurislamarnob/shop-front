@@ -195,15 +195,32 @@ class ManagerTest extends WP_UnitTestCase {
 		$fired = array();
 		add_action(
 			'storesuite_module_deactivated',
-			function ( $slug ) use ( &$fired ) {
-				$fired[] = $slug;
-			}
+			function ( $slug, $instance ) use ( &$fired ) {
+				$fired[] = array( $slug, $instance );
+			},
+			10,
+			2
 		);
 
 		$this->assertTrue( $manager->deactivate( 'plain' ) );
 		$this->assertFalse( $manager->is_active( 'plain' ) );
 		$this->assertSame( 1, $module->deactivate_calls );
-		$this->assertSame( array( 'plain' ), $fired );
+		$this->assertCount( 1, $fired );
+		$this->assertSame( 'plain', $fired[0][0] );
+		$this->assertSame( $module, $fired[0][1] );
+	}
+
+	public function test_deactivate_flags_rewrite_flush() {
+		$manager = $this->make_manager( array( new FixtureModule( 'plain' ) ) );
+		$manager->activate( 'plain' );
+
+		// Clear the flag set by activate() so the assertion below can only be
+		// satisfied by deactivate() itself.
+		delete_option( 'storesuite_flush_rewrite_rules' );
+
+		$manager->deactivate( 'plain' );
+
+		$this->assertEquals( 1, get_option( 'storesuite_flush_rewrite_rules' ) );
 	}
 
 	public function test_deactivate_of_inactive_module_is_a_noop() {
@@ -289,6 +306,57 @@ class ManagerTest extends WP_UnitTestCase {
 		$manager = new Manager();
 
 		$this->assertSame( array( 'good' ), array_keys( $manager->get_all() ) );
+	}
+
+	public function test_first_registration_of_a_slug_wins_over_later_duplicates() {
+		$first  = new FixtureModule( 'dup' );
+		$second = new FixtureModule( 'dup' );
+
+		add_filter(
+			'storesuite_modules_dir',
+			function () {
+				return sys_get_temp_dir() . '/storesuite-tests-no-such-dir';
+			}
+		);
+		add_filter(
+			'storesuite_register_modules',
+			function () use ( $first, $second ) {
+				// Array keys are ignored by registration — the Manager keys the
+				// registry by each instance's own get_slug().
+				return array( $first, $second );
+			}
+		);
+
+		$manager = new Manager();
+		$modules = $manager->get_all();
+
+		$this->assertCount( 1, $modules );
+		$this->assertSame( $first, $modules['dup'], 'A later registration must not clobber an already-registered slug.' );
+	}
+
+	public function test_register_modules_filter_merges_with_disk_discovered_modules() {
+		$extra = new FixtureModule( 'filter-extra' );
+
+		add_filter(
+			'storesuite_modules_dir',
+			function () {
+				return dirname( __DIR__ ) . '/fixtures/modules-merge';
+			}
+		);
+		add_filter(
+			'storesuite_register_modules',
+			function ( $registered ) use ( $extra ) {
+				$registered[ $extra->get_slug() ] = $extra;
+				return $registered;
+			}
+		);
+
+		$manager = new Manager();
+		$modules = $manager->get_all();
+
+		$this->assertArrayHasKey( 'beta', $modules, 'Disk-discovered module must survive the filter.' );
+		$this->assertArrayHasKey( 'filter-extra', $modules, 'Filter-added module must be registered alongside disk modules.' );
+		$this->assertSame( $extra, $modules['filter-extra'] );
 	}
 
 	public function test_uninstall_all_runs_on_every_discovered_module_even_inactive_ones() {
