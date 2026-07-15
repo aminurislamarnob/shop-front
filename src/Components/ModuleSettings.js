@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { useState, useEffect, useCallback } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	Button,
 	Card,
@@ -100,6 +100,7 @@ const renderField = ( key, field, value, onChange ) => {
 
 const ModuleSettings = () => {
 	const { slug } = useParams();
+	const [ moduleName, setModuleName ] = useState( '' );
 	const [ schema, setSchema ] = useState( {} );
 	const [ values, setValues ] = useState( {} );
 	const [ isLoading, setIsLoading ] = useState( true );
@@ -117,6 +118,7 @@ const ModuleSettings = () => {
 				if ( cancelled ) {
 					return;
 				}
+				setModuleName( response?.name ?? '' );
 				setSchema( response?.schema ?? {} );
 				setValues( response?.values ?? {} );
 			} )
@@ -159,6 +161,7 @@ const ModuleSettings = () => {
 				data: { values },
 			} );
 
+			setModuleName( response?.name ?? '' );
 			setSchema( response?.schema ?? {} );
 			setValues( response?.values ?? {} );
 
@@ -238,7 +241,13 @@ const ModuleSettings = () => {
 							>
 								<ChevronLeftIcon />
 							</Link>
-							{ __( 'Module Settings', 'storesuite' ) }
+							{ moduleName
+								? sprintf(
+										/* translators: %s: module name */
+										__( '%s Settings', 'storesuite' ),
+										moduleName
+								  )
+								: __( 'Module Settings', 'storesuite' ) }
 						</h3>
 						<p className="storesuite-section-description">
 							{ __(
@@ -274,6 +283,18 @@ const ModuleSettings = () => {
 											field,
 											values[ key ],
 											onFieldChange
+										) }
+										{ !! field.link?.url && (
+											<a
+												className="storesuite-settings-field-link"
+												href={ field.link.url }
+											>
+												{ field.link.label ||
+													__(
+														'Configure',
+														'storesuite'
+													) }
+											</a>
 										) }
 									</div>
 								) ) }
