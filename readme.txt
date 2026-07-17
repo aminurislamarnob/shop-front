@@ -4,7 +4,7 @@ Tags: frontend manager, shop manager, woocommerce order management, woocommerce 
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -126,6 +126,10 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.2.1 =
+* Add a Changelog page to the admin settings app, paginated with a "Load more" button.
+* Fix collapsed selectWoo fields on the order add/edit form.
 
 = 1.2.0 =
 * Add a full **Analytics** suite with WooCommerce-admin report parity: Revenue, Orders, Products, Variations, Categories, Coupons, Taxes, Downloads, Stock, and Customers reports.
