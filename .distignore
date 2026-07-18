@@ -32,6 +32,7 @@ phpcs.xml.dist
 phpunit.xml.dist
 phpunit.xml
 playwright.config.js
+jest.config.js
 .editorconfig
 .eslintrc
 .php_cs

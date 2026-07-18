@@ -6,6 +6,7 @@ tests
 test-results
 playwright-report
 playwright.config.js
+jest.config.js
 nbproject
 Gruntfile.js
 package.json

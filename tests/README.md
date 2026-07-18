@@ -30,6 +30,7 @@ the same test framework WordPress core uses, installed via Composer.
 | Area | Files | Covers |
 | --- | --- | --- |
 | Browser E2E (Playwright) | `e2e/specs/*.spec.js` | Real-browser flows against the local Herd site — see "Browser E2E suite" below |
+| JS unit (Jest) | `js/**/*.test.js` | React settings app + dashboard/analytics JS logic — see "JS unit suite" below |
 | End-to-end flows | `Integration/PluginBootTest.php`, `Integration/*AjaxTest.php`, `Integration/DashboardShortcodeTest.php` | Full plugin boot wiring (container, hooks, REST routes, shortcode); category/coupon/account form flows through real `wp_ajax_storesuite_*` dispatch (nonce → capability → validation → persistence → lifecycle actions); shortcode access gating and query-var template routing |
 | Module system | `Module/ManagerTest.php` | Discovery, dependency gating, activate/deactivate lifecycle, boot ordering, registry hygiene (detailed below) |
 | REST API | `REST/ModulesControllerTest.php`, `REST/SettingsControllerTest.php`, `REST/ChangelogControllerTest.php` | Permissions (401/403), module list/activate/deactivate/settings, admin-tab sanitization, settings CRUD, readme changelog parsing |
@@ -233,6 +234,47 @@ A module can declare required plugins via `get_requires()`.
    actions, and fixture call counters.
 6. Run `composer test`, then `vendor/bin/phpcs tests/...` — test code follows
    the same WPCS standard as the plugin.
+
+## JS unit suite (Jest)
+
+```bash
+npm run test:unit
+```
+
+Runs `wp-scripts test-unit-js` (Jest + jsdom) over `tests/js/` — no database,
+no browser, no local site needed. It covers the JS that has real logic in it:
+
+- **`js/context/`** — `SettingsContext` (fetch/save against
+  `/storesuite/v1/settings`, loading/saving state, success & error notices,
+  the `useSettings`-outside-provider guard).
+- **`js/components/`** — admin settings components rendered with React
+  Testing Library (`PaginationSettings` form round-trip, `SettingsHeader`
+  logo/icon/actions variants, `ColorPreview` palette wiring).
+- **`js/dashboard/`** — the frontend-dashboard React app's pure logic:
+  admin.php → frontend URL remapping, the `storesuite_dashboard_analytics_reports_list`
+  widget filter, `lazyWithRetry` chunk-recovery, `getAdminSetting` sources.
+- **`js/analytics/`** — the analytics app's URL remapping (including the
+  wc-admin `/customers` special case), capture-phase link interception, and
+  the default-date-range fallback chain.
+
+Configuration lives in `jest.config.js`. Things to know before adding tests:
+
+- **`@woocommerce/*` packages are webpack externals** (`window.wc.*` at
+  runtime) and are not installed via npm. Jest maps them to the stand-ins in
+  `js/__mocks__/woocommerce/` — add a file there if you import a new one.
+- **`window.location` cannot be stubbed in jsdom.** Change the URL with
+  `window.history.replaceState( null, '', path )` instead; a test that must
+  stub `location.reload` opts into the node environment via a
+  `@jest-environment node` docblock and builds its own minimal `window`
+  (see `js/dashboard/lazy-with-retry.test.js` and `setup-window-shim.js`).
+- **`@wordpress/jest-console` fails tests on unexpected `console` calls.**
+  For expected noise (e.g. `@wordpress/components` deprecation warnings),
+  replace the console method with a plain function and restore it —
+  `jest.spyOn` would hand back the preset's existing spy, which still
+  records the calls.
+- The vanilla jQuery files in `assets/frontend/` are intentionally not unit
+  tested — they are server-rendered-page glue and are covered end-to-end by
+  the Playwright suite.
 
 ## Browser E2E suite (Playwright)
 
