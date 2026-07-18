@@ -9,7 +9,8 @@
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
-		"packages-update": "wp-scripts packages-update"
+		"packages-update": "wp-scripts packages-update",
+		"test:e2e": "playwright test"
 	},
 	"repository": {
 		"type": "git",
@@ -40,6 +41,7 @@
 		"tailwind-merge": "^3.6.0"
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.61.1",
 		"@tailwindcss/postcss": "^4.3.2",
 		"@wordpress/postcss-plugins-preset": "^5.50.0",
 		"@wordpress/scripts": "^32.2.0",

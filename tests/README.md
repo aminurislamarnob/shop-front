@@ -29,6 +29,7 @@ the same test framework WordPress core uses, installed via Composer.
 
 | Area | Files | Covers |
 | --- | --- | --- |
+| Browser E2E (Playwright) | `e2e/specs/*.spec.js` | Real-browser flows against the local Herd site — see "Browser E2E suite" below |
 | End-to-end flows | `Integration/PluginBootTest.php`, `Integration/*AjaxTest.php`, `Integration/DashboardShortcodeTest.php` | Full plugin boot wiring (container, hooks, REST routes, shortcode); category/coupon/account form flows through real `wp_ajax_storesuite_*` dispatch (nonce → capability → validation → persistence → lifecycle actions); shortcode access gating and query-var template routing |
 | Module system | `Module/ManagerTest.php` | Discovery, dependency gating, activate/deactivate lifecycle, boot ordering, registry hygiene (detailed below) |
 | REST API | `REST/ModulesControllerTest.php`, `REST/SettingsControllerTest.php`, `REST/ChangelogControllerTest.php` | Permissions (401/403), module list/activate/deactivate/settings, admin-tab sanitization, settings CRUD, readme changelog parsing |
@@ -232,6 +233,68 @@ A module can declare required plugins via `get_requires()`.
    actions, and fixture call counters.
 6. Run `composer test`, then `vendor/bin/phpcs tests/...` — test code follows
    the same WPCS standard as the plugin.
+
+## Browser E2E suite (Playwright)
+
+```bash
+npm run test:e2e
+```
+
+Unlike the PHPUnit suite (throwaway install, transactions rolled back), the
+E2E suite drives a real Chromium browser against the live local Herd site at
+`https://westore-headless.test` — StoreSuite must be installed there and the
+site reachable. Everything else is self-bootstrapping:
+
+- **`playwright.config.js`** — baseURL, self-signed-cert tolerance, one
+  worker (the suite mutates one shared site), a `setup` project that runs
+  before the specs.
+- **`tests/e2e/global-setup.js`** — wp-cli: activates StoreSuite, flushes
+  rewrites, creates the `e2e-admin` / `e2e-manager` / `e2e-customer` users,
+  and runs `tests/e2e/seed.php` (idempotent: one stock-managed
+  "E2E Seed Product" and one processing seed order).
+- **`tests/e2e/auth.setup.js`** — logs each persona in through the
+  WooCommerce My Account form (this site's redirect plugin 302s
+  wp-login.php there) and saves storage states under `tests/e2e/.auth/`
+  (gitignored).
+
+What the specs cover:
+
+| Spec | Flows |
+| --- | --- |
+| `access-control` | Logged-out redirect, customer denial, manager dashboard access, wp-admin blocking (toggles `storesuite_prevent_admin_access` around the test and restores it) |
+| `dashboard` | Sidebar registry, submenu expand/navigate, active states, module nav entry |
+| `products` | List + toolbar, search filtering, add simple product via the form |
+| `products-edit` | Edit an existing product (persisted), delete from the list row action |
+| `categories` | Add → search-filtered list → edit → delete (SweetAlert2 confirm), client-side required-field validation |
+| `tags-brands` | Add + delete lifecycles for both taxonomies |
+| `coupons` | Add → list → soft delete, edit (persisted), required-code validation |
+| `orders` | Seeded order in the list, order-details screen, add + delete order note |
+| `account` | Save + persist account details, email-as-display-name rejection |
+| `analytics` | React app mounts for managers, customers redirected |
+| `inventory` | Module app mount + REST fetch, stock-list search, log view, customer denial |
+| `modules-admin` | Deactivate → re-activate the Inventory Manager toggle, verified against the persisted option (with a wp-cli re-activate safety net) |
+| `admin-settings` | wp-admin React app mounts, Modules screen lists Inventory Manager, pagination setting save round-trip (restored afterwards) |
+
+Hard-won stability notes, so nobody re-discovers them:
+
+- **Names/slugs are timestamped** (`uniq()`), so re-runs never collide, and
+  list assertions go through each screen's `?search_by=` filter because the
+  lists are paginated.
+- **Row-action dropdowns animate open** (jQuery slideToggle); coordinate
+  clicks race the animation. Delete buttons are triggered with
+  `dispatchEvent('click')` and edit links are followed via their `href`.
+- **SweetAlert2 popups animate** with a scale transform, so even forced
+  coordinate clicks can land on the backdrop and dismiss the dialog. Confirm
+  through the library's test API instead — `Swal.clickConfirm()` via the
+  `confirmSwal()` helper.
+- **Fixture hygiene**: specs that create products/coupons delete them at the
+  end (`wpEval()`), otherwise repeated runs push the seed data off page one
+  of the newest-first lists.
+- **Delete success handlers call `window.location.reload()`** after a row
+  fade-out; `settleReload()` waits it out before the next `goto`, or the
+  navigation aborts with `net::ERR_ABORTED`.
+- **Hidden submenu links are outside the accessibility tree** — match them
+  as plain elements, `getByRole` won't find them until expanded.
 
 ## Troubleshooting
 
