@@ -25,6 +25,20 @@ The machinery that makes this possible is the
 [`wp-phpunit/wp-phpunit`](https://github.com/wp-phpunit/wp-phpunit) package —
 the same test framework WordPress core uses, installed via Composer.
 
+## Suite map — what lives where
+
+| Area | Files | Covers |
+| --- | --- | --- |
+| Module system | `Module/ManagerTest.php` | Discovery, dependency gating, activate/deactivate lifecycle, boot ordering, registry hygiene (detailed below) |
+| REST API | `REST/ModulesControllerTest.php`, `REST/SettingsControllerTest.php`, `REST/ChangelogControllerTest.php` | Permissions (401/403), module list/activate/deactivate/settings, admin-tab sanitization, settings CRUD, readme changelog parsing |
+| Analytics | `Analytics/RestPermissionsTest.php`, `Analytics/SettingsTest.php` | wc-analytics read-access widening for shop managers; JS settings payload, per-capability preload transient, role-change invalidation |
+| Orders | `Order/OrderManagerTest.php` | Listing filters (status/customer/month/channel), pagination, months dropdown (HPOS + legacy), order actions, column renderers |
+| Products | `Product/ProductManagerTest.php`, `Product/ProductExporterTest.php` | CRUD via WC APIs, CSV export |
+| Coupons | `Coupon/CouponManagerTest.php` | Coupon CRUD/listing |
+| Taxonomies | `Taxonomy/TaxonomyListingTest.php` | Category/brand/tag hierarchy flattening, pagination, search, cache busting |
+| Inventory Manager module | `InventoryManager/*Test.php` | Module lifecycle, installer/settings, stock repository/log, REST controller |
+| Core services | `CacheTest.php`, `MainTest.php`, `FunctionsTest.php`, `HelperTest.php`, `HandlePaginationsTest.php`, `InstallerUpgraderTest.php`, `RoutingMenuTest.php`, `DashboardPageTest.php` | Cache wrapper, access control, global helpers, pagination math, install/upgrade routines, rewrites + dashboard menu, dashboard-page asset stripping |
+
 ## The boot sequence (what happens on `composer test`)
 
 Everything is wired up in `tests/bootstrap.php`, in this order:
@@ -65,7 +79,7 @@ so every test starts from a blank slate even within the same transaction.
 
 ## The fixtures
 
-### `FixtureModule` — a counting test double
+### `FixtureModule` — a counting, configurable test double
 
 `tests/fixtures/FixtureModule.php` extends the real `Abstracts\Module`, but its
 slug and required plugins are passed to the constructor, and every lifecycle
@@ -80,6 +94,17 @@ $this->assertSame( 1, $module->activate_calls ); // hook ran exactly once
 
 Those counters are what make idempotency tests meaningful — e.g. "activating
 twice must run the hook only once".
+
+It also exposes public properties that feed the corresponding `Module`
+accessors, so REST tests can shape a module without subclassing:
+
+```php
+$module->admin_tabs      = array( ... ); // returned by get_admin_tabs()
+$module->has_settings    = true;         // returned by has_settings()
+$module->settings_schema = array( ... ); // returned by get_settings_schema()
+$module->settings_values = array( ... ); // returned by get_settings(); update_settings()
+                                         // writes back here, dropping keys not in the schema
+```
 
 ### Disk fixtures and the `include_once` rule ⚠️
 

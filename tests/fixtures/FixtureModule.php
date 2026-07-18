@@ -58,6 +58,36 @@ class FixtureModule extends Module {
 	public $uninstall_calls = 0;
 
 	/**
+	 * Admin tabs returned by get_admin_tabs(). Tests assign raw (possibly
+	 * malformed) shapes here to exercise REST-boundary sanitization.
+	 *
+	 * @var array
+	 */
+	public $admin_tabs = array();
+
+	/**
+	 * Whether the module reports configurable settings.
+	 *
+	 * @var bool
+	 */
+	public $has_settings = false;
+
+	/**
+	 * Settings schema returned by get_settings_schema().
+	 *
+	 * @var array
+	 */
+	public $settings_schema = array();
+
+	/**
+	 * Current setting values; update_settings() writes back here so tests can
+	 * assert on what was persisted.
+	 *
+	 * @var array
+	 */
+	public $settings_values = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string   $slug     Module slug.
@@ -116,5 +146,42 @@ class FixtureModule extends Module {
 	 */
 	public function uninstall() {
 		++$this->uninstall_calls;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get_admin_tabs() {
+		return $this->admin_tabs;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function has_settings() {
+		return $this->has_settings;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get_settings_schema() {
+		return $this->settings_schema;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function get_settings() {
+		return $this->settings_values;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function update_settings( array $data ) {
+		$this->settings_values = array_intersect_key( $data, $this->settings_schema );
+
+		return $this->settings_values;
 	}
 }
