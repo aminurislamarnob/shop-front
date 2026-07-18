@@ -46,3 +46,35 @@ tests_add_filter(
 require $storesuite_wp_phpunit_dir . '/includes/bootstrap.php';
 
 require __DIR__ . '/fixtures/FixtureModule.php';
+require __DIR__ . '/Integration/StoreSuiteAjaxTestCase.php';
+
+// Neutralize core/plugin/theme update checks. Ajax tests fire `admin_init`
+// (as admin-ajax.php does), which re-runs wp_version_check() and friends on
+// nearly every test because the caching transients roll back with each test's
+// DB transaction — ~3s of api.wordpress.org traffic per test. Serving a fresh
+// "already checked" payload via the pre_site_transient filters makes every
+// checker return before it builds a request.
+$storesuite_tests_no_updates = function () {
+	return (object) array(
+		'last_checked'    => time(),
+		'updates'         => array(),
+		'response'        => array(),
+		'translations'    => array(),
+		'version_checked' => $GLOBALS['wp_version'],
+	);
+};
+add_filter( 'pre_site_transient_update_core', $storesuite_tests_no_updates );
+add_filter( 'pre_site_transient_update_plugins', $storesuite_tests_no_updates );
+add_filter( 'pre_site_transient_update_themes', $storesuite_tests_no_updates );
+
+// Belt and braces: any other outbound HTTP fails fast instead of hanging the
+// suite, so tests stay deterministic and offline-safe.
+add_filter(
+	'pre_http_request',
+	function ( $pre, $args, $url ) {
+		unset( $pre, $args );
+		return new WP_Error( 'http_request_blocked', 'External HTTP is disabled in the test suite: ' . $url );
+	},
+	PHP_INT_MAX,
+	3
+);

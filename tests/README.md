@@ -29,6 +29,7 @@ the same test framework WordPress core uses, installed via Composer.
 
 | Area | Files | Covers |
 | --- | --- | --- |
+| End-to-end flows | `Integration/PluginBootTest.php`, `Integration/*AjaxTest.php`, `Integration/DashboardShortcodeTest.php` | Full plugin boot wiring (container, hooks, REST routes, shortcode); category/coupon/account form flows through real `wp_ajax_storesuite_*` dispatch (nonce → capability → validation → persistence → lifecycle actions); shortcode access gating and query-var template routing |
 | Module system | `Module/ManagerTest.php` | Discovery, dependency gating, activate/deactivate lifecycle, boot ordering, registry hygiene (detailed below) |
 | REST API | `REST/ModulesControllerTest.php`, `REST/SettingsControllerTest.php`, `REST/ChangelogControllerTest.php` | Permissions (401/403), module list/activate/deactivate/settings, admin-tab sanitization, settings CRUD, readme changelog parsing |
 | Analytics | `Analytics/RestPermissionsTest.php`, `Analytics/SettingsTest.php` | wc-analytics read-access widening for shop managers; JS settings payload, per-capability preload transient, role-change invalidation |
@@ -60,8 +61,39 @@ Everything is wired up in `tests/bootstrap.php`, in this order:
 6. **Boot WordPress** — wp-phpunit's `includes/bootstrap.php` installs a fresh
    WP into the test database and fires the normal load sequence, so
    StoreSuite's `plugins_loaded` / `init` hooks all run for real.
-7. **Load fixtures** — `tests/fixtures/FixtureModule.php` is required so tests
-   can use it.
+7. **Load fixtures** — `tests/fixtures/FixtureModule.php` and the
+   `StoreSuiteAjaxTestCase` base class are required so tests can use them.
+8. **Neutralize update checks & block HTTP** — Ajax tests fire `admin_init`
+   (mimicking admin-ajax.php), which would re-run WordPress's
+   core/plugin/theme update checks on nearly every test (the caching
+   transients roll back with each test's DB transaction — ~3s of
+   api.wordpress.org traffic each). The bootstrap serves an "already checked"
+   payload via the `pre_site_transient_update_*` filters and fails any other
+   outbound HTTP fast via `pre_http_request`, keeping the suite deterministic
+   and offline-safe.
+
+## AJAX integration tests
+
+`tests/Integration/*AjaxTest.php` extend `StoreSuiteAjaxTestCase`
+(`tests/Integration/StoreSuiteAjaxTestCase.php`, loaded by the bootstrap),
+which wraps wp-phpunit's `WP_Ajax_UnitTestCase`:
+
+```php
+$response = $this->dispatch(
+    'storesuite_add_coupon',                       // wp_ajax_ action name
+    $this->nonce_field( 'add_coupon' ) + array(    // storesuite_add_coupon_nonce
+        'coupon_code' => 'SUMMER15',
+    )
+);
+$this->assertTrue( $response['success'] );
+```
+
+`dispatch()` populates `$_POST`, fires the real `wp_ajax_*` hook the way
+admin-ajax.php does (including `admin_init`), catches the `wp_die()` that
+`wp_send_json_*()` ends with, and returns the decoded JSON. `nonce_field()`
+builds the `storesuite_{action}_nonce` / `_storesuite_{action}_` pair the
+plugin's forms use. Note that category *delete* uses its own nonce action stem
+(`_storesuite_delete_nonce_`), so that test builds its nonce by hand.
 
 ## Test isolation — why tests don't leak into each other
 
