@@ -3,6 +3,9 @@ node_modules
 assets/src
 assets/css/style.css.map
 tests
+test-results
+playwright-report
+playwright.config.js
 nbproject
 Gruntfile.js
 package.json
@@ -12,6 +15,10 @@ changelog.txt
 .travis.yml
 debug.log
 phpunit.xml
+phpunit.xml.dist
+.phpunit.result.cache
+.claude
+CLAUDE.md
 .svnignore
 README.md
 plugin-deploy.sh

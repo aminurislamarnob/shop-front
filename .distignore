@@ -6,6 +6,8 @@
 /modules/*/src
 /modules/*/node_modules
 /tests
+/test-results
+/playwright-report
 /bin
 /docs
 /build
@@ -29,6 +31,7 @@ LICENSE
 phpcs.xml.dist
 phpunit.xml.dist
 phpunit.xml
+playwright.config.js
 .editorconfig
 .eslintrc
 .php_cs
