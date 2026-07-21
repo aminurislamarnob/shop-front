@@ -2,7 +2,7 @@
 
 While your team works in the frontend dashboard, *you* control how that dashboard looks and behaves from one tidy settings page in the WordPress admin.
 
-To find it, log in to WordPress and go to **WooCommerce → StoreSuite**. Everything is organized into four tabs along the top: **General**, **Dashboard**, **Appearance**, and **Pagination**. Each tab has its own **Save Changes** button, so save before hopping to the next one.
+To find it, log in to WordPress and go to **WooCommerce → StoreSuite**. Everything is organized into four tabs along the top: **General**, **Appearance**, **Pagination**, and **AI**. Each tab has its own **Save Changes** button, so save before hopping to the next one.
 
 > Up in the corner you'll also find a **Documentation** button (you're reading the result!) and a **Support Me** button if StoreSuite is making your life easier and you'd like to say thanks.
 
@@ -35,39 +35,6 @@ This toggle is the heart of StoreSuite's philosophy. Switch it on, and **shop ma
 Leave it off if you'd rather shop managers keep both doors open.
 
 Click **Save Changes** and you're done.
-
----
-
-## Dashboard — choose what your team sees
-
-![Dashboard Settings](screenshot-2.png)
-
-The dashboard home page greets your team with performance numbers and "top" lists. This tab lets you decide exactly which of those appear. Maybe you don't charge tax, or you don't sell downloads — switch those boxes off and the dashboard stays clean and relevant.
-
-### Performance boxes
-
-Each toggle shows or hides one stat box on the dashboard home:
-
-- **Total sales** / **Gross sales** / **Net sales** — your revenue, sliced three ways
-- **Orders** — how many orders came in
-- **Average order value** — what a typical order is worth
-- **Products sold** / **Variations sold** — units moved
-- **Returns** — refunded value
-- **Discounted orders** / **Net discount amount** — how much your coupons are being used, and what they cost you
-- **Total tax** / **Order tax** / **Shipping tax** — tax breakdowns
-- **Shipping** — shipping charges collected
-- **Downloads** — digital file downloads
-
-### Dashboard widgets
-
-These are the leaderboard-style lists below the stats:
-
-- **Top products – Items sold** — your best sellers
-- **Top categories – Items sold** — which sections of the store perform best
-- **Top customers – Total spend** — your VIPs
-- **Top coupons – Number of orders** — which promo codes actually get used
-
-Flip off anything you don't need, hit **Save Changes**, and the frontend dashboard updates instantly.
 
 ---
 
@@ -128,9 +95,43 @@ Every field defaults to **10**. Leave a field blank to keep the default, or type
 
 ---
 
+## AI — assisted content generation
+
+![AI Settings](screenshot-5.png)
+
+StoreSuite can help draft product content right on the frontend product form. This tab decides **where** those AI helpers appear and **how** they write.
+
+### Which fields offer AI
+
+Toggle the **Generate with AI** helper on or off for each part of the product form:
+
+- **Product Title**
+- **Product Long description**
+- **Product Short description**
+- **Product featured image**
+- **Product Gallery images**
+- **Product Global Generate with AI button** — the header button that drafts the title and both descriptions together in one go
+
+Turn off any you'd rather your team write by hand.
+
+### System Instructions
+
+![AI System Instructions](screenshot-6.png)
+
+Each field also has a **System Instruction** — a short brief telling the AI how to write for that field. StoreSuite ships sensible defaults (the product-title brief, for instance, asks for "ONE concise, compelling product title of at most 70 characters"), and you can rewrite any of them to match your store's voice:
+
+- **Product Title System Instruction**
+- **Product Long Description System Instruction**
+- **Product Short Description System Instruction**
+- **Product Image System Instruction** — styling guidance appended to every AI image prompt
+
+Leave a box empty to fall back to the built-in default, then **Save Changes**.
+
+---
+
 ## A Few Friendly Tips
 
 - **Setting up for a client?** Upload their logo, pick a palette that matches their brand, and turn on *Restrict Admin Area Access* — they get a polished, branded store manager that never shows them the WordPress admin.
-- **Less is more on the dashboard.** Hide every stat that doesn't apply to your store. A dashboard with eight meaningful numbers beats one with fifteen noisy ones.
+- **Bake your voice into the AI once.** Edit the System Instructions with a line like "friendly, no jargon, mention the material," and every product your team generates comes out sounding like you — with far less editing.
 - **Test the preview before saving.** The Appearance preview reflects your choices live — a ten-second look there saves a save-and-refresh round trip.
 - **Tune pagination to your catalog.** Small store? Set products to 50 and skip pagination entirely. Thousands of products? Keep it at 10–20 so pages stay fast.
