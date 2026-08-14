@@ -141,12 +141,17 @@ Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order S
 = 1.3.0 =
 * Add **dark mode** to the frontend dashboard: a sun/moon toggle in the header flips between light and dark, the choice is saved per user, and the operating system `prefers-color-scheme` setting is honoured on the first visit. The theme resolves before the first paint, so there is no flash of the wrong theme on load.
 * Dark mode covers the whole dashboard — tables, forms, badges, buttons, pagination, switches, selects, dialogs, the quick-edit modal, the filter off-canvas, the loading skeletons, order details, account and address forms, and the TinyMCE editor content.
-* Add a **dark mode theme picker** in **WooCommerce → StoreSuite → Appearance**: choose from Dark default, Soft dark, Midnight black, and Carbon, or set your own dark colours.
+* Add a **dark mode theme picker** in **WooCommerce → StoreSuite → Appearance**: choose from Dark default, Soft dark, Midnight black, and Carbon. Each palette sets the dark neutrals only — the accent colour carries over from your light palette.
+* Dark mode also covers the full **Analytics** suite: report charts, summary KPI tiles, loading skeletons, data tables, advanced filters, the date-range picker, and the interval selects.
 * Add optional dark variants for the sidebar logo and sidebar icon, so branding stays legible in both themes.
 * Add **product CSV import** on the Products page: a guided wizard walks through uploading a CSV, mapping its columns to product fields, live import progress, and a summary of what was imported, with an expandable import log.
-* Add a **realtime notifications** system: a bell in the dashboard header badges new activity, with a full notifications page and per-event toggles in **WooCommerce → StoreSuite → Notifications** for new orders, new customer registrations, and new product reviews. Polling pauses while the browser tab is hidden.
+* Add a **realtime notifications** system: a bell in the dashboard header badges new activity, with a full notifications page and per-event toggles in **WooCommerce → StoreSuite → Notifications** for new orders, new customer registrations, and new product reviews. Polling pauses while the browser tab is hidden. Notifications are visible only to users who can manage WooCommerce, and each recipient has their own copy — marking as read or clearing affects only that user.
+* Notifications older than 90 days are removed automatically by a daily cleanup task, so the notifications table does not grow without bound. The retention window is filterable with `storesuite_notification_retention_days`.
 * Add **PDF invoice plugin support**: when WooCommerce PDF Invoices & Packing Slips or WebToffee Print Invoices, Packing Slips, Delivery Notes & Shipping Labels is active, their documents appear as print and download actions in the order list row actions and in a Documents card on the order details page.
 * Add icons to the order row actions and open the browser print dialog directly for print actions.
+* Add two dashboard endpoints, `import-products` and `notifications`, with pagination support on the notifications list. Both slugs can be changed with the `storesuite_myshop_import_product_endpoint` and `storesuite_myshop_notifications_endpoint` options.
+* Add `storesuite_notification_poll_interval`, `storesuite_notification_retention_days`, `storesuite_notifications_per_page`, and `storesuite_order_list_row_actions` hooks, plus `storesuite_load_import_products_template` and `storesuite_load_notifications_template` for overriding the new pages.
+* On update, the notifications table is created, the daily cleanup is scheduled, and rewrite rules are flushed automatically — no need to re-save permalinks after upgrading.
 * Fix undefined `--storesuite-title-text-color` references so title text uses the defined colour token.
 
 = 1.2.1 =
