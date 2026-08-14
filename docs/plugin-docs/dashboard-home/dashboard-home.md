@@ -6,6 +6,8 @@ The **Dashboard** is the first thing you (and your team) see when opening StoreS
 
 To get there, click **Dashboard** at the top of the left sidebar.
 
+> **In the top bar, on every page:** a **bell** that badges new orders, customer sign-ups, and reviews as they happen (see [Notifications](../notifications/notifications.md)), and a **sun/moon** button that switches the dashboard between light and dark (see [Dark Mode](../dark-mode/dark-mode.md)).
+
 ---
 
 ## The Numbers That Matter
