@@ -30,6 +30,38 @@ class Main {
 		add_action( 'woocommerce_account_dashboard', array( $this, 'add_storesuite_dashboard_btn' ), 1 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_dashboard_btn_css' ), 20 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_css_variables' ), 20 );
+		add_filter( 'user_has_cap', array( $this, 'grant_storesuite_caps_to_managers' ), 10, 2 );
+	}
+
+	/**
+	 * Treat `manage_woocommerce` as implicitly holding every granular
+	 * `storesuite_{area}` capability.
+	 *
+	 * The granular caps back the per-area permission model
+	 * (see storesuite_current_user_can()). Most call sites go through that
+	 * helper, which already accepts manage_woocommerce — but a few check a
+	 * granular cap with the raw current_user_can() (e.g. DashboardMenu's per-item
+	 * `permission` key). Without this, a shop manager or admin would lose menu
+	 * items whose permission was set to a granular cap. Granting the caps on
+	 * demand keeps managers all-powerful while letting granular-permission
+	 * modules restrict individual staff roles.
+	 *
+	 * @param array $allcaps The user's current capabilities.
+	 * @param array $caps    The primitive caps being checked this call.
+	 * @return array
+	 */
+	public function grant_storesuite_caps_to_managers( $allcaps, $caps ) {
+		if ( empty( $allcaps['manage_woocommerce'] ) ) {
+			return $allcaps;
+		}
+
+		foreach ( (array) $caps as $cap ) {
+			if ( is_string( $cap ) && 0 === strpos( $cap, 'storesuite_' ) ) {
+				$allcaps[ $cap ] = true;
+			}
+		}
+
+		return $allcaps;
 	}
 
 	/**
@@ -48,7 +80,16 @@ class Main {
 		$valid_pages = array( 'admin-ajax.php', 'admin-post.php', 'async-upload.php', 'media-upload.php' );
 		$user_role   = reset( $current_user->roles );
 
-		if ( ( 'yes' === $is_prevent_admin_access ) && in_array( $user_role, array( 'shop_manager', 'customer' ), true ) && ( ! in_array( $pagenow, $valid_pages, true ) ) ) {
+		/**
+		 * Filter the roles blocked from wp-admin when "prevent admin access" is
+		 * on. A granular-permission module registers its custom staff roles
+		 * here so they are kept out of wp-admin like shop managers.
+		 *
+		 * @param string[] $roles Role slugs to block.
+		 */
+		$blocked_roles = apply_filters( 'storesuite_blocked_admin_roles', array( 'shop_manager', 'customer' ) );
+
+		if ( ( 'yes' === $is_prevent_admin_access ) && in_array( $user_role, $blocked_roles, true ) && ( ! in_array( $pagenow, $valid_pages, true ) ) ) {
 			wp_safe_redirect( home_url() );
 			exit;
 		}
@@ -99,12 +140,13 @@ class Main {
 			wp_safe_redirect( admin_url() );
 			exit();
 		}
-	
-		// 2) Non-admins who can manage WooCommerce → StoreSuite dashboard.
-		if ( user_can( $user, 'manage_woocommerce' ) ) {
+
+		// 2) Non-admins who can manage WooCommerce, or hold a granular
+		// StoreSuite dashboard capability → StoreSuite dashboard.
+		if ( user_can( $user, 'manage_woocommerce' ) || user_can( $user, 'storesuite_access_dashboard' ) ) {
 			$this->redirect_to_storesuite_dashboard(); // This already redirects & exits if page is set.
 		}
-	
+
 		// 3) Everyone else → normal My Account page.
 		wp_safe_redirect( wc_get_page_permalink( 'myaccount' ) );
 		exit();
