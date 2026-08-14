@@ -50,10 +50,15 @@ No feature gates. No trial limits. No upsell.
 * 📈 **Analytics reports** – A full analytics suite with WooCommerce-admin parity: Revenue, Orders, Products, Variations, Categories, Coupons, Taxes, Downloads, Stock, and Customers reports, each with summary KPIs, an interactive line/bar chart, sortable and paginated data tables, advanced filters, date-range comparison, and CSV export
 * 🌗 **Dark and light mode** – A header toggle switches the whole dashboard between light and dark; the choice is remembered per user and the operating system preference is honoured on the first visit
 * 🔔 **Dashboard notifications** – A bell in the header surfaces new orders, customer registrations, and product reviews in realtime, with a full notifications page and per-event settings
-* 🧾 **PDF invoice support** – Invoice, packing slip, and delivery note actions appear on the order list and order details when WooCommerce PDF Invoices & Packing Slips or WebToffee Print Invoices is active
+* 🧾 **PDF invoice support** – Invoice, packing slip, and delivery note actions appear on the order list and order details when PDF Invoices & Packing Slips for WooCommerce or the WebToffee WooCommerce PDF Invoices plugin is active (see *StoreSuite Compatible Plugins* below)
 * 📱 **Fully responsive** – The entire frontend dashboard and analytics reports adapt to mobile and desktop screens with an off-canvas sidebar, stacked cards, and touch-friendly controls
 * 🔑 **Bring your own AI** – Built on the WordPress 7.0 central AI connector; generation runs on the provider and keys you configure in WordPress
 * ⚡ **Built for WooCommerce HPOS** – Fully compatible with High-Performance Order Storage
+
+= 🔌 StoreSuite Compatible Plugins =
+
+* [PDF Invoices & Packing Slips for WooCommerce](https://wordpress.org/plugins/woocommerce-pdf-invoices-packing-slips/) – adds Invoice and Packing Slip documents.
+* [WebToffee WooCommerce PDF Invoices, Packing Slips, Delivery Notes & Shipping Labels](https://wordpress.org/plugins/print-invoices-packing-slip-labels-for-woocommerce/) – adds Invoice, Packing Slip, Delivery Note, Shipping Label, and Dispatch Label actions.
 
 = How It Works =
 
