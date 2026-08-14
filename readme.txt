@@ -133,7 +133,6 @@ Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order S
 
 == Changelog ==
 
-= 1.3.0 =
 * Add **dark mode** to the frontend dashboard: a sun/moon toggle in the header flips between light and dark, the choice is saved per user, and the operating system `prefers-color-scheme` setting is honoured on the first visit. The theme resolves before the first paint, so there is no flash of the wrong theme on load.
 * Dark mode covers the whole dashboard — tables, forms, badges, buttons, pagination, switches, selects, dialogs, the quick-edit modal, the filter off-canvas, the loading skeletons, order details, account and address forms, and the TinyMCE editor content.
 * Add a **dark mode theme picker** in **WooCommerce → StoreSuite → Appearance**: choose from Dark default, Soft dark, Midnight black, and Carbon, or set your own dark colours.
@@ -143,6 +142,10 @@ Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order S
 * Add **PDF invoice plugin support**: when WooCommerce PDF Invoices & Packing Slips or WebToffee Print Invoices, Packing Slips, Delivery Notes & Shipping Labels is active, their documents appear as print and download actions in the order list row actions and in a Documents card on the order details page.
 * Add icons to the order row actions and open the browser print dialog directly for print actions.
 * Fix undefined `--storesuite-title-text-color` references so title text uses the defined colour token.
+
+= 1.2.1 =
+* Add a Changelog page to the admin settings app, paginated with a "Load more" button.
+* Fix collapsed selectWoo fields on the order add/edit form.
 
 = 1.2.0 =
 * Add a full **Analytics** suite with WooCommerce-admin report parity: Revenue, Orders, Products, Variations, Categories, Coupons, Taxes, Downloads, Stock, and Customers reports.
