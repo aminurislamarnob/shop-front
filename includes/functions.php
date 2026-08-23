@@ -135,23 +135,30 @@ function storesuite_get_post_status_class( $status = '' ) {
 }
 
 /**
- * HTML for one product row of the products list table.
+ * HTML for one product row of a product-based list table.
  *
  * Shared by the first paint, quick edit and inline cell edit AJAX row refreshes.
  *
- * @param int $product_id Product ID.
+ * @param int    $product_id Product ID.
+ * @param string $context    List context: 'products' (default) or 'inventory'.
  * @return string
  */
-function storesuite_get_product_list_row_html( $product_id ) {
+function storesuite_get_product_list_row_html( $product_id, $context = 'products' ) {
 	$product_id = absint( $product_id );
 	$product    = wc_get_product( $product_id );
 	if ( ! $product_id || ! $product ) {
 		return '';
 	}
 
+	$row_templates = array(
+		'products'  => 'products/product-list-table-row',
+		'inventory' => 'inventory/inventory-list-table-row',
+	);
+	$template      = isset( $row_templates[ $context ] ) ? $row_templates[ $context ] : $row_templates['products'];
+
 	ob_start();
 	storesuite_get_template_part(
-		'products/product-list-table-row',
+		$template,
 		'',
 		array(
 			'product_id' => $product_id,

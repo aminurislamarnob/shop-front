@@ -64,6 +64,7 @@ class ProductInlineEdit {
 
 		$product_id = isset( $_POST['product_id'] ) ? absint( wp_unslash( $_POST['product_id'] ) ) : 0;
 		$field      = isset( $_POST['field'] ) ? sanitize_key( wp_unslash( $_POST['field'] ) ) : '';
+		$context    = isset( $_POST['context'] ) ? sanitize_key( wp_unslash( $_POST['context'] ) ) : 'products';
 
 		try {
 			if ( ! $product_id || 'product' !== get_post_type( $product_id ) ) {
@@ -86,6 +87,10 @@ class ProductInlineEdit {
 
 				case 'stock_quantity':
 					$this->apply_stock_quantity( $product );
+					break;
+
+				case 'stock_status':
+					$this->apply_stock_status( $product );
 					break;
 
 				case 'status':
@@ -113,7 +118,7 @@ class ProductInlineEdit {
 			wp_send_json_success(
 				array(
 					'message' => __( 'Product updated.', 'storesuite' ),
-					'row'     => storesuite_get_product_list_row_html( $product_id ),
+					'row'     => storesuite_get_product_list_row_html( $product_id, $context ),
 				)
 			);
 		} catch ( \WC_Data_Exception $e ) {
@@ -201,6 +206,30 @@ class ProductInlineEdit {
 		}
 
 		$product->set_stock_quantity( wc_stock_amount( $raw ) );
+	}
+
+	/**
+	 * Apply an inline stock status edit.
+	 *
+	 * Only meaningful when stock is not managed by quantity — with managed
+	 * stock WooCommerce derives the status from the quantity on save.
+	 *
+	 * @param \WC_Product $product Product being edited.
+	 * @return void
+	 * @throws \RuntimeException When the product manages stock or the status is invalid.
+	 */
+	private function apply_stock_status( $product ) {
+		if ( $product->managing_stock() ) {
+			throw new \RuntimeException( esc_html__( 'Stock status is derived from the stock quantity for this product.', 'storesuite' ), 400 );
+		}
+
+		$value = isset( $_POST['value'] ) ? sanitize_key( wp_unslash( $_POST['value'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified in handle_inline_cell_edit_ajax().
+
+		if ( ! array_key_exists( $value, wc_get_product_stock_status_options() ) ) {
+			throw new \RuntimeException( esc_html__( 'Invalid stock status.', 'storesuite' ), 422 );
+		}
+
+		$product->set_stock_status( $value );
 	}
 
 	/**

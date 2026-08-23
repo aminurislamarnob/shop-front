@@ -120,6 +120,12 @@ class Products {
 			);
 		}
 
+		// Restrict to an explicit ID set (e.g. the inventory low-stock filter).
+		if ( ! empty( $filters['post__in'] ) && is_array( $filters['post__in'] ) ) {
+			$ids               = array_values( array_filter( array_map( 'absint', $filters['post__in'] ) ) );
+			$query['post__in'] = ! empty( $ids ) ? $ids : array( 0 );
+		}
+
 		// Filter by post status, validated against the listing allow-list.
 		if ( ! empty( $filters['status'] ) ) {
 			$allowed_statuses = apply_filters( 'storesuite_product_listing_post_statuses', array( 'publish', 'draft', 'pending', 'future' ) );

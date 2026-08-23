@@ -93,7 +93,9 @@
 			var $editor = $( '<div class="storesuite-inline-editor" />' );
 
 			if ( 'status' === field ) {
-				$editor.append( this.buildStatusSelect( $cell ) );
+				$editor.append( this.buildSelect( $cell, this.config().statuses || {}, this.i18n().status ) );
+			} else if ( 'stock_status' === field ) {
+				$editor.append( this.buildSelect( $cell, this.config().stock_statuses || {}, this.i18n().stock_status ) );
 			} else if ( 'price' === field ) {
 				$editor.append(
 					this.buildInput( 'regular_price', String( $cell.data( 'regular-price' ) || '' ), this.i18n().regular_price ),
@@ -119,15 +121,14 @@
 				.val( 'undefined' === value ? '' : value );
 		},
 
-		buildStatusSelect: function ( $cell ) {
-			var statuses = this.config().statuses || {};
+		buildSelect: function ( $cell, options, label ) {
 			var current = String( $cell.data( 'inline-value' ) );
 			var $select = $( '<select class="storesuite-form-control storesuite-inline-input" name="value" />' )
-				.attr( 'aria-label', this.i18n().status || '' );
+				.attr( 'aria-label', label || '' );
 
-			$.each( statuses, function ( key, statusLabel ) {
+			$.each( options, function ( key, optionLabel ) {
 				$select.append(
-					$( '<option />' ).attr( 'value', key ).text( statusLabel ).prop( 'selected', key === current )
+					$( '<option />' ).attr( 'value', key ).text( optionLabel ).prop( 'selected', key === current )
 				);
 			} );
 
@@ -148,6 +149,7 @@
 				security: this.config().nonce,
 				product_id: $cell.closest( 'tr' ).find( 'input[name="bulk_product_ids[]"]' ).val(),
 				field: field,
+				context: this.config().context || 'products',
 			};
 
 			if ( 'price' === field ) {
