@@ -5,7 +5,7 @@ Tags: woocommerce frontend dashboard, woocommerce order management, woocommerce 
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,6 +129,11 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.2.2 =
+* Refresh the plugin listing: new title, tags, short description, and description intro.
+* Add All Features, Documentation, and Support links to the listing description.
+* Add a donate link and the PluginizeLab contributor to the listing.
 
 = 1.2.1 =
 * Add a Changelog page to the admin settings app, paginated with a "Load more" button.
