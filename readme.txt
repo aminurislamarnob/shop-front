@@ -1,18 +1,21 @@
-=== StoreSuite – AI-Powered WooCommerce Frontend Dashboard & Complete Store Management Solution ===
-Contributors: aminurislam01
-Tags: frontend manager, shop manager, woocommerce order management, woocommerce product management, woocommerce ai
+=== StoreSuite – Frontend Shop Manager for WooCommerce with AI – Product, Order, Coupon Management & Analytics Dashboard ===
+Contributors: aminurislam01, pluginizelab
+Donate link: https://www.buymeacoffee.com/aiarnob
+Tags: woocommerce frontend dashboard, woocommerce order management, woocommerce product management, shop manager, woocommerce ai
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AI-assisted frontend dashboard to manage your WooCommerce store — products, orders, coupons, categories, and analytics in one place.
+Frontend shop manager dashboard for WooCommerce. Manage products, orders, coupons & analytics with AI — premium features, 100% free.
 
 == Description ==
 
-StoreSuite adds a frontend store management dashboard for WooCommerce. Give store managers one place to run the day-to-day: products, categories, tags, brands, coupons, orders, and key metrics—without switching between multiple admin screens.
+StoreSuite is a free frontend shop manager for WooCommerce that puts complete store management in one fast dashboard. Manage products (simple, variable, grouped, and external), orders, coupons, categories, tags, brands, and attributes — without opening wp-admin. Generate product titles, descriptions, and images with AI, export products to CSV, and track sales with a full analytics suite that matches WooCommerce admin reports: Revenue, Orders, Products, Customers, and more. Fully responsive on mobile and tablet, and 100% free with no feature gates, trials, or upsells.
+
+✨ **[All Features](https://storesuite.dev/features/)** | 📖 **[Documentation](https://storesuite.dev/docs/)** | 🆘 **[Support](https://wordpress.org/support/plugin/storesuite/#new-post)**
 
 = 💎 Premium-grade features, completely free =
 
@@ -126,6 +129,11 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
 == Changelog ==
+
+= 1.2.2 =
+* Refresh the plugin listing: new title, tags, short description, and description intro.
+* Add All Features, Documentation, and Support links to the listing description.
+* Add a donate link and the PluginizeLab contributor to the listing.
 
 = 1.2.1 =
 * Add a Changelog page to the admin settings app, paginated with a "Load more" button.
