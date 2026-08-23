@@ -1,6 +1,6 @@
 === StoreSuite – Frontend Shop Manager for WooCommerce with AI – Product, Order, Coupon Management & Analytics Dashboard ===
 Contributors: aminurislam01
-Tags: woocommerce, shop manager, frontend manager, order management, store management
+Tags: woocommerce frontend dashboard, woocommerce order management, woocommerce product management, shop manager, woocommerce ai
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
