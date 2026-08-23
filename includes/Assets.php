@@ -92,6 +92,7 @@ class Assets {
 		$frontend_sweetalert2         = STORESUITE_PLUGIN_ASSET . '/frontend/library/sweetalert2.min.js';
 		$frontend_variation_script    = STORESUITE_PLUGIN_ASSET . '/frontend/product-variation.js';
 		$frontend_product_export      = STORESUITE_PLUGIN_ASSET . '/frontend/product-export.js';
+		$frontend_product_inline_edit = STORESUITE_PLUGIN_ASSET . '/frontend/product-inline-edit.js';
 		$frontend_taxonomy_list       = STORESUITE_PLUGIN_ASSET . '/frontend/taxonomy-list.js';
 		$frontend_coupon_bulk         = STORESUITE_PLUGIN_ASSET . '/frontend/coupon-bulk.js';
 
@@ -114,6 +115,9 @@ class Assets {
 		wp_register_script( 'wc-accounting', WC()->plugin_url() . '/assets/js/accounting/accounting.min.js', array( 'jquery' ), '0.4.2', true );
 		wp_register_script( 'storesuite_variation_script', $frontend_variation_script, array( 'jquery', 'storesuite_selectWoo', 'storesuite_sweetalert2_script', 'jquery-ui-sortable', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_product_export_script', $frontend_product_export, array( 'jquery', 'storesuite_product_script', 'storesuite_selectWoo', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
+
+		// Inline cell editing on the products list table.
+		wp_register_script( 'storesuite_product_inline_edit_script', $frontend_product_inline_edit, array( 'jquery', 'storesuite_script', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 
 		// WooCommerce's product CSV import wizard JS (reused verbatim; drives the AJAX batch import).
 		wp_register_script( 'wc-product-import', WC()->plugin_url() . '/assets/js/admin/wc-product-import.js', array( 'jquery' ), WC_VERSION, true );
@@ -801,6 +805,31 @@ class Assets {
 					),
                 )
             );
+
+			wp_enqueue_script( 'storesuite_product_inline_edit_script' );
+			wp_localize_script(
+				'storesuite_product_inline_edit_script',
+				'StoreSuite_ProductInlineEdit',
+				array(
+					'ajax_url' => admin_url( 'admin-ajax.php' ),
+					'nonce'    => wp_create_nonce( \PluginizeLab\StoreSuite\Product\ProductInlineEdit::NONCE_ACTION ),
+					'statuses' => array_intersect_key(
+						storesuite_get_post_status(),
+						array_flip( \PluginizeLab\StoreSuite\Product\ProductInlineEdit::EDITABLE_STATUSES )
+					),
+					'i18n'     => array(
+						'error_title'      => __( 'Update failed', 'storesuite' ),
+						'ok_button'        => __( 'OK', 'storesuite' ),
+						'unexpected_error' => __( 'An unexpected error occurred. Please try again.', 'storesuite' ),
+						'hint'             => __( 'Enter to save · Esc to cancel', 'storesuite' ),
+						'regular_price'    => __( 'Regular price', 'storesuite' ),
+						'sale_price'       => __( 'Sale price', 'storesuite' ),
+						'stock_quantity'   => __( 'Stock quantity', 'storesuite' ),
+						'sku'              => __( 'SKU', 'storesuite' ),
+						'status'           => __( 'Status', 'storesuite' ),
+					),
+				)
+			);
 
 			wp_enqueue_script( 'storesuite_product_export_script' );
 			wp_localize_script(

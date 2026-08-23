@@ -16,6 +16,13 @@ $storesuite_wfm_thumb = get_the_post_thumbnail_url( $product_id, 'thumbnail' );
 if ( empty( $storesuite_wfm_thumb ) ) {
 	$storesuite_wfm_thumb = wc_placeholder_img_src( 'thumbnail' );
 }
+
+$storesuite_can_inline_edit = current_user_can( 'edit_post', $product_id );
+$storesuite_inline_status   = $storesuite_can_inline_edit && in_array( get_post_status( $product_id ), \PluginizeLab\StoreSuite\Product\ProductInlineEdit::EDITABLE_STATUSES, true );
+$storesuite_inline_sku      = $storesuite_can_inline_edit;
+$storesuite_inline_stock    = $storesuite_can_inline_edit && $product->managing_stock() && ! $product->is_type( 'variable' );
+$storesuite_inline_price    = $storesuite_can_inline_edit && $product->is_type( \PluginizeLab\StoreSuite\Product\ProductInlineEdit::get_price_editable_types() );
+$storesuite_inline_title    = __( 'Click to edit', 'storesuite' );
 ?>
 <tr class="single-product-item storesuite-list-row" id="product-row-<?php echo esc_attr( (string) $product_id ); ?>">
 	<td class="check-column">
@@ -38,12 +45,20 @@ if ( empty( $storesuite_wfm_thumb ) ) {
 	<td data-title="<?php esc_attr_e( 'Category', 'storesuite' ); ?>">
 		<?php echo wp_kses_post( wc_get_product_category_list( $product_id, ', ', '', '' ) ); ?>
 	</td>
-	<td data-title="<?php esc_attr_e( 'Status', 'storesuite' ); ?>">
+	<td data-title="<?php esc_attr_e( 'Status', 'storesuite' ); ?>"
+		<?php if ( $storesuite_inline_status ) : ?>
+		class="storesuite-inline-cell" data-inline-field="status" data-inline-value="<?php echo esc_attr( get_post_status( $product_id ) ); ?>" tabindex="0" title="<?php echo esc_attr( $storesuite_inline_title ); ?>"
+		<?php endif; ?>
+	>
 		<span class="storesuite-badge storesuite-badge-<?php echo esc_attr( storesuite_get_post_status_class( get_post_status( $product_id ) ) ); ?>">
 			<?php echo esc_html( storesuite_get_post_status( get_post_status( $product_id ) ) ); ?>
 		</span>
 	</td>
-	<td data-title="<?php esc_attr_e( 'SKU', 'storesuite' ); ?>">
+	<td data-title="<?php esc_attr_e( 'SKU', 'storesuite' ); ?>"
+		<?php if ( $storesuite_inline_sku ) : ?>
+		class="storesuite-inline-cell" data-inline-field="sku" data-inline-value="<?php echo esc_attr( $product->get_sku() ); ?>" tabindex="0" title="<?php echo esc_attr( $storesuite_inline_title ); ?>"
+		<?php endif; ?>
+	>
 		<?php
 		if ( $product->get_sku() ) {
 			echo esc_html( $product->get_sku() );
@@ -52,7 +67,11 @@ if ( empty( $storesuite_wfm_thumb ) ) {
 		}
 		?>
 	</td>
-	<td data-title="<?php esc_attr_e( 'Stock', 'storesuite' ); ?>">
+	<td data-title="<?php esc_attr_e( 'Stock', 'storesuite' ); ?>"
+		<?php if ( $storesuite_inline_stock ) : ?>
+		class="storesuite-inline-cell" data-inline-field="stock_quantity" data-inline-value="<?php echo esc_attr( (string) $product->get_stock_quantity() ); ?>" tabindex="0" title="<?php echo esc_attr( $storesuite_inline_title ); ?>"
+		<?php endif; ?>
+	>
 		<?php
 		$stock_count = '';
 		if ( $product->managing_stock() ) {
@@ -68,7 +87,11 @@ if ( empty( $storesuite_wfm_thumb ) ) {
 		}
 		?>
 	</td>
-	<td data-title="<?php esc_attr_e( 'Price', 'storesuite' ); ?>">
+	<td data-title="<?php esc_attr_e( 'Price', 'storesuite' ); ?>"
+		<?php if ( $storesuite_inline_price ) : ?>
+		class="storesuite-inline-cell" data-inline-field="price" data-regular-price="<?php echo esc_attr( $product->get_regular_price() ); ?>" data-sale-price="<?php echo esc_attr( $product->get_sale_price() ); ?>" tabindex="0" title="<?php echo esc_attr( $storesuite_inline_title ); ?>"
+		<?php endif; ?>
+	>
 		<?php echo wp_kses_post( $product->get_price_html() ); ?>
 	</td>
 	<td data-title="<?php esc_attr_e( 'Type', 'storesuite' ); ?>">

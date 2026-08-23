@@ -135,6 +135,33 @@ function storesuite_get_post_status_class( $status = '' ) {
 }
 
 /**
+ * HTML for one product row of the products list table.
+ *
+ * Shared by the first paint, quick edit and inline cell edit AJAX row refreshes.
+ *
+ * @param int $product_id Product ID.
+ * @return string
+ */
+function storesuite_get_product_list_row_html( $product_id ) {
+	$product_id = absint( $product_id );
+	$product    = wc_get_product( $product_id );
+	if ( ! $product_id || ! $product ) {
+		return '';
+	}
+
+	ob_start();
+	storesuite_get_template_part(
+		'products/product-list-table-row',
+		'',
+		array(
+			'product_id' => $product_id,
+			'product'    => $product,
+		)
+	);
+	return ob_get_clean();
+}
+
+/**
  * Get user-friendly order status class based on order status
  *
  * @param string $status

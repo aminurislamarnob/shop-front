@@ -8042,3 +8042,52 @@ ul.storesuite-notifications-list {
 [data-theme="dark"] .storesuite-order-documents .storesuite-order-documents-list .my-storesuite-button:hover svg {
   background: var(--storesuite-primary-bg);
 }
+
+/* --------------------------------------------------------------------------
+ * Products list — inline cell editing
+ * ------------------------------------------------------------------------ */
+td.storesuite-inline-cell {
+  cursor: pointer;
+}
+td.storesuite-inline-cell:not(.storesuite-inline-editing):hover,
+td.storesuite-inline-cell:not(.storesuite-inline-editing):focus-visible {
+  box-shadow: inset 0 0 0 1px var(--storesuite-border-color);
+  border-radius: 6px;
+  outline: none;
+}
+td.storesuite-inline-cell.storesuite-inline-editing {
+  cursor: default;
+}
+.storesuite-inline-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 130px;
+  max-width: 220px;
+}
+.storesuite-inline-editor .storesuite-inline-input {
+  height: 32px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+.storesuite-inline-editor-hint {
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--storesuite-text-color-light);
+  white-space: nowrap;
+}
+td.storesuite-inline-cell.storesuite-inline-saving .storesuite-inline-editor {
+  opacity: 0.6;
+  pointer-events: none;
+}
+tr.storesuite-inline-saved-flash > td {
+  animation: storesuite-inline-saved-flash 1.6s ease-out;
+}
+@keyframes storesuite-inline-saved-flash {
+  0% {
+    background-color: color-mix(in srgb, var(--storesuite-primary-bg) 14%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
