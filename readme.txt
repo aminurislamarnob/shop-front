@@ -8,11 +8,11 @@ Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AI-assisted frontend dashboard to manage your WooCommerce store — products, orders, coupons, categories, and analytics in one place.
+Frontend shop manager dashboard for WooCommerce. Manage products, orders, coupons & analytics with AI — premium features, 100% free.
 
 == Description ==
 
-StoreSuite adds a frontend store management dashboard for WooCommerce. Give store managers one place to run the day-to-day: products, categories, tags, brands, coupons, orders, and key metrics—without switching between multiple admin screens.
+StoreSuite is a free frontend shop manager for WooCommerce that puts complete store management in one fast dashboard. Manage products (simple, variable, grouped, and external), orders, coupons, categories, tags, brands, and attributes — without opening wp-admin. Generate product titles, descriptions, and images with AI, export products to CSV, and track sales with a full analytics suite that matches WooCommerce admin reports: Revenue, Orders, Products, Customers, and more. Fully responsive on mobile and tablet, and 100% free with no feature gates, trials, or upsells.
 
 = 💎 Premium-grade features, completely free =
 
