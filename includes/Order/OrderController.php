@@ -472,33 +472,52 @@ class OrderController {
 
 		$order_ids = array_map( 'absint', wp_unslash( $_POST['bulk_order_ids'] ) );
 
+		$updated = 0;
+		$trashed = 0;
+		$skipped = 0;
+
 		foreach ( $order_ids as $order_id ) {
 			$order = wc_get_order( $order_id );
 			if ( ! $order ) {
+				++$skipped;
 				continue;
 			}
 
 			switch ( $action ) {
 				case 'mark_processing':
-					$order->update_status( 'processing' );
+					$order->update_status( 'processing' ) ? ++$updated : ++$skipped;
 					break;
 				case 'mark_on-hold':
-					$order->update_status( 'on-hold' );
+					$order->update_status( 'on-hold' ) ? ++$updated : ++$skipped;
 					break;
 				case 'mark_completed':
-					$order->update_status( 'completed' );
+					$order->update_status( 'completed' ) ? ++$updated : ++$skipped;
 					break;
 				case 'mark_cancelled':
-					$order->update_status( 'cancelled' );
+					$order->update_status( 'cancelled' ) ? ++$updated : ++$skipped;
 					break;
 				case 'trash':
-					$order->delete();
+					$order->delete() ? ++$trashed : ++$skipped;
+					break;
+				default:
+					++$skipped;
 					break;
 			}
 		}
 
-		// Redirect back.
-		wp_safe_redirect( storesuite_get_navigation_url( 'orders' ) );
+		// Redirect back with the result counts for the list notice.
+		$redirect_url = add_query_arg(
+			array_filter(
+				array(
+					'updated' => $updated,
+					'trashed' => $trashed,
+					'skipped' => $skipped,
+				)
+			),
+			storesuite_get_navigation_url( 'orders' )
+		);
+
+		wp_safe_redirect( $redirect_url );
 		exit;
 	}
 }

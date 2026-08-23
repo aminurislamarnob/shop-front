@@ -1012,6 +1012,24 @@ form.storesuite-filters-form .row {
   visibility: visible;
 }
 
+/* "Some rows selected" state on the header select-all checkbox: filled box with a dash. */
+.my-storesuite-checkbox-input:indeterminate ~ .my-storesuite-checkbox-back {
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg) !important;
+}
+
+.my-storesuite-checkbox-input:indeterminate ~ .my-storesuite-checkbox-back::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 1px;
+  background: #fff;
+}
+
 
 /*Proudct List Page*/
 .my-storesuite-tbl td, .my-storesuite-tbl th{
@@ -5861,18 +5879,23 @@ form.storesuite-dashboard-date-range-form button.my-storesuite-button.storesuite
 .storesuite-bulk-edit-feedback {
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: var(--storesuite-bg-color-muted);
+  border: 1px solid var(--storesuite-border-color);
   border-radius: 6px;
 }
 
 .storesuite-bulk-edit-feedback-line {
   margin: 0.25rem 0;
   font-size: 0.9375rem;
+  color: var(--storesuite-text-color);
 }
 
 .storesuite-text-success {
   color: #047857;
+}
+
+[data-theme="dark"] .storesuite-text-success {
+  color: #34d399;
 }
 
 .storesuite-hide {
@@ -7090,6 +7113,11 @@ body,
 [data-theme="dark"] .my-storesuite-checkbox-input:focus-visible ~ .my-storesuite-checkbox-back {
   outline: 2px solid var(--storesuite-primary-bg);
   outline-offset: 1px;
+}
+
+[data-theme="dark"] .my-storesuite-checkbox-input:indeterminate ~ .my-storesuite-checkbox-back {
+  background: var(--storesuite-primary-bg);
+  border-color: var(--storesuite-primary-bg) !important;
 }
 
 /* Card title divider hardcodes a light gray border. */

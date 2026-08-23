@@ -691,10 +691,16 @@ class Assets {
 				'bulk_edit'                   => array(
 					'nonce'                   => wp_create_nonce( 'storesuite_bulk_edit_products' ),
 					'trash_nonce'             => wp_create_nonce( 'storesuite_bulk_trash_products' ),
+					'delete_nonce'            => wp_create_nonce( 'storesuite_bulk_delete_products' ),
 					'select_products_title'   => __( 'Select products', 'storesuite' ),
 					'select_products_message' => __( 'Choose at least one product to bulk edit.', 'storesuite' ),
 					'success_title'           => __( 'Bulk update complete', 'storesuite' ),
 					'trash_success_title'     => __( 'Bulk trash complete', 'storesuite' ),
+					'delete_success_title'    => __( 'Bulk delete complete', 'storesuite' ),
+					'delete_confirm_title'    => __( 'Delete permanently?', 'storesuite' ),
+					'delete_confirm_message'  => __( 'The selected products will be deleted permanently. This cannot be undone.', 'storesuite' ),
+					'delete_confirm_button'   => __( 'Yes, delete permanently', 'storesuite' ),
+					'cancel_button'           => __( 'Cancel', 'storesuite' ),
 					'ok_button'               => __( 'OK', 'storesuite' ),
 				),
 				'woocommerce_admin'          => array(
