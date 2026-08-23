@@ -14,6 +14,8 @@ Frontend shop manager dashboard for WooCommerce. Manage products, orders, coupon
 
 StoreSuite is a free frontend shop manager for WooCommerce that puts complete store management in one fast dashboard. Manage products (simple, variable, grouped, and external), orders, coupons, categories, tags, brands, and attributes — without opening wp-admin. Generate product titles, descriptions, and images with AI, export products to CSV, and track sales with a full analytics suite that matches WooCommerce admin reports: Revenue, Orders, Products, Customers, and more. Fully responsive on mobile and tablet, and 100% free with no feature gates, trials, or upsells.
 
+✨ **[All Features](https://storesuite.dev/features/)** | 📖 **[Documentation](https://storesuite.dev/docs/)** | 🆘 **[Support](https://wordpress.org/support/plugin/storesuite/#new-post)**
+
 = 💎 Premium-grade features, completely free =
 
 StoreSuite includes capabilities that other store-management dashboards often lock behind a Pro plan — at no cost:
