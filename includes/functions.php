@@ -18,10 +18,6 @@ function storesuite_get_template_part( $slug, $name = '', $args = array() ) {
 
 	$args = wp_parse_args( $args, $defaults );
 
-	if ( $args && is_array( $args ) ) {
-		extract( $args ); // phpcs:ignore
-	}
-
 	$template = '';
 
 	// Look in yourtheme/my-storesuite/slug-name.php and yourtheme/my-storesuite/slug.php
@@ -44,6 +40,13 @@ function storesuite_get_template_part( $slug, $name = '', $args = array() ) {
 
 	// Allow 3rd party plugin filter template file from their plugin
 	$template = apply_filters( 'storesuite_get_template_part', $template, $slug, $name );
+
+	// Extract only after the template has been resolved, and never overwrite
+	// this function's own variables: an arg keyed "name" (or "slug", "template",
+	// ...) must not be able to break template resolution or the include below.
+	if ( $args && is_array( $args ) ) {
+		extract( $args, EXTR_SKIP ); // phpcs:ignore
+	}
 
 	if ( $template ) {
 		include $template;
