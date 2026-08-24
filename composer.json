@@ -26,6 +26,9 @@
 		"symfony/var-dumper": "6.4.x-dev"
 	},
 	"scripts": {
+		"test": [
+			"vendor/bin/phpunit"
+		],
 		"phpcs": [
 			"vendor/bin/phpcs -p -s"
 		],
