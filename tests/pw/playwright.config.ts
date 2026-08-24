@@ -29,7 +29,7 @@ export default defineConfig( {
 	expect: { timeout: 10_000 },
 
 	reporter: IS_CI
-		? [ [ 'blob' ], [ 'list' ] ]
+		? [ [ 'list' ], [ 'html', { open: 'never' } ], [ 'github' ] ]
 		: [ [ 'html', { open: 'never' } ], [ 'list' ] ],
 
 	use: {
