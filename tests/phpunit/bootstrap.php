@@ -43,6 +43,12 @@ tests_add_filter(
 			WC_Install::install();
 		}
 
+		// The HPOS "newly installed" check runs on admin_init and issues a
+		// self-joined orders query that MySQL cannot execute against the test
+		// suite's TEMPORARY tables ("Can't reopen table"). Mark the install as
+		// not-new so the check is skipped during AJAX tests.
+		update_option( 'woocommerce_newly_installed', 'no' );
+
 		// Reload capabilities added by the install.
 		$GLOBALS['wp_roles'] = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Standard WooCommerce test-suite reset.
 		wp_roles();

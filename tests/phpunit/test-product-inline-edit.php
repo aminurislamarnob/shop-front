@@ -57,7 +57,14 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 			unset( $e );
 		}
 
-		return json_decode( $this->_last_response, true );
+		// Strip any debug notices printed before the JSON payload.
+		$raw   = $this->_last_response;
+		$start = strpos( $raw, '{' );
+		if ( false !== $start ) {
+			$raw = substr( $raw, $start );
+		}
+
+		return json_decode( $raw, true );
 	}
 
 	public function test_price_edit_updates_regular_and_sale_price() {
