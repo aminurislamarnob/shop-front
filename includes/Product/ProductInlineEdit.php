@@ -114,13 +114,6 @@ class ProductInlineEdit {
 			 * @param string $field      Edited field key.
 			 */
 			do_action( 'storesuite_product_inline_cell_edited', $product_id, $field );
-
-			wp_send_json_success(
-				array(
-					'message' => __( 'Product updated.', 'storesuite' ),
-					'row'     => storesuite_get_product_list_row_html( $product_id, $context ),
-				)
-			);
 		} catch ( \WC_Data_Exception $e ) {
 			wp_send_json_error(
 				array(
@@ -140,6 +133,16 @@ class ProductInlineEdit {
 				$status
 			);
 		}
+
+		// Deliberately outside the try/catch: wp_die() inside wp_send_json_*
+		// is replaced with an exception by the AJAX test framework, and the
+		// success response must not be swallowed by our own catch block.
+		wp_send_json_success(
+			array(
+				'message' => __( 'Product updated.', 'storesuite' ),
+				'row'     => storesuite_get_product_list_row_html( $product_id, $context ),
+			)
+		);
 	}
 
 	/**
