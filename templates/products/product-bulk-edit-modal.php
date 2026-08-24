@@ -9,12 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$post_type_object = get_post_type_object( 'product' );
-if ( ! $post_type_object ) {
+$storesuite_post_type_object = get_post_type_object( 'product' );
+if ( ! $storesuite_post_type_object ) {
 	return;
 }
 
-$can_publish = current_user_can( $post_type_object->cap->publish_posts );
+$can_publish = current_user_can( $storesuite_post_type_object->cap->publish_posts );
 
 $inline_edit_statuses = array(
 	'-1' => __( '— No change —', 'storesuite' ),
