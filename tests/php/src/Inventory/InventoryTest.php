@@ -5,33 +5,33 @@
  * @package StoreSuite\Tests
  */
 
+namespace PluginizeLab\StoreSuite\Test\Inventory;
+
 use PluginizeLab\StoreSuite\Inventory\InventoryManager;
 use PluginizeLab\StoreSuite\Rewrites;
+use PluginizeLab\StoreSuite\Test\StoreSuiteTestCase;
 
 /**
  * @covers \PluginizeLab\StoreSuite\Inventory\InventoryManager
+ * @group storesuite-inventory
  */
-class Test_Inventory extends WP_UnitTestCase {
+class InventoryTest extends StoreSuiteTestCase {
 
 	/**
 	 * Create a stock-managed simple product.
 	 *
 	 * @param int      $stock     Stock quantity.
 	 * @param int|null $threshold Per-product low stock amount (null = store default).
-	 * @return WC_Product_Simple
+	 * @return \WC_Product
 	 */
 	private function create_stocked_product( $stock, $threshold = null ) {
-		$product = new WC_Product_Simple();
-		$product->set_name( 'Stocked ' . $stock . '/' . var_export( $threshold, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
-		$product->set_regular_price( '10' );
-		$product->set_manage_stock( true );
-		$product->set_stock_quantity( $stock );
-		if ( null !== $threshold ) {
-			$product->set_low_stock_amount( $threshold );
-		}
-		$product->save();
-
-		return $product;
+		return self::factory()->product->create(
+			array(
+				'manage_stock'     => true,
+				'stock_quantity'   => $stock,
+				'low_stock_amount' => $threshold,
+			)
+		);
 	}
 
 	public function test_low_stock_ids_use_store_default_threshold() {

@@ -5,34 +5,16 @@
  * @package StoreSuite\Tests
  */
 
+namespace PluginizeLab\StoreSuite\Test\Product;
+
 use PluginizeLab\StoreSuite\Product\Products;
+use PluginizeLab\StoreSuite\Test\StoreSuiteTestCase;
 
 /**
  * @covers \PluginizeLab\StoreSuite\Product\Products
+ * @group storesuite-product
  */
-class Test_Products_Query extends WP_UnitTestCase {
-
-	/**
-	 * Create a simple product.
-	 *
-	 * @param string      $name  Product name.
-	 * @param string      $price Regular price ('' to leave unpriced).
-	 * @param string|null $sku   Optional SKU.
-	 * @return WC_Product_Simple
-	 */
-	private function create_product( $name, $price = '10', $sku = null ) {
-		$product = new WC_Product_Simple();
-		$product->set_name( $name );
-		if ( '' !== $price ) {
-			$product->set_regular_price( $price );
-		}
-		if ( null !== $sku ) {
-			$product->set_sku( $sku );
-		}
-		$product->save();
-
-		return $product;
-	}
+class ProductsQueryTest extends StoreSuiteTestCase {
 
 	/**
 	 * Run the query and return the matched product IDs.
@@ -48,14 +30,13 @@ class Test_Products_Query extends WP_UnitTestCase {
 	}
 
 	public function test_status_filter_honors_allow_list() {
-		$published = $this->create_product( 'Published One' );
-		$draft_id  = $this->create_product( 'Draft One' )->get_id();
-		wp_update_post(
+		$published = self::factory()->product->create( array( 'name' => 'Published One' ) );
+		$draft_id  = self::factory()->product->create(
 			array(
-				'ID'          => $draft_id,
-				'post_status' => 'draft',
+				'name'   => 'Draft One',
+				'status' => 'draft',
 			)
-		);
+		)->get_id();
 
 		$ids = $this->query_ids( array( 'status' => 'draft' ) );
 		$this->assertContains( $draft_id, $ids );
@@ -68,9 +49,24 @@ class Test_Products_Query extends WP_UnitTestCase {
 	}
 
 	public function test_price_range_filters() {
-		$cheap  = $this->create_product( 'Cheap', '5' )->get_id();
-		$medium = $this->create_product( 'Medium', '20' )->get_id();
-		$dear   = $this->create_product( 'Expensive', '80' )->get_id();
+		$cheap  = self::factory()->product->create(
+			array(
+				'name'          => 'Cheap',
+				'regular_price' => '5',
+			)
+		)->get_id();
+		$medium = self::factory()->product->create(
+			array(
+				'name'          => 'Medium',
+				'regular_price' => '20',
+			)
+		)->get_id();
+		$dear   = self::factory()->product->create(
+			array(
+				'name'          => 'Expensive',
+				'regular_price' => '80',
+			)
+		)->get_id();
 
 		$ids = $this->query_ids(
 			array(
@@ -90,14 +86,14 @@ class Test_Products_Query extends WP_UnitTestCase {
 	}
 
 	public function test_created_date_range_filter() {
-		$old_id = static::factory()->post->create(
+		$old_id = self::factory()->post->create(
 			array(
 				'post_type'   => 'product',
 				'post_status' => 'publish',
 				'post_date'   => '2020-01-15 10:00:00',
 			)
 		);
-		$new_id = static::factory()->post->create(
+		$new_id = self::factory()->post->create(
 			array(
 				'post_type'   => 'product',
 				'post_status' => 'publish',
@@ -116,12 +112,25 @@ class Test_Products_Query extends WP_UnitTestCase {
 	}
 
 	public function test_price_sorting_keeps_products_without_price_meta() {
-		$low  = $this->create_product( 'Low', '5' )->get_id();
-		$high = $this->create_product( 'High', '50' )->get_id();
+		$low  = self::factory()->product->create(
+			array(
+				'name'          => 'Low',
+				'regular_price' => '5',
+			)
+		)->get_id();
+		$high = self::factory()->product->create(
+			array(
+				'name'          => 'High',
+				'regular_price' => '50',
+			)
+		)->get_id();
 
-		$grouped = new WC_Product_Grouped();
-		$grouped->set_name( 'No Price Grouped' );
-		$grouped->save();
+		$grouped = self::factory()->product->create(
+			array(
+				'type' => 'grouped',
+				'name' => 'No Price Grouped',
+			)
+		);
 
 		$ids = $this->query_ids(
 			array(
@@ -135,7 +144,7 @@ class Test_Products_Query extends WP_UnitTestCase {
 	}
 
 	public function test_unknown_orderby_is_ignored() {
-		$this->create_product( 'Any Product' );
+		self::factory()->product->create( array( 'name' => 'Any Product' ) );
 
 		$result = ( new Products() )->get_paginated_products(
 			1,
@@ -150,8 +159,18 @@ class Test_Products_Query extends WP_UnitTestCase {
 	}
 
 	public function test_search_matches_sku() {
-		$this->create_product( 'Alpha Widget', '10', 'AAA-111' );
-		$target = $this->create_product( 'Beta Widget', '10', 'ZZZ-999' )->get_id();
+		self::factory()->product->create(
+			array(
+				'name' => 'Alpha Widget',
+				'sku'  => 'AAA-111',
+			)
+		);
+		$target = self::factory()->product->create(
+			array(
+				'name' => 'Beta Widget',
+				'sku'  => 'ZZZ-999',
+			)
+		)->get_id();
 
 		$ids = $this->query_ids( array(), 'ZZZ-999' );
 		$this->assertContains( $target, $ids );

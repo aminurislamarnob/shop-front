@@ -5,82 +5,25 @@
  * @package StoreSuite\Tests
  */
 
+namespace PluginizeLab\StoreSuite\Test\Product;
+
+use PluginizeLab\StoreSuite\Test\StoreSuiteAjaxTestCase;
+
 /**
  * @covers \PluginizeLab\StoreSuite\Product\ProductInlineEdit
+ * @group storesuite-product
+ * @group storesuite-ajax
  */
-class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
+class ProductInlineEditTest extends StoreSuiteAjaxTestCase {
 
 	const ACTION = 'storesuite_product_inline_cell_edit';
 
-	/**
-	 * Create a simple product.
-	 *
-	 * @param array $args Optional overrides.
-	 * @return WC_Product_Simple
-	 */
-	private function create_simple_product( $args = array() ) {
-		$product = new WC_Product_Simple();
-		$product->set_name( isset( $args['name'] ) ? $args['name'] : 'Inline Test Product' );
-		$product->set_regular_price( isset( $args['regular_price'] ) ? $args['regular_price'] : '20' );
-
-		if ( isset( $args['sku'] ) ) {
-			$product->set_sku( $args['sku'] );
-		}
-		if ( ! empty( $args['manage_stock'] ) ) {
-			$product->set_manage_stock( true );
-			$product->set_stock_quantity( isset( $args['stock'] ) ? $args['stock'] : 5 );
-		}
-
-		$product->save();
-
-		return $product;
-	}
-
-	/**
-	 * Dispatch the inline edit action and return the decoded JSON response.
-	 *
-	 * @param array $post_fields Request fields (product_id, field, value, ...).
-	 * @return array
-	 */
-	private function do_inline_edit( $post_fields ) {
-		// _last_response accumulates across _handleAjax calls; start fresh.
-		$this->_last_response = '';
-
-		$_POST = array_merge(
-			array(
-				'security' => wp_create_nonce( self::ACTION ),
-			),
-			$post_fields
-		);
-
-		try {
-			$this->_handleAjax( self::ACTION );
-		} catch ( WPAjaxDieContinueException $e ) {
-			// wp_send_json_* ends with an empty wp_die(); this is the expected control flow.
-			unset( $e );
-		}
-
-		// Strip any debug output printed before or after the JSON payload.
-		$raw   = $this->_last_response;
-		$start = strpos( $raw, '{' );
-		$end   = strrpos( $raw, '}' );
-		if ( false !== $start && false !== $end && $end >= $start ) {
-			$raw = substr( $raw, $start, $end - $start + 1 );
-		}
-
-		$decoded = json_decode( $raw, true );
-		if ( null === $decoded ) {
-			$this->fail( 'Non-JSON AJAX response (' . strlen( $this->_last_response ) . ' bytes), tail: ' . substr( $this->_last_response, -600 ) );
-		}
-
-		return $decoded;
-	}
-
 	public function test_price_edit_updates_regular_and_sale_price() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product();
+		$product = self::factory()->product->create();
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id'    => $product->get_id(),
 				'field'         => 'price',
@@ -99,9 +42,10 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_sale_price_must_be_lower_than_regular_price() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product();
+		$product = self::factory()->product->create( array( 'regular_price' => '20' ) );
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id'    => $product->get_id(),
 				'field'         => 'price',
@@ -118,9 +62,10 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_invalid_price_is_rejected() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product();
+		$product = self::factory()->product->create();
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id'    => $product->get_id(),
 				'field'         => 'price',
@@ -134,14 +79,15 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_stock_quantity_edit_when_stock_is_managed() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product(
+		$product = self::factory()->product->create(
 			array(
-				'manage_stock' => true,
-				'stock'        => 5,
+				'manage_stock'   => true,
+				'stock_quantity' => 5,
 			)
 		);
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id' => $product->get_id(),
 				'field'      => 'stock_quantity',
@@ -155,9 +101,10 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_stock_quantity_edit_rejected_when_stock_not_managed() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product();
+		$product = self::factory()->product->create();
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id' => $product->get_id(),
 				'field'      => 'stock_quantity',
@@ -170,9 +117,10 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_status_edit_accepts_whitelisted_status_only() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product();
+		$product = self::factory()->product->create();
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id' => $product->get_id(),
 				'field'      => 'status',
@@ -182,7 +130,8 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 		$this->assertTrue( $response['success'] );
 		$this->assertSame( 'draft', get_post_status( $product->get_id() ) );
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id' => $product->get_id(),
 				'field'      => 'status',
@@ -194,20 +143,21 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_duplicate_sku_is_rejected() {
 		$this->_setRole( 'administrator' );
-		$this->create_simple_product(
+		self::factory()->product->create(
 			array(
 				'name' => 'Product A',
 				'sku'  => 'DUP-SKU',
 			)
 		);
-		$product_b = $this->create_simple_product(
+		$product_b = self::factory()->product->create(
 			array(
 				'name' => 'Product B',
 				'sku'  => 'OTHER-SKU',
 			)
 		);
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id' => $product_b->get_id(),
 				'field'      => 'sku',
@@ -221,9 +171,10 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_stock_status_edit_only_when_stock_not_managed() {
 		$this->_setRole( 'administrator' );
-		$unmanaged = $this->create_simple_product();
+		$unmanaged = self::factory()->product->create();
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id' => $unmanaged->get_id(),
 				'field'      => 'stock_status',
@@ -233,14 +184,15 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 		$this->assertTrue( $response['success'] );
 		$this->assertSame( 'outofstock', wc_get_product( $unmanaged->get_id() )->get_stock_status() );
 
-		$managed = $this->create_simple_product(
+		$managed = self::factory()->product->create(
 			array(
-				'manage_stock' => true,
-				'stock'        => 3,
+				'manage_stock'   => true,
+				'stock_quantity' => 3,
 			)
 		);
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id' => $managed->get_id(),
 				'field'      => 'stock_status',
@@ -252,10 +204,11 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_user_without_capability_is_rejected() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product();
+		$product = self::factory()->product->create();
 
 		$this->_setRole( 'subscriber' );
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id' => $product->get_id(),
 				'field'      => 'sku',
@@ -269,9 +222,10 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_inventory_context_returns_inventory_row_markup() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product();
+		$product = self::factory()->product->create();
 
-		$response = $this->do_inline_edit(
+		$response = $this->do_ajax(
+			self::ACTION,
 			array(
 				'product_id' => $product->get_id(),
 				'field'      => 'sku',

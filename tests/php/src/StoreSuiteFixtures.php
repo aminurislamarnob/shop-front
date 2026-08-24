@@ -1,0 +1,128 @@
+<?php
+/**
+ * Shared fixtures and helpers for the StoreSuite test cases.
+ *
+ * @package StoreSuite\Tests
+ */
+
+namespace PluginizeLab\StoreSuite\Test;
+
+use PluginizeLab\StoreSuite\Test\Factories\StoreSuiteFactory;
+
+/**
+ * Fixtures shared by StoreSuiteTestCase and StoreSuiteAjaxTestCase.
+ *
+ * Lives in a trait because the AJAX base must extend WP_Ajax_UnitTestCase and
+ * therefore cannot inherit from StoreSuiteTestCase.
+ */
+trait StoreSuiteFixtures {
+
+	/**
+	 * Administrator user fixture, created fresh for every test.
+	 *
+	 * @var int
+	 */
+	protected $admin_id;
+
+	/**
+	 * Shop manager user fixture, created fresh for every test.
+	 *
+	 * @var int
+	 */
+	protected $shop_manager_id;
+
+	/**
+	 * Customer user fixture, created fresh for every test.
+	 *
+	 * @var int
+	 */
+	protected $customer_id;
+
+	/**
+	 * Shared factory instance.
+	 *
+	 * @var StoreSuiteFactory|null
+	 */
+	protected static $storesuite_factory = null;
+
+	/**
+	 * Replace the core factory with the StoreSuite one.
+	 *
+	 * Adds `product` and `coupon` entity factories on top of everything
+	 * WP_UnitTest_Factory already provides (post, user, term, ...).
+	 *
+	 * @return StoreSuiteFactory
+	 */
+	protected static function factory() {
+		if ( ! static::$storesuite_factory ) {
+			static::$storesuite_factory = new StoreSuiteFactory();
+		}
+
+		return static::$storesuite_factory;
+	}
+
+	/**
+	 * Create the standard user fixtures (admin, shop manager, customer).
+	 *
+	 * The database transaction rollback in tear_down() removes them again.
+	 *
+	 * @return void
+	 */
+	protected function create_storesuite_users() {
+		$this->admin_id        = static::factory()->user->create( array( 'role' => 'administrator' ) );
+		$this->shop_manager_id = static::factory()->user->create( array( 'role' => 'shop_manager' ) );
+		$this->customer_id     = static::factory()->user->create( array( 'role' => 'customer' ) );
+	}
+
+	/**
+	 * Write one key into the serialized storesuite_settings option.
+	 *
+	 * Mirrors how the plugin stores settings, so storesuite_get_option_by_key()
+	 * picks the value up.
+	 *
+	 * @param string $key   Setting key, e.g. 'storesuite_prevent_admin_access'.
+	 * @param mixed  $value Setting value.
+	 * @return void
+	 */
+	protected function set_storesuite_option( $key, $value ) {
+		$settings         = get_option( 'storesuite_settings', array() );
+		$settings         = is_array( $settings ) ? $settings : array();
+		$settings[ $key ] = $value;
+
+		update_option( 'storesuite_settings', $settings );
+	}
+
+	/**
+	 * Create a dashboard page with the [storesuite_dashboard] shortcode and
+	 * register it as the plugin's dashboard page.
+	 *
+	 * @return int Page ID.
+	 */
+	protected function create_dashboard_page() {
+		$page_id = static::factory()->post->create(
+			array(
+				'post_type'    => 'page',
+				'post_title'   => 'StoreSuite Dashboard',
+				'post_content' => '[storesuite_dashboard]',
+			)
+		);
+
+		$this->set_storesuite_option( 'storesuite_dashboard_page_id', $page_id );
+
+		return $page_id;
+	}
+
+	/**
+	 * Rebuild the wp_roles singleton.
+	 *
+	 * The transaction rollback restores the roles option, but in-memory
+	 * add_cap()/remove_cap() mutations survive on the singleton and would leak
+	 * into the next test without this reset.
+	 *
+	 * @return void
+	 */
+	protected function reset_role_singleton() {
+		$GLOBALS['wp_roles'] = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Standard test-suite role reset.
+		wp_roles();
+	}
+}

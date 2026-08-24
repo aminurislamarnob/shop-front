@@ -5,73 +5,24 @@
  * @package StoreSuite\Tests
  */
 
+namespace PluginizeLab\StoreSuite\Test\Product;
+
+use PluginizeLab\StoreSuite\Test\StoreSuiteAjaxTestCase;
+
 /**
  * @covers \PluginizeLab\StoreSuite\Product\ProductBulkEdit
+ * @group storesuite-product
+ * @group storesuite-ajax
  */
-class Test_Product_Bulk_Edit extends WP_Ajax_UnitTestCase {
-
-	/**
-	 * Create a simple product.
-	 *
-	 * @param string $name Product name.
-	 * @return WC_Product_Simple
-	 */
-	private function create_simple_product( $name = 'Bulk Test Product' ) {
-		$product = new WC_Product_Simple();
-		$product->set_name( $name );
-		$product->set_regular_price( '10' );
-		$product->save();
-
-		return $product;
-	}
-
-	/**
-	 * Dispatch a bulk AJAX action and return the decoded JSON response.
-	 *
-	 * @param string $action      AJAX action name (also the nonce action).
-	 * @param array  $post_fields Request fields.
-	 * @return array
-	 */
-	private function do_bulk_ajax( $action, $post_fields ) {
-		// _last_response accumulates across _handleAjax calls; start fresh.
-		$this->_last_response = '';
-
-		$_POST = array_merge(
-			array(
-				'security' => wp_create_nonce( $action ),
-			),
-			$post_fields
-		);
-
-		try {
-			$this->_handleAjax( $action );
-		} catch ( WPAjaxDieContinueException $e ) {
-			unset( $e );
-		}
-
-		// Strip any debug output printed before or after the JSON payload.
-		$raw   = $this->_last_response;
-		$start = strpos( $raw, '{' );
-		$end   = strrpos( $raw, '}' );
-		if ( false !== $start && false !== $end && $end >= $start ) {
-			$raw = substr( $raw, $start, $end - $start + 1 );
-		}
-
-		$decoded = json_decode( $raw, true );
-		if ( null === $decoded ) {
-			$this->fail( 'Non-JSON AJAX response (' . strlen( $this->_last_response ) . ' bytes), tail: ' . substr( $this->_last_response, -600 ) );
-		}
-
-		return $decoded;
-	}
+class ProductBulkEditTest extends StoreSuiteAjaxTestCase {
 
 	public function test_bulk_trash_moves_products_to_trash_and_skips_non_products() {
 		$this->_setRole( 'administrator' );
-		$product_a = $this->create_simple_product( 'Trash A' );
-		$product_b = $this->create_simple_product( 'Trash B' );
-		$page_id   = static::factory()->post->create( array( 'post_type' => 'page' ) );
+		$product_a = self::factory()->product->create( array( 'name' => 'Trash A' ) );
+		$product_b = self::factory()->product->create( array( 'name' => 'Trash B' ) );
+		$page_id   = self::factory()->post->create( array( 'post_type' => 'page' ) );
 
-		$response = $this->do_bulk_ajax(
+		$response = $this->do_ajax(
 			'storesuite_bulk_trash_products',
 			array(
 				'product_ids' => array( $product_a->get_id(), $product_b->get_id(), $page_id ),
@@ -87,9 +38,9 @@ class Test_Product_Bulk_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_bulk_delete_removes_products_permanently() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product( 'Delete Me' );
+		$product = self::factory()->product->create( array( 'name' => 'Delete Me' ) );
 
-		$response = $this->do_bulk_ajax(
+		$response = $this->do_ajax(
 			'storesuite_bulk_delete_products',
 			array(
 				'product_ids' => array( $product->get_id() ),
@@ -103,12 +54,12 @@ class Test_Product_Bulk_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_bulk_edit_adds_and_removes_categories() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product( 'Category Target' );
+		$product = self::factory()->product->create( array( 'name' => 'Category Target' ) );
 		$term    = wp_insert_term( 'Bulk Cat', 'product_cat' );
 		$term_id = $term['term_id'];
 
 		// Add.
-		$response = $this->do_bulk_ajax(
+		$response = $this->do_ajax(
 			'storesuite_bulk_edit_products',
 			array(
 				'post'                   => array( $product->get_id() ),
@@ -123,7 +74,7 @@ class Test_Product_Bulk_Edit extends WP_Ajax_UnitTestCase {
 		$this->assertTrue( has_term( $term_id, 'product_cat', $product->get_id() ) );
 
 		// Remove.
-		$response = $this->do_bulk_ajax(
+		$response = $this->do_ajax(
 			'storesuite_bulk_edit_products',
 			array(
 				'post'                   => array( $product->get_id() ),
@@ -140,10 +91,10 @@ class Test_Product_Bulk_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_bulk_trash_requires_capability() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product( 'Protected' );
+		$product = self::factory()->product->create( array( 'name' => 'Protected' ) );
 
 		$this->_setRole( 'subscriber' );
-		$response = $this->do_bulk_ajax(
+		$response = $this->do_ajax(
 			'storesuite_bulk_trash_products',
 			array(
 				'product_ids' => array( $product->get_id() ),
@@ -157,10 +108,10 @@ class Test_Product_Bulk_Edit extends WP_Ajax_UnitTestCase {
 
 	public function test_bulk_edit_requires_capability() {
 		$this->_setRole( 'administrator' );
-		$product = $this->create_simple_product( 'Edit Protected' );
+		$product = self::factory()->product->create( array( 'name' => 'Edit Protected' ) );
 
 		$this->_setRole( 'subscriber' );
-		$response = $this->do_bulk_ajax(
+		$response = $this->do_ajax(
 			'storesuite_bulk_edit_products',
 			array(
 				'post'      => array( $product->get_id() ),
