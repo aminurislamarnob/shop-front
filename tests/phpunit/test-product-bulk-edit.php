@@ -49,16 +49,17 @@ class Test_Product_Bulk_Edit extends WP_Ajax_UnitTestCase {
 			unset( $e );
 		}
 
-		// Strip any debug notices printed before the JSON payload.
+		// Strip any debug output printed before or after the JSON payload.
 		$raw   = $this->_last_response;
 		$start = strpos( $raw, '{' );
-		if ( false !== $start ) {
-			$raw = substr( $raw, $start );
+		$end   = strrpos( $raw, '}' );
+		if ( false !== $start && false !== $end && $end >= $start ) {
+			$raw = substr( $raw, $start, $end - $start + 1 );
 		}
 
 		$decoded = json_decode( $raw, true );
 		if ( null === $decoded ) {
-			$this->fail( 'Non-JSON AJAX response (' . strlen( $this->_last_response ) . ' bytes): ' . substr( $this->_last_response, 0, 1500 ) );
+			$this->fail( 'Non-JSON AJAX response (' . strlen( $this->_last_response ) . ' bytes), tail: ' . substr( $this->_last_response, -600 ) );
 		}
 
 		return $decoded;
