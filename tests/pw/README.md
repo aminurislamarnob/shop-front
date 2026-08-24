@@ -1,7 +1,11 @@
 # StoreSuite Playwright end-to-end tests
 
-Smoke-level e2e coverage of the frontend dashboard: access control, products
-list (search, sort, bulk selection, inline edit), inventory, and coupons.
+E2e coverage of the frontend dashboard — access control, products (search,
+sort, bulk selection, inline edit), inventory, orders (filters + bulk
+actions), coupons, categories, the account form and the wp-admin settings
+app — plus HTTP-level REST contract tests in `tests/api`.
+
+`feature-map.yml` tracks which surface is covered by which suite.
 
 ## Layout
 
@@ -13,10 +17,18 @@ tests/pw/
 │   ├── test.ts               Import { test, expect } from here, never from @playwright/test
 │   ├── authStates.ts         Storage-state paths for admin / shop manager / customer
 │   └── testData.ts           Test users and the seeded data the specs rely on
-└── tests/e2e/
-    ├── _auth.setup.ts        Logs each role in once, saves storage states
-    └── <feature>/            Co-located <feature>.spec.ts + optional <feature>Page.ts
+├── tests/e2e/
+│   ├── _auth.setup.ts        Logs each role in once, saves storage states
+│   └── <feature>/            Co-located <feature>.spec.ts + optional <feature>Page.ts
+└── tests/api/                REST contract specs (application-password auth,
+                              //COVERAGE_TAG comments name the routes covered)
 ```
+
+The `api_tests` project needs the application passwords the provisioning
+script prints — copy them into `.env` (`ADMIN_APP_PASSWORD`,
+`MANAGER_APP_PASSWORD`). E2e specs that need their own data (e.g. the order
+bulk action) seed it through the WooCommerce REST API via
+`utils/apiUtils.ts` instead of mutating the shared seed.
 
 ## Running against wp-env (Docker)
 

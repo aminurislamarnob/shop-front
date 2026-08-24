@@ -21,6 +21,13 @@ $WP_CLI user create customer customer@example.com --role=customer --user_pass=pa
 
 $WP_CLI option update woocommerce_notify_low_stock_amount 3
 
+# Application passwords for the REST API specs. They only work over plain
+# HTTP when the environment type is "local".
+$WP_CLI config set WP_ENVIRONMENT_TYPE local || true
+echo "ADMIN_APP_PASSWORD=$( $WP_CLI user application-password create admin e2e-api --porcelain )"
+echo "MANAGER_APP_PASSWORD=$( $WP_CLI user application-password create manager e2e-api --porcelain )"
+echo "Copy the two lines above into tests/pw/.env."
+
 # Seed the products and coupon that utils/testData.ts describes.
 $WP_CLI eval '
 $specs = [
@@ -50,6 +57,23 @@ if ( ! wc_get_coupon_id_by_code( "welcome10" ) ) {
 	$c->set_amount( 10 );
 	$c->set_discount_type( "percent" );
 	$c->save();
+}
+$orders = [
+	[ "processing", "checkout", "Alice" ],
+	[ "completed",  "checkout", "Bob" ],
+	[ "on-hold",    "pos",      "Carol" ],
+];
+$existing = wc_get_orders( [ "billing_last_name" => "Tester", "limit" => 1, "return" => "ids" ] );
+if ( empty( $existing ) ) {
+	$product = wc_get_product( wc_get_product_id_by_sku( "HOOD-1" ) );
+	foreach ( $orders as $o ) {
+		$order = wc_create_order( [ "status" => $o[0], "customer_id" => 0, "created_via" => $o[1] ] );
+		$order->add_product( $product, 1 );
+		$order->set_billing_first_name( $o[2] );
+		$order->set_billing_last_name( "Tester" );
+		$order->calculate_totals();
+		$order->save();
+	}
 }
 echo "Seeded.\n";
 '

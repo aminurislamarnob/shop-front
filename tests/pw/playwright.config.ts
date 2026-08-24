@@ -15,7 +15,7 @@ const PW_CHROMIUM_PATH = process.env.PW_CHROMIUM_PATH;
  * storage states are reused while iterating locally.
  */
 export default defineConfig( {
-	testDir: './tests/e2e',
+	testDir: './tests',
 	outputDir: './test-results',
 
 	// The smoke suite shares one seeded data set; a single worker keeps
@@ -49,9 +49,16 @@ export default defineConfig( {
 		},
 		{
 			name: 'e2e_tests',
-			testMatch: /.*\.spec\.ts/,
+			testMatch: /e2e\/.*\.spec\.ts/,
 			dependencies: NO_SETUP ? [] : [ 'auth_setup' ],
 			use: { ...devices[ 'Desktop Chrome' ] },
+		},
+		{
+			// HTTP-level REST contract tests; authenticate with application
+			// passwords, no browser and no storage state involved.
+			name: 'api_tests',
+			testMatch: /api\/.*\.spec\.ts/,
+			expect: { timeout: 5_000 },
 		},
 	],
 } );
