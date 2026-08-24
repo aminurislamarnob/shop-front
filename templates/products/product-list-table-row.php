@@ -32,7 +32,7 @@ $storesuite_inline_title    = __( 'Click to edit', 'storesuite' );
 			'',
 			array(
 				'value' => (string) $product_id,
-				'name'  => 'bulk_product_ids[]',
+				'input_name' => 'bulk_product_ids[]',
 				'id'    => 'cb-select-' . $product_id,
 			)
 		);

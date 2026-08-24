@@ -43,7 +43,7 @@ if ( null !== $storesuite_stock_qty && $storesuite_stock_qty <= 0 ) {
 			'',
 			array(
 				'value' => (string) $product_id,
-				'name'  => 'bulk_product_ids[]',
+				'input_name' => 'bulk_product_ids[]',
 				'id'    => 'cb-select-' . $product_id,
 			)
 		);

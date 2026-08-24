@@ -234,7 +234,7 @@ do_action( 'storesuite_dashboard_wrapper_start' );
 											'',
 											array(
 												'value' => (string) $order->get_id(),
-												'name'  => 'bulk_order_ids[]',
+												'input_name' => 'bulk_order_ids[]',
 											)
 										);
 										?>
