@@ -113,6 +113,37 @@ trait StoreSuiteFixtures {
 	}
 
 	/**
+	 * Run a callback and capture the URL it redirects to.
+	 *
+	 * Production code paths end redirects with exit, which would kill the test
+	 * process. The wp_redirect filter runs before the Location header is sent,
+	 * so throwing there unwinds the stack back into the test after all side
+	 * effects (status updates, deletes) have already happened.
+	 *
+	 * @param callable $callback Code expected to call wp_redirect()/wp_safe_redirect().
+	 * @return string|null The redirect target, or null when no redirect happened.
+	 */
+	protected function capture_redirect( callable $callback ) {
+		$captured    = null;
+		$interceptor = function ( $location ) use ( &$captured ) {
+			$captured = $location;
+			throw new StoreSuiteRedirectException( (string) $location );
+		};
+
+		add_filter( 'wp_redirect', $interceptor, 1 );
+
+		try {
+			$callback();
+		} catch ( StoreSuiteRedirectException $e ) {
+			unset( $e ); // Expected control flow: the redirect was intercepted.
+		} finally {
+			remove_filter( 'wp_redirect', $interceptor, 1 );
+		}
+
+		return $captured;
+	}
+
+	/**
 	 * REST server instance for the current test.
 	 *
 	 * @var \WP_REST_Server|null

@@ -31,6 +31,13 @@ class StoreSuiteFactory extends \WP_UnitTest_Factory {
 	public $coupon;
 
 	/**
+	 * Order factory.
+	 *
+	 * @var OrderFactory
+	 */
+	public $order;
+
+	/**
 	 * The constructor.
 	 */
 	public function __construct() {
@@ -38,5 +45,6 @@ class StoreSuiteFactory extends \WP_UnitTest_Factory {
 
 		$this->product = new ProductFactory();
 		$this->coupon  = new CouponFactory();
+		$this->order   = new OrderFactory();
 	}
 }

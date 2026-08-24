@@ -52,15 +52,18 @@ abstract class StoreSuiteAjaxTestCase extends \WP_Ajax_UnitTestCase {
 	 * @param string      $action       AJAX action name.
 	 * @param array       $post_fields  Request fields.
 	 * @param string|null $nonce_action Nonce action when it differs from $action.
+	 * @param string      $nonce_field  POST field carrying the nonce. Defaults to
+	 *                                  'security' (the check_ajax_referer convention);
+	 *                                  form-handler endpoints use per-form field names.
 	 * @return array Decoded wp_send_json_* payload.
 	 */
-	protected function do_ajax( $action, array $post_fields = array(), $nonce_action = null ) {
+	protected function do_ajax( $action, array $post_fields = array(), $nonce_action = null, $nonce_field = 'security' ) {
 		// _last_response accumulates across _handleAjax calls; start fresh.
 		$this->_last_response = '';
 
 		$_POST = array_merge(
 			array(
-				'security' => wp_create_nonce( $nonce_action ? $nonce_action : $action ),
+				$nonce_field => wp_create_nonce( $nonce_action ? $nonce_action : $action ),
 			),
 			$post_fields
 		);
