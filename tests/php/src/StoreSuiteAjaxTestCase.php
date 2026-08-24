@@ -43,6 +43,7 @@ abstract class StoreSuiteAjaxTestCase extends \WP_Ajax_UnitTestCase {
 		parent::tear_down();
 
 		$this->reset_role_singleton();
+		$this->reset_rest_server();
 	}
 
 	/**

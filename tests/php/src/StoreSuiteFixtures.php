@@ -113,6 +113,61 @@ trait StoreSuiteFixtures {
 	}
 
 	/**
+	 * REST server instance for the current test.
+	 *
+	 * @var \WP_REST_Server|null
+	 */
+	protected $rest_server = null;
+
+	/**
+	 * Boot a fresh REST server and fire rest_api_init so the plugin's routes
+	 * (registered by StoreSuite::register_rest_route()) are available.
+	 *
+	 * @return \WP_REST_Server
+	 */
+	protected function set_up_rest_server() {
+		global $wp_rest_server;
+
+		$wp_rest_server    = new \WP_REST_Server(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Standard REST test-suite setup.
+		$this->rest_server = $wp_rest_server;
+
+		do_action( 'rest_api_init', $wp_rest_server );
+
+		return $wp_rest_server;
+	}
+
+	/**
+	 * Dispatch a REST request and return the response.
+	 *
+	 * @param string $method HTTP method.
+	 * @param string $route  Route, e.g. '/storesuite/v1/settings'.
+	 * @param array  $params Request parameters.
+	 * @return \WP_REST_Response
+	 */
+	protected function do_rest_request( $method, $route, $params = array() ) {
+		if ( ! $this->rest_server ) {
+			$this->set_up_rest_server();
+		}
+
+		$request = new \WP_REST_Request( $method, $route );
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
+
+		return rest_do_request( $request );
+	}
+
+	/**
+	 * Drop the per-test REST server so it cannot leak into the next test.
+	 *
+	 * @return void
+	 */
+	protected function reset_rest_server() {
+		$GLOBALS['wp_rest_server'] = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Standard REST test-suite reset.
+		$this->rest_server         = null;
+	}
+
+	/**
 	 * Rebuild the wp_roles singleton.
 	 *
 	 * The transaction rollback restores the roles option, but in-memory

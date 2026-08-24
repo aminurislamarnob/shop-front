@@ -38,5 +38,6 @@ abstract class StoreSuiteTestCase extends \WP_UnitTestCase {
 		parent::tear_down();
 
 		$this->reset_role_singleton();
+		$this->reset_rest_server();
 	}
 }
