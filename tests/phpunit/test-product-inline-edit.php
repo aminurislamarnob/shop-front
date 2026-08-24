@@ -43,6 +43,9 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 	 * @return array
 	 */
 	private function do_inline_edit( $post_fields ) {
+		// _last_response accumulates across _handleAjax calls; start fresh.
+		$this->_last_response = '';
+
 		$_POST = array_merge(
 			array(
 				'security' => wp_create_nonce( self::ACTION ),
@@ -64,7 +67,12 @@ class Test_Product_Inline_Edit extends WP_Ajax_UnitTestCase {
 			$raw = substr( $raw, $start );
 		}
 
-		return json_decode( $raw, true );
+		$decoded = json_decode( $raw, true );
+		if ( null === $decoded ) {
+			$this->fail( 'Non-JSON AJAX response (' . strlen( $this->_last_response ) . ' bytes): ' . substr( $this->_last_response, 0, 1500 ) );
+		}
+
+		return $decoded;
 	}
 
 	public function test_price_edit_updates_regular_and_sale_price() {
