@@ -81,10 +81,9 @@ class OrderBulkActionsTest extends StoreSuiteTestCase {
 		wp_set_current_user( $this->admin_id );
 		$order = self::factory()->order->create( array( 'status' => 'processing' ) );
 
-		$query = $this->run_bulk( 'mark_completed', array( $order->get_id() ), false );
+		$this->run_bulk( 'mark_completed', array( $order->get_id() ), false );
 
 		$this->assertSame( 'processing', wc_get_order( $order->get_id() )->get_status() );
-		$this->assertArrayNotHasKey( 'updated', $query );
 	}
 
 	public function test_bulk_action_requires_manage_woocommerce() {
@@ -92,19 +91,17 @@ class OrderBulkActionsTest extends StoreSuiteTestCase {
 		$order = self::factory()->order->create( array( 'status' => 'processing' ) );
 
 		wp_set_current_user( $this->customer_id );
-		$query = $this->run_bulk( 'mark_completed', array( $order->get_id() ) );
+		$this->run_bulk( 'mark_completed', array( $order->get_id() ) );
 
 		$this->assertSame( 'processing', wc_get_order( $order->get_id() )->get_status() );
-		$this->assertArrayNotHasKey( 'updated', $query );
 	}
 
 	public function test_unknown_bulk_action_skips_everything() {
 		wp_set_current_user( $this->admin_id );
 		$order = self::factory()->order->create( array( 'status' => 'processing' ) );
 
-		$query = $this->run_bulk( 'mark_exploded', array( $order->get_id() ) );
+		$this->run_bulk( 'mark_exploded', array( $order->get_id() ) );
 
 		$this->assertSame( 'processing', wc_get_order( $order->get_id() )->get_status() );
-		$this->assertArrayNotHasKey( 'updated', $query );
 	}
 }

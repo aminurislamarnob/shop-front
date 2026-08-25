@@ -27,12 +27,29 @@ test.describe( 'admin settings app', () => {
 
 		const productsPerPage = page.getByLabel( 'Products per page' );
 		await expect( productsPerPage ).toBeVisible();
+		const previous = await productsPerPage.inputValue();
 
-		await productsPerPage.fill( '12' );
-		await page.getByRole( 'button', { name: 'Save Changes' } ).click();
+		// The save is an async apiFetch POST with no navigation; wait for the
+		// request to finish (and succeed) before reloading, or the reload can
+		// abort it and the persistence assertion races the write.
+		const saveSettings = async ( value: string ) => {
+			await productsPerPage.fill( value );
+			const [ response ] = await Promise.all( [
+				page.waitForResponse(
+					( r ) => r.url().includes( '/storesuite/v1/settings' ) && 'POST' === r.request().method()
+				),
+				page.getByRole( 'button', { name: 'Save Changes' } ).click(),
+			] );
+			expect( response.ok(), 'The settings save request must succeed.' ).toBeTruthy();
+		};
+
+		await saveSettings( '12' );
 
 		// Reload and confirm the value came back from the REST API.
 		await page.reload();
 		await expect( page.getByLabel( 'Products per page' ) ).toHaveValue( '12' );
+
+		// Leave the shared site as we found it.
+		await saveSettings( previous );
 	} );
 } );

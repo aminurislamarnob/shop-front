@@ -21,9 +21,28 @@ $WP_CLI user create customer customer@example.com --role=customer --user_pass=pa
 
 $WP_CLI option update woocommerce_notify_low_stock_amount 3
 
+# Wide per-page settings give the list specs headroom: every run adds an
+# order, a coupon and a category, and the seeded rows must stay on page 1
+# of a persistent site for many runs.
+$WP_CLI eval '
+$settings = get_option( "storesuite_settings", array() );
+foreach ( array( "order", "coupon", "category" ) as $list ) {
+	$settings[ "storesuite_{$list}_per_page" ] = "50";
+}
+update_option( "storesuite_settings", $settings );
+echo "Per-page settings widened.\n";
+'
+
 # Application passwords for the REST API specs. They only work over plain
-# HTTP when the environment type is "local".
+# HTTP when the environment type is "local". Re-runnable: an existing
+# e2e-api password is deleted first (its secret is only shown at creation).
 $WP_CLI config set WP_ENVIRONMENT_TYPE local || true
+for wp_user in admin manager; do
+	uuid=$( $WP_CLI user application-password list "$wp_user" --fields=uuid,name --format=csv 2>/dev/null | awk -F, '$2 == "e2e-api" { print $1 }' )
+	if [ -n "$uuid" ]; then
+		$WP_CLI user application-password delete "$wp_user" "$uuid" || true
+	fi
+done
 echo "ADMIN_APP_PASSWORD=$( $WP_CLI user application-password create admin e2e-api --porcelain )"
 echo "MANAGER_APP_PASSWORD=$( $WP_CLI user application-password create manager e2e-api --porcelain )"
 echo "Copy the two lines above into tests/pw/.env."
