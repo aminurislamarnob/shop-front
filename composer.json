@@ -7,6 +7,11 @@
 			"PluginizeLab\\StoreSuite\\": "includes/"
 		}
 	},
+	"autoload-dev": {
+		"psr-4": {
+			"PluginizeLab\\StoreSuite\\Test\\": "tests/php/src/"
+		}
+	},
 	"authors": [
 		{
 			"name": "Aminur Islam Arnob",

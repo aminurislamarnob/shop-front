@@ -1,4 +1,11 @@
-on: pull_request
+# Runs on every pull request, and additionally on direct pushes to the
+# release-critical branches so merges get a run even without a PR event.
+on:
+    pull_request:
+    push:
+        branches:
+            - develop
+            - feat/dark-light-mode
 
 name: Tests
 jobs:

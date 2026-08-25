@@ -32,6 +32,13 @@ tests_add_filter(
 
 		require rtrim( $wc_dir, '/' ) . '/woocommerce.php';
 		require dirname( __DIR__, 2 ) . '/storesuite.php';
+
+		// Keep the suite hermetic: core update checks phone home to
+		// wordpress.org on admin_init (which every AJAX dispatch fires) and
+		// turn into test errors on hosts without outbound network access.
+		remove_action( 'admin_init', '_maybe_update_core' );
+		remove_action( 'admin_init', '_maybe_update_plugins' );
+		remove_action( 'admin_init', '_maybe_update_themes' );
 	}
 );
 
