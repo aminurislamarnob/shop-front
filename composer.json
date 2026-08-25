@@ -40,5 +40,8 @@
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
+	},
+	"require": {
+		"appsero/client": "^2.0"
 	}
 }
