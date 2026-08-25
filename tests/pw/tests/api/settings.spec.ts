@@ -49,6 +49,11 @@ test.describe( 'settings REST API', () => {
 	test( 'admin update round-trips and enums are enforced', async () => {
 		const api = await apiContext( adminAuth() );
 
+		// The settings option is shared site state: remember the current
+		// value and put it back after the round trip.
+		const before = await ( await api.get( ROUTE ) ).json();
+		const previous = before.storesuite_order_per_page ?? '';
+
 		const write = await api.post( ROUTE, { data: { storesuite_order_per_page: '18' } } );
 		expect( write.status() ).toBe( 200 );
 		expect( ( await write.json() ).storesuite_order_per_page ).toBe( '18' );
@@ -59,6 +64,9 @@ test.describe( 'settings REST API', () => {
 		// Values outside a schema enum are rejected by the REST layer.
 		const invalid = await api.post( ROUTE, { data: { storesuite_color_palette_mode: 'neon' } } );
 		expect( invalid.status() ).toBe( 400 );
+
+		const restore = await api.post( ROUTE, { data: { storesuite_order_per_page: previous } } );
+		expect( restore.status() ).toBe( 200 );
 
 		await api.dispose();
 	} );
