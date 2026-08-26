@@ -105,7 +105,7 @@ class Assets {
 		wp_register_script( 'storesuite_sweetalert2_script', $frontend_sweetalert2, array(), '11.14.5', true );
 
 		// Order scripts.
-		wp_register_script( 'storesuite_order_script', $frontend_order_script, array( 'storesuite_selectWoo' ), STORESUITE_PLUGIN_VERSION, true );
+		wp_register_script( 'storesuite_order_script', $frontend_order_script, array( 'storesuite_selectWoo', 'jquery-ui-datepicker' ), STORESUITE_PLUGIN_VERSION, true );
 		wp_register_script( 'storesuite_product_script', $frontend_product_script, array( 'storesuite_script', 'storesuite_form_handler_script', 'storesuite_selectWoo', 'jquery-ui-datepicker', 'jquery-ui-sortable', 'storesuite_sweetalert2_script' ), STORESUITE_PLUGIN_VERSION, true );
 		// AI copy generation, split from product.js. Depends on the product
 		// script so the localized StoreSuite_Product global is available.
@@ -332,9 +332,9 @@ class Assets {
 		$needs_form_handler = $is_products || $is_coupons || $is_categories || $is_tags || $is_brands || $is_attributes || $is_account;
 		$needs_sweetalert   = $needs_form_handler || $is_orders;
 		$needs_select2      = $is_products || $is_orders || $is_coupons;
-		// jQuery UI datepicker styles: any form-handler page that renders
-		// .date-picker inputs (currently the coupon expiry date) needs them.
-		$needs_jquery_ui = $is_products || $is_coupons;
+		// jQuery UI datepicker styles: any page that renders .date-picker inputs
+		// (the coupon expiry date, the product sale schedule, the order created date).
+		$needs_jquery_ui = $is_products || $is_coupons || $is_orders;
 
 		if ( $needs_jquery_ui ) {
 			wp_enqueue_style( 'storesuite_jquery-ui-style' );
