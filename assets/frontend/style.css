@@ -7059,7 +7059,6 @@ body,
 [data-theme="dark"] .woocommerce_order_items_wrapper select,
 [data-theme="dark"] .woocommerce_order_items_wrapper textarea,
 [data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection,
-[data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection--single .select2-selection__rendered,
 [data-theme="dark"] .storesuite-main-dashboard .select2-dropdown,
 [data-theme="dark"] .storesuite-table-search-input,
 [data-theme="dark"] .storesuite-table-search-input input,
@@ -7067,6 +7066,16 @@ body,
 [data-theme="dark"] select#customer_user,
 [data-theme="dark"] select#storesuite_product_search {
   background-color: var(--storesuite-surface-elevated);
+  color: var(--storesuite-text-color);
+}
+
+/* The single-select rendered label hardcodes #444 in light mode, so it needs a
+ * dark text color here — but it must NOT repaint a background. Its `line-height:
+ * 38px` makes the box 38px tall inside the 36px content box of the 38px
+ * border-box .select2-selection, so an opaque background bleeds over the
+ * parent's border and the field reads as borderless in dark mode. The parent
+ * already paints the elevated surface. */
+[data-theme="dark"] .storesuite-main-dashboard .select2-container .select2-selection--single .select2-selection__rendered {
   color: var(--storesuite-text-color);
 }
 
