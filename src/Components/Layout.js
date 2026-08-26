@@ -12,6 +12,7 @@ import { store as noticesStore } from '@wordpress/notices';
 
 import { useSettings } from '../context/SettingsContext';
 import {
+	BellIcon,
 	ClockIcon,
 	CodeBracketSquareIcon,
 	GearIcon,
@@ -37,6 +38,11 @@ const TABS = [
 		to: '/ai-settings',
 		icon: SparklesIcon,
 		label: __( 'AI', 'storesuite' ),
+	},
+	{
+		to: '/notifications-settings',
+		icon: BellIcon,
+		label: __( 'Notifications', 'storesuite' ),
 	},
 	{
 		to: '/changelog',

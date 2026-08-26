@@ -50,6 +50,12 @@ Need to update many products at once? Tick the checkboxes on the left of the row
 
 Pick your action and click **Apply**. The **Export** button in the top-right corner does the same for your whole list.
 
+### Bringing products in from a file
+
+Next to **Export** you'll find an **Import** button. It opens a step-by-step wizard that turns a CSV file into products — perfect for moving a catalog over from another store, adding a supplier's list, or updating prices in bulk.
+
+It's a guide of its own: see [Importing Products from a CSV](../product-import/product-import.md).
+
 ---
 
 ## Filtering Your Products

@@ -95,6 +95,28 @@ When you've made your changes, click **Update Order** to save.
 
 ---
 
+## Invoices and Packing Slips
+
+If you use a PDF invoice plugin, its documents show up right here in StoreSuite — no trip to the WordPress admin to print a packing slip.
+
+StoreSuite works with either of these (see the plugin's readme for the current list):
+
+- **PDF Invoices & Packing Slips for WooCommerce** — adds Invoice and Packing Slip
+- **WebToffee PDF Invoices, Packing Slips, Delivery Notes & Shipping Labels** — adds Invoice, Packing Slip, Delivery Note, Shipping Label, and Dispatch Label
+
+Install and set up whichever you prefer in the usual way, and make sure the documents you want are enabled in *that* plugin's settings. StoreSuite picks them up automatically — there's nothing to configure on the StoreSuite side, and if you have both active, you'll see both sets.
+
+You'll find the documents in two places:
+
+- **In the orders list** — open any order's **⋯** menu and the document actions sit below **View** and **Edit**.
+- **On the order details page** — a **Documents** card gathers them all in one place, just above Order notes.
+
+Each action carries a small icon telling you what it does: a **printer** opens your browser's print dialog straight away, and a **download arrow** saves the PDF to your computer. Printing happens right on the page — you stay on the order, no new tab, no losing your place.
+
+> **Tip:** Fulfilling a batch? Work down the orders list and print each packing slip straight from the **⋯** menu without ever opening the orders themselves.
+
+---
+
 ## A Few Friendly Tips
 
 - **Work by status.** Filter to Processing, fulfill those, mark them Completed — a clean, repeatable routine.

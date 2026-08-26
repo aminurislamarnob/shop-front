@@ -30,6 +30,34 @@ class Main {
 		add_action( 'woocommerce_account_dashboard', array( $this, 'add_storesuite_dashboard_btn' ), 1 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_dashboard_btn_css' ), 20 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_storesuite_css_variables' ), 20 );
+		add_action( 'wp_head', array( $this, 'add_storesuite_theme_mode_script' ), 1 );
+	}
+
+	/**
+	 * Print an inline head script that resolves the dashboard color scheme
+	 * (light/dark) before first paint to avoid a flash of the wrong theme.
+	 *
+	 * The user's explicit choice is read from localStorage; when unset we fall
+	 * back to the operating system's `prefers-color-scheme` preference.
+	 */
+	public function add_storesuite_theme_mode_script() {
+		if ( ! storesuite_is_dashboard_page() ) {
+			return;
+		}
+		?>
+		<script id="storesuite-theme-mode">
+			( function () {
+				try {
+					var storedMode = localStorage.getItem( 'storesuite_theme_mode' );
+					var prefersDark = window.matchMedia && window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
+					var mode = ( storedMode === 'dark' || storedMode === 'light' ) ? storedMode : ( prefersDark ? 'dark' : 'light' );
+					document.documentElement.setAttribute( 'data-theme', mode );
+				} catch ( error ) {
+					document.documentElement.setAttribute( 'data-theme', 'light' );
+				}
+			} )();
+		</script>
+		<?php
 	}
 
 	/**
@@ -99,12 +127,12 @@ class Main {
 			wp_safe_redirect( admin_url() );
 			exit();
 		}
-	
+
 		// 2) Non-admins who can manage WooCommerce → StoreSuite dashboard.
 		if ( user_can( $user, 'manage_woocommerce' ) ) {
 			$this->redirect_to_storesuite_dashboard(); // This already redirects & exits if page is set.
 		}
-	
+
 		// 3) Everyone else → normal My Account page.
 		wp_safe_redirect( wc_get_page_permalink( 'myaccount' ) );
 		exit();
@@ -199,18 +227,47 @@ class Main {
 			'--storesuite-border-color'           => 'storesuite_color_border',
 		);
 
-		$rules = array();
-		foreach ( $css_vars as $var_name => $option_key ) {
-			$value = storesuite_get_option_by_key( $option_key );
-			if ( $value !== '' && $value !== null ) {
-				$rules[] = $var_name . ': ' . esc_attr( $value );
-			}
-		}
-		if ( empty( $rules ) ) {
+		/*
+		 * Dark mode overrides only the neutrals — surfaces, text and borders. The button
+		 * and active-menu accents are intentionally left out so the light palette's
+		 * primary colors carry over from the `:root{}` block above.
+		 *
+		 * These are written to a `html[data-theme="dark"]:root` block so they outrank the
+		 * built-in `:root[data-theme="dark"]` palette in style.css, which stays the
+		 * fallback when a store has never saved a dark theme.
+		 */
+		$dark_css_vars = array(
+			'--storesuite-text-black'           => 'storesuite_dark_title_text_color',
+			'--storesuite-text-color'           => 'storesuite_dark_text_color',
+			'--storesuite-text-color-light'     => 'storesuite_dark_lite_text_color',
+			'--storesuite-icon-color'           => 'storesuite_dark_icon_color',
+			'--storesuite-sidebar-bg-color'     => 'storesuite_dark_color_sidebar_background',
+			'--storesuite-sidebar-menu-text'    => 'storesuite_dark_color_sidebar_menu_text',
+			'--storesuite-sidebar-active-text'  => 'storesuite_dark_color_sidebar_active_text',
+			'--storesuite-sidebar-border-color' => 'storesuite_dark_color_sidebar_border',
+			'--storesuite-bg-color-light'       => 'storesuite_dark_color_lite_bg',
+			'--storesuite-border-color'         => 'storesuite_dark_color_border',
+			'--storesuite-page-bg'              => 'storesuite_dark_color_page_bg',
+			'--storesuite-surface-bg'           => 'storesuite_dark_color_surface_bg',
+			'--storesuite-surface-elevated'     => 'storesuite_dark_color_surface_bg',
+		);
+
+		$rules      = $this->build_css_variable_rules( $css_vars );
+		$dark_rules = $this->build_css_variable_rules( $dark_css_vars );
+
+		if ( empty( $rules ) && empty( $dark_rules ) ) {
 			return;
 		}
 
-		$css = ':root{ ' . esc_attr( implode( ';', $rules ) ) . ' }';
+		$css = '';
+
+		if ( ! empty( $rules ) ) {
+			$css .= ':root{ ' . esc_attr( implode( ';', $rules ) ) . ' }';
+		}
+
+		if ( ! empty( $dark_rules ) ) {
+			$css .= 'html[data-theme="dark"]:root{ ' . esc_attr( implode( ';', $dark_rules ) ) . ' }';
+		}
 
 		if ( storesuite_get_option_by_key( 'storesuite_color_palette_mode' ) === 'predefined' ) {
 			$css .= '.storesuite-table-search-icon svg,'
@@ -221,5 +278,26 @@ class Main {
 		wp_register_style( 'storesuite-css-variables', false );
 		wp_enqueue_style( 'storesuite-css-variables' );
 		wp_add_inline_style( 'storesuite-css-variables', $css );
+	}
+
+	/**
+	 * Turn a CSS variable => option key map into `--var: value` declarations.
+	 *
+	 * Options that were never saved are skipped so the stylesheet defaults apply.
+	 *
+	 * @param array $css_vars Map of CSS variable name to settings option key.
+	 * @return array List of declarations.
+	 */
+	private function build_css_variable_rules( $css_vars ) {
+		$rules = array();
+
+		foreach ( $css_vars as $var_name => $option_key ) {
+			$value = storesuite_get_option_by_key( $option_key );
+			if ( $value !== '' && $value !== null ) {
+				$rules[] = $var_name . ': ' . esc_attr( $value );
+			}
+		}
+
+		return $rules;
 	}
 }

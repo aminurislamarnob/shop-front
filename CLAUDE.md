@@ -31,7 +31,16 @@ npm run format         # Auto-format with Prettier
 bash bin/build.sh
 ```
 
-Note: No PHP or JS test suite exists yet. PHPUnit is configured in `composer.json` but no `tests/` directory has been created.
+## Testing
+
+```bash
+composer test                    # PHPUnit (needs WP_CORE_DIR, WC_DIR and WP_DB_* env — see tests/php/bootstrap.php)
+cd tests/pw && npm test          # Playwright e2e + REST API suites (see tests/pw/README.md for site setup)
+```
+
+- **PHPUnit** (`tests/php/`): integration tests against a real WP + WooCommerce database. Base classes `StoreSuiteTestCase` / `StoreSuiteAjaxTestCase` provide user fixtures, entity factories (`self::factory()->product->create()`), a `do_ajax()` dispatch helper and `capture_redirect()` for redirect-and-exit paths. Test classes are PSR-4 (`PluginizeLab\StoreSuite\Test\`), discovered by `suffix="Test.php"`.
+- **Playwright** (`tests/pw/`): self-contained npm project — browser e2e specs (co-located page objects per feature folder, storage-state auth for admin/shop manager/customer) plus HTTP-level REST contract specs in `tests/api` using application passwords. `bin/e2e-provision.sh` seeds any wp-cli-reachable site.
+- **CI**: PHPCS + PHPUnit run on every pull request; PHPUnit also runs on pushes to `develop` and `feat/dark-light-mode`. The e2e suite runs nightly in dual lanes (latest WP/WC gates; pinned versions advisory) plus `workflow_dispatch`.
 
 ## Architecture
 
@@ -52,7 +61,7 @@ Note: No PHP or JS test suite exists yet. PHPUnit is configured in `composer.jso
   - **Controllers** register `wp_ajax_storesuite_*` hooks, handle form submission, load templates via `storesuite_get_template_part()`
   - **Managers** contain business logic (CRUD operations using WooCommerce APIs)
   - Some modules also have a Hooks class (e.g., `ProductHooks`, `OrderHooks`) for WordPress/WooCommerce action integrations
-- **REST API:** `REST/SettingsController.php` — namespace `storesuite/v1`, base `settings`, handles admin settings CRUD. Permission checks require `manage_woocommerce` capability
+- **REST API:** `REST/SettingsController.php` — namespace `storesuite/v1`, base `settings`, handles admin settings CRUD. Permission checks require the `manage_options` capability (admin-only; shop managers are denied)
 - **Core services:**
   - `Assets.php` — registers and enqueues scripts/styles; strips theme and disallowed plugin assets on dashboard pages (extensible via `storesuite_allowed_plugin_slugs` and `storesuite_allowed_asset_handles` filters)
   - `Rewrites.php` — registers custom rewrite endpoints for each dashboard sub-page; endpoint slugs are configurable via `get_option('storesuite_myshop_*_endpoint')` with sensible defaults
