@@ -139,6 +139,16 @@ Create a page, add the shortcode `[storesuite_dashboard]`, then go to **WooComme
 
 Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order Storage (HPOS).
 
+== Privacy Policy ==
+
+StoreSuite uses [Appsero](https://appsero.com) SDK to collect some telemetry data upon user's confirmation. This helps us to troubleshoot problems faster & make product improvements.
+
+Appsero SDK **does not gather any data by default.** The SDK only starts gathering basic telemetry data **when a user allows it via the admin notice**. We collect the data to ensure a great user experience for all our users.
+
+Integrating Appsero SDK **DOES NOT IMMEDIATELY** start gathering data, **without confirmation from users in any case.**
+
+Learn more about how [Appsero collects and uses this data](https://appsero.com/privacy-policy/).
+
 == Changelog ==
 
 = 1.3.0 =
@@ -156,6 +166,10 @@ Yes. StoreSuite declares compatibility with WooCommerce High-Performance Order S
 * Add `storesuite_notification_poll_interval`, `storesuite_notification_retention_days`, `storesuite_notifications_per_page`, and `storesuite_order_list_row_actions` hooks, plus `storesuite_load_import_products_template` and `storesuite_load_notifications_template` for overriding the new pages.
 * On update, the notifications table is created, the daily cleanup is scheduled, and rewrite rules are flushed automatically — no need to re-save permalinks after upgrading.
 * Fix undefined `--storesuite-title-text-color` references so title text uses the defined colour token.
+
+= 1.2.3 =
+* Add optional, opt-in telemetry via the Appsero SDK. No data is collected unless you explicitly allow it from the admin notice.
+* Document the telemetry behaviour in a new Privacy Policy section.
 
 = 1.2.2 =
 * Refresh the plugin listing: new title, tags, short description, and description intro.
