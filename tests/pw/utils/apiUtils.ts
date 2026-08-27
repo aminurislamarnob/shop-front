@@ -123,3 +123,35 @@ export async function getProductViaApi( id: number ): Promise< Record< string, a
 
 	return product;
 }
+
+/**
+ * Read the StoreSuite settings object through the plugin's own REST route.
+ */
+export async function getSettingsViaApi(): Promise< Record< string, any > > {
+	const api = await apiContext( adminAuth() );
+	const response = await api.get( '/wp-json/storesuite/v1/settings' );
+
+	if ( ! response.ok() ) {
+		throw new Error( `Settings fetch failed: ${ response.status() } ${ await response.text() }` );
+	}
+
+	const settings = await response.json();
+	await api.dispose();
+
+	return settings;
+}
+
+/**
+ * Patch StoreSuite settings. Specs that change shared site state this way
+ * must restore the previous value when they finish.
+ */
+export async function updateSettingsViaApi( data: Record< string, string > ): Promise< void > {
+	const api = await apiContext( adminAuth() );
+	const response = await api.post( '/wp-json/storesuite/v1/settings', { data } );
+
+	if ( ! response.ok() ) {
+		throw new Error( `Settings update failed: ${ response.status() } ${ await response.text() }` );
+	}
+
+	await api.dispose();
+}

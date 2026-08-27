@@ -32,7 +32,13 @@ if ( $total_pages > 1 ) {
 
 	$page_links = paginate_links(
 		array(
-			'base'      => str_replace( $big_num, '%#%', esc_url( get_pagenum_link( $big_num ) ) ),
+			// get_pagenum_link()'s $escape argument must be false here: escaped,
+			// it encodes '&' as '&#038;', and paginate_links() then feeds the base
+			// through add_query_arg(), which reads the '#' as the start of a
+			// fragment — truncating the query string and leaving a junk
+			// '#038;...' fragment on every page link. paginate_links() escapes
+			// the final href itself.
+			'base'      => str_replace( $big_num, '%#%', get_pagenum_link( $big_num, false ) ),
 			'format'    => '?page=%#%',
 			'add_args'  => ! empty( $storesuite_add_args ) ? $storesuite_add_args : false,
 			'current'   => $current_page,

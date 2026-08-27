@@ -37,7 +37,11 @@ export class ProductsPage {
 
 	/** Names of the products currently listed, in render order. */
 	async rowNames(): Promise< string[] > {
-		return this.rows.locator( 'td a[href*="/edit-product/"]' ).allInnerTexts();
+		// :not(.dropdown-link) excludes the row-actions "Edit" link, which
+		// points at the same URL as the product-name link.
+		return this.rows
+			.locator( 'td a[href*="/edit-product/"]:not(.dropdown-link)' )
+			.allInnerTexts();
 	}
 
 	async searchFor( term: string ) {
