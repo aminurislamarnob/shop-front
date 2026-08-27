@@ -46,3 +46,25 @@ function pluginizelab_storesuite() {
 
 // Lets Go....
 pluginizelab_storesuite();
+
+/**
+ * Initialize the plugin tracker
+ *
+ * @return void
+ */
+function storesuite_init_appsero_tracker() {
+	if ( ! class_exists( 'Appsero\Client' ) ) {
+		return;
+	}
+
+	$client = new Appsero\Client(
+		'f7ef1e53-4c57-466c-b668-cb5c2d34a3e7',
+		'StoreSuite – Frontend Shop Manager for WooCommerce with AI – Product, Order, Coupon Management & Analytics Dashboard',
+		__FILE__
+	);
+
+	// Active insights.
+	$client->insights()->init();
+}
+
+storesuite_init_appsero_tracker();
