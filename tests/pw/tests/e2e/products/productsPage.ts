@@ -10,6 +10,10 @@ export class ProductsPage {
 	readonly rows: Locator;
 	readonly selectAll: Locator;
 	readonly rowCheckboxes: Locator;
+	readonly filterToggle: Locator;
+	readonly filterCount: Locator;
+	readonly filterDrawer: Locator;
+	readonly filterForm: Locator;
 
 	constructor( page: Page ) {
 		this.page = page;
@@ -17,6 +21,10 @@ export class ProductsPage {
 		this.rows = this.table.locator( 'tbody tr.single-product-item' );
 		this.selectAll = this.table.locator( '.storesuite-bulk-select-all' );
 		this.rowCheckboxes = this.table.locator( '.storesuite-bulk-cb' );
+		this.filterToggle = page.locator( '#storesuite-filter-toggle' );
+		this.filterCount = this.filterToggle.locator( '.storesuite-filter-count' );
+		this.filterDrawer = page.locator( '#storesuite-filter-offcanvas' );
+		this.filterForm = this.filterDrawer.locator( 'form.storesuite-filters-form-offcanvas' );
 	}
 
 	async goto( query = '' ) {
@@ -25,6 +33,11 @@ export class ProductsPage {
 
 	row( name: string ): Locator {
 		return this.rows.filter( { has: this.page.getByRole( 'link', { name, exact: true } ) } );
+	}
+
+	/** Names of the products currently listed, in render order. */
+	async rowNames(): Promise< string[] > {
+		return this.rows.locator( 'td a[href*="/edit-product/"]' ).allInnerTexts();
 	}
 
 	async searchFor( term: string ) {
@@ -37,5 +50,28 @@ export class ProductsPage {
 	 */
 	inlineCell( row: Locator, field: string ): Locator {
 		return row.locator( `td.storesuite-inline-cell[data-inline-field="${ field }"]` );
+	}
+
+	/** Open a cell's inline editor and return the editor element. */
+	async openInlineEditor( row: Locator, field: string ): Promise< Locator > {
+		const cell = this.inlineCell( row, field );
+		await cell.click();
+		const editor = cell.locator( '.storesuite-inline-editor' );
+		await editor.waitFor();
+		return editor;
+	}
+
+	/** Open the filter off-canvas and wait for it to be usable. */
+	async openFilters() {
+		await this.filterToggle.click();
+		await this.filterForm.waitFor( { state: 'visible' } );
+	}
+
+	/** Submit the filter drawer and wait for the filtered list to render. */
+	async applyFilters() {
+		await Promise.all( [
+			this.page.waitForLoadState(),
+			this.filterForm.getByRole( 'button', { name: 'Filter Products' } ).click(),
+		] );
 	}
 }

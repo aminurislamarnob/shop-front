@@ -21,12 +21,17 @@ features:
 
   - name: Products list (query filters, sorting, search)
     phpunit: yes       # Product/ProductsQueryTest
-    e2e: yes           # products/products.spec.ts
+    e2e: yes           # products/products.spec.ts + products/filters.spec.ts
+                       # (price/date/status filters, badge count, reset,
+                       #  filters preserved across sorting)
     api: n/a
 
   - name: Product inline edit
     phpunit: yes       # Product/ProductInlineEditTest
     e2e: yes           # products/products.spec.ts (price cell round trip)
+                       # products/inlineEdit.spec.ts — sku/stock/status cells,
+                       # sale-price + duplicate-SKU rejection, Esc/click-away
+                       # cancel, non-managed stock cell not editable
     api: n/a
 
   - name: Product bulk actions (edit, trash, delete, taxonomy ops)
